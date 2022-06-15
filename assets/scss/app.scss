@@ -1,0 +1,20 @@
+@use "constants";
+@use "titlebar";
+
+div.main {
+  background: constants.$backgroundColour;
+  min-height: 100vh;
+  min-width: 100vh;
+  display: flex;
+  color: white;
+}
+
+.mainTable {
+  background: #242424 !important;
+  color: white !important;
+}
+
+.mainBody {
+  height: 90vh;
+  padding: 2px;
+}
