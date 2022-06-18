@@ -164,7 +164,7 @@ export class FormatPlayer {
     public renderFKDRColour = (player: Player) => {
         let renderer = this.starterDivider;
         if (!player.nicked) {
-            let playerValue = ((player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0));
+            const playerValue = ((player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0));
             if (player.runApi?.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, 'red');
             } else if (playerValue === 1) {
@@ -208,7 +208,8 @@ export class FormatPlayer {
     };
 
     private getPlayerTagDividerNicked = () => {
-        let htmlResponse = `<div>`, styleString = `color: red; padding-left: 1px;`;
+        const styleString = `color: red; padding-left: 1px;`;
+        let htmlResponse = `<div>`;
         htmlResponse += `<div style="${styleString}">?</div>`;
         htmlResponse += `</div>`;
         return htmlResponse;

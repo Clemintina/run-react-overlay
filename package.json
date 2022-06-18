@@ -1,13 +1,21 @@
 {
 	"name": "seraph-overlay",
 	"productName": "Seraph Overlay",
+	"author": {
+		"name": "Kay"
+	},
+	"maintainers": [
+		{
+			"name": "Arman"
+		}
+	],
 	"version": "1.0.0",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
 		"start": "cross-env NODE_ENV=development electron-forge start",
 		"package": "electron-forge package",
-		"make": "electron-forge make -windows",
+		"make": "electron-forge make --platform=win32",
 		"publish": "electron-forge publish",
 		"lint": "eslint src/ --ext .ts,.js,.tsx,.jsx"
 	},
@@ -31,7 +39,6 @@
 		"@sinclair/typebox": "^0.23.5",
 		"@tanstack/react-table": "^8.0.0-beta.4",
 		"@types/uuid": "^8.3.4",
-		"@zikeji/hypixel": "^3.1.1",
 		"axios": "^0.27.2",
 		"cache-manager": "^4.0.1",
 		"electron-squirrel-startup": "^1.0.0",

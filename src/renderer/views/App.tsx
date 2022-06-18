@@ -1,7 +1,8 @@
 import '@assets/scss/app.scss';
 import React from "react";
-import store from "@common/store";
-import {getPlayerHypixelData} from "@common/store/PlayerStore";
+import store from "@renderer/store";
+import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
+// eslint-disable-next-line import/named
 import {DataGrid, GridCellParams, GridColDef} from "@mui/x-data-grid";
 import {useSelector} from "react-redux";
 import {FormatPlayer, Player} from "@common/utils/PlayerUtils";

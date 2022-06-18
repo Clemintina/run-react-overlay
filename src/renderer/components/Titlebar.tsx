@@ -1,6 +1,6 @@
 import "@assets/scss/titlebar.scss";
-import store from '@common/store';
-import {getPlayerHypixelData} from "@common/store/PlayerStore";
+import store from '@renderer/store';
+import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
 import {Link, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars as headerIcon} from '@fortawesome/free-solid-svg-icons';

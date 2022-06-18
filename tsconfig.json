@@ -1,27 +1,50 @@
 {
-  "compilerOptions": {
-    "jsx": "react",
-    "allowJs": true,
-    "target": "ES2020",
-    "module": "ES2020",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "noImplicitAny": false,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "outDir": "dist",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "paths": {
-      "*": ["node_modules/*"],
-      "@assets/*": ["./assets/*"],
-      "@components/*": ["./src/renderer/components/*"],
-      "@common/*": ["./src/common/*"],
-      "@main/*": ["./src/main/*"],
-      "@renderer/*": ["./src/renderer/*"],
-      "@src/*": ["./src/*"],
-      "@misc/*": ["./misc/*"],
-    }
-  },
-  "include": ["src/**/*", "tools/**/*"]
+	"compilerOptions": {
+		"jsx": "react",
+		"allowJs": true,
+		"strict": true,
+		"target": "ES2022",
+		"module": "ES2022",
+		"importHelpers": true,
+		"allowSyntheticDefaultImports": true,
+		"downlevelIteration": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"noImplicitAny": false,
+		"sourceMap": true,
+		"baseUrl": ".",
+		"outDir": "dist",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"paths": {
+			"@assets/*": [
+				"./assets/*"
+			],
+			"@components/*": [
+				"./src/renderer/components/*"
+			],
+			"@common/*": [
+				"./src/common/*"
+			],
+			"@main/*": [
+				"./src/main/*"
+			],
+			"@renderer/*": [
+				"./src/renderer/*"
+			],
+			"@src/*": [
+				"./src/*"
+			],
+			"@misc/*": [
+				"./misc/*"
+			],
+		}
+	},
+	"include": [
+		"src/**/*",
+		"tools/**/*"
+	],
+	"exclude": [
+		"node_modules"
+	]
 }

@@ -6,11 +6,11 @@ import fs from 'fs';
 import TailFile from '@logdna/tail-file';
 import readline from 'readline';
 import cacheManager from 'cache-manager';
-import {Client} from "@zikeji/hypixel";
 import Store from "electron-store";
-import {RUNElectronStoreType} from "@common/store/ElectronStoreUtils";
+import {RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
 import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {HypixelApi} from "@common/utils/HypixelApi";
+import {HypixelApi} from "./HypixelApi";
+import AppUpdater from "./AutoUpdate";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -51,6 +51,13 @@ export const createAppWindow = (): BrowserWindow => {
         },
     });
 
+    if (!isDevelopment) {
+        if (!require('electron-squirrel-startup') && process.platform === 'win32') {
+            const autoUpdater = new AppUpdater().getAutoUpdater();
+            autoUpdater.checkForUpdates();
+        }
+    }
+
     appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
 
     appWindow.on('ready-to-show', () => appWindow.show());
@@ -58,7 +65,7 @@ export const createAppWindow = (): BrowserWindow => {
     registerMainIPC();
 
     appWindow.on('close', () => {
-        appWindow = null;
+        appWindow.close();
         app.quit();
     });
 
@@ -79,7 +86,7 @@ const registerMainIPC = () => {
 const registerSeraphIPC = () => {
 
     ipcMain.handle('isFileReadable', async (event: IpcMainInvokeEvent, path: string) => {
-        return await fs.promises.access(path, fs.constants.R_OK).then(() => true).catch(() => false)
+        return await fs.promises.access(path, fs.constants.R_OK).then(() => true).catch(() => false);
     });
 
     ipcMain.on('logFileSet', async (event: IpcMainInvokeEvent, path: string) => {
@@ -103,13 +110,13 @@ const registerSeraphIPC = () => {
         }
     });
 
-    ipcMain.handle('hypixel', async (event: IpcMainInvokeEvent, key: string, resource: RequestType, ...args: any[]) => {
-        const client = new Client(key, {
+    ipcMain.handle('hypixel', async (event: IpcMainInvokeEvent, key: string, resource: RequestType, ...args: unknown[]) => {
+        const hypixelClient = new HypixelApi(key, {
             cache: {
                 get(key) {
                     return playerCache.get(`hypixel:${key}`);
                 },
-                set(key: `hypixel:${string}`, value: any) {
+                set(key: `hypixel:${string}`, value: never) {
                     let ttl = 300;
                     if (key.startsWith("player:")) {
                         ttl = 600;
@@ -118,27 +125,19 @@ const registerSeraphIPC = () => {
                     }
                     return playerCache.set(`hypixel:${key}`, value, {ttl: ttl});
                 }
-            }, userAgent: 'Run-Bedwars-Overlay-' + overlayVersion, retries: 2, timeout: 7200
+            }, userAgent: 'Run-Bedwars-React-Overlay-' + overlayVersion, retries: 2, timeout: 7200
         });
-        const hypixelClient = new HypixelApi(client);
+        const client = hypixelClient.getClient();
         if (resource === RequestType.KEY) {
             return await client.key();
         } else if (resource === RequestType.USERNAME) {
             const [name] = args as [string];
-            return await hypixelClient.username(name);
+            return await hypixelClient.getClient().player.username(name);
         } else if (resource === RequestType.UUID) {
             const [uuid] = args as [string];
-            return await hypixelClient.uuid(uuid);
-        } else if (resource === RequestType.GUILD_PLAYER) {
-            const [player] = args as [string];
-            return await client.guild.player(player);
-        } else if (resource === RequestType.FRIENDS) {
-            const [player] = args as [string];
-            return await client.friends.uuid(player);
-        } else if (resource === RequestType.RECENT_GAMES) {
-            const [player] = args as [string];
-            return await client.recentGames.uuid(player);
+            return await hypixelClient.getClient().player.uuid(uuid);
         }
+        return null;
     });
 
     ipcMain.handle('mcutils', async (event: IpcMainInvokeEvent, resource: RequestType, player: string) => {

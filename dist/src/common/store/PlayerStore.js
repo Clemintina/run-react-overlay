@@ -79,7 +79,7 @@ const PlayerStore = createSlice({
             const payload = action.payload;
             if (payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
                 const playerPayload = payload.data;
-                let doesPlayerExist = state.players.findIndex((player) => player.name === playerPayload.name);
+                const doesPlayerExist = state.players.findIndex((player) => player.name === playerPayload.name);
                 if (doesPlayerExist !== -1) {
                     state.players[doesPlayerExist] = payload.data;
                 }
@@ -90,7 +90,7 @@ const PlayerStore = createSlice({
             else {
                 if (payload.data !== undefined && payload.status === 400) {
                     const playerPayload = payload.data;
-                    let doesPlayerExist = state.players.findIndex((player) => player.name === playerPayload.name);
+                    const doesPlayerExist = state.players.findIndex((player) => player.name === playerPayload.name);
                     if (doesPlayerExist !== -1) {
                         state.players[doesPlayerExist] = playerPayload;
                     }

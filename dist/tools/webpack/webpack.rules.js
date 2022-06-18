@@ -1,3 +1,4 @@
+"use strict";
 module.exports = [
     {
         // Add support for native node modules

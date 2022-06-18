@@ -1,3 +1,4 @@
+"use strict";
 const path = require('path');
 const cwd = process.cwd();
 function inDev() {

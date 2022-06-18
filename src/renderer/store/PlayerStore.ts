@@ -1,9 +1,9 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {Player} from "../utils/PlayerUtils";
-import {PlayerAPI, RequestType, RunEndpoints} from "../utils/externalapis/RunApi";
+import {Player} from "@common/utils/PlayerUtils";
+import {PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Components} from "@zikeji/hypixel";
 import {Store} from "./index";
-import {Schemas} from "../utils/Schemas";
+import {PlayerHandler} from "@common/utils/Schemas";
 
 export interface PlayerStoreThunkObject {
     name: string,
@@ -16,7 +16,7 @@ export interface PlayerStore {
     players: Array<Player>
 }
 
-export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>('PlayerStore/getPlayerHypixelData', async (thunkObject: PlayerStoreThunkObject, {getState}) => {
+export const getPlayerHypixelData = createAsyncThunk<any,any, { state: Store }>('PlayerStore/getPlayerHypixelData', async (thunkObject: PlayerStoreThunkObject, {getState}) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -96,10 +96,10 @@ const PlayerStore = createSlice({
             state.players = state.players.filter((player: Player) => player.name !== name);
         },
         updatePlayer: (state, action) => {
-            const payload: Schemas.PlayerHandler = action.payload;
+            const payload: PlayerHandler = action.payload;
             if (payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
                 const playerPayload: Player = payload.data;
-                let doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
+                const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
                 if (doesPlayerExist !== -1) {
                     state.players[doesPlayerExist] = payload.data;
                 } else {
@@ -108,7 +108,7 @@ const PlayerStore = createSlice({
             } else {
                 if (payload.data !== undefined && payload.status === 400) {
                     const playerPayload: Player = payload.data;
-                    let doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
+                    const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
                     if (doesPlayerExist !== -1) {
                         state.players[doesPlayerExist] = playerPayload;
                     } else {

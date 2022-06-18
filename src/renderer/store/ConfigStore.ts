@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {HypixelApiKey} from "../utils/HypixelApi";
-import {Key, RequestType} from "../utils/externalapis/RunApi";
+import {Key, RequestType} from "@common/utils/externalapis/RunApi";
+import {HypixelApiKey} from "@common/utils/Schemas";
 
 export interface ConfigStore {
     apiKey: string,
@@ -72,7 +72,7 @@ export const apiKeyValidator = createAsyncThunk('ConfigStore/apiKeyValidator', a
 });
 
 export const initScript = createAsyncThunk('ConfigStore/Init', async () => {
-    let hypixel = {key: '', owner: ''};
+    const hypixel = {key: '', owner: ''};
 
     const runKey = await window.config.get('run.apiKey');
     hypixel.key = await window.config.get('hypixel.apiKey');

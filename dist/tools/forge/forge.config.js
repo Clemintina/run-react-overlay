@@ -1,3 +1,4 @@
+"use strict";
 // Forge Configuration
 const path = require('path');
 const rootDir = process.cwd();
@@ -7,7 +8,7 @@ module.exports = {
         // Create asar archive for main, renderer process files
         asar: true,
         // Set executable name
-        executableName: 'Seraph Overlay',
+        executableName: 'Seraph-Overlay',
         // Set application copyright
         appCopyright: 'Copyright (C) 2022 seraph.si',
     },
@@ -18,7 +19,7 @@ module.exports = {
             // Windows applications and is therefore the most user friendly you can get.
             name: '@electron-forge/maker-squirrel',
             config: {
-                name: 'Seraph Overlay',
+                name: 'Seraph-Overlay',
             },
         },
         {

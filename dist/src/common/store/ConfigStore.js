@@ -52,7 +52,7 @@ export const apiKeyValidator = createAsyncThunk('ConfigStore/apiKeyValidator', a
     return await window.ipcRenderer.invoke('hypixel', hypixelApiKey, RequestType.KEY);
 });
 export const initScript = createAsyncThunk('ConfigStore/Init', async () => {
-    let hypixel = { key: '', owner: '' };
+    const hypixel = { key: '', owner: '' };
     const runKey = await window.config.get('run.apiKey');
     hypixel.key = await window.config.get('hypixel.apiKey');
     hypixel.owner = await window.config.get('hypixel.apiKeyOwner');

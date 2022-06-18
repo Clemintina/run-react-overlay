@@ -1,3 +1,4 @@
+"use strict";
 module.exports = {
     /**
      * This is the main entry point for your application, it's the first file

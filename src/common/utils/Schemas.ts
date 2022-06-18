@@ -1,12 +1,20 @@
 import {Player} from "./PlayerUtils";
-import {Static, Type} from "@sinclair/typebox";
 
-export namespace Schemas {
+export interface PlayerHandler {
+    status: number;
+    cause: string;
+    data?: Player;
+}
 
-    export interface PlayerHandler {
-        status: number;
-        cause: string;
-        data?: Player;
-    }
+export interface HypixelApiKeyRaw {
+    success: boolean,
+    record: HypixelApiKey
+}
 
+export interface HypixelApiKey {
+    key: string,
+    owner: string,
+    limit: number,
+    queriesInPastMin: number,
+    totalQueries: number
 }

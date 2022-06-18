@@ -6,12 +6,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import TitleBar from "@components/Titlebar";
 import App from "@renderer/views/App";
 import MainSettings from "@renderer/views/MainSettings";
-import store from '@common/store';
-import { initScript } from "@common/store/ConfigStore";
+import store from '@renderer/store';
+import { initScript } from "@renderer/store/ConfigStore";
 // Load config
 setTimeout(() => store.dispatch(initScript()), 20);
-// Application to Render
-const app = (React.createElement(WindowFrame, { title: 'Seraph Overlay', platform: 'windows' },
+// Render application in DOM
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+createRoot(document.getElementById('app')).render((React.createElement(WindowFrame, { title: 'Seraph Overlay', platform: 'windows' },
     React.createElement(React.StrictMode, null,
         React.createElement(Provider, { store: store },
             React.createElement("div", { style: { width: window.innerWidth - 20 }, className: 'mainBody' },
@@ -20,7 +21,5 @@ const app = (React.createElement(WindowFrame, { title: 'Seraph Overlay', platfor
                     React.createElement(Routes, null,
                         React.createElement(Route, { path: "/", element: React.createElement(App, null) }),
                         React.createElement(Route, { path: "*", element: React.createElement(App, null) }),
-                        React.createElement(Route, { path: "settings", element: React.createElement(MainSettings, null) }))))))));
-// Render application in DOM
-createRoot(document.getElementById('app')).render(app);
+                        React.createElement(Route, { path: "settings", element: React.createElement(MainSettings, null) })))))))));
 //# sourceMappingURL=appRenderer.js.map

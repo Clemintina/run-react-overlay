@@ -10,25 +10,26 @@
  * @package : Window Frame (Component)
  */
 import React, { useEffect, useRef } from 'react';
-import Titlebar from './Titlebar';
-import logo from '@assets/images/logo.png';
 export const WindowContext = React.createContext({
     platform: 'windows',
 });
 const WindowFrame = (props) => {
     const itsRef = useRef(null);
     useEffect(() => {
-        const { parentElement } = itsRef.current;
-        parentElement.classList.add('has-electron-window');
-        parentElement.classList.add('has-border');
-        // Apply border color if prop given
-        if (props.borderColor) {
-            parentElement.style.borderColor = props.borderColor;
+        if (itsRef.current !== null) {
+            const { parentElement } = itsRef.current;
+            if (parentElement !== null) {
+                parentElement.classList.add('has-electron-window');
+                parentElement.classList.add('has-border');
+                // Apply border color if prop given
+                if (props.borderColor) {
+                    parentElement.style.borderColor = props.borderColor;
+                }
+            }
         }
     }, []);
     return (React.createElement(WindowContext.Provider, { value: { platform: props.platform } },
         React.createElement("div", { className: 'start-electron-window', ref: itsRef }),
-        React.createElement(Titlebar, { title: props.title ?? 'Electron Window', mode: 'centered-title', icon: logo }),
         React.createElement("div", { className: 'window-content' }, props.children)));
 };
 export default WindowFrame;

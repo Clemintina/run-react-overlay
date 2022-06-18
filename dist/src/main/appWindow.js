@@ -6,10 +6,10 @@ import fs from 'fs';
 import TailFile from '@logdna/tail-file';
 import readline from 'readline';
 import cacheManager from 'cache-manager';
-import { Client } from "@zikeji/hypixel";
 import Store from "electron-store";
 import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { HypixelApi } from "@common/utils/HypixelApi";
+import { HypixelApi } from "./HypixelApi";
+import AppUpdater from "./AutoUpdate";
 const overlayVersion = app.getVersion();
 const playerCache = cacheManager.caching({ ttl: 60 * 5, store: 'memory' });
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -40,11 +40,17 @@ export const createAppWindow = () => {
             preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
     });
+    if (!isDevelopment) {
+        if (!require('electron-squirrel-startup') && process.platform === 'win32') {
+            const autoUpdater = new AppUpdater().getAutoUpdater();
+            autoUpdater.checkForUpdates();
+        }
+    }
     appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
     appWindow.on('ready-to-show', () => appWindow.show());
     registerMainIPC();
     appWindow.on('close', () => {
-        appWindow = null;
+        appWindow.close();
         app.quit();
     });
     return appWindow;
@@ -80,7 +86,7 @@ const registerSeraphIPC = () => {
         }
     });
     ipcMain.handle('hypixel', async (event, key, resource, ...args) => {
-        const client = new Client(key, {
+        const hypixelClient = new HypixelApi(key, {
             cache: {
                 get(key) {
                     return playerCache.get(`hypixel:${key}`);
@@ -95,32 +101,21 @@ const registerSeraphIPC = () => {
                     }
                     return playerCache.set(`hypixel:${key}`, value, { ttl: ttl });
                 }
-            }, userAgent: 'Run-Bedwars-Overlay-' + overlayVersion, retries: 2, timeout: 7200
+            }, userAgent: 'Run-Bedwars-React-Overlay-' + overlayVersion, retries: 2, timeout: 7200
         });
-        const hypixelClient = new HypixelApi(client);
+        const client = hypixelClient.getClient();
         if (resource === RequestType.KEY) {
             return await client.key();
         }
         else if (resource === RequestType.USERNAME) {
             const [name] = args;
-            return await hypixelClient.username(name);
+            return await hypixelClient.getClient().player.username(name);
         }
         else if (resource === RequestType.UUID) {
             const [uuid] = args;
-            return await hypixelClient.uuid(uuid);
+            return await hypixelClient.getClient().player.uuid(uuid);
         }
-        else if (resource === RequestType.GUILD_PLAYER) {
-            const [player] = args;
-            return await client.guild.player(player);
-        }
-        else if (resource === RequestType.FRIENDS) {
-            const [player] = args;
-            return await client.friends.uuid(player);
-        }
-        else if (resource === RequestType.RECENT_GAMES) {
-            const [player] = args;
-            return await client.recentGames.uuid(player);
-        }
+        return null;
     });
     ipcMain.handle('mcutils', async (event, resource, player) => {
         let url;

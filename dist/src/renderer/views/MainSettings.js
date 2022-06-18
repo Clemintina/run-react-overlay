@@ -1,7 +1,7 @@
 import "@assets/scss/titlebar.scss";
 import React from 'react';
-import store from "@common/store";
-import { apiKeyValidator } from "@common/store/ConfigStore";
+import store from "@renderer/store";
+import { apiKeyValidator } from "@renderer/store/ConfigStore";
 const MainSettings = () => {
     return (React.createElement("div", null,
         React.createElement("h1", null, "TODO add settings"),
