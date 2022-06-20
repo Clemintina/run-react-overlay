@@ -1,4 +1,4 @@
-import { getBedwarsLevelInfo } from "@common/zikeji";
+import { getBedwarsLevelInfo } from '@common/zikeji';
 export class PlayerUtils {
     formatPlayerInstance;
     playerHypixelUtils;
@@ -14,7 +14,7 @@ export class PlayerUtils {
     }
 }
 export class FormatPlayer {
-    starterDivider = `<div style="margin: 0 auto; justify-content: center; display: flex;">`;
+    starterDivider = `<div style='margin: 0 auto; justify-content: center; display: flex;'>`;
     utils = new PlayerHypixelUtils();
     renderTags = (player) => {
         let tagRenderer = this.starterDivider;
@@ -43,7 +43,7 @@ export class FormatPlayer {
         if (!player.nicked && player.hypixelPlayer !== null) {
             const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
             if (!player.runApi?.data.blacklist.tagged) {
-                starRenderer += this.getPlayerTagDivider(bwLevel.level, bwLevel.prestigeColorHex);
+                starRenderer += this.getPlayerTagDivider(bwLevel.level, '#' + bwLevel.prestigeColorHex);
             }
             else {
                 starRenderer += this.getPlayerTagDivider(bwLevel.level || 0, 'red', player);
@@ -61,7 +61,7 @@ export class FormatPlayer {
             if (!player.runApi?.data.blacklist.tagged) {
                 if (player.hypixelPlayer !== null) {
                     const rank = this.utils.getPlayerRank({ player: player, formatting: false });
-                    nameRenderer += `${rank.htmlCode}&nbsp <span style="color: #${rank.rankColourHex.hex}">${player.hypixelPlayer.displayname}</span>`;
+                    nameRenderer += `${rank.htmlCode}&nbsp <span style='color: #${rank.rankColourHex.hex}'>${player.hypixelPlayer.displayname}</span>`;
                 }
                 else {
                     nameRenderer += ``;
@@ -208,7 +208,7 @@ export class FormatPlayer {
     };
     getPlayerTagDivider = (tag, colour, player) => {
         let htmlResponse = `<div>`, styleString = `color: ${colour}; padding-left: 1px;`;
-        if (typeof tag == "number" && !Number.isInteger(tag))
+        if (typeof tag == 'number' && !Number.isInteger(tag))
             tag = tag.toFixed(2);
         if (colour == 'white') {
             styleString += `opacity: 75%;`;
@@ -216,14 +216,14 @@ export class FormatPlayer {
         if (player?.runApi?.data.blacklist.tagged) {
             styleString += `font: bold;`;
         }
-        htmlResponse += `<div style="${styleString}">${tag}</div>`;
+        htmlResponse += `<div style='${styleString}'>${tag}</div>`;
         htmlResponse += `</div>`;
         return htmlResponse;
     };
     getPlayerTagDividerNicked = () => {
         const styleString = `color: red; padding-left: 1px;`;
         let htmlResponse = `<div>`;
-        htmlResponse += `<div style="${styleString}">?</div>`;
+        htmlResponse += `<div style='${styleString}'>?</div>`;
         htmlResponse += `</div>`;
         return htmlResponse;
     };
@@ -236,38 +236,38 @@ export class PlayerHypixelUtils {
             if (hypixelPlayer.rank && hypixelPlayer.rank !== 'NORMAL') {
                 switch (hypixelPlayer.rank) {
                     case 'MODERATOR':
-                        rank = "MOD";
+                        rank = 'MOD';
                         break;
                     case 'YOUTUBER':
-                        rank = "Youtuber";
+                        rank = 'Youtuber';
                         break;
                     case 'HELPER':
-                        rank = "Helper";
+                        rank = 'Helper';
                         break;
                     case 'ADMIN':
-                        rank = "Admin";
+                        rank = 'Admin';
                         break;
                 }
             }
             else
                 switch (hypixelPlayer.newPackageRank) {
                     case 'MVP_PLUS':
-                        rank = hypixelPlayer.monthlyPackageRank && hypixelPlayer.monthlyPackageRank === 'SUPERSTAR' ? "MVP++" : "MVP+";
+                        rank = hypixelPlayer.monthlyPackageRank && hypixelPlayer.monthlyPackageRank === 'SUPERSTAR' ? 'MVP++' : 'MVP+';
                         break;
                     case 'MVP':
-                        rank = "MVP";
+                        rank = 'MVP';
                         rankColourHex = MinecraftColours.AQUA;
                         break;
                     case 'VIP_PLUS':
-                        rank = "VIP+";
+                        rank = 'VIP+';
                         rankColourHex = MinecraftColours.GREEN;
                         break;
                     case 'VIP':
-                        rank = "VIP";
+                        rank = 'VIP';
                         rankColourHex = MinecraftColours.GREEN;
                         break;
                     default:
-                        rank = "";
+                        rank = '';
                         rankColourHex = MinecraftColours.GREY;
                         break;
                 }
@@ -276,47 +276,47 @@ export class PlayerHypixelUtils {
             if (plusColour !== undefined) {
                 if (hypixelPlayer.monthlyPackageRank === 'SUPERSTAR') {
                     htmlCode = `
-                        <div style="color: #${MinecraftColours.GOLD.hex}">[MVP<span style="color: #${MinecraftColours[plusColour].hex}">++</span><span style="color: #${MinecraftColours.GOLD.hex}">]</span></div>`;
+            <div style='color: #${MinecraftColours.GOLD.hex}'>[MVP<span style='color: #${MinecraftColours[plusColour].hex}'>++</span><span style='color: #${MinecraftColours.GOLD.hex}'>]</span></div>`;
                     rankColourHex = MinecraftColours.GOLD;
                 }
                 else if (hypixelPlayer.newPackageRank === 'MVP_PLUS') {
                     htmlCode = `
-                        <div style="color: #${MinecraftColours.AQUA.hex}">[MVP<span style="color: #${MinecraftColours[plusColour].hex}">+</span><span style="color: #${MinecraftColours.AQUA.hex};">]</span></div>`;
+            <div style='color: #${MinecraftColours.AQUA.hex}'>[MVP<span style='color: #${MinecraftColours[plusColour].hex}'>+</span><span style='color: #${MinecraftColours.AQUA.hex};'>]</span></div>`;
                     rankColourHex = MinecraftColours.AQUA;
                 }
             }
             return {
                 rankClean: rank,
                 rankFormatted: `[${rank}]`,
-                colourHex: "",
+                colourHex: '',
                 htmlCode: htmlCode,
-                rankColourHex: rankColourHex
+                rankColourHex: rankColourHex,
             };
         }
         else {
             return {
                 rankClean: '',
                 rankFormatted: ``,
-                colourHex: "",
+                colourHex: '',
                 htmlCode: '',
-                rankColourHex: ''
+                rankColourHex: '',
             };
         }
     };
 }
 export const MinecraftColours = {
-    BLACK: { colour: "§0", hex: '000000' },
-    DARK_BLUE: { colour: "§1", hex: '0000AA' },
-    DARK_GREEN: { colour: "§2", hex: '00AA00' },
-    DARK_AQUA: { colour: "§3", hex: '00AAAA' },
-    DARK_RED: { colour: "§4", hex: 'AA0000' },
-    DARK_PURPLE: { colour: "§5", hex: 'AA00AA' },
-    GOLD: { colour: "§6", hex: 'FFAA00' },
-    GRAY: { colour: "§7", hex: 'AAAAAA' },
-    DARK_GRAY: { colour: "§7", hex: 'AAAAAA' },
-    GREY: { colour: "§8", hex: '555555' },
-    DARK_GREY: { colour: "§8", hex: '555555' },
-    BLUE: { colour: "§9", hex: '5555FF' },
+    BLACK: { colour: '§0', hex: '000000' },
+    DARK_BLUE: { colour: '§1', hex: '0000AA' },
+    DARK_GREEN: { colour: '§2', hex: '00AA00' },
+    DARK_AQUA: { colour: '§3', hex: '00AAAA' },
+    DARK_RED: { colour: '§4', hex: 'AA0000' },
+    DARK_PURPLE: { colour: '§5', hex: 'AA00AA' },
+    GOLD: { colour: '§6', hex: 'FFAA00' },
+    GRAY: { colour: '§7', hex: 'AAAAAA' },
+    DARK_GRAY: { colour: '§7', hex: 'AAAAAA' },
+    GREY: { colour: '§8', hex: '555555' },
+    DARK_GREY: { colour: '§8', hex: '555555' },
+    BLUE: { colour: '§9', hex: '5555FF' },
     GREEN: { colour: '§a', hex: '55FF55' },
     AQUA: { colour: '§b', hex: '55FFFF' },
     CYAN: { colour: '§b', hex: '55FFFF' },
