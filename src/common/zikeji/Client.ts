@@ -222,10 +222,7 @@ export class Client {
      * @category API
      */
     public async boosters(): Promise<ResultObject<Paths.Boosters.Get.Responses.$200, ["success"]>> {
-        return getResultObject(
-            await this.call<Paths.Boosters.Get.Responses.$200>("boosters"),
-            ["success"]
-        );
+        return getResultObject(await this.call<Paths.Boosters.Get.Responses.$200>("boosters"), ["success"]);
     }
 
     /**
@@ -261,10 +258,7 @@ export class Client {
      * @category API
      */
     public async gameCounts(): Promise<ResultObject<Paths.GameCounts.Get.Responses.$200, ["success"]>> {
-        return getResultObject(
-            await this.call<Paths.GameCounts.Get.Responses.$200>("gameCounts"),
-            ["success"]
-        );
+        return getResultObject(await this.call<Paths.GameCounts.Get.Responses.$200>("gameCounts"), ["success"]);
     }
 
     /**
@@ -287,10 +281,7 @@ export class Client {
      * @category API
      */
     public async key(): Promise<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> {
-        return getResultObject(
-            await this.call<Paths.Key.Get.Responses.$200>("key"),
-            ["record"]
-        );
+        return getResultObject(await this.call<Paths.Key.Get.Responses.$200>("key"), ["record"]);
     }
 
     /**
@@ -303,10 +294,7 @@ export class Client {
      * @category API
      */
     public async leaderboards(): Promise<ResultObject<Paths.Leaderboards.Get.Responses.$200, ["leaderboards"]>> {
-        return getResultObject(
-            await this.call<Paths.Leaderboards.Get.Responses.$200>("leaderboards"),
-            ["leaderboards"]
-        );
+        return getResultObject(await this.call<Paths.Leaderboards.Get.Responses.$200>("leaderboards"), ["leaderboards"]);
     }
 
     /**
@@ -330,10 +318,7 @@ export class Client {
      * @category API
      */
     public async playerCount(): Promise<ResultObject<Paths.PlayerCount.Get.Responses.$200, ["success"]>> {
-        return getResultObject(
-            await this.call<Paths.PlayerCount.Get.Responses.$200>("playerCount"),
-            ["success"]
-        );
+        return getResultObject(await this.call<Paths.PlayerCount.Get.Responses.$200>("playerCount"), ["success"]);
     }
 
     /**
@@ -381,10 +366,7 @@ export class Client {
      * @category API
      */
     public async watchdogstats(): Promise<ResultObject<Paths.Watchdogstats.Get.Responses.$200, ["success"]>> {
-        return getResultObject(
-            await this.call<Paths.Watchdogstats.Get.Responses.$200>("watchdogstats"),
-            ["success"]
-        );
+        return getResultObject(await this.call<Paths.Watchdogstats.Get.Responses.$200>("watchdogstats"), ["success"]);
     }
 
     /**
@@ -402,29 +384,17 @@ export class Client {
      * // { success: true, guild: '553490650cf26f12ae5bac8f' }
      * ```
      */
-    public async call<T extends Components.Schemas.ApiSuccess>(path: string, parameters: Parameters = {}): Promise<T & { cached?: boolean }> {
+    public async call<T extends Components.Schemas.ApiSuccess>(path: string, parameters: Parameters = {}): Promise<T & {cached?: boolean}> {
         if (!this.cache) {
-            return this.executeActionableCall(
-                this.createActionableCall(path, parameters)
-            );
+            return this.executeActionableCall(this.createActionableCall(path, parameters));
         }
-        const key = `${path.split("/").join(":")}${
-            Object.values(parameters).length === 0
-                ? ""
-                : `:${Object.values(parameters).map((v) =>
-                    v.toLowerCase().replace(/-/g, "")
-                )}`
-        }`;
-        const cachedResponse:
-            | (T & { cached?: boolean })
-            | undefined = await this.cache.get<T>(key);
+        const key = `${path.split("/").join(":")}${Object.values(parameters).length === 0 ? "" : `:${Object.values(parameters).map((v) => v.toLowerCase().replace(/-/g, ""))}`}`;
+        const cachedResponse: (T & {cached?: boolean}) | undefined = await this.cache.get<T>(key);
         if (cachedResponse) {
             cachedResponse.cached = true;
             return cachedResponse;
         }
-        const response: T = await this.executeActionableCall(
-            this.createActionableCall(path, parameters)
-        );
+        const response: T = await this.executeActionableCall(this.createActionableCall(path, parameters));
         await this.cache.set(key, response);
         return response;
     }
@@ -434,11 +404,7 @@ export class Client {
         await this.queue.wait();
         if (this.rateLimit.remaining === 0) {
             const timeout = this.rateLimit.reset * 1000;
-            this.emitter.emit(
-                "limited",
-                this.rateLimit.limit,
-                new Date(Date.now() + timeout)
-            );
+            this.emitter.emit("limited", this.rateLimit.limit, new Date(Date.now() + timeout));
             await new Promise((resolve) => {
                 setTimeout(resolve, timeout);
             });
@@ -449,11 +415,7 @@ export class Client {
             response = await call.execute();
         } catch (error) {
             /* istanbul ignore else */
-            if (
-                error instanceof InvalidKeyError ||
-                error instanceof GenericHTTPError ||
-                /* istanbul ignore next */ call.retries === this.retries
-            ) {
+            if (error instanceof InvalidKeyError || error instanceof GenericHTTPError || /* istanbul ignore next */ call.retries === this.retries) {
                 throw error;
             }
             /* istanbul ignore next */
@@ -470,7 +432,7 @@ export class Client {
     }
 
     /** @internal */
-    private createActionableCall<T extends Components.Schemas.ApiSuccess>(path: string,parameters: Parameters = {}): ActionableCall<T> {
+    private createActionableCall<T extends Components.Schemas.ApiSuccess>(path: string, parameters: Parameters = {}): ActionableCall<T> {
         let noRateLimit = false;
         let includeApiKey = true;
 
@@ -480,12 +442,17 @@ export class Client {
             includeApiKey = false;
         }
 
-        return {execute: this.callMethod.bind(this, path, parameters, noRateLimit, includeApiKey), retries: 0, noRateLimit, includeApiKey,} as ActionableCall<T>;
+        return {
+            execute: this.callMethod.bind(this, path, parameters, noRateLimit, includeApiKey),
+            retries: 0,
+            noRateLimit,
+            includeApiKey,
+        } as ActionableCall<T>;
     }
 
     /** @internal */
-    private callMethod<T extends Components.Schemas.ApiSuccess & { cause?: string; } & { cloudflareCache?: DefaultMeta["cloudflareCache"] }>(path: string, parameters: Parameters, noRateLimit: boolean, includeApiKey: boolean): Promise<T> {
-        const url = new URL(path, 'https://api.hypixel.net');
+    private callMethod<T extends Components.Schemas.ApiSuccess & {cause?: string} & {cloudflareCache?: DefaultMeta["cloudflareCache"]}>(path: string, parameters: Parameters, noRateLimit: boolean, includeApiKey: boolean): Promise<T> {
+        const url = new URL(path, "https://api.hypixel.net");
         Object.keys(parameters).forEach((param) => {
             url.searchParams.set(param, parameters[param]);
         });
@@ -508,10 +475,7 @@ export class Client {
         Object.keys(this.rateLimit).forEach((key) => {
             const headerKey = `ratelimit-${key}`;
             if (headerKey in headers) {
-                this.rateLimit[key as keyof Client["rateLimit"]] = parseInt(
-                    headers[headerKey] as string,
-                    10
-                );
+                this.rateLimit[key as keyof Client["rateLimit"]] = parseInt(headers[headerKey] as string, 10);
             }
         });
     }

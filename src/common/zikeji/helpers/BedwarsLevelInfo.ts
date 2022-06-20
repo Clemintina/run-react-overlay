@@ -8,7 +8,7 @@
  */
 
 import {Components} from "../types/api";
-import {MinecraftColorAsHex, MinecraftFormatting,} from "./MinecraftFormatting";
+import {MinecraftColourAsHex, MinecraftFormatting} from "@common/zikeji";
 
 /** @internal */
 enum BEDWARS_LEVEL_CONSTANTS {
@@ -25,8 +25,8 @@ export interface BedwarsLevelInfo {
     level: number;
     prestige: number;
     prestigeName: string;
-    prestigeColor: string;
-    prestigeColorHex: string;
+    prestigeColour: string;
+    prestigeColourHex: string;
     levelInCurrentPrestige: number;
 }
 
@@ -37,9 +37,7 @@ export interface BedwarsLevelInfo {
 export const getBedwarsLevelInfo = (data: Components.Schemas.Player | number): BedwarsLevelInfo => {
     const currentExp = typeof data === "number" ? data : data.stats.Bedwars?.Experience ?? data.stats.Bedwars?.Experience_new;
     if (typeof currentExp !== "number" || Number.isNaN(currentExp)) {
-        throw new TypeError(
-            "Data supplied does not contain player Bedwars experience."
-        );
+        throw new TypeError("Data supplied does not contain player Bedwars experience.");
     }
     const prestiges = Math.floor(currentExp / BEDWARS_LEVEL_CONSTANTS.XPP);
     let level = prestiges * BEDWARS_LEVEL_CONSTANTS.LPP;
@@ -64,47 +62,47 @@ export const getBedwarsLevelInfo = (data: Components.Schemas.Player | number): B
         prestige = BEDWARS_LEVEL_CONSTANTS.HP;
     }
     let prestigeName = "None";
-    let prestigeColor = MinecraftFormatting.GRAY;
+    let prestigeColour = MinecraftFormatting.GRAY;
     switch (prestige) {
         case 1:
             prestigeName = "Iron";
-            prestigeColor = MinecraftFormatting.WHITE;
+            prestigeColour = MinecraftFormatting.WHITE;
             break;
         case 2:
             prestigeName = "Gold";
-            prestigeColor = MinecraftFormatting.GOLD;
+            prestigeColour = MinecraftFormatting.GOLD;
             break;
         case 3:
             prestigeName = "Diamond";
-            prestigeColor = MinecraftFormatting.AQUA;
+            prestigeColour = MinecraftFormatting.AQUA;
             break;
         case 4:
             prestigeName = "Emerald";
-            prestigeColor = MinecraftFormatting.DARK_GREEN;
+            prestigeColour = MinecraftFormatting.DARK_GREEN;
             break;
         case 5:
             prestigeName = "Sapphire";
-            prestigeColor = MinecraftFormatting.DARK_AQUA;
+            prestigeColour = MinecraftFormatting.DARK_AQUA;
             break;
         case 6:
             prestigeName = "Ruby";
-            prestigeColor = MinecraftFormatting.DARK_RED;
+            prestigeColour = MinecraftFormatting.DARK_RED;
             break;
         case 7:
             prestigeName = "Crystal";
-            prestigeColor = MinecraftFormatting.LIGHT_PURPLE;
+            prestigeColour = MinecraftFormatting.LIGHT_PURPLE;
             break;
         case 8:
             prestigeName = "Opal";
-            prestigeColor = MinecraftFormatting.BLUE;
+            prestigeColour = MinecraftFormatting.BLUE;
             break;
         case 9:
             prestigeName = "Amethyst";
-            prestigeColor = MinecraftFormatting.DARK_PURPLE;
+            prestigeColour = MinecraftFormatting.DARK_PURPLE;
             break;
         case 10:
             prestigeName = "Rainbow";
-            prestigeColor = MinecraftFormatting.WHITE;
+            prestigeColour = MinecraftFormatting.WHITE;
             break;
         default:
         // noop
@@ -114,8 +112,8 @@ export const getBedwarsLevelInfo = (data: Components.Schemas.Player | number): B
         level,
         prestige,
         prestigeName,
-        prestigeColor,
-        prestigeColorHex: MinecraftColorAsHex[prestigeColor],
+        prestigeColour,
+        prestigeColourHex: MinecraftColourAsHex[prestigeColour],
         levelInCurrentPrestige,
     };
 };

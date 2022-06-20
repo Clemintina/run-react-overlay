@@ -1,11 +1,11 @@
-import {IpcRenderer} from 'electron'
+import {IpcRenderer} from "electron";
 
 declare global {
     interface Window {
-        ipcRenderer: IpcRenderer,
+        ipcRenderer: IpcRenderer;
         config: {
-            set(key: string, data: any),
-            get(key: string)
-        }
+            set(key: string, data: any);
+            get(key: string);
+        };
     }
 }

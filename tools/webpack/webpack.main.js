@@ -1,4 +1,5 @@
 const resolver = require('./webpack.resolve.helper');
+const JavaScriptObfuscator = require('webpack-obfuscator');
 
 module.exports = {
     /**
@@ -10,6 +11,9 @@ module.exports = {
     module: {
         rules: require('./webpack.rules'),
     },
+    plugins: [  new JavaScriptObfuscator({
+        rotateStringArray: true
+    }),],
     resolve: resolver.resolve,
     stats: 'minimal',
 };

@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Player} from "@common/utils/PlayerUtils";
 import {PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Store} from "./index";
@@ -6,17 +6,17 @@ import {PlayerHandler} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
 
 export interface PlayerStoreThunkObject {
-    name: string,
-    apiKey?: string | undefined,
-    apiKeyOwner?: string | undefined,
-    runKey?: string | undefined
+    name: string;
+    apiKey?: string | undefined;
+    apiKeyOwner?: string | undefined;
+    runKey?: string | undefined;
 }
 
 export interface PlayerStore {
-    players: Array<Player>
+    players: Array<Player>;
 }
 
-export const getPlayerHypixelData = createAsyncThunk<any,any, { state: Store }>('PlayerStore/getPlayerHypixelData', async (thunkObject: PlayerStoreThunkObject, {getState}) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, {getState}) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -24,8 +24,8 @@ export const getPlayerHypixelData = createAsyncThunk<any,any, { state: Store }>(
         bot: false,
         hypixelGuild: null,
         hypixelPlayer: null,
-        runApi: null
-    }
+        runApi: null,
+    };
     let hypixelPlayer: Components.Schemas.Player;
 
     const state = getState();
@@ -35,57 +35,77 @@ export const getPlayerHypixelData = createAsyncThunk<any,any, { state: Store }>(
     const runApiKey = thunkObject.runKey ?? state.configStore.runKey;
 
     if (apiKey.length !== 36) {
-        return {status: 403, cause: 'No API Key', data: null};
+        return {status: 403, cause: "No API Key", data: null};
     }
 
     try {
-        if (playerData.name.length <= 16) {
-            hypixelPlayer = await window.ipcRenderer.invoke('hypixel', apiKey, RequestType.USERNAME, playerData.name);
+        hypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.UUID, playerData.name.replace("-", ""));
+        playerData.hypixelPlayer = hypixelPlayer;
+        if (playerData.hypixelPlayer?.uuid === undefined) {
+            playerData.nicked = true;
+            return {status: 400, cause: "Player is not valid on Hypixel!", data: playerData};
         } else {
-            hypixelPlayer = await window.ipcRenderer.invoke('hypixel', apiKey, RequestType.UUID, playerData.name.replace("-", ""));
+            playerData.id = hypixelPlayer.uuid;
         }
     } catch (e) {
-        const mcUtilsRequest = await window.ipcRenderer.invoke('mcutils', RequestType.USERNAME, playerData.name);
+        const mcUtilsRequest = await window.ipcRenderer.invoke("mcutils", RequestType.USERNAME, playerData.name);
         const mcUtils: PlayerAPI = mcUtilsRequest.data;
-        if (mcUtils.player.username === null || mcUtils.player.uuid === null) {
+        playerData.nicked = true;
+        if (mcUtilsRequest.status === 400) {
+            return {status: 400, cause: "Player is not valid for Mojang!", data: playerData};
+        } else if (mcUtils.player.username === null || mcUtils.player.uuid === null) {
             playerData.nicked = true;
-            return playerData;
+            return {status: 400, cause: "Player is not valid for Mojang!", data: playerData};
         } else {
+            playerData.nicked = false;
             playerData.id = mcUtils.player.uuid;
-            hypixelPlayer = await window.ipcRenderer.invoke('hypixel', apiKey, RequestType.UUID, mcUtils.player.uuid);
+            hypixelPlayer = await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.UUID, mcUtils.player.uuid);
         }
     }
 
     playerData.hypixelPlayer = hypixelPlayer;
 
     let runApi;
-    if (hypixelPlayer.uuid != undefined) {
-        runApi = await window.ipcRenderer.invoke('seraph', RunEndpoints.BLACKLIST, hypixelPlayer.uuid, apiKey, apiKeyOwner, runApiKey, apiKeyOwner);
+    if (hypixelPlayer.uuid !== undefined) {
+        runApi = await window.ipcRenderer.invoke("seraph", RunEndpoints.BLACKLIST, hypixelPlayer.uuid, apiKey, apiKeyOwner, runApiKey, apiKeyOwner);
         playerData.runApi = runApi.data;
     } else {
         runApi = {
             code: 400,
             data: {
                 annoylist: {tagged: false},
-                blacklist: {reason: "", report_type: "", tagged: false, timestamp: 0},
+                blacklist: {
+                    reason: "",
+                    report_type: "",
+                    tagged: false,
+                    timestamp: 0,
+                },
                 bot: {kay: false, tagged: false, unidentified: false},
                 customTag: undefined,
                 migrated: {tagged: false},
-                safelist: {personal: false, security_level: 0, tagged: false, timesKilled: 0},
+                safelist: {
+                    personal: false,
+                    security_level: 0,
+                    tagged: false,
+                    timesKilled: 0,
+                },
                 statistics: {encounters: 0, threat_level: 0},
                 username: "",
-                uuid: ""
+                uuid: "",
             },
             msTime: Date.now(),
-            success: false
+            success: false,
         };
     }
-
-    return {status: runApi.status, cause: 'valid request', data: playerData};
+    return {
+        status: runApi.status,
+        cause: "valid request",
+        data: playerData,
+    };
 });
 
 const PlayerStore = createSlice({
-    name: 'PlayerStore',
+    name: "PlayerStore",
     initialState: {
         players: Array<Player>(),
         runKey: "public",
@@ -118,13 +138,15 @@ const PlayerStore = createSlice({
             }
         },
     },
-    extraReducers: builder => {
-        builder.addCase(getPlayerHypixelData.fulfilled, (state, action) => {
-            PlayerStore.caseReducers.updatePlayer(state, action);
-        }).addCase(getPlayerHypixelData.rejected, (state, action) => {
-            PlayerStore.caseReducers.updatePlayer(state, action);
-        });
-    }
+    extraReducers: (builder) => {
+        builder
+            .addCase(getPlayerHypixelData.fulfilled, (state, action) => {
+                PlayerStore.caseReducers.updatePlayer(state, action);
+            })
+            .addCase(getPlayerHypixelData.rejected, (state, action) => {
+                PlayerStore.caseReducers.updatePlayer(state, action);
+            });
+    },
 });
 
 export default PlayerStore.reducer;

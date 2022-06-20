@@ -9,7 +9,11 @@ import {Components} from "../types/api";
 const CACHE_CONTROL_REGEX = /s-maxage=(\d+)/;
 
 /** @internal */
-export function request<T extends Components.Schemas.ApiSuccess & { cause?: string; } & { cloudflareCache?: DefaultMeta["cloudflareCache"] }>(options: RequestOptions): Promise<T> {
+export function request<
+    T extends Components.Schemas.ApiSuccess & {cause?: string} & {
+        cloudflareCache?: DefaultMeta["cloudflareCache"];
+    },
+>(options: RequestOptions): Promise<T> {
     return new Promise((resolve, reject) => {
         const clientRequest = httpsRequest(
             options.url,
@@ -30,15 +34,10 @@ export function request<T extends Components.Schemas.ApiSuccess & { cause?: stri
 
                 incomingMessage.on("end", () => {
                     if (!options.noRateLimit) {
-                        options.getRateLimitHeaders(
-                            incomingMessage.headers as Record<string, string>
-                        );
+                        options.getRateLimitHeaders(incomingMessage.headers as Record<string, string>);
                     }
 
-                    if (
-                        typeof responseBody !== "string" ||
-                        responseBody.trim().length === 0
-                    ) {
+                    if (typeof responseBody !== "string" || responseBody.trim().length === 0) {
                         return reject(new Error(`No response body received.`));
                     }
 
@@ -46,7 +45,7 @@ export function request<T extends Components.Schemas.ApiSuccess & { cause?: stri
                     try {
                         responseObject = JSON.parse(responseBody);
                     } catch (e) {
-                        console.log(e)
+                        console.log(e);
                     }
 
                     if (incomingMessage.statusCode !== 200) {
@@ -75,19 +74,23 @@ export function request<T extends Components.Schemas.ApiSuccess & { cause?: stri
 
                     if (incomingMessage.headers["cf-cache-status"]) {
                         const age = parseInt(incomingMessage.headers.age as string, 10);
-                        const maxAge = CACHE_CONTROL_REGEX.exec(
-                            incomingMessage.headers["cache-control"] as string
-                        );
+                        const maxAge = CACHE_CONTROL_REGEX.exec(incomingMessage.headers["cache-control"] as string);
                         responseObject.cloudflareCache = {
-                            status: incomingMessage.headers["cf-cache-status"] as never, ...(typeof age === "number" && !Number.isNaN(age) && {age}), ...(incomingMessage.headers["cf-cache-status"] === "HIT" && (typeof age !== "number" || Number.isNaN(age)) && {age: 0}), ...(maxAge && typeof maxAge === "object" && maxAge.length === 2 && parseInt(maxAge[1], 10) > 0 && {
-                                maxAge: parseInt(maxAge[1], 10),
-                            }),
+                            status: incomingMessage.headers["cf-cache-status"] as never,
+                            ...(typeof age === "number" && !Number.isNaN(age) && {age}),
+                            ...(incomingMessage.headers["cf-cache-status"] === "HIT" && (typeof age !== "number" || Number.isNaN(age)) && {age: 0}),
+                            ...(maxAge &&
+                                typeof maxAge === "object" &&
+                                maxAge.length === 2 &&
+                                parseInt(maxAge[1], 10) > 0 && {
+                                    maxAge: parseInt(maxAge[1], 10),
+                                }),
                         };
                     }
 
                     return resolve(responseObject);
                 });
-            }
+            },
         );
 
         let abortError: Error;

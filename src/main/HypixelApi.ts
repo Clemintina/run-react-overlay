@@ -3,7 +3,6 @@ import {getResultObject, ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 
 export class HypixelApi {
-
     private readonly client: Client;
 
     constructor(key: string, opts: ClientOptions) {
@@ -13,8 +12,4 @@ export class HypixelApi {
     public getClient(): Client {
         return this.client;
     }
-
 }
-
-
-

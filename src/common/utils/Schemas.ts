@@ -7,14 +7,14 @@ export interface PlayerHandler {
 }
 
 export interface HypixelApiKeyRaw {
-    success: boolean,
-    record: HypixelApiKey
+    success: boolean;
+    record: HypixelApiKey;
 }
 
 export interface HypixelApiKey {
-    key: string,
-    owner: string,
-    limit: number,
-    queriesInPastMin: number,
-    totalQueries: number
+    key: string;
+    owner: string;
+    limit: number;
+    queriesInPastMin: number;
+    totalQueries: number;
 }

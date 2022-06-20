@@ -1,3 +1,11 @@
 $backgroundColour: #242424;
 $primaryColour: grey;
 $secondaryColour: aqua;
+
+*.drag {
+  -webkit-app-region: drag;
+}
+
+*.nodrag{
+  -webkit-app-region: no-drag;
+}

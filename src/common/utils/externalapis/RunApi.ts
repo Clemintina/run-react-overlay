@@ -4,13 +4,23 @@ export interface Blacklist {
     data: {
         uuid: string;
         username: string;
-        blacklist: { tagged: boolean, timestamp: number, reason: string, report_type: string };
-        safelist: { tagged: boolean; timesKilled: number, personal: boolean, security_level: number };
+        blacklist: {
+            tagged: boolean;
+            timestamp: number;
+            reason: string;
+            report_type: string;
+        };
+        safelist: {
+            tagged: boolean;
+            timesKilled: number;
+            personal: boolean;
+            security_level: number;
+        };
         customTag: string | null;
-        bot: { tagged: boolean; unidentified: boolean; kay: boolean };
-        statistics: { encounters: number; threat_level: number };
-        migrated: { tagged: boolean };
-        annoylist: { tagged: boolean };
+        bot: {tagged: boolean; unidentified: boolean; kay: boolean};
+        statistics: {encounters: number; threat_level: number};
+        migrated: {tagged: boolean};
+        annoylist: {tagged: boolean};
     };
     msTime: number;
 }
@@ -51,5 +61,5 @@ export enum RequestType {
     FRIENDS = "player.friends",
     USERNAME = "player.username",
     RECENT_GAMES = "player.games",
-    GUILD_PLAYER = "guild.player"
+    GUILD_PLAYER = "guild.player",
 }

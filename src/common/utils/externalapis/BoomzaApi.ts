@@ -1,7 +1,6 @@
 export interface BoomzaAntisniper {
-    sniper:boolean,
-    report: number,
-    error: boolean,
-    username: string
+    sniper: boolean;
+    report: number;
+    error: boolean;
+    username: string;
 }
-

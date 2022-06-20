@@ -4,18 +4,17 @@ import AutoUpdater = Electron.AutoUpdater;
 export default class AppUpdater {
     private readonly appUpdater;
     private readonly constants = {
-        url: 'https://antisniper.seraph.si/overlay/latest'
-    }
+        url: "https://antisniper.seraph.si/overlay/latest",
+    };
 
     constructor() {
         this.appUpdater = autoUpdater;
         this.appUpdater.setFeedURL({
-            url: this.constants.url
+            url: this.constants.url,
         });
     }
 
     getAutoUpdater(): AutoUpdater {
         return this.appUpdater;
     }
-
 }
