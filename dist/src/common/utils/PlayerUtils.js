@@ -1,3 +1,4 @@
+import { getBedwarsLevelInfo } from "@common/zikeji";
 export class PlayerUtils {
     formatPlayerInstance;
     playerHypixelUtils;
@@ -39,12 +40,13 @@ export class FormatPlayer {
     };
     renderStar = (player) => {
         let starRenderer = this.starterDivider;
-        if (!player.nicked) {
+        if (!player.nicked && player.hypixelPlayer !== null) {
+            const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
             if (!player.runApi?.data.blacklist.tagged) {
-                starRenderer += this.getPlayerTagDivider(player.hypixelPlayer?.achievements.bedwars_level || 0, 'green');
+                starRenderer += this.getPlayerTagDivider(bwLevel.level, bwLevel.prestigeColorHex);
             }
             else {
-                starRenderer += this.getPlayerTagDivider(player.hypixelPlayer?.achievements.bedwars_level || 0, 'red', player);
+                starRenderer += this.getPlayerTagDivider(bwLevel.level || 0, 'red', player);
             }
         }
         else {
@@ -273,13 +275,11 @@ export class PlayerHypixelUtils {
                 plusColour = hypixelPlayer.rankPlusColor;
             if (plusColour !== undefined) {
                 if (hypixelPlayer.monthlyPackageRank === 'SUPERSTAR') {
-                    // language=HTML
                     htmlCode = `
                         <div style="color: #${MinecraftColours.GOLD.hex}">[MVP<span style="color: #${MinecraftColours[plusColour].hex}">++</span><span style="color: #${MinecraftColours.GOLD.hex}">]</span></div>`;
                     rankColourHex = MinecraftColours.GOLD;
                 }
                 else if (hypixelPlayer.newPackageRank === 'MVP_PLUS') {
-                    // language=HTML
                     htmlCode = `
                         <div style="color: #${MinecraftColours.AQUA.hex}">[MVP<span style="color: #${MinecraftColours[plusColour].hex}">+</span><span style="color: #${MinecraftColours.AQUA.hex};">]</span></div>`;
                     rankColourHex = MinecraftColours.AQUA;

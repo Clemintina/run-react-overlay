@@ -1,6 +1,5 @@
 "use strict";
 const { createWebpackAliases } = require('./webpack.helpers');
-// Export aliases
 module.exports = createWebpackAliases({
     '@assets': 'assets',
     '@components': 'src/renderer/components',

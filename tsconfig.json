@@ -3,8 +3,8 @@
 		"jsx": "react",
 		"allowJs": true,
 		"strict": true,
-		"target": "ES2022",
-		"module": "ES2022",
+		"target": "ESNext",
+		"module": "ESNext",
 		"importHelpers": true,
 		"allowSyntheticDefaultImports": true,
 		"downlevelIteration": true,
@@ -16,6 +16,8 @@
 		"outDir": "dist",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
+		"pretty": true,
+		"removeComments": true,
 		"paths": {
 			"@assets/*": [
 				"./assets/*"

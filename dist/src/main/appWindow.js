@@ -18,10 +18,6 @@ electronStore.set('run.overlay.version', app.getVersion());
 let logFileTail = null;
 let logFileReadline = null;
 let appWindow;
-/**
- * Create Application Window
- * @returns {BrowserWindow} Application Window Instance
- */
 export const createAppWindow = () => {
     appWindow = new BrowserWindow({
         width: 800,
@@ -55,16 +51,10 @@ export const createAppWindow = () => {
     });
     return appWindow;
 };
-/**
- * Register Inter Process Communication
- */
 const registerMainIPC = () => {
     registerTitlebarIpc(appWindow);
     registerSeraphIPC();
 };
-/**
- * Register Seraph Inter Process Communication
- */
 const registerSeraphIPC = () => {
     ipcMain.handle('isFileReadable', async (event, path) => {
         return await fs.promises.access(path, fs.constants.R_OK).then(() => true).catch(() => false);

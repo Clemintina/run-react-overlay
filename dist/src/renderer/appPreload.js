@@ -21,7 +21,6 @@ contextBridge.exposeInMainWorld('config', {
         return ipcRenderer.invoke('configGet', { key });
     }
 });
-// Get versions
 window.addEventListener('DOMContentLoaded', () => {
     console.log("Loaded DOM");
 });

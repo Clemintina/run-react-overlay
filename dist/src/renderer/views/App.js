@@ -2,7 +2,6 @@ import '@assets/scss/app.scss';
 import React from "react";
 import store from "@renderer/store";
 import { getPlayerHypixelData } from "@renderer/store/PlayerStore";
-// eslint-disable-next-line import/named
 import { DataGrid } from "@mui/x-data-grid";
 import { useSelector } from "react-redux";
 import { FormatPlayer } from "@common/utils/PlayerUtils";
@@ -91,7 +90,6 @@ const getNickedPlayerSortingResponse = (params) => {
 };
 const showPlayers = () => console.log(store.getState().playerStore.players.length);
 const showPlayerData = () => store.getState().playerStore.players.forEach((player) => console.log(player.name, player.nicked));
-// a2db40d5-d629-4042-9d1a-6963b2a7e000
 const AppTable = () => {
     const players = useSelector(() => store.getState().playerStore.players);
     const theme = createTheme({

@@ -1,5 +1,3 @@
-import { parse } from "../util/NBT";
-
 /**
  * Array of inventory slots. If that slot is empty it will be null, otherwise it will be an object containing the data.
  */
@@ -140,64 +138,3 @@ export interface NBTCustomPotionEffect {
   Amplifier: number;
 }
 
-/**
- * This helper will transform NBT data into a typed object using prismarine-nbt. It will also transform any backpacks/bags with item data so you can explore those as well.
- * @param value A Base64 item data string, NBT byte array, or buffer. If Deno, no Buffer but a Uint8Array is supported.
- * @category Helper
- */
-export async function transformItemData(
-  value: Parameters<typeof parse>[number]
-): Promise<NBTInventory> {
-  const data = await parse(value);
-  return Promise.all(
-    data.map(
-      async (item): Promise<NBTInventory[number]> => {
-        if (Object.entries(item).length === 0) {
-          return null;
-        }
-        /* istanbul ignore else */
-        if (item.tag) {
-          if (item.tag.SkullOwner) {
-            const skullOwner: {
-              Properties: { textures: { Value: string }[] };
-            } = item.tag.SkullOwner as never;
-            const propertiesData = skullOwner.Properties.textures.shift();
-            /* istanbul ignore else */
-            if (propertiesData) {
-              item.tag.SkullOwner.Properties = JSON.parse(
-                Buffer.from(propertiesData.Value, "base64").toString()
-              );
-              /* istanbul ignore if */
-              if (skullOwner.Properties.textures.length > 0) {
-                item.tag.SkullOwner.ExtraProperties = skullOwner.Properties.textures.map(
-                  ({ Value }) =>
-                    JSON.parse(Buffer.from(Value, "base64").toString())
-                );
-              }
-            } else {
-              item.tag.SkullOwner.Properties = null;
-            }
-          }
-          if (item.tag.ExtraAttributes) {
-            const extraAttributes = item.tag
-              .ExtraAttributes as NBTExtraAttributes;
-            await Promise.all(
-              Object.keys(extraAttributes).map(async (key) => {
-                /* istanbul ignore if */
-                if (
-                  key.endsWith("_backpack_data") ||
-                  key.endsWith("_bag_data")
-                ) {
-                  extraAttributes[key] = await transformItemData(
-                    extraAttributes[key] as number[]
-                  );
-                }
-              })
-            );
-          }
-        }
-        return item;
-      }
-    )
-  );
-}

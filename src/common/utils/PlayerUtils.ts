@@ -1,5 +1,5 @@
-import {Components} from "@zikeji/hypixel";
 import {Blacklist} from "./externalapis/RunApi";
+import {Components, getBedwarsLevelInfo} from "@common/zikeji";
 
 export interface Player {
     name: string;
@@ -59,11 +59,12 @@ export class FormatPlayer {
 
     public renderStar = (player: Player) => {
         let starRenderer: string = this.starterDivider;
-        if (!player.nicked) {
+        if (!player.nicked && player.hypixelPlayer!==null) {
+            const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
             if (!player.runApi?.data.blacklist.tagged) {
-                starRenderer += this.getPlayerTagDivider(player.hypixelPlayer?.achievements.bedwars_level || 0, 'green');
+                starRenderer += this.getPlayerTagDivider(bwLevel.level, bwLevel.prestigeColorHex);
             } else {
-                starRenderer += this.getPlayerTagDivider(player.hypixelPlayer?.achievements.bedwars_level || 0, 'red', player);
+                starRenderer += this.getPlayerTagDivider(bwLevel.level|| 0, 'red', player);
             }
         } else {
             starRenderer += this.getPlayerTagDividerNicked();

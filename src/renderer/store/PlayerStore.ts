@@ -1,9 +1,9 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Player} from "@common/utils/PlayerUtils";
 import {PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {Components} from "@zikeji/hypixel";
 import {Store} from "./index";
 import {PlayerHandler} from "@common/utils/Schemas";
+import {Components} from "@common/zikeji";
 
 export interface PlayerStoreThunkObject {
     name: string,
