@@ -211,6 +211,7 @@ const registerLogCommunications = () => {
     });
 
     ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, path: string) => {
+        electronStore.set("overlay.logPath", path);
         logFileReadline?.close();
         logFileReadline = null;
 

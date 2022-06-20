@@ -62,16 +62,15 @@ const ConfigStore = createSlice({
                 const payload: HypixelApiKey = action.payload;
                 if (payload.key !== undefined) {
                     ConfigStore.caseReducers.setHypixelApiKey(state, {
-                        payload: payload,
+                        payload,
                     });
                 } else {
-                    console.log("Error with api key");
+                    console.log("Error with api-key");
                 }
             })
             .addCase(initScript.fulfilled, (state, action) => {
                 const payload: InitScript = action.payload;
                 ConfigStore.caseReducers.setDataFromConfig(state, {payload});
-                console.log("Run init script");
             });
     },
 });

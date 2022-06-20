@@ -1,6 +1,5 @@
 import "@misc/window/windowPreload";
 import {contextBridge, ipcRenderer} from "electron";
-import {channel} from "diagnostics_channel";
 
 contextBridge.exposeInMainWorld("ipcRenderer", {
     invoke: (channel: string, ...args: any[]) => {

@@ -184,6 +184,7 @@ const registerLogCommunications = () => {
             .catch(() => false);
     });
     ipcMain.on("logFileSet", async (event, path) => {
+        electronStore.set("overlay.logPath", path);
         logFileReadline?.close();
         logFileReadline = null;
         await logFileTail?.quit();

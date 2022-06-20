@@ -20,13 +20,11 @@ export const RUNElectronStore = Type.Optional(
             Type.Object({
                 apiKey: Type.String({
                     description: "Hypixel API Key",
-                    format: "uuid",
-                    default: null,
+                    default: "",
                 }),
                 apiKeyOwner: Type.String({
                     description: "Hypixel API Key Owner",
-                    format: "uuid",
-                    default: null,
+                    default: "",
                 }),
             }),
         ),
@@ -34,7 +32,7 @@ export const RUNElectronStore = Type.Optional(
             Type.Object({
                 logPath: Type.String({
                     description: "The Logs path which the overlay uses to read players",
-                    default: null,
+                    default: "",
                 }),
             }),
         ),
