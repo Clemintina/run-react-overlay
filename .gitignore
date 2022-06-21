@@ -16,6 +16,7 @@ pids
 *.pid.lock
 *.js
 *.js.map
+*.map.js
 *.plugin.js.map
 .DS_Store
 
@@ -89,3 +90,4 @@ jspm_packages/
 out/
 dist/
 /dist/
+/out/

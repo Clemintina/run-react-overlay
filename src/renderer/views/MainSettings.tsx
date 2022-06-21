@@ -36,7 +36,7 @@ const MainSettings = () => {
                             const logPath = path.filePaths[0];
                             const readable: boolean = await window.ipcRenderer.invoke("isFileReadable", logPath);
                             if (readable) {
-                                await window.ipcRenderer.invoke("logFileSet", logPath);
+                                window.ipcRenderer.send("logFileSet", logPath);
                             }
                         }
                     }}

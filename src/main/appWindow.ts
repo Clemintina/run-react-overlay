@@ -15,17 +15,28 @@ import AppUpdater from "./AutoUpdate";
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
-
+/**
+ * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
+ */
 const overlayVersion = app.getVersion();
 const playerCache = cacheManager.caching({ttl: 60 * 5, store: "memory"});
 const mojangCache = cacheManager.caching({ttl: 600 * 5, store: "memory"});
-
+/**
+ * Checks if the app is running in Production or Development
+ */
 const isDevelopment = process.env.NODE_ENV !== "production";
-
+/**
+ * Configures the Electron Store
+ * To add to the schema, refer to **@renderer/store/ElectronStoreUtils**
+ * @see RUNElectronStore
+ * @see RUNElectronStoreType
+ */
 const electronStoreSchema = JSON.parse(JSON.stringify(RUNElectronStore));
 const electronStore = new Store<RUNElectronStoreType>({schema: electronStoreSchema.properties});
 electronStore.set("run.overlay.version", app.getVersion());
-
+/**
+ * Configures the log reader. See {@link [TailFile](https://www.npmjs.com/package/@logdna/tail-file)} for more information.
+ */
 let logFileTail: TailFile | null = null;
 let logFileReadline: readline.Interface | null = null;
 let appWindow: BrowserWindow;
@@ -192,6 +203,9 @@ const registerSeraphIPC = () => {
     });
 };
 
+/**
+ * Register Store Inter Process Communication
+ */
 const registerElectronStore = () => {
     ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: any}) => {
         electronStore.set(data.key, data.data);
@@ -202,6 +216,9 @@ const registerElectronStore = () => {
     });
 };
 
+/**
+ * Register Log Inter Process Communication
+ */
 const registerLogCommunications = () => {
     ipcMain.handle("isFileReadable", async (event: IpcMainInvokeEvent, path: string) => {
         return await fs.promises
@@ -239,7 +256,7 @@ const registerLogCommunications = () => {
                 input: logFileTail,
             });
 
-            logFileReadline.on("line", (line) => {
+            logFileReadline.on("line", async (line) => {
                 appWindow?.webContents.send("logFileLine", line);
             });
         }

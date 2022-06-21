@@ -6,15 +6,18 @@ export interface PlayerHandler {
     data?: Player;
 }
 
-export interface HypixelApiKeyRaw {
-    success: boolean;
-    record: HypixelApiKey;
-}
-
 export interface HypixelApiKey {
     key: string;
     owner: string;
     limit: number;
     queriesInPastMin: number;
     totalQueries: number;
+}
+
+export interface DisplayErrorMessage {
+    code: number;
+    title: string;
+    cause: string;
+    detail: string;
+    referenceId?: string | number;
 }

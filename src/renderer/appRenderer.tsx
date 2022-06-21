@@ -7,12 +7,21 @@ import App from "@renderer/views/App";
 import MainSettings from "@renderer/views/MainSettings";
 import store from "@renderer/store";
 import {initScript} from "@renderer/store/ConfigStore";
+import {LogFileReader} from "@common/utils/LogFileReader";
+import {playerInitScript} from "@renderer/store/PlayerStore";
 
-// Load config
+/**
+ * Loads the **Initial Script**
+ * @see store
+ */
 setTimeout(() => store.dispatch(initScript()), 20);
+setTimeout(() => store.dispatch(playerInitScript()), 20);
+const reader = new LogFileReader();
+reader.startListening();
 
-// Render application in DOM
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+/**
+ * Renders the document in the DOM and creates our React application.
+ */
 createRoot(document.getElementById("app")!).render(
     <React.StrictMode>
         <Provider store={store}>

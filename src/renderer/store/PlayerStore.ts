@@ -16,7 +16,17 @@ export interface PlayerStore {
     players: Array<Player>;
 }
 
-export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, {getState}) => {
+const cacheState: PlayerStoreThunkObject = {
+    name: "",
+    apiKey: "",
+    apiKeyOwner: "",
+    runKey: "",
+};
+
+/**
+ * Adds players to the Overlay Table.
+ */
+export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -28,13 +38,13 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
     };
     let hypixelPlayer: Components.Schemas.Player;
 
-    const state = getState();
+    const state = cacheState;
 
-    const apiKey = thunkObject.apiKey ?? state.configStore.apiKey;
-    const apiKeyOwner = thunkObject.apiKeyOwner ?? state.configStore.apiKeyOwner;
-    const runApiKey = thunkObject.runKey ?? state.configStore.runKey;
+    const apiKey = thunkObject.apiKey ?? state.apiKey;
+    const apiKeyOwner = thunkObject.apiKeyOwner ?? state.apiKeyOwner;
+    const runApiKey = thunkObject.runKey ?? state.runKey;
 
-    if (apiKey.length !== 36) {
+    if (apiKey === undefined || apiKey.length !== 36) {
         return {status: 403, cause: "No API Key", data: null};
     }
 
@@ -103,15 +113,36 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         data: playerData,
     };
 });
+/**
+ * Removes a player from the Overlay Table
+ */
+export const removePlayerFromOverlay = createAsyncThunk("PlayerStore/removePlayerFromOverlay", async (thunkObject: PlayerStoreThunkObject) => {
+    return thunkObject;
+});
+/**
+ * Resets the Overlay Table
+ */
+export const resetOverlayTable = createAsyncThunk("PlayerStore/resetOverlayTable", async () => {
+    return true;
+});
 
+export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () => {
+    cacheState.apiKey = await window.config.get("hypixel.apiKey");
+    cacheState.apiKeyOwner = await window.config.get("hypixel.apiKeyOwner");
+    cacheState.runKey = await window.config.get("run.apiKey");
+    return true;
+});
+
+/**
+ * Creates a **slice** which, is specific to storing player data within the overlay.
+ */
 const PlayerStore = createSlice({
     name: "PlayerStore",
     initialState: {
         players: Array<Player>(),
-        runKey: "public",
     },
     reducers: {
-        removePlayer: (state, action) => {
+        removePlayer: (state, action: {payload: PlayerStoreThunkObject}) => {
             const {name} = action.payload;
             state.players = state.players.filter((player: Player) => player.name !== name);
         },
@@ -137,6 +168,9 @@ const PlayerStore = createSlice({
                 }
             }
         },
+        resetTable: (state) => {
+            state.players = [];
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -145,6 +179,13 @@ const PlayerStore = createSlice({
             })
             .addCase(getPlayerHypixelData.rejected, (state, action) => {
                 PlayerStore.caseReducers.updatePlayer(state, action);
+            })
+            .addCase(removePlayerFromOverlay.fulfilled, (state, action) => {
+                const payload: PlayerStoreThunkObject = action.payload;
+                PlayerStore.caseReducers.removePlayer(state, {payload});
+            })
+            .addCase(resetOverlayTable.fulfilled, (state) => {
+                PlayerStore.caseReducers.resetTable(state);
             });
     },
 });

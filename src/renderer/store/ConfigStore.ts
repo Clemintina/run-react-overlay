@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {Key, RequestType} from "@common/utils/externalapis/RunApi";
-import {HypixelApiKey} from "@common/utils/Schemas";
+import {RequestType, RunApiKey} from "@common/utils/externalapis/RunApi";
+import {DisplayErrorMessage, HypixelApiKey} from "@common//utils/Schemas";
 
 export interface ConfigStore {
     apiKey: string;
@@ -23,6 +23,9 @@ interface InitScript {
     };
 }
 
+/**
+ * The main slice, Used to store API-keys, logs and anything else used by the Overlay which isn't calling players.
+ */
 const ConfigStore = createSlice({
     name: "ConfigStore",
     initialState: {
@@ -31,18 +34,24 @@ const ConfigStore = createSlice({
         apiKeyOwner: "",
         runKey: "public",
         logPath: "",
+        error: {
+            code: 200,
+            title: "",
+            cause: "",
+            detail: "",
+        },
     },
     reducers: {
         setHypixelApiKey: (state, action: {payload: HypixelApiKey}) => {
             const payload: HypixelApiKey = action.payload;
             state.apiKeyValid = true;
             state.apiKey = payload.key;
-            state.apiKeyOwner = payload.owner;
+            state.apiKeyOwner = payload.key;
             window.config.set("hypixel.apiKey", payload.key);
             window.config.set("hypixel.apiKeyOwner", payload.owner);
         },
-        setRunApiKey: (state, action: {payload: Key}) => {
-            const payload: Key = action.payload;
+        setRunApiKey: (state, action: {payload: RunApiKey}) => {
+            const payload: RunApiKey = action.payload;
             state.runKey = payload.key.key;
         },
         setDataFromConfig: (state, action: {payload: InitScript}) => {
@@ -55,30 +64,67 @@ const ConfigStore = createSlice({
             if (payload.data.runKey !== undefined) state.runKey = payload.data.runKey;
             if (payload.data.overlay.logPath !== undefined) state.logPath = payload.data.overlay.logPath;
         },
+        updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
+            state.error = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
             .addCase(apiKeyValidator.fulfilled, (state, action) => {
                 const payload: HypixelApiKey = action.payload;
-                if (payload.key !== undefined) {
+                if (payload?.key !== undefined) {
                     ConfigStore.caseReducers.setHypixelApiKey(state, {
                         payload,
                     });
                 } else {
-                    console.log("Error with api-key");
+                    ConfigStore.caseReducers.updateErrorMessage(state, {
+                        payload: {
+                            code: 403,
+                            title: "Invalid API Key",
+                            cause: "The API Key provided was not valid",
+                            detail: "The Hypixel API key inputted was not valid, try a new key.",
+                            referenceId: "extra reducer, rejected promise, invalid key?",
+                        },
+                    });
                 }
+            })
+            .addCase(apiKeyValidator.rejected, (state) => {
+                ConfigStore.caseReducers.updateErrorMessage(state, {
+                    payload: {
+                        code: 403,
+                        title: "Invalid API Key",
+                        cause: "The API Key provided was not valid",
+                        detail: "The Hypixel API key inputted was not valid, try a new key.",
+                        referenceId: "extra reducer, rejected promise, invalid key?",
+                    },
+                });
             })
             .addCase(initScript.fulfilled, (state, action) => {
                 const payload: InitScript = action.payload;
                 ConfigStore.caseReducers.setDataFromConfig(state, {payload});
+            })
+            .addCase(initScript.rejected, (state, action) => {
+                ConfigStore.caseReducers.updateErrorMessage(state, {
+                    payload: {
+                        code: 422,
+                        title: "Initial Script",
+                        cause: "The Initial script failed",
+                        detail: action?.error?.message || "Unknown error",
+                        referenceId: "init script failed",
+                    },
+                });
             });
     },
 });
-
+/**
+ * Validates the Hypixel API Key
+ */
 export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", async (hypixelApiKey: string) => {
     return await window.ipcRenderer.invoke("hypixel", hypixelApiKey, RequestType.KEY);
 });
-
+/**
+ * Called when the Overlay loads, **DO NOT PUT RESOURCE INTENSIVE METHODS IN THIS FUNCTION**
+ */
 export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const hypixel = {key: "", owner: ""};
     const overlay = {logPath: ""};

@@ -25,7 +25,7 @@ export interface Blacklist {
     msTime: number;
 }
 
-export interface Key {
+export interface RunApiKey {
     success: boolean;
     code: number;
     key: {

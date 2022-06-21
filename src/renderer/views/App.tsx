@@ -9,7 +9,6 @@ import {FormatPlayer, Player} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
 import {createTheme, ThemeProvider} from "@mui/material";
 import {v4} from "uuid";
-import {LogFileReader} from "@common/utils/LogFileReader";
 import {inDev} from "@common/helpers";
 
 const playerFormatter = new FormatPlayer();
@@ -125,6 +124,11 @@ const showPlayerData = () => store.getState().playerStore.players.forEach((playe
 // a2db40d5-d629-4042-9d1a-6963b2a7e000
 
 const AppTable = () => {
+    /**
+     * Creates the rendered Homepage
+     * All **css** is done in {@link assets/scss/app}
+     * All processing is done in {@link store}
+     */
     const players: Array<Player> = useSelector(() => store.getState().playerStore.players);
     const theme = createTheme({
         palette: {
@@ -142,12 +146,6 @@ const AppTable = () => {
                 },
             },
         },
-    });
-
-    useEffect(() => {
-        window.ipcRenderer.on("logFileLine", async (event, data) => {
-            LogFileReader(data);
-        });
     });
 
     return (
