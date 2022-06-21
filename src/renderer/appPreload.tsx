@@ -20,7 +20,6 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     },
     send: (channel: string, data: never) => {
         const validChannels = ["logFileSet"];
-
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data);
         }
