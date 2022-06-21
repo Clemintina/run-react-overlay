@@ -203,7 +203,7 @@ export const SkyWarsPrestiges: SkyWarsPrestige[] = [
 
 /**
  * Returns a {@link SkyWarsPrestige} object for the level you supplied.
- * @param level The level of the player you are checking. TODO: obtain
+ * @param level The level of the player you are checking.
  */
 export function getSkyWarsPrestigeForLevel(level: number): SkyWarsPrestige {
     if (typeof level !== "number" || level < 1) {

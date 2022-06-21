@@ -9,6 +9,7 @@ import { Interweave } from "interweave";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { v4 } from "uuid";
 import { LogFileReader } from "@common/utils/LogFileReader";
+import { inDev } from "@common/helpers";
 const playerFormatter = new FormatPlayer();
 const columns = [
     {
@@ -146,10 +147,10 @@ const AppTable = () => {
                         border: "none",
                         flex: 1,
                     } })),
-            React.createElement("div", null,
+            inDev() ? (React.createElement("div", null,
                 React.createElement("div", { style: { color: "white" } },
                     "Add to Table: ",
-                    React.createElement("button", { onClick: addToTable, style: { height: 20, width: 20 } }))))));
+                    React.createElement("button", { onClick: addToTable, style: { height: 20, width: 20 } })))) : (React.createElement("div", null)))));
 };
 const addToTable = async () => {
     const players = ["somie", "ohdevil", "andorite", "clemintina", "xpinkk", "ice4cherry", "kekca", "kelnis", "akiaura", "waelle", "lcya", "helne"];

@@ -9,8 +9,6 @@ import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 const MainSettings = () => {
     const isHypixelKeySet = useSelector(() => store.getState().configStore.apiKey.length === 36);
     const isLogsSet = useSelector(() => store.getState().configStore.logPath.length !== 0);
-    const renderHypixelKeySet = isHypixelKeySet ? React.createElement(FontAwesomeIcon, { style: { color: "green" }, icon: faExclamationCircle }) : React.createElement(FontAwesomeIcon, { style: { color: "red" }, icon: faExclamationCircle });
-    const renderLogFileSet = isLogsSet ? React.createElement(FontAwesomeIcon, { style: { color: "green" }, icon: faExclamationCircle }) : React.createElement(FontAwesomeIcon, { style: { color: "red" }, icon: faExclamationCircle });
     return (React.createElement("div", { className: 'mainSettingsPanel' },
         React.createElement("h1", { className: 'underline hover-underline-animation' }, "Overlay Settings"),
         React.createElement("div", { className: 'mainSettingsOption' },
@@ -20,9 +18,9 @@ const MainSettings = () => {
                         store.dispatch(apiKeyValidator(event.currentTarget.value));
                     }
                 } }),
-            renderHypixelKeySet),
+            React.createElement(FontAwesomeIcon, { style: { color: isHypixelKeySet ? "green" : "red" }, icon: faExclamationCircle })),
         React.createElement("div", { className: 'mainSettingsOption' },
-            React.createElement("div", { className: 'underline' }, " Overlay Logs: "),
+            React.createElement("div", { className: 'underline' }, " Overlay Logs:"),
             React.createElement("button", { onClick: async () => {
                     const path = await window.ipcRenderer.invoke("selectLogFile");
                     if (path.filePaths[0] !== undefined) {
@@ -33,7 +31,7 @@ const MainSettings = () => {
                         }
                     }
                 } }, "Set Log File"),
-            renderLogFileSet)));
+            React.createElement(FontAwesomeIcon, { style: { color: isLogsSet ? "green" : "red" }, icon: faExclamationCircle }))));
 };
 export default MainSettings;
 //# sourceMappingURL=MainSettings.js.map

@@ -10,6 +10,7 @@ import {Interweave} from "interweave";
 import {createTheme, ThemeProvider} from "@mui/material";
 import {v4} from "uuid";
 import {LogFileReader} from "@common/utils/LogFileReader";
+import {inDev} from "@common/helpers";
 
 const playerFormatter = new FormatPlayer();
 
@@ -170,11 +171,15 @@ const AppTable = () => {
                         }}
                     />
                 </ThemeProvider>
-                <div>
-                    <div style={{color: "white"}}>
-                        Add to Table: <button onClick={addToTable} style={{height: 20, width: 20}} />
+                {inDev() ? (
+                    <div>
+                        <div style={{color: "white"}}>
+                            Add to Table: <button onClick={addToTable} style={{height: 20, width: 20}} />
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div />
+                )}
             </div>
         </div>
     );

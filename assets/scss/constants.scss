@@ -23,7 +23,8 @@ $secondaryColour: aqua;
 
   &:hover {
     color: white;
-    &:after{
+
+    &:after {
       transform: scaleX(1);
       transform-origin: bottom left;
     }
@@ -42,12 +43,9 @@ input {
     border: $secondaryColour 1px solid;
   }
 
-  &:hover{
+  &:hover {
     border: $secondaryColour 1px solid;
     cursor: text;
-    &:after{
-      transform: scaleX(1);
-    }
   }
 
   &[type='text'] {

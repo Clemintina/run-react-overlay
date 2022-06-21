@@ -11,9 +11,6 @@ const MainSettings = () => {
     const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.apiKey.length === 36);
     const isLogsSet: boolean = useSelector(() => store.getState().configStore.logPath.length !== 0);
 
-    const renderHypixelKeySet: JSX.Element = isHypixelKeySet ? <FontAwesomeIcon style={{color: "green"}} icon={faExclamationCircle} /> : <FontAwesomeIcon style={{color: "red"}} icon={faExclamationCircle} />;
-    const renderLogFileSet: JSX.Element = isLogsSet ? <FontAwesomeIcon style={{color: "green"}} icon={faExclamationCircle} /> : <FontAwesomeIcon style={{color: "red"}} icon={faExclamationCircle} />;
-
     // TODO make it look nicer and cleaner
     return (
         <div className='mainSettingsPanel'>
@@ -28,10 +25,10 @@ const MainSettings = () => {
                         }
                     }}
                 />
-                {renderHypixelKeySet}
+                {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
             </div>
             <div className='mainSettingsOption'>
-                <div className='underline'> Overlay Logs: </div>
+                <div className='underline'> Overlay Logs:</div>
                 <button
                     onClick={async () => {
                         const path = await window.ipcRenderer.invoke("selectLogFile");
@@ -46,7 +43,7 @@ const MainSettings = () => {
                 >
                     Set Log File
                 </button>
-                {renderLogFileSet}
+                {<FontAwesomeIcon style={{color: isLogsSet ? "green" : "red"}} icon={faExclamationCircle} />}
             </div>
         </div>
     );
