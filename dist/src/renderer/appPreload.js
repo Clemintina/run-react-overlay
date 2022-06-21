@@ -2,14 +2,13 @@ import "@misc/window/windowPreload";
 import { contextBridge, ipcRenderer } from "electron";
 contextBridge.exposeInMainWorld("ipcRenderer", {
     invoke: (channel, ...args) => {
-        if (channel === "hypixel") {
+        const validNoArgs = [""];
+        const validArgs = ["hypixel", "seraph", "mcutils", "selectLogFile", "isFileReadable"];
+        if (validArgs.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);
         }
-        else if (channel === "seraph") {
-            return ipcRenderer.invoke(channel, ...args);
-        }
-        else if (channel === "mcutils") {
-            return ipcRenderer.invoke(channel, ...args);
+        else if (validNoArgs.includes(channel)) {
+            return ipcRenderer.invoke(channel);
         }
     },
     on: (channel, method) => {

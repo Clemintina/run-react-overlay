@@ -1,31 +1,52 @@
 import "@assets/scss/titlebar.scss";
+import "@assets/scss/settings.scss";
 import React from "react";
 import store from "@renderer/store";
 import {apiKeyValidator} from "@renderer/store/ConfigStore";
+import {useSelector} from "react-redux";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 
 const MainSettings = () => {
+    const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.apiKey.length === 36);
+    const isLogsSet: boolean = useSelector(() => store.getState().configStore.logPath.length !== 0);
+
+    const renderHypixelKeySet: JSX.Element = isHypixelKeySet ? <FontAwesomeIcon style={{color: "green"}} icon={faExclamationCircle} /> : <FontAwesomeIcon style={{color: "red"}} icon={faExclamationCircle} />;
+    const renderLogFileSet: JSX.Element = isLogsSet ? <FontAwesomeIcon style={{color: "green"}} icon={faExclamationCircle} /> : <FontAwesomeIcon style={{color: "red"}} icon={faExclamationCircle} />;
+
+    // TODO make it look nicer and cleaner
     return (
-        <div>
-            <h1>TODO add settings</h1>
-            <div>
-                Hypixel API Key:
+        <div className='mainSettingsPanel'>
+            <h1 className='underline hover-underline-animation'>Overlay Settings</h1>
+            <div className='mainSettingsOption'>
+                <div className='underline'>Hypixel API Key:</div>
                 <input
+                    type='text'
                     onKeyDown={(event) => {
                         if (event.key === "Enter") {
                             store.dispatch(apiKeyValidator(event.currentTarget.value));
                         }
                     }}
                 />
+                {renderHypixelKeySet}
             </div>
-            <div>
-                Overlay Logs:{" "}
-                <input
-                    onKeyDown={(event) => {
-                        if (event.key === "Enter") {
-                            window.ipcRenderer.send("logFileSet", event.currentTarget.value);
+            <div className='mainSettingsOption'>
+                <div className='underline'> Overlay Logs: </div>
+                <button
+                    onClick={async () => {
+                        const path = await window.ipcRenderer.invoke("selectLogFile");
+                        if (path.filePaths[0] !== undefined) {
+                            const logPath = path.filePaths[0];
+                            const readable: boolean = await window.ipcRenderer.invoke("isFileReadable", logPath);
+                            if (readable) {
+                                await window.ipcRenderer.invoke("logFileSet", logPath);
+                            }
                         }
                     }}
-                />
+                >
+                    Set Log File
+                </button>
+                {renderLogFileSet}
             </div>
         </div>
     );

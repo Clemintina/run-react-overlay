@@ -22,7 +22,7 @@ const TitleBar = () => {
             React.createElement(Link, { to: titlePath, style: { display: "flex" } },
                 React.createElement("div", { style: { paddingRight: 5 } },
                     React.createElement("div", { className: 'settings-icon', style: { display: "flex" } }, renderCaret)),
-                React.createElement("div", { className: 'title' },
+                React.createElement("div", { className: 'underline' },
                     React.createElement("header", { style: { fontSize: 30 } }, "Seraph")))),
         React.createElement("div", { className: 'headerSearchBox' },
             React.createElement("input", { type: 'text', placeholder: 'Username...', className: 'headerSearchBox', onKeyDown: (event) => {

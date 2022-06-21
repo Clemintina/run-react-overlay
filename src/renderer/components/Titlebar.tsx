@@ -28,7 +28,7 @@ const TitleBar = () => {
                             {renderCaret}
                         </div>
                     </div>
-                    <div className='title'>
+                    <div className='underline'>
                         <header style={{fontSize: 30}}>Seraph</header>
                     </div>
                 </Link>

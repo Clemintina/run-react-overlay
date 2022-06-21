@@ -2,13 +2,14 @@ import "@misc/window/windowPreload";
 import {contextBridge, ipcRenderer} from "electron";
 
 contextBridge.exposeInMainWorld("ipcRenderer", {
-    invoke: (channel: string, ...args: any[]) => {
-        if (channel === "hypixel") {
+    invoke: (channel: string, ...args: never[]) => {
+        const validNoArgs: Array<string> = [""];
+        const validArgs: Array<string> = ["hypixel", "seraph", "mcutils", "selectLogFile", "isFileReadable"];
+
+        if (validArgs.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);
-        } else if (channel === "seraph") {
-            return ipcRenderer.invoke(channel, ...args);
-        } else if (channel === "mcutils") {
-            return ipcRenderer.invoke(channel, ...args);
+        } else if (validNoArgs.includes(channel)) {
+            return ipcRenderer.invoke(channel);
         }
     },
     on: (channel: string, method: any) => {
@@ -35,7 +36,6 @@ contextBridge.exposeInMainWorld("config", {
     },
 });
 
-// Get versions
 window.addEventListener("DOMContentLoaded", () => {
     console.log("Loaded DOM");
 });

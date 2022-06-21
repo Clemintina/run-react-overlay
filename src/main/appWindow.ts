@@ -1,4 +1,4 @@
-import {app, BrowserWindow, ipcMain, IpcMainInvokeEvent} from "electron";
+import {app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent} from "electron";
 import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
 import path from "path";
 import axios from "axios";
@@ -208,6 +208,19 @@ const registerLogCommunications = () => {
             .access(path, fs.constants.R_OK)
             .then(() => true)
             .catch(() => false);
+    });
+
+    ipcMain.handle("selectLogFile", async (event: IpcMainInvokeEvent, args: never[]) => {
+        return await dialog.showOpenDialog(appWindow, {
+            defaultPath: app.getPath("appData"),
+            filters: [
+                {
+                    name: "Logs",
+                    extensions: ["log"],
+                },
+            ],
+            properties: ["openFile"],
+        });
     });
 
     ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, path: string) => {

@@ -2,10 +2,66 @@ $backgroundColour: #242424;
 $primaryColour: grey;
 $secondaryColour: aqua;
 
+.underline {
+  display: inline-block;
+  position: relative;
+  color: $primaryColour;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: $secondaryColour;
+    -webkit-transform: scaleX(0);
+    -webkit-transition: all 0.3s ease-in-out 0s;
+    transition: all 0.3s ease-in-out 0s;
+  }
+
+  &:hover {
+    color: white;
+    &:after{
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+  }
+}
+
+
+input {
+  background: transparentize($backgroundColour, 1);
+  transition: .2s ease all;
+  color: $primaryColour;
+
+  &:focus {
+    background: transparentize($backgroundColour, 0.1);
+    color: white;
+    border: $secondaryColour 1px solid;
+  }
+
+  &:hover{
+    border: $secondaryColour 1px solid;
+    cursor: text;
+    &:after{
+      transform: scaleX(1);
+    }
+  }
+
+  &[type='text'] {
+    &:focus {
+      outline: 0;
+    }
+  }
+}
+
+
 *.drag {
   -webkit-app-region: drag;
 }
 
-*.nodrag{
+*.nodrag {
   -webkit-app-region: no-drag;
 }
