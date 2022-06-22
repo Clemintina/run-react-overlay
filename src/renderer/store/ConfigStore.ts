@@ -62,7 +62,10 @@ const ConfigStore = createSlice({
                 state.apiKeyOwner = payload.data.hypixel.owner;
             }
             if (payload.data.runKey !== undefined) state.runKey = payload.data.runKey;
-            if (payload.data.overlay.logPath !== undefined) state.logPath = payload.data.overlay.logPath;
+            if (payload.data.overlay.logPath !== undefined) {
+                state.logPath = payload.data.overlay.logPath;
+                window.ipcRenderer.send("logFileSet", state.logPath);
+            }
         },
         updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
             state.error = action.payload;

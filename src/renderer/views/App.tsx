@@ -8,8 +8,6 @@ import {useSelector} from "react-redux";
 import {FormatPlayer, Player} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
 import {createTheme, ThemeProvider} from "@mui/material";
-import {v4} from "uuid";
-import {inDev} from "@common/helpers";
 
 const playerFormatter = new FormatPlayer();
 
@@ -27,7 +25,11 @@ const columns: GridColDef<Player>[] = [
         description: `Player's Bedwars Level`,
         renderCell: (params) => <Interweave content={playerFormatter.renderStar(params.row)} />,
         valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.achievements.bedwars_level;
+            if (params.row.nicked) {
+                return getNickedPlayerSortingResponse(params);
+            } else {
+                return params.row.hypixelPlayer?.achievements?.bedwars_level || 0;
+            }
         },
     },
     {
@@ -57,7 +59,7 @@ const columns: GridColDef<Player>[] = [
         description: `Player's Winstreak`,
         renderCell: (params) => <Interweave content={playerFormatter.renderWinstreak(params.row)} />,
         valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats.Bedwars?.winstreak;
+            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats?.Bedwars?.winstreak || 0;
         },
     },
     {
@@ -68,7 +70,7 @@ const columns: GridColDef<Player>[] = [
         renderCell: (params) => <Interweave content={playerFormatter.renderFKDRColour(params.row)} />,
         valueFormatter: ({value}) => value.toFixed(2),
         valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0) / (params.row.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0) || 0;
+            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars || 0) / (params.row.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars || 0) || 0;
         },
     },
     {
@@ -79,7 +81,7 @@ const columns: GridColDef<Player>[] = [
         renderCell: (params) => <Interweave content={playerFormatter.renderRatioColour(params.row, "wlr")} />,
         valueFormatter: ({value}) => value.toFixed(2),
         valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats.Bedwars?.wins_bedwars || 0) / (params.row.hypixelPlayer?.stats.Bedwars?.losses_bedwars || 0) || 0;
+            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats?.Bedwars?.wins_bedwars || 0) / (params.row.hypixelPlayer?.stats?.Bedwars?.losses_bedwars || 0) || 0;
         },
     },
     {
@@ -90,7 +92,7 @@ const columns: GridColDef<Player>[] = [
         renderCell: (params) => <Interweave content={playerFormatter.renderRatioColour(params.row, "bblr")} />,
         valueFormatter: ({value}) => value.toFixed(2),
         valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars || 0) / (params.row.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars || 0) || 0;
+            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars || 0) / (params.row.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars || 0) || 0;
         },
     },
     {
@@ -99,7 +101,7 @@ const columns: GridColDef<Player>[] = [
         flex: 1,
         description: `Player's Wins`,
         valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats.Bedwars?.wins_bedwars || 0;
+            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats?.Bedwars?.wins_bedwars || 0;
         },
     },
     {
@@ -108,7 +110,7 @@ const columns: GridColDef<Player>[] = [
         flex: 1,
         description: `Player's Losses`,
         valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats.Bedwars?.losses_bedwars || 0;
+            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats?.Bedwars?.losses_bedwars || 0;
         },
     },
 ];
@@ -166,13 +168,6 @@ const AppTable = () => {
             </div>
         </div>
     );
-};
-
-const addToTable = async () => {
-    const players = ["somie", "ohdevil", "andorite", "clemintina", "xpinkk", "ice4cherry", "kekca", "kelnis", "akiaura", "waelle", "lcya", "helne"];
-    for (const name of players) {
-        store.dispatch(getPlayerHypixelData({name}));
-    }
 };
 
 export default AppTable;

@@ -8,7 +8,6 @@ export class LogFileReader {
     public startListening = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
-            if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
             if (line.includes("Sending you to")) {
                 await store.dispatch(resetOverlayTable());
             }
@@ -18,7 +17,6 @@ export class LogFileReader {
     public startJoinHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
-            if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
             if (line.includes(" has joined (")) {
                 const username = line.split(" [CHAT] ")[1].split(" has joined")[0];
                 const obj: PlayerStoreThunkObject = {name: username};
@@ -33,7 +31,6 @@ export class LogFileReader {
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
-            if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
             if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 await Promise.all(players.map(async (player) => await store.dispatch(getPlayerHypixelData({name: player}))));
@@ -54,7 +51,6 @@ export class LogFileReader {
     public startSeraphHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
-            if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
             if (line.includes("FINAL KILL!")) {
                 const lineTemp = line.toString().substring(line.indexOf("[CHAT]"), line.length).replace("[CHAT] ", "");
                 const final_ign = lineTemp.split(" ")[0];
@@ -70,15 +66,33 @@ export class LogFileReader {
     public startCommandListener = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
-            if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
             if (line.toLowerCase().includes("can't find a player by the name of ")) {
-                console.log(line);
-                const command = line.replace("can't find a player by the name of ", "").replaceAll("'", "").replace("[CHAT]").trim();
-                console.log(command);
-                if (command === ".c") {
+                const command = line.split("[CHAT]")[1].replace("can't find a player by the name of ", "").replaceAll("'", "").trim();
+                const commands = [".c", ".clear", ".h", ".hide", ".s", ".show", ".r"];
+                const command_clean = command.replaceAll(".", "").replaceAll("@", "").replaceAll("-", "").replaceAll(",", "").toLowerCase();
+                if (command === ".c" || command === ".clear") {
                     await store.dispatch(resetOverlayTable());
+                    return;
+                } else if (command === ".h" || command === ".hide") {
+                    window.ipcRenderer.send("windowMinimise");
+                    return;
+                } else if (command === ".s" || command === ".show") {
+                    window.ipcRenderer.send("windowMaximise");
+                    return;
+                } else if ((command_clean.length <= 16 || command_clean.length == 32 || command_clean.length == 36) && !commands.includes(command)) {
+                    await store.dispatch(getPlayerHypixelData(command_clean));
+                    return;
                 }
+                return;
             }
+        });
+    };
+
+    public startPartyListener = async () => {
+        // TODO Add party handling
+        await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
+            const line = data;
+            console.log(line);
         });
     };
 }

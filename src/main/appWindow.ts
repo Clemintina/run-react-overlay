@@ -230,12 +230,7 @@ const registerLogCommunications = () => {
     ipcMain.handle("selectLogFile", async (event: IpcMainInvokeEvent, args: never[]) => {
         return await dialog.showOpenDialog(appWindow, {
             defaultPath: app.getPath("appData"),
-            filters: [
-                {
-                    name: "Logs",
-                    extensions: ["log"],
-                },
-            ],
+            filters: [{name: "Logs", extensions: ["log"]}],
             properties: ["openFile"],
         });
     });
@@ -257,6 +252,7 @@ const registerLogCommunications = () => {
             });
 
             logFileReadline.on("line", async (line) => {
+                if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
                 appWindow?.webContents.send("logFileLine", line);
             });
         }

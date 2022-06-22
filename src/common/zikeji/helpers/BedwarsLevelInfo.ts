@@ -37,7 +37,15 @@ export interface BedwarsLevelInfo {
 export const getBedwarsLevelInfo = (data: Components.Schemas.Player | number): BedwarsLevelInfo => {
     const currentExp = typeof data === "number" ? data : data.stats.Bedwars?.Experience ?? data.stats.Bedwars?.Experience_new;
     if (typeof currentExp !== "number" || Number.isNaN(currentExp)) {
-        throw new TypeError("Data supplied does not contain player Bedwars experience.");
+        const prestigeColour = MinecraftFormatting.GRAY;
+        return {
+            level: 0,
+            prestige: 0,
+            prestigeName: "None",
+            prestigeColour,
+            prestigeColourHex: MinecraftColourAsHex[prestigeColour],
+            levelInCurrentPrestige: 0,
+        };
     }
     const prestiges = Math.floor(currentExp / BEDWARS_LEVEL_CONSTANTS.XPP);
     let level = prestiges * BEDWARS_LEVEL_CONSTANTS.LPP;
@@ -45,11 +53,9 @@ export const getBedwarsLevelInfo = (data: Components.Schemas.Player | number): B
     for (let i = 1; i <= BEDWARS_LEVEL_CONSTANTS.EL; i += 1) {
         let elExp = 500;
         const rL = i % BEDWARS_LEVEL_CONSTANTS.LPP;
-
         for (let ii = 0; ii < rL; ii += 1) {
             elExp += ii * 500;
         }
-
         if (expWithoutPrestiges < elExp) {
             break;
         }
