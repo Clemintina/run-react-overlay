@@ -1,5 +1,5 @@
 import "@assets/scss/app.scss";
-import React, {useEffect} from "react";
+import React from "react";
 import store from "@renderer/store";
 import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
 // eslint-disable-next-line import/named
@@ -117,10 +117,6 @@ const getNickedPlayerSortingResponse = (params: GridCellParams) => {
     return 0;
 };
 
-const showPlayers = () => console.log(store.getState().playerStore.players.length);
-
-const showPlayerData = () => store.getState().playerStore.players.forEach((player: Player) => console.log(player.name, player.nicked));
-
 // a2db40d5-d629-4042-9d1a-6963b2a7e000
 
 const AppTable = () => {
@@ -154,13 +150,11 @@ const AppTable = () => {
                 <ThemeProvider theme={theme}>
                     <DataGrid
                         className='mainTable'
-                        getRowId={(row: Player) => v4()}
+                        getRowId={(row: Player) => row.name}
                         rows={players}
                         columns={columns}
-                        pageSize={16}
-                        rowsPerPageOptions={[16]}
                         hideFooter={true}
-                        rowHeight={35}
+                        rowHeight={33}
                         disableSelectionOnClick
                         sx={{
                             padding: 0,
@@ -169,15 +163,6 @@ const AppTable = () => {
                         }}
                     />
                 </ThemeProvider>
-                {inDev() ? (
-                    <div>
-                        <div style={{color: "white"}}>
-                            Add to Table: <button onClick={addToTable} style={{height: 20, width: 20}} />
-                        </div>
-                    </div>
-                ) : (
-                    <div />
-                )}
             </div>
         </div>
     );

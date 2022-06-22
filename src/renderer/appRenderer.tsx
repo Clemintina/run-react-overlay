@@ -16,8 +16,17 @@ import {playerInitScript} from "@renderer/store/PlayerStore";
  */
 setTimeout(() => store.dispatch(initScript()), 20);
 setTimeout(() => store.dispatch(playerInitScript()), 20);
+
+/**
+ * Starts the Log readers
+ * We use multiple to make each method cleaner and less ify
+ */
 const reader = new LogFileReader();
 reader.startListening();
+reader.startJoinHandler();
+reader.startListHandler();
+reader.startSeraphHandler();
+reader.startCommandListener();
 
 /**
  * Renders the document in the DOM and creates our React application.

@@ -40,9 +40,9 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
 
     const state = cacheState;
 
-    const apiKey = thunkObject.apiKey ?? state.apiKey;
-    const apiKeyOwner = thunkObject.apiKeyOwner ?? state.apiKeyOwner;
-    const runApiKey = thunkObject.runKey ?? state.runKey;
+    const apiKey = state.apiKey;
+    const apiKeyOwner = state.apiKeyOwner;
+    const runApiKey = state.runKey;
 
     if (apiKey === undefined || apiKey.length !== 36) {
         return {status: 403, cause: "No API Key", data: null};
@@ -107,6 +107,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
             success: false,
         };
     }
+
     return {
         status: runApi.status,
         cause: "valid request",
