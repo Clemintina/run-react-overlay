@@ -49,20 +49,23 @@ export const createAppWindow = (): BrowserWindow => {
     appWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        backgroundColor: "#1f252c",
+        backgroundColor: "#242424",
         show: false,
         autoHideMenuBar: true,
         frame: false,
         titleBarStyle: "hidden",
-        icon: path.resolve("assets/images/appIcon.ico"),
+        icon: path.resolve("assets/images/icon.ico"),
         webPreferences: {
-            nodeIntegration: false,
+            nodeIntegration: true,
             contextIsolation: true,
             nodeIntegrationInWorker: false,
             nodeIntegrationInSubFrames: false,
             preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
     });
+
+    appWindow.setAlwaysOnTop(true, 'floating');
+    appWindow.setVisibleOnAllWorkspaces(true);
 
     if (!isDevelopment) {
         if (!require("electron-squirrel-startup") && process.platform === "win32") {
@@ -71,16 +74,17 @@ export const createAppWindow = (): BrowserWindow => {
         }
     }
 
-    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
+    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY,{userAgent:'SeraphOverlay'});
 
     appWindow.on("ready-to-show", () => appWindow.show());
 
     registerMainIPC();
 
-    appWindow.on("close", () => {
-        appWindow.close();
-        app.quit();
-    });
+    app.on('window-all-closed', () => {
+        if (process.platform !== 'darwin') {
+            app.quit()
+        }
+    })
 
     return appWindow;
 };
@@ -244,7 +248,7 @@ const registerLogCommunications = () => {
         logFileTail = null;
 
         if (path !== null) {
-            logFileTail = new TailFile(path);
+            logFileTail = new TailFile(path.replace('\\','/'));
             await logFileTail.start();
 
             logFileReadline = readline.createInterface({
@@ -253,6 +257,7 @@ const registerLogCommunications = () => {
 
             logFileReadline.on("line", async (line) => {
                 if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
+                console.log(line)
                 appWindow?.webContents.send("logFileLine", line);
             });
         }

@@ -11,12 +11,13 @@ module.exports = {
         executableName: 'Seraph-Overlay',
         // Set application copyright
         appCopyright: 'Copyright (C) 2022 seraph.si',
+        icon: "assets/images/icon.ico"
     },
     // Forge Makers
     makers: [
         {
             // Squirrel.Windows is a no-prompt, no-hassle, no-admin method of installing
-            // Windows applications and is therefore the most user friendly you can get.
+            // Windows applications and is therefore the most user-friendly you can get.
             name: '@electron-forge/maker-squirrel',
             config: {
                 name: 'Seraph-Overlay',
@@ -24,7 +25,7 @@ module.exports = {
         },
         {
             // The Zip target builds basic .zip files containing your packaged application.
-            // There are no platform specific dependencies for using this maker and it will run on any platform.
+            // There are no platform specific dependencies for using this maker, and it will run on any platform.
             name: '@electron-forge/maker-zip',
             platforms: ['darwin'],
         },

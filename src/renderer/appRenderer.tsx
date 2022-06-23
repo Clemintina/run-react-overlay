@@ -1,7 +1,7 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {Provider} from "react-redux";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, HashRouter, Route, Routes} from "react-router-dom";
 import TitleBar from "@components/Titlebar";
 import App from "@renderer/views/App";
 import MainSettings from "@renderer/views/MainSettings";
@@ -34,15 +34,14 @@ reader.startCommandListener();
 createRoot(document.getElementById("app")!).render(
     <React.StrictMode>
         <Provider store={store}>
-            <div style={{width: window.innerWidth - 20}} className='mainBody'>
-                <BrowserRouter>
+            <div className='mainBody'>
+                <HashRouter basename='/'>
                     <TitleBar />
                     <Routes>
-                        <Route path='/' element={<App />} />
-                        <Route path='*' element={<App />} />
-                        <Route path='settings' element={<MainSettings />} />
+                        <Route path='/' element={<App />}/>
+                        <Route path='/settings' element={<MainSettings />} />
                     </Routes>
-                </BrowserRouter>
+                </HashRouter>
             </div>
         </Provider>
     </React.StrictMode>,

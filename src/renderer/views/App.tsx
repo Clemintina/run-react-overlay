@@ -148,7 +148,7 @@ const AppTable = () => {
 
     return (
         <div>
-            <div style={{height: "85vh", width: "100%"}}>
+            <div style={{height: "92vh", width: "100%"}}>
                 <ThemeProvider theme={theme}>
                     <DataGrid
                         className='mainTable'

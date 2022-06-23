@@ -17,14 +17,14 @@ const TitleBar = () => {
         titlePath = "";
     } else {
         renderCaret = <FontAwesomeIcon icon={headerIcon} fontSize={"30"} />;
-        titlePath = "settings";
+        titlePath = "/settings";
     }
 
     return (
         <div>
-            <div className='header'>
-                <div className='headerBar drag'>
-                    <Link to={titlePath} style={{display: "flex"}}>
+            <div className='header drag'>
+                <div className='headerBar'>
+                    <Link to={titlePath} style={{display: "flex"}} className='nodrag'>
                         <div style={{paddingRight: 5}}>
                             <div className='settings-icon' style={{display: "flex"}}>
                                 {renderCaret}
@@ -35,7 +35,7 @@ const TitleBar = () => {
                         </div>
                     </Link>
                 </div>
-                <div className='headerSearchBox'>
+                <div className='headerSearchBox nodrag'>
                     <input
                         type='text'
                         placeholder='Username...'
