@@ -33,11 +33,13 @@ export class LogFileReader {
             const line = data;
             if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
+                store.dispatch(resetOverlayTable());
                 Promise.all(players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player}))));
             } else if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
                 players.shift();
                 const playerNames = players[0].split(", ");
+                store.dispatch(resetOverlayTable());
                 Promise.all(
                     playerNames.map(async (name) => {
                         if (name.includes(" ")) name = name.split(" ")[name.split(" ").length - 1].trim();
@@ -67,7 +69,7 @@ export class LogFileReader {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
             if (line.toLowerCase().includes("Can't find a player by the name of ".toLowerCase())) {
-                const command = line.split("[CHAT]")[1].split("Can't find a player by the name of ".toLowerCase())[1].replaceAll("'", "").trim();
+                const command = line.split("[CHAT]")[1].split("Can't find a player by the name of ")[1].replaceAll("'","").trim();
                 const commands = [".c", ".clear", ".h", ".hide", ".s", ".show", ".r"];
                 const command_clean = command.replace(".", "").replace("@", "").replace("-", "").replace(",", "").toLowerCase();
                 if (command === ".c" || command === ".clear") {
