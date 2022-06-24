@@ -50,7 +50,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
     }
 
     try {
-        hypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.USERNAME, playerData.name.replace("-", ""));
+        hypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.UUID, playerData.name.replace("-", ""));
         playerData.hypixelPlayer = hypixelPlayer;
         if (playerData.hypixelPlayer?.uuid === undefined) {
             playerData.nicked = true;
@@ -149,9 +149,9 @@ const PlayerStore = createSlice({
             const {name} = action.payload;
             state.players = state.players.filter((player: Player) => player.name !== name);
         },
-        updatePlayer: (state, action) => {
+        updatePlayer: (state, action: {payload: PlayerHandler}) => {
             const payload: PlayerHandler = action.payload;
-            if (payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
+            if (payload !== undefined && payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
                 const playerPayload: Player = payload.data;
                 const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
                 if (doesPlayerExist !== -1) {
@@ -160,7 +160,7 @@ const PlayerStore = createSlice({
                     state.players.push(playerPayload);
                 }
             } else {
-                if (payload.data !== undefined && payload.status === 400) {
+                if (payload !== undefined && payload.status === 400 && payload.data !== undefined) {
                     const playerPayload: Player = payload.data;
                     const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
                     if (doesPlayerExist !== -1) {
@@ -180,7 +180,7 @@ const PlayerStore = createSlice({
             .addCase(getPlayerHypixelData.fulfilled, (state, action) => {
                 PlayerStore.caseReducers.updatePlayer(state, action);
             })
-            .addCase(getPlayerHypixelData.rejected, (state, action) => {
+            .addCase(getPlayerHypixelData.rejected, (state, action: {payload}) => {
                 PlayerStore.caseReducers.updatePlayer(state, action);
             })
             .addCase(removePlayerFromOverlay.fulfilled, (state, action) => {

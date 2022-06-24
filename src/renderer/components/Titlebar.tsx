@@ -13,10 +13,10 @@ const TitleBar = () => {
     let renderCaret: JSX.Element;
     let titlePath: string;
     if (currentRoute.pathname.includes("settings")) {
-        renderCaret = <FontAwesomeIcon icon={headerIcon} fontSize={"30"} />;
+        renderCaret = <FontAwesomeIcon icon={headerIcon} fontSize={"25"} />;
         titlePath = "";
     } else {
-        renderCaret = <FontAwesomeIcon icon={headerIcon} fontSize={"30"} />;
+        renderCaret = <FontAwesomeIcon icon={headerIcon} fontSize={"25"} />;
         titlePath = "/settings";
     }
 
@@ -26,12 +26,12 @@ const TitleBar = () => {
                 <div className='headerBar'>
                     <Link to={titlePath} style={{display: "flex"}} className='nodrag'>
                         <div style={{paddingRight: 5}}>
-                            <div className='settings-icon' style={{display: "flex"}}>
+                            <div className='settings-icon' style={{display: "flex", paddingLeft: 10}}>
                                 {renderCaret}
                             </div>
                         </div>
                         <div className='underline'>
-                            <header style={{fontSize: 30}}>Seraph</header>
+                            <header style={{fontSize: 25}}>Seraph</header>
                         </div>
                     </Link>
                 </div>

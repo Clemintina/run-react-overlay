@@ -1,5 +1,6 @@
 import "@misc/window/windowPreload";
 import {contextBridge, ipcRenderer} from "electron";
+import {IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
 
 /**
  * Allows access to the **ipcRenderer**
@@ -11,14 +12,8 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
      * @param channel
      * @param args
      */
-    invoke: (channel: string, ...args: any[]) => {
-        const validNoArgs: Array<string> = [""];
-        const validArgs: Array<string> = ["hypixel", "seraph", "mcutils", "selectLogFile", "isFileReadable"];
-        if (validArgs.includes(channel)) {
-            return ipcRenderer.invoke(channel, ...args);
-        } else if (validNoArgs.includes(channel)) {
-            return ipcRenderer.invoke(channel);
-        }
+    invoke: (channel: IPCValidInvokeChannels, ...args: any[]) => {
+        return ipcRenderer.invoke(channel, ...args);
     },
     /**
      * Register **listening** data so the **appWindow** file can be used to send it
@@ -26,11 +21,8 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
      * @param channel
      * @param method
      */
-    on: (channel: string, method: any) => {
-        const validChannels = ["logFileLine"];
-        if (validChannels.includes(channel)) {
-            ipcRenderer.on(channel, method);
-        }
+    on: (channel: IPCValidOnChannels, method: any) => {
+        ipcRenderer.on(channel, method);
     },
     /**
      * Register **sending** data so the **appWindow** file can be used to receive it
@@ -38,11 +30,8 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
      * @param channel
      * @param data
      */
-    send: (channel: string, data: any) => {
-        const validChannels = ["logFileSet", "windowMinimise", "windowMaximise", "windowClose"];
-        if (validChannels.includes(channel)) {
-            ipcRenderer.send(channel, data);
-        }
+    send: (channel: IPCValidSendChannels, data: any) => {
+        ipcRenderer.send(channel, data);
     },
 });
 
@@ -57,7 +46,7 @@ contextBridge.exposeInMainWorld("config", {
      * @param key
      * @param data
      */
-    set: (key: string, data: any) => {
+    set: (key: string, data: object | string | number) => {
         return ipcRenderer.send("configSet", {key, data});
     },
     /**

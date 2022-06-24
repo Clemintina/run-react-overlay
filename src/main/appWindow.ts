@@ -1,4 +1,4 @@
-import {app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent} from "electron";
+import {app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions} from "electron";
 import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
 import path from "path";
 import axios from "axios";
@@ -11,14 +11,19 @@ import {RUNElectronStore, RUNElectronStoreType} from "@renderer/store/ElectronSt
 import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
+import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {ProxyStore} from "@common/utils/Schemas";
+import * as tunnel from "tunnel";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
+/** Overlay Variables */
+const overlayVersion = app.getVersion();
+const userAgent = `Run-Bedwars-Overlay-React-${overlayVersion}`;
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
-const overlayVersion = app.getVersion();
 const playerCache = cacheManager.caching({ttl: 60 * 5, store: "memory"});
 const mojangCache = cacheManager.caching({ttl: 60000, store: "memory"});
 /**
@@ -98,6 +103,7 @@ const registerMainIPC = () => {
     registerElectronStore();
     registerLogCommunications();
     registerMainWindowCommunications();
+    registerExternalApis();
 };
 
 /**
@@ -132,7 +138,6 @@ const registerSeraphIPC = () => {
         } else if (resource === RequestType.USERNAME) {
             const [name] = args as [string];
             const uuid: string | undefined = await mojangCache.get(`mojang:${name}`);
-            console.log(uuid);
             if (uuid !== undefined || name.length == 32) {
                 return await hypixelClient.getClient().player.uuid(uuid ?? name);
             } else {
@@ -279,5 +284,92 @@ const registerMainWindowCommunications = () => {
 
     ipcMain.on("windowMaximise", () => {
         appWindow?.showInactive();
+    });
+};
+
+/**
+ * Register External Inter Process Communications
+ */
+const registerExternalApis = () => {
+    ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, username: string) => {
+        const proxyStore: ProxyStore = electronStore.get("external.proxy");
+        const channelTunnel = tunnel.httpsOverHttp({
+            proxy: {
+                host: proxyStore.hostname,
+                port: Number(proxyStore.port),
+                proxyAuth: proxyStore.username + ":" + proxyStore.password,
+            },
+        });
+        const response = await axios(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "User-Agent": userAgent,
+            },
+            httpsAgent: channelTunnel,
+            proxy: false,
+        });
+        const json_response = JSON.parse(response.data.replaceAll("'", '"').toLowerCase());
+        let json: BoomzaAntisniper;
+        try {
+            json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};
+        } catch (e) {
+            json = {sniper: false, report: 0, error: true, username: username};
+        }
+        return {data: json, status: response.status};
+    });
+
+    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, username: string) => {
+        const apikey = electronStore.get("external.keathiz.apiKey");
+        const proxyStore: ProxyStore = electronStore.get("external.proxy");
+        const channelTunnel = tunnel.httpsOverHttp({
+            proxy: {
+                host: proxyStore.hostname,
+                port: Number(proxyStore.port),
+                proxyAuth: proxyStore.username + ":" + proxyStore.password,
+            },
+        });
+        const response = await axios(`https://api.antisniper.net/overlay/run?name=${username}&key=${apikey}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "User-Agent": userAgent,
+            },
+            httpsAgent: channelTunnel,
+            proxy: false,
+        });
+        return {data: response.data, status: response.status};
+    });
+
+    ipcMain.handle("observer", async (event: IpcMainInvokeEvent, uuid: string) => {
+        const apikey = electronStore.get("external.observer.apiKey");
+        const response = await axios(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "User-Agent": userAgent,
+            },
+        });
+        return {data: response.data, status: response.status};
+    });
+};
+
+const registerOverlayFeatures = () => {
+    ipcMain.handle("notifications", async (event: IpcMainInvokeEvent, message: string, subtitle: string | undefined) => {
+        const options: NotificationConstructorOptions = {
+            title: "Run Overlay",
+            subtitle: subtitle,
+            body: message,
+            silent: false,
+            hasReply: false,
+            timeoutType: "default",
+            urgency: "critical",
+            closeButtonText: "Close notification",
+        };
+        const notif: Notification = new Notification(options);
+        notif.show();
+        setTimeout(() => {
+            notif.close();
+        }, 60000);
     });
 };
