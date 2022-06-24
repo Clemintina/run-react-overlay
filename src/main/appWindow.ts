@@ -132,7 +132,6 @@ const registerSeraphIPC = () => {
         } else if (resource === RequestType.USERNAME) {
             const [name] = args as [string];
             const uuid: string | undefined = await mojangCache.get(`mojang:${name}`);
-            console.log(uuid);
             if (uuid !== undefined || name.length == 32) {
                 return await hypixelClient.getClient().player.uuid(uuid ?? name);
             } else {
