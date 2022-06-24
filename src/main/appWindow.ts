@@ -20,7 +20,7 @@ declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
  */
 const overlayVersion = app.getVersion();
 const playerCache = cacheManager.caching({ttl: 60 * 5, store: "memory"});
-const mojangCache = cacheManager.caching({ttl: 600 * 5, store: "memory"});
+const mojangCache = cacheManager.caching({ttl: 60000, store: "memory"});
 /**
  * Checks if the app is running in Production or Development
  */
@@ -64,7 +64,7 @@ export const createAppWindow = (): BrowserWindow => {
         },
     });
 
-    appWindow.setAlwaysOnTop(true, 'floating');
+    appWindow.setAlwaysOnTop(true, "floating");
     appWindow.setVisibleOnAllWorkspaces(true);
 
     if (!isDevelopment) {
@@ -74,17 +74,17 @@ export const createAppWindow = (): BrowserWindow => {
         }
     }
 
-    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY,{userAgent:'SeraphOverlay'});
+    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, {userAgent: "SeraphOverlay"});
 
     appWindow.on("ready-to-show", () => appWindow.show());
 
     registerMainIPC();
 
-    app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') {
-            app.quit()
+    app.on("window-all-closed", () => {
+        if (process.platform !== "darwin") {
+            app.quit();
         }
-    })
+    });
 
     return appWindow;
 };
@@ -97,6 +97,7 @@ const registerMainIPC = () => {
     registerSeraphIPC();
     registerElectronStore();
     registerLogCommunications();
+    registerMainWindowCommunications();
 };
 
 /**
@@ -131,8 +132,9 @@ const registerSeraphIPC = () => {
         } else if (resource === RequestType.USERNAME) {
             const [name] = args as [string];
             const uuid: string | undefined = await mojangCache.get(`mojang:${name}`);
-            if (uuid !== undefined) {
-                return await hypixelClient.getClient().player.uuid(uuid);
+            console.log(uuid);
+            if (uuid !== undefined || name.length == 32) {
+                return await hypixelClient.getClient().player.uuid(uuid ?? name);
             } else {
                 const res = await hypixelClient.getClient().player.username(name);
                 if (res.uuid !== undefined) {
@@ -248,7 +250,7 @@ const registerLogCommunications = () => {
         logFileTail = null;
 
         if (path !== null) {
-            logFileTail = new TailFile(path.replace('\\','/'));
+            logFileTail = new TailFile(path.replace("\\", "/"));
             await logFileTail.start();
 
             logFileReadline = readline.createInterface({
@@ -257,9 +259,25 @@ const registerLogCommunications = () => {
 
             logFileReadline.on("line", async (line) => {
                 if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
-                console.log(line)
                 appWindow?.webContents.send("logFileLine", line);
             });
         }
+    });
+};
+
+/**
+ * Register Main Window Inter Process Communication
+ */
+const registerMainWindowCommunications = () => {
+    ipcMain.on("windowClose", async () => {
+        appWindow.close();
+    });
+
+    ipcMain.on("windowMinimise", () => {
+        appWindow?.minimize();
+    });
+
+    ipcMain.on("windowMaximise", () => {
+        appWindow?.showInactive();
     });
 };

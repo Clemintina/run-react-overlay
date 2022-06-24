@@ -27,6 +27,7 @@ const cacheState: PlayerStoreThunkObject = {
  * Adds players to the Overlay Table.
  */
 export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
+    console.time(thunkObject.name);
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -49,7 +50,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
     }
 
     try {
-        hypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.UUID, playerData.name.replace("-", ""));
+        hypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.USERNAME, playerData.name.replace("-", ""));
         playerData.hypixelPlayer = hypixelPlayer;
         if (playerData.hypixelPlayer?.uuid === undefined) {
             playerData.nicked = true;
@@ -106,8 +107,9 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
             msTime: Date.now(),
             success: false,
         };
+        runApi.status = 400;
     }
-
+    console.timeEnd(thunkObject.name);
     return {
         status: runApi.status,
         cause: "valid request",

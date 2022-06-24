@@ -9,7 +9,7 @@ export class LogFileReader {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
             if (line.includes("Sending you to")) {
-                await store.dispatch(resetOverlayTable());
+                store.dispatch(resetOverlayTable());
             }
         });
     };
@@ -20,10 +20,10 @@ export class LogFileReader {
             if (line.includes(" has joined (")) {
                 const username = line.split(" [CHAT] ")[1].split(" has joined")[0];
                 const obj: PlayerStoreThunkObject = {name: username};
-                await store.dispatch(getPlayerHypixelData(obj));
+                store.dispatch(getPlayerHypixelData(obj));
             } else if (line.includes(" has quit!")) {
                 const player = line.split(" [CHAT] ")[1].split(" has quit!")[0];
-                await store.dispatch(removePlayerFromOverlay({name: player}));
+                store.dispatch(removePlayerFromOverlay({name: player}));
             }
         });
     };
@@ -33,15 +33,15 @@ export class LogFileReader {
             const line = data;
             if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
-                await Promise.all(players.map(async (player) => await store.dispatch(getPlayerHypixelData({name: player}))));
+                Promise.all(players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player}))));
             } else if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
                 players.shift();
                 const playerNames = players[0].split(", ");
-                await Promise.all(
+                Promise.all(
                     playerNames.map(async (name) => {
                         if (name.includes(" ")) name = name.split(" ")[name.split(" ").length - 1].trim();
-                        await store.dispatch(getPlayerHypixelData({name: name}));
+                        store.dispatch(getPlayerHypixelData({name: name}));
                     }),
                 );
             }
@@ -57,7 +57,7 @@ export class LogFileReader {
                 const configStore = store.getState().configStore;
                 const player: Player | undefined = store.getState().playerStore.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
                 if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
-                    await window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.apiKey, configStore.apiKeyOwner, configStore.runKey, configStore.apiKeyOwner);
+                    window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.apiKey, configStore.apiKeyOwner, configStore.runKey, configStore.apiKeyOwner);
                 }
             }
         });
@@ -66,12 +66,12 @@ export class LogFileReader {
     public startCommandListener = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
-            if (line.toLowerCase().includes("can't find a player by the name of ")) {
-                const command = line.split("[CHAT]")[1].replace("can't find a player by the name of ", "").replaceAll("'", "").trim();
+            if (line.toLowerCase().includes("Can't find a player by the name of ".toLowerCase())) {
+                const command = line.split("[CHAT]")[1].split("Can't find a player by the name of ".toLowerCase())[1].replaceAll("'", "").trim();
                 const commands = [".c", ".clear", ".h", ".hide", ".s", ".show", ".r"];
-                const command_clean = command.replaceAll(".", "").replaceAll("@", "").replaceAll("-", "").replaceAll(",", "").toLowerCase();
+                const command_clean = command.replace(".", "").replace("@", "").replace("-", "").replace(",", "").toLowerCase();
                 if (command === ".c" || command === ".clear") {
-                    await store.dispatch(resetOverlayTable());
+                    store.dispatch(resetOverlayTable());
                     return;
                 } else if (command === ".h" || command === ".hide") {
                     window.ipcRenderer.send("windowMinimise");
@@ -80,7 +80,7 @@ export class LogFileReader {
                     window.ipcRenderer.send("windowMaximise");
                     return;
                 } else if ((command_clean.length <= 16 || command_clean.length == 32 || command_clean.length == 36) && !commands.includes(command)) {
-                    await store.dispatch(getPlayerHypixelData(command_clean));
+                    store.dispatch(getPlayerHypixelData({name: command_clean}));
                     return;
                 }
                 return;
@@ -92,7 +92,6 @@ export class LogFileReader {
         // TODO Add party handling
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
-            console.log(line);
         });
     };
 }
