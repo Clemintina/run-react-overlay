@@ -1,5 +1,6 @@
 import {Blacklist} from "./externalapis/RunApi";
 import {Components, getBedwarsLevelInfo, getPlayerRank} from "@common/zikeji";
+import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
 
 export interface Player {
     name: string;
@@ -9,6 +10,7 @@ export interface Player {
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: Components.Schemas.Guild | null;
     runApi: Blacklist | null;
+    boomza: BoomzaAntisniper | null;
 }
 
 export class PlayerUtils {

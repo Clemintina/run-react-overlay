@@ -25,6 +25,11 @@ export interface Blacklist {
     msTime: number;
 }
 
+export interface BlacklistIPC {
+    status: number;
+    data: Blacklist;
+}
+
 export interface RunApiKey {
     success: boolean;
     code: number;

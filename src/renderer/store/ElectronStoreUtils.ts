@@ -36,6 +36,31 @@ export const RUNElectronStore = Type.Optional(
                 }),
             }),
         ),
+        external: Type.Optional(
+            Type.Object({
+                proxy: Type.Object({
+                    enableProxies: Type.Boolean({
+                        default: true,
+                    }),
+                    hasAuth: Type.Boolean({
+                        default: true,
+                    }),
+                    type: Type.String({
+                        default: "HTTP",
+                    }),
+                    hostname: Type.String({
+                        default: "",
+                    }),
+                    port: Type.String({default: ""}),
+                    username: Type.String({
+                        default: "",
+                    }),
+                    password: Type.String({
+                        default: "",
+                    }),
+                }),
+            }),
+        ),
     }),
 );
 

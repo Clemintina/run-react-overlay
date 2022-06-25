@@ -11,8 +11,8 @@ import {RUNElectronStore, RUNElectronStoreType} from "@renderer/store/ElectronSt
 import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {ProxyStore} from "@common/utils/Schemas";
+import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
+import {ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
 
 // Electron Forge automatically creates these entry points
@@ -101,9 +101,9 @@ const registerMainIPC = () => {
     registerTitlebarIpc(appWindow);
     registerSeraphIPC();
     registerElectronStore();
+    registerExternalApis();
     registerLogCommunications();
     registerMainWindowCommunications();
-    registerExternalApis();
 };
 
 /**
@@ -292,7 +292,10 @@ const registerMainWindowCommunications = () => {
  */
 const registerExternalApis = () => {
     ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, username: string) => {
-        const proxyStore: ProxyStore = electronStore.get("external.proxy");
+        let proxyStore: ProxyStore = electronStore.get("external.proxy");
+        if (proxyStore == undefined) {
+            proxyStore = {enableProxies: true, hasAuth: true, hostname: "p.webshare.io", port: "80", username: "twtmuzmg-rotate", password: "8nhzubu4xg33", type: ProxyType.HTTP};
+        }
         const channelTunnel = tunnel.httpsOverHttp({
             proxy: {
                 host: proxyStore.hostname,

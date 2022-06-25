@@ -1,9 +1,11 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Player} from "@common/utils/PlayerUtils";
-import {PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {Store} from "./index";
+import {Blacklist, BlacklistIPC, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import store, {Store} from "./index";
 import {PlayerHandler} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
+import {useDispatch} from "react-redux";
+import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
 
 export interface PlayerStoreThunkObject {
     name: string;
@@ -16,6 +18,10 @@ export interface PlayerStore {
     players: Array<Player>;
 }
 
+interface PlayerTransfer {
+    player: Player;
+}
+
 const cacheState: PlayerStoreThunkObject = {
     name: "",
     apiKey: "",
@@ -26,7 +32,7 @@ const cacheState: PlayerStoreThunkObject = {
 /**
  * Adds players to the Overlay Table.
  */
-export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, thunkAPI) => {
     console.time(thunkObject.name);
     const playerData: Player = {
         name: thunkObject.name,
@@ -36,6 +42,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         hypixelGuild: null,
         hypixelPlayer: null,
         runApi: null,
+        boomza: null,
     };
     let hypixelPlayer: Components.Schemas.Player;
 
@@ -76,42 +83,15 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
 
     playerData.hypixelPlayer = hypixelPlayer;
 
-    let runApi;
-    if (hypixelPlayer.uuid !== undefined) {
-        runApi = await window.ipcRenderer.invoke("seraph", RunEndpoints.BLACKLIST, hypixelPlayer.uuid, apiKey, apiKeyOwner, runApiKey, apiKeyOwner);
+    if (!playerData.nicked) {
+        const [boomza, runApi] = await Promise.all([getBoomza(playerData), getRunApi(playerData)]);
+        playerData.boomza = boomza;
         playerData.runApi = runApi.data;
-    } else {
-        runApi = {
-            code: 400,
-            data: {
-                annoylist: {tagged: false},
-                blacklist: {
-                    reason: "",
-                    report_type: "",
-                    tagged: false,
-                    timestamp: 0,
-                },
-                bot: {kay: false, tagged: false, unidentified: false},
-                customTag: undefined,
-                migrated: {tagged: false},
-                safelist: {
-                    personal: false,
-                    security_level: 0,
-                    tagged: false,
-                    timesKilled: 0,
-                },
-                statistics: {encounters: 0, threat_level: 0},
-                username: "",
-                uuid: "",
-            },
-            msTime: Date.now(),
-            success: false,
-        };
-        runApi.status = 400;
     }
+
     console.timeEnd(thunkObject.name);
     return {
-        status: runApi.status,
+        status: 200,
         cause: "valid request",
         data: playerData,
     };
@@ -135,6 +115,50 @@ export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () =>
     cacheState.runKey = await window.config.get("run.apiKey");
     return true;
 });
+
+const getBoomza = async (player: Player) => {
+    const boomzaApi: BoomzaAntisniper = await window.ipcRenderer.invoke("boomza", player.name);
+    return new Promise<BoomzaAntisniper>((resolve) => resolve(boomzaApi));
+};
+
+const getRunApi = async (player: Player) => {
+    let runApi: BlacklistIPC;
+    if (player.hypixelPlayer?.uuid !== undefined) {
+        const state = cacheState;
+        runApi = await window.ipcRenderer.invoke("seraph", RunEndpoints.BLACKLIST, player.hypixelPlayer.uuid, state.apiKey, state.apiKeyOwner, state.runKey, state.apiKeyOwner);
+    } else {
+        runApi = {
+            data: {
+                code: 400,
+                data: {
+                    annoylist: {tagged: false},
+                    blacklist: {
+                        reason: "",
+                        report_type: "",
+                        tagged: false,
+                        timestamp: 0,
+                    },
+                    bot: {kay: false, tagged: false, unidentified: false},
+                    customTag: null,
+                    migrated: {tagged: false},
+                    safelist: {
+                        personal: false,
+                        security_level: 0,
+                        tagged: false,
+                        timesKilled: 0,
+                    },
+                    statistics: {encounters: 0, threat_level: 0},
+                    username: "",
+                    uuid: "",
+                },
+                msTime: Date.now(),
+                success: false,
+            },
+            status: 400,
+        };
+    }
+    return new Promise<BlacklistIPC>((resolve) => resolve(runApi));
+};
 
 /**
  * Creates a **slice** which, is specific to storing player data within the overlay.
@@ -177,7 +201,7 @@ const PlayerStore = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getPlayerHypixelData.fulfilled, (state, action) => {
+            .addCase(getPlayerHypixelData.fulfilled, (state, action: {payload: PlayerHandler}) => {
                 PlayerStore.caseReducers.updatePlayer(state, action);
             })
             .addCase(getPlayerHypixelData.rejected, (state, action: {payload}) => {
