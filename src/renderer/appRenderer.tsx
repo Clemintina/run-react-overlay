@@ -32,17 +32,15 @@ reader.startCommandListener();
  * Renders the document in the DOM and creates our React application.
  */
 createRoot(document.getElementById("app")!).render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <div className='mainBody'>
-                <HashRouter basename='/'>
-                    <TitleBar />
-                    <Routes>
-                        <Route path='/' element={<App />}/>
-                        <Route path='/settings' element={<MainSettings />} />
-                    </Routes>
-                </HashRouter>
-            </div>
-        </Provider>
-    </React.StrictMode>,
+    <Provider store={store}>
+        <div className='mainBody'>
+            <HashRouter basename='/'>
+                <TitleBar />
+                <Routes>
+                    <Route path='/' element={<App />} />
+                    <Route path='/settings' element={<MainSettings />} />
+                </Routes>
+            </HashRouter>
+        </div>
+    </Provider>,
 );

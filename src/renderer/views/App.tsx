@@ -1,121 +1,110 @@
 import "@assets/scss/app.scss";
 import React from "react";
 import store from "@renderer/store";
-import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
-// eslint-disable-next-line import/named
-import {DataGrid, GridCellParams, GridColDef} from "@mui/x-data-grid";
 import {useSelector} from "react-redux";
 import {FormatPlayer, Player} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
-import {createTheme, ThemeProvider} from "@mui/material";
+import {createTheme} from "@mui/material";
+import ReactDataGrid from "@inovua/reactdatagrid-community";
+import {faArrowUp} from "@fortawesome/free-solid-svg-icons";
+import {TypeColumn} from "@inovua/reactdatagrid-community/types/TypeColumn";
+
+import "@inovua/reactdatagrid-community/index.css";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const playerFormatter = new FormatPlayer();
 
-const columns: GridColDef<Player>[] = [
+const columns: TypeColumn[] = [
     {
-        field: "id",
-        headerName: "ID",
-        hide: true,
-        valueGetter: (params) => params.id,
+        id: "id",
+        header: "ID",
+        defaultVisible: false,
+        render: ({data}) => data.uuid,
     },
     {
-        field: "star",
-        headerName: "Star",
+        id: "star",
+        header: "Star",
         flex: 1,
-        description: `Player's Bedwars Level`,
-        renderCell: (params) => <Interweave content={playerFormatter.renderStar(params.row)} />,
-        valueGetter: (params) => {
-            if (params.row.nicked) {
-                return getNickedPlayerSortingResponse(params);
-            } else {
-                return params.row.hypixelPlayer?.achievements?.bedwars_level || 0;
-            }
-        },
+        sortName: `Player's Bedwars Level`,
+        render: ({data}) => <Interweave content={playerFormatter.renderStar(data)} />,
     },
     {
-        field: "name",
-        headerName: "Name",
+        id: "name",
+        header: "Name",
         flex: 1,
         minWidth: 200,
-        description: `Name of the Player`,
-        renderCell: (params) => <Interweave content={playerFormatter.renderName(params.row)} />,
-        valueGetter: (params) => {
-            return !params.row.nicked ? params.row.hypixelPlayer?.displayname : params.row.name;
-        },
+        sortName: `Name of the Player`,
+        render: ({data}) => <Interweave content={playerFormatter.renderName(data)} />,
     },
     {
-        field: "tags",
-        headerName: "Tag",
+        id: "tags",
+        header: "Tag",
         flex: 1,
         minWidth: 100,
-        description: `Tags for the Overlay`,
-        renderCell: (params) => <Interweave content={playerFormatter.renderTags(params.row)} />,
+        sortName: `Tags for the Overlay`,
+        render: ({data}) => <Interweave content={playerFormatter.renderTags(data)} />,
         sortable: false,
     },
     {
-        field: "winstreak",
-        headerName: "WS",
+        id: "winstreak",
+        header: "WS",
         flex: 1,
-        description: `Player's Winstreak`,
-        renderCell: (params) => <Interweave content={playerFormatter.renderWinstreak(params.row)} />,
-        valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats?.Bedwars?.winstreak || 0;
-        },
+        sortName: `Player's Winstreak`,
+        render: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)} />,
     },
     {
-        field: "fkdr",
-        headerName: "FKDR",
+        id: "fkdr",
+        header: "FKDR",
         flex: 1,
-        description: `Player's Final Kill to Death Ratio`,
-        renderCell: (params) => <Interweave content={playerFormatter.renderFKDRColour(params.row)} />,
-        valueFormatter: ({value}) => value.toFixed(2),
-        valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars || 0) / (params.row.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars || 0) || 0;
-        },
+        sortName: `Player's Final Kill to Death Ratio`,
+        render: ({data}) => <Interweave content={playerFormatter.renderFKDRColour(data)} />,
     },
     {
-        field: "wlr",
-        headerName: "WLR",
+        id: "wlr",
+        header: "WLR",
         flex: 1,
-        description: `Player's Win to Loss Ratio`,
-        renderCell: (params) => <Interweave content={playerFormatter.renderRatioColour(params.row, "wlr")} />,
-        valueFormatter: ({value}) => value.toFixed(2),
-        valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats?.Bedwars?.wins_bedwars || 0) / (params.row.hypixelPlayer?.stats?.Bedwars?.losses_bedwars || 0) || 0;
-        },
+        sortName: `Player's Win to Loss Ratio`,
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")} />,
     },
     {
-        field: "bblr",
-        headerName: "BBLR",
+        id: "bblr",
+        header: "BBLR",
         flex: 1,
-        description: `Player's Beds Broken to Beds Lost Ratio`,
-        renderCell: (params) => <Interweave content={playerFormatter.renderRatioColour(params.row, "bblr")} />,
-        valueFormatter: ({value}) => value.toFixed(2),
-        valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : (params.row.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars || 0) / (params.row.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars || 0) || 0;
-        },
+        sortName: `Player's Beds Broken to Beds Lost Ratio`,
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
     },
     {
-        field: "wins",
-        headerName: "Wins",
+        id: "wins",
+        header: "Wins",
         flex: 1,
-        description: `Player's Wins`,
-        valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats?.Bedwars?.wins_bedwars || 0;
-        },
+        sortName: `Player's Wins`,
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
     },
     {
-        field: "losses",
-        headerName: "Losses",
+        id: "losses",
+        header: "Losses",
         flex: 1,
-        description: `Player's Losses`,
-        valueGetter: (params) => {
-            return params.row.nicked ? getNickedPlayerSortingResponse(params) : params.row.hypixelPlayer?.stats?.Bedwars?.losses_bedwars || 0;
-        },
+        sortName: `Player's Losses`,
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
     },
 ];
 
-const getNickedPlayerSortingResponse = (params: GridCellParams) => {
+const gridStyle = {minHeight: 550};
+
+const arrowStyle = {
+    display: "block",
+    marginBottom: 2,
+};
+
+const defaultStyle = {
+    display: "inline-block",
+    marginRight: 5,
+    marginLeft: 5,
+    width: 8,
+    verticalAlign: "middle",
+};
+
+const getNickedPlayerSortingResponse = (params) => {
     return 0;
 };
 
@@ -128,43 +117,11 @@ const AppTable = () => {
      * All processing is done in {@link store}
      */
     const players: Array<Player> = useSelector(() => store.getState().playerStore.players);
-    const theme = createTheme({
-        palette: {
-            mode: "dark",
-        },
-        components: {
-            MuiTableCell: {
-                defaultProps: {},
-                styleOverrides: {
-                    root: {
-                        spacing: 4,
-                        padding: 0,
-                        border: "none",
-                    },
-                },
-            },
-        },
-    });
 
     return (
         <div>
-            <div style={{height: "92vh", width: "100%"}}>
-                <ThemeProvider theme={theme}>
-                    <DataGrid
-                        className='mainTable'
-                        getRowId={(row: Player) => row.name}
-                        rows={players}
-                        columns={columns}
-                        hideFooter={true}
-                        rowHeight={33}
-                        disableSelectionOnClick
-                        sx={{
-                            padding: 0,
-                            border: "none",
-                            flex: 1,
-                        }}
-                    />
-                </ThemeProvider>
+            <div style={{height: "92vh", width: "100%", color: "grey"}}>
+                <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' style={gridStyle} />
             </div>
         </div>
     );
