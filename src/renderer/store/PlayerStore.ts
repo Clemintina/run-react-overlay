@@ -1,10 +1,9 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Player} from "@common/utils/PlayerUtils";
-import {Blacklist, BlacklistIPC, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import store, {Store} from "./index";
+import {BlacklistIPC, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {Store} from "./index";
 import {PlayerHandler} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
-import {useDispatch} from "react-redux";
 import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
 
 export interface PlayerStoreThunkObject {
@@ -18,10 +17,6 @@ export interface PlayerStore {
     players: Array<Player>;
 }
 
-interface PlayerTransfer {
-    player: Player;
-}
-
 const cacheState: PlayerStoreThunkObject = {
     name: "",
     apiKey: "",
@@ -33,7 +28,6 @@ const cacheState: PlayerStoreThunkObject = {
  * Adds players to the Overlay Table.
  */
 export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, thunkAPI) => {
-    console.time(thunkObject.name);
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -89,7 +83,6 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         playerData.runApi = runApi.data;
     }
 
-    console.timeEnd(thunkObject.name);
     return {
         status: 200,
         cause: "valid request",

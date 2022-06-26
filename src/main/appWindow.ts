@@ -275,7 +275,9 @@ const registerLogCommunications = () => {
  */
 const registerMainWindowCommunications = () => {
     ipcMain.on("windowClose", async () => {
-        appWindow.close();
+        if (process.platform !== "darwin") {
+            app.quit();
+        }
     });
 
     ipcMain.on("windowMinimise", () => {

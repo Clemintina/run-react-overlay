@@ -1,6 +1,6 @@
 import {Blacklist} from "./externalapis/RunApi";
 import {Components, getBedwarsLevelInfo, getPlayerRank} from "@common/zikeji";
-import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
+import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 
 export interface Player {
     name: string;
@@ -11,6 +11,7 @@ export interface Player {
     hypixelGuild: Components.Schemas.Guild | null;
     runApi: Blacklist | null;
     boomza: BoomzaAntisniper | null;
+    keathiz: KeathizOverlayRun | null;
 }
 
 export class PlayerUtils {
@@ -193,6 +194,54 @@ export class FormatPlayer {
         return renderer;
     };
 
+    public renderKeathizTags = (player: Player) => {
+        let renderer = this.starterDivider;
+        const keathizTagArray: Array<string> = [];
+        if (player.keathiz === null) {
+            keathizTagArray.push(`<span style='color:red;'>ERROR</span>`);
+        } else {
+            const keathizTags: KeathizOverlayRun = player.keathiz;
+            const accountType = keathizTags.player.extra.status;
+            if (keathizTags.success) {
+                if (keathizTags.player.exits.last_10_min >= 1) {
+                    keathizTagArray.push(this.getPlayerTagDivider("E10", MinecraftColours.GOLD.hex));
+                }
+                if (keathizTags.player.queues.total == 0) {
+                    keathizTagArray.push(this.getPlayerTagDivider("ND", MinecraftColours.GOLD.hex));
+                }
+                if (keathizTags.player.queues.last_3_min >= 2) {
+                    const count = keathizTags.player.queues.last_3_min;
+                    keathizTagArray.push(this.getPlayerTagDivider(`Q3-${count}`, MinecraftColours.GOLD.hex));
+                }
+                if (keathizTags.player.queues.last_10_min >= 3) {
+                    const count = keathizTags.player.queues.last_10_min;
+                    keathizTagArray.push(this.getPlayerTagDivider(`Q10-${count}`, MinecraftColours.GOLD.hex));
+                }
+                if (keathizTags.player.queues.last_30_min >= 6) {
+                    const count = keathizTags.player.queues.last_30_min;
+                    keathizTagArray.push(this.getPlayerTagDivider(`Q30-${count}`, MinecraftColours.GOLD.hex));
+                }
+                if (keathizTags.player.queues.last_24_hours >= 75) {
+                    keathizTagArray.push(this.getPlayerTagDivider("Q24", MinecraftColours.GOLD.hex));
+                }
+                if (keathizTags.player.queues.consecutive_queue_checks.weighted["1_min_requeue"] >= 50) {
+                    keathizTagArray.push(this.getPlayerTagDivider("Z", MinecraftColours.RED.hex));
+                }
+                if (keathizTags.player.queues.consecutive_queue_checks.last_30_queues["1_min_requeue"] >= 15 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["1_min_requeue"] >= 5 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["2_min_requeue"] >= 6 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["3_min_requeue"] >= 8) {
+                    keathizTagArray.push(this.getPlayerTagDivider("C", MinecraftColours.RED.hex));
+                }
+                if ((keathizTags.player.queues.last_3_min >= 2 && accountType === "mojang" && (player?.hypixelPlayer?.achievements?.bedwars_level ?? 0) <= 12) || accountType === "mojang") {
+                    keathizTagArray.push(this.getPlayerTagDivider("DODGE", MinecraftColours.DARK_RED.hex));
+                }
+            } else {
+                keathizTagArray.push(this.getPlayerTagDivider("FAILED", MinecraftColours.DARK_RED.hex));
+            }
+        }
+        renderer += keathizTagArray.toString();
+        renderer += `</div>`;
+        return renderer;
+    };
+
     private getPlayerTagDivider = (tag: string | number | undefined, colour: string, player?: Player) => {
         let htmlResponse = `<div>`,
             styleString = `color: ${colour}; padding-left: 1px;`;
@@ -217,89 +266,7 @@ export class FormatPlayer {
     };
 }
 
-export class PlayerHypixelUtils {
-    public getPlayerRank: ({player, formatting}: {player: Player; formatting?: boolean}) => {
-        colourHex: string;
-        rankFormatted: string;
-        rankClean: string;
-        htmlCode: string;
-        rankColourHex: MinecraftColoursImpl;
-    } = ({player, formatting = false}: {player: Player; formatting?: boolean}) => {
-        const hypixelPlayer = player.hypixelPlayer;
-        let rank, htmlCode, plusColour, rankColourHex;
-        if (hypixelPlayer !== null) {
-            if (hypixelPlayer.rank && hypixelPlayer.rank !== "NORMAL") {
-                switch (hypixelPlayer.rank) {
-                    case "MODERATOR":
-                        rank = "MOD";
-                        break;
-                    case "YOUTUBER":
-                        rank = "Youtuber";
-                        break;
-                    case "HELPER":
-                        rank = "Helper";
-                        break;
-                    case "ADMIN":
-                        rank = "Admin";
-                        break;
-                }
-            } else
-                switch (hypixelPlayer.newPackageRank) {
-                    case "MVP_PLUS":
-                        rank = hypixelPlayer.monthlyPackageRank && hypixelPlayer.monthlyPackageRank === "SUPERSTAR" ? "MVP++" : "MVP+";
-                        break;
-                    case "MVP":
-                        rank = "MVP";
-                        rankColourHex = MinecraftColours.AQUA;
-                        break;
-                    case "VIP_PLUS":
-                        rank = "VIP+";
-                        rankColourHex = MinecraftColours.GREEN;
-                        break;
-                    case "VIP":
-                        rank = "VIP";
-                        rankColourHex = MinecraftColours.GREEN;
-                        break;
-                    default:
-                        rank = "";
-                        rankColourHex = MinecraftColours.GREY;
-                        break;
-                }
-
-            if (hypixelPlayer.rankPlusColor !== undefined) plusColour = hypixelPlayer.rankPlusColor;
-
-            if (plusColour !== undefined) {
-                if (hypixelPlayer.monthlyPackageRank === "SUPERSTAR") {
-                    // language=HTML
-                    htmlCode = `
-                        <div style='color: #${MinecraftColours.GOLD.hex}'>[MVP<span style='color: #${MinecraftColours[plusColour].hex}'>++</span><span style='color: #${MinecraftColours.GOLD.hex}'>]</span></div>`;
-                    rankColourHex = MinecraftColours.GOLD;
-                } else if (hypixelPlayer.newPackageRank === "MVP_PLUS") {
-                    // language=HTML
-                    htmlCode = `
-                        <div style='color: #${MinecraftColours.AQUA.hex}'>[MVP<span style='color: #${MinecraftColours[plusColour].hex}'>+</span><span style='color: #${MinecraftColours.AQUA.hex};'>]</span></div>`;
-                    rankColourHex = MinecraftColours.AQUA;
-                }
-            }
-
-            return {
-                rankClean: rank,
-                rankFormatted: `[${rank}]`,
-                colourHex: "",
-                htmlCode: htmlCode,
-                rankColourHex: rankColourHex,
-            };
-        } else {
-            return {
-                rankClean: "",
-                rankFormatted: ``,
-                colourHex: "",
-                htmlCode: "",
-                rankColourHex: "",
-            };
-        }
-    };
-}
+export class PlayerHypixelUtils {}
 
 export interface MinecraftColoursImpl {
     [colour: string]: {colour: string; hex: string};

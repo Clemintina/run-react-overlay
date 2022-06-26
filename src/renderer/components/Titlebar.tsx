@@ -2,7 +2,7 @@ import "@assets/scss/titlebar.scss";
 import store from "@renderer/store";
 import {Link, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBars as headerIcon} from "@fortawesome/free-solid-svg-icons";
+import {faBars as headerIcon, faWindowMinimize, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
 
@@ -51,6 +51,28 @@ const TitleBar = () => {
                             }
                         }}
                     />
+                </div>
+                <div>
+                    <span>
+                        <button
+                            className='headerButton'
+                            onClick={(event) => {
+                                window.ipcRenderer.send("windowMinimise");
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faWindowMinimize}></FontAwesomeIcon>
+                        </button>
+                    </span>
+                    <span>
+                        <button
+                            className='headerButton'
+                            onClick={(event) => {
+                                window.ipcRenderer.send("windowClose");
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faWindowClose}></FontAwesomeIcon>
+                        </button>
+                    </span>
                 </div>
             </div>
             <div className='error'>
