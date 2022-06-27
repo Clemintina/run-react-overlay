@@ -38,27 +38,37 @@ export const RUNElectronStore = Type.Optional(
         ),
         external: Type.Optional(
             Type.Object({
-                proxy: Type.Object({
-                    enableProxies: Type.Boolean({
-                        default: true,
+                proxy: Type.Optional(
+                    Type.Object({
+                        enableProxies: Type.Boolean({
+                            default: true,
+                        }),
+                        hasAuth: Type.Boolean({
+                            default: true,
+                        }),
+                        type: Type.String({
+                            default: "HTTP",
+                        }),
+                        hostname: Type.String({
+                            default: "",
+                        }),
+                        port: Type.String({default: ""}),
+                        username: Type.String({
+                            default: "",
+                        }),
+                        password: Type.String({
+                            default: "",
+                        }),
                     }),
-                    hasAuth: Type.Boolean({
-                        default: true,
+                ),
+                keathiz: Type.Optional(
+                    Type.Object({
+                        apiKey: Type.String({
+                            default: "",
+                            description: "Keathiz Api Key for https://api.antisniper.net",
+                        }),
                     }),
-                    type: Type.String({
-                        default: "HTTP",
-                    }),
-                    hostname: Type.String({
-                        default: "",
-                    }),
-                    port: Type.String({default: ""}),
-                    username: Type.String({
-                        default: "",
-                    }),
-                    password: Type.String({
-                        default: "",
-                    }),
-                }),
+                ),
             }),
         ),
     }),

@@ -45,6 +45,19 @@ electronStore.set("run.overlay.version", app.getVersion());
 let logFileTail: TailFile | null = null;
 let logFileReadline: readline.Interface | null = null;
 let appWindow: BrowserWindow;
+/**
+ * Axios HTTP Client
+ */
+const axiosClient = axios.create({
+    headers: {
+        "Content-Type": "application/json",
+        "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+        "Run-API-Version": overlayVersion,
+    },
+    timeout: 5000,
+    timeoutErrorMessage: "Unable to communicate with the server",
+    validateStatus: () => true,
+});
 
 /**
  * Create Application Window
@@ -169,14 +182,7 @@ const registerSeraphIPC = () => {
                 break;
         }
         try {
-            const response = await axios(url, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
-                    "Run-API-Version": overlayVersion,
-                },
-            });
+            const response = await axiosClient(url);
             return {data: response.data, status: response.status};
         } catch (e) {
             return {data: null, status: 400};
@@ -185,7 +191,7 @@ const registerSeraphIPC = () => {
 
     ipcMain.handle("seraph", async (event: IpcMainInvokeEvent, endpoint: RunEndpoints, uuid: string, hypixelApiKey: string, hypixelApiKeyOwner: string, runApiKey: string, overlayUuid: string) => {
         if (endpoint === RunEndpoints.KEY) {
-            const response = await axios(`https://antisniper.seraph.si/api/v3/key`, {
+            const response = await axiosClient(`https://antisniper.seraph.si/api/v3/key`, {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
@@ -197,7 +203,7 @@ const registerSeraphIPC = () => {
             });
             return {data: response.data, status: response.status};
         } else {
-            const response = await axios(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
+            const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
@@ -211,6 +217,11 @@ const registerSeraphIPC = () => {
             });
             return {data: response.data, status: response.status};
         }
+    });
+
+    ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, uuid: string) => {
+        const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`);
+        return {status: response.status, data: response.data};
     });
 };
 
@@ -294,24 +305,11 @@ const registerMainWindowCommunications = () => {
  */
 const registerExternalApis = () => {
     ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, username: string) => {
-        let proxyStore: ProxyStore = electronStore.get("external.proxy");
-        if (proxyStore == undefined) {
-            proxyStore = {enableProxies: true, hasAuth: true, hostname: "p.webshare.io", port: "80", username: "twtmuzmg-rotate", password: "8nhzubu4xg33", type: ProxyType.HTTP};
-        }
-        const channelTunnel = tunnel.httpsOverHttp({
-            proxy: {
-                host: proxyStore.hostname,
-                port: Number(proxyStore.port),
-                proxyAuth: proxyStore.username + ":" + proxyStore.password,
-            },
-        });
-        const response = await axios(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
+        const response = await axiosClient(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
             headers: {
-                "Content-Type": "application/json",
                 Accept: "application/json",
-                "User-Agent": userAgent,
             },
-            httpsAgent: channelTunnel,
+            httpsAgent: getProxyChannel(),
             proxy: false,
         });
         const json_response = JSON.parse(response.data.replaceAll("'", '"').toLowerCase());
@@ -324,23 +322,13 @@ const registerExternalApis = () => {
         return {data: json, status: response.status};
     });
 
-    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, username: string) => {
+    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, uuid: string) => {
         const apikey = electronStore.get("external.keathiz.apiKey");
-        const proxyStore: ProxyStore = electronStore.get("external.proxy");
-        const channelTunnel = tunnel.httpsOverHttp({
-            proxy: {
-                host: proxyStore.hostname,
-                port: Number(proxyStore.port),
-                proxyAuth: proxyStore.username + ":" + proxyStore.password,
-            },
-        });
-        const response = await axios(`https://api.antisniper.net/overlay/run?name=${username}&key=${apikey}`, {
+        const response = await axiosClient(`https://api.antisniper.net/overlay/run?uuid=${uuid}&key=${apikey}`, {
             headers: {
-                "Content-Type": "application/json",
                 Accept: "application/json",
-                "User-Agent": userAgent,
             },
-            httpsAgent: channelTunnel,
+            httpsAgent: getProxyChannel(),
             proxy: false,
         });
         return {data: response.data, status: response.status};
@@ -348,11 +336,18 @@ const registerExternalApis = () => {
 
     ipcMain.handle("observer", async (event: IpcMainInvokeEvent, uuid: string) => {
         const apikey = electronStore.get("external.observer.apiKey");
-        const response = await axios(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
+        const response = await axiosClient(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
             headers: {
-                "Content-Type": "application/json",
                 Accept: "application/json",
-                "User-Agent": userAgent,
+            },
+        });
+        return {data: response.data, status: response.status};
+    });
+
+    ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, uuid: string) => {
+        const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${uuid}`, {
+            headers: {
+                Accept: "application/json",
             },
         });
         return {data: response.data, status: response.status};
@@ -376,5 +371,19 @@ const registerOverlayFeatures = () => {
         setTimeout(() => {
             notif.close();
         }, 60000);
+    });
+};
+
+const getProxyChannel = () => {
+    let proxyStore: ProxyStore = electronStore.get("external.proxy");
+    if (proxyStore == undefined) {
+        proxyStore = {enableProxies: true, hasAuth: true, hostname: "p.webshare.io", port: "80", username: "twtmuzmg-rotate", password: "8nhzubu4xg33", type: ProxyType.HTTP};
+    }
+    return tunnel.httpsOverHttp({
+        proxy: {
+            host: proxyStore.hostname,
+            port: Number(proxyStore.port),
+            proxyAuth: proxyStore.username + ":" + proxyStore.password,
+        },
     });
 };

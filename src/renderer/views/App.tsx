@@ -4,13 +4,10 @@ import store from "@renderer/store";
 import {useSelector} from "react-redux";
 import {FormatPlayer, Player} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
-import {createTheme} from "@mui/material";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
-import {faArrowUp} from "@fortawesome/free-solid-svg-icons";
 import {TypeColumn} from "@inovua/reactdatagrid-community/types/TypeColumn";
 
 import "@inovua/reactdatagrid-community/index.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const playerFormatter = new FormatPlayer();
 
@@ -19,6 +16,7 @@ const columns: TypeColumn[] = [
         id: "id",
         header: "ID",
         defaultVisible: false,
+        showInContextMenu: false,
         render: ({data}) => data.uuid,
     },
     {
@@ -89,19 +87,8 @@ const columns: TypeColumn[] = [
     },
 ];
 
-const gridStyle = {minHeight: 550};
-
-const arrowStyle = {
-    display: "block",
-    marginBottom: 2,
-};
-
-const defaultStyle = {
-    display: "inline-block",
-    marginRight: 5,
-    marginLeft: 5,
-    width: 8,
-    verticalAlign: "middle",
+const gridStyle = {
+    minHeight: 550,
 };
 
 const getNickedPlayerSortingResponse = (params) => {
@@ -118,10 +105,27 @@ const AppTable = () => {
      */
     const players: Array<Player> = useSelector(() => store.getState().playerStore.players);
 
+    const renderRowContextMenu = (menuProps, {rowProps}) => {
+        menuProps.autoDismiss = true;
+        menuProps.items = [
+            {
+                label: "Hi " + rowProps.rowIndex,
+            },
+        ];
+    };
+
+    const renderColumnContextMenu = (menuProps, rowProps) => {
+        menuProps.items = [
+            {
+                label: "Row " + rowProps.rowIndex,
+            },
+        ];
+    };
+
     return (
         <div>
             <div style={{height: "92vh", width: "100%", color: "grey"}}>
-                <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' style={gridStyle} />
+                <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' style={gridStyle} showColumnMenuTool={false} renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false} showColumnMenuToolOnHover={true} />
             </div>
         </div>
     );

@@ -2,7 +2,7 @@ import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import React from "react";
 import store from "@renderer/store";
-import {apiKeyValidator} from "@renderer/store/ConfigStore";
+import {apiKeyValidator, keathizApiKeyValidator} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
@@ -28,7 +28,19 @@ const MainSettings = () => {
                 {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
             </div>
             <div className='mainSettingsOption'>
-                <div className='underline'> Overlay Logs:</div>
+                <div className='underline'>Keathiz Key:</div>
+                <input
+                    type='text'
+                    onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                            store.dispatch(keathizApiKeyValidator(event.currentTarget.value));
+                        }
+                    }}
+                />
+                {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
+            </div>
+            <div className='mainSettingsOption'>
+                <div className='underline'>Overlay Logs:</div>
                 <button
                     onClick={async () => {
                         const path = await window.ipcRenderer.invoke("selectLogFile");

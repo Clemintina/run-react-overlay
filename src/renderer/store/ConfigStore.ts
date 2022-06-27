@@ -20,6 +20,9 @@ interface InitScript {
             logPath: string;
         };
         runKey: string;
+        external: {
+            keathiz: {apiKey: string};
+        };
     };
 }
 
@@ -126,18 +129,27 @@ export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", a
     return await window.ipcRenderer.invoke("hypixel", hypixelApiKey, RequestType.KEY);
 });
 /**
+ * Validates the Keathiz API Key
+ */
+export const keathizApiKeyValidator = createAsyncThunk("ConfigStore/keathizApiKeyValidator", async (keathizKey: string) => {
+    return await window.config.set("external.keathiz.apiKey", keathizKey);
+});
+/**
  * Called when the Overlay loads, **DO NOT PUT RESOURCE INTENSIVE METHODS IN THIS FUNCTION**
  */
 export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const hypixel = {key: "", owner: ""};
     const overlay = {logPath: ""};
+    const external = {keathiz: {apiKey: ""}};
 
     const runKey = await window.config.get("run.apiKey");
     hypixel.key = await window.config.get("hypixel.apiKey");
     hypixel.owner = await window.config.get("hypixel.apiKeyOwner");
     overlay.logPath = await window.config.get("overlay.logPath");
 
-    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay}};
+    external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
+
+    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external}};
     return res;
 });
 

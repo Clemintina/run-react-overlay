@@ -25,11 +25,6 @@ export interface Blacklist {
     msTime: number;
 }
 
-export interface BlacklistIPC {
-    status: number;
-    data: Blacklist;
-}
-
 export interface RunApiKey {
     success: boolean;
     code: number;
@@ -67,4 +62,41 @@ export enum RequestType {
     USERNAME = "player.username",
     RECENT_GAMES = "player.games",
     GUILD_PLAYER = "guild.player",
+}
+
+export interface LunarCosmetic {
+    id: number;
+    name: string;
+    url: string;
+}
+
+export interface LunarAPIResponse {
+    success: boolean;
+    code: number;
+    player: {
+        uuid: string;
+        online: boolean;
+        status: string;
+        cosmetics: {count: number; activeCosmetics: LunarCosmetic[]; cachedCosmetics: LunarCosmetic[]};
+        lunarPlus: {
+            premium: boolean;
+            clothCloak: boolean;
+            plusColour: number;
+        };
+        rank: {
+            unknownBooleanB: boolean;
+            unknownBooleanC: boolean;
+        };
+        unknown: {
+            unknownBooleanA: boolean;
+            unknownBooleanB: boolean;
+            unknownBooleanC: boolean;
+        };
+    };
+    msTime: number;
+}
+
+export interface IPCResponse<T> {
+    status: number;
+    data: T;
 }

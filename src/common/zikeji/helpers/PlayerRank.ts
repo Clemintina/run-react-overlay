@@ -125,7 +125,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.GREEN,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.GREEN],
                 staff: false,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>[VIP]</div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>[VIP]</span>`,
             };
             break;
         case PlayerRanks.VIP_PLUS:
@@ -138,7 +138,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.GREEN,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.GREEN],
                 staff: false,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>[VIP<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GOLD]}'>+</span><span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>]</span></div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>[VIP<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GOLD]}'>+</span><span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>]</span></span>`,
             };
             break;
         case PlayerRanks.MVP:
@@ -151,7 +151,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.AQUA,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.AQUA],
                 staff: false,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.AQUA]}'>[MVP]</div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.AQUA]}'>[MVP]</span>`,
             };
             break;
         case PlayerRanks.MVP_PLUS:
@@ -164,7 +164,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.AQUA,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.AQUA],
                 staff: false,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.AQUA]}'>[MVP<span style='color: #${MinecraftColourAsHex[MinecraftFormatting[player.rankPlusColor != undefined ? player.rankPlusColor : "RED"]]}'>+</span><span style='color: #${MinecraftColourAsHex[MinecraftFormatting.AQUA]};'>]</span></div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.AQUA]}'>[MVP<span style='color: #${MinecraftColourAsHex[MinecraftFormatting[player.rankPlusColor != undefined ? player.rankPlusColor : "RED"]]}'>+</span><span style='color: #${MinecraftColourAsHex[MinecraftFormatting.AQUA]};'>]</span></span>`,
             };
             break;
         case PlayerRanks.SUPERSTAR:
@@ -177,9 +177,9 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.GOLD,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting[player.monthlyRankColor != undefined ? player.monthlyRankColor : "GOLD"]],
                 staff: false,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting[player.monthlyRankColor != undefined ? player.monthlyRankColor : "GOLD"]]}'>[MVP<span style='color: #${MinecraftColourAsHex[MinecraftFormatting[player.rankPlusColor != undefined ? player.rankPlusColor : "RED"]]}'>++</span><span style='color: #${
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting[player.monthlyRankColor != undefined ? player.monthlyRankColor : "GOLD"]]}'>[MVP<span style='color: #${MinecraftColourAsHex[MinecraftFormatting[player.rankPlusColor != undefined ? player.rankPlusColor : "RED"]]}'>++</span><span style='color: #${
                     MinecraftColourAsHex[MinecraftFormatting[player.monthlyRankColor != undefined ? player.monthlyRankColor : "GOLD"]]
-                };'>]</span></div>`,
+                };'>]</span></span>`,
             };
             break;
         case PlayerRanks.YOUTUBER:
@@ -192,7 +192,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.RED,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.RED],
                 staff: false,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.RED]}'>[<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.WHITE]}'>YOUTUBE</span><span style='color: #${MinecraftColourAsHex[MinecraftFormatting.RED]};'>]</span></div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.RED]}'>[<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.WHITE]}'>YOUTUBE</span><span style='color: #${MinecraftColourAsHex[MinecraftFormatting.RED]};'>]</span></span>`,
             };
             break;
         case PlayerRanks.JR_HELPER:
@@ -205,7 +205,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.BLUE,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.BLUE],
                 staff: true,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.BLUE]}'>[JR HELPER]</span></div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.BLUE]}'>[JR HELPER]</span></span>`,
             };
             break;
         case PlayerRanks.HELPER:
@@ -218,7 +218,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.BLUE,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.BLUE],
                 staff: true,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.BLUE]}'>[JR HELPER]</span></div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.BLUE]}'>[JR HELPER]</span></span>`,
             };
             break;
         case PlayerRanks.MODERATOR:
@@ -231,7 +231,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.DARK_GREEN,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.DARK_GREEN],
                 staff: true,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>[MOD]</span></div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>[MOD]</span></span>`,
             };
             break;
         case PlayerRanks.ADMIN:
@@ -244,7 +244,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.RED,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.RED],
                 staff: true,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.RED]}'>[ADMIN]</span></div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.RED]}'>[ADMIN]</span></span>`,
             };
             break;
         default:

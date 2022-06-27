@@ -1,6 +1,7 @@
-import {Blacklist} from "./externalapis/RunApi";
+import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
 import {Components, getBedwarsLevelInfo, getPlayerRank} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 
 export interface Player {
     name: string;
@@ -9,9 +10,13 @@ export interface Player {
     bot: boolean | null;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: Components.Schemas.Guild | null;
-    runApi: Blacklist | null;
-    boomza: BoomzaAntisniper | null;
-    keathiz: KeathizOverlayRun | null;
+    sources: {
+        runApi: Blacklist | null;
+        boomza?: IPCResponse<BoomzaAntisniper> | null;
+        keathiz?: IPCResponse<KeathizOverlayRun> | null;
+        lunar?: IPCResponse<LunarAPIResponse> | null;
+        playerDb?: IPCResponse<PlayerDB> | null;
+    };
 }
 
 export class PlayerUtils {
@@ -33,21 +38,37 @@ export class PlayerUtils {
 }
 
 export class FormatPlayer {
-    private starterDivider = `<div style='margin: 0 auto; justify-content: center; display: flex;'>`;
+    private starterDivider = `<div style='margin: 0 auto;  display: flex;'>`;
     private utils = new PlayerHypixelUtils();
 
     public renderTags = (player: Player) => {
         let tagRenderer: string = this.starterDivider;
-        if (player.runApi != null) {
-            const runApi = player.runApi.data;
+        if (player.sources.runApi != null) {
+            const runApi = player.sources.runApi.data;
             if (runApi.blacklist.tagged) {
                 tagRenderer += this.getPlayerTagDivider("BLACKLISTED", "red", player);
+            } else if (runApi.bot.tagged) {
+                tagRenderer += this.getPlayerTagDivider("BOT", "green", player);
             } else {
                 if (runApi.migrated.tagged) {
                     tagRenderer += this.getPlayerTagDivider("M", "green");
                 }
                 if (runApi.safelist.tagged) {
                     tagRenderer += this.getPlayerTagDivider("S", "green");
+                }
+                if (runApi.annoylist.tagged) {
+                    tagRenderer += this.getPlayerTagDivider("A", "red");
+                }
+                if (runApi.statistics.encounters != 0) {
+                    tagRenderer += this.getPlayerTagDivider("E", "red");
+                }
+
+                if (this.renderNameChangeTag(player) <= 10) {
+                    tagRenderer += this.getPlayerTagDivider("NC", "#FF55FF");
+                }
+
+                if (player.sources.keathiz != null) {
+                    tagRenderer += this.renderKeathizTags(player);
                 }
             }
         } else {
@@ -61,7 +82,7 @@ export class FormatPlayer {
         let starRenderer: string = this.starterDivider;
         if (!player.nicked && player.hypixelPlayer !== null) {
             const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
-            if (!player.runApi?.data.blacklist.tagged) {
+            if (!player.sources.runApi?.data.blacklist.tagged) {
                 starRenderer += this.getPlayerTagDivider(bwLevel.level, "#" + bwLevel.prestigeColourHex);
             } else {
                 starRenderer += this.getPlayerTagDivider(bwLevel.level || 0, "red", player);
@@ -76,16 +97,26 @@ export class FormatPlayer {
     public renderName = (player: Player) => {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
-            if (!player.runApi?.data.blacklist.tagged) {
+            nameRenderer += `<span class='name-span'>`;
+            if (player.sources.lunar !== undefined && player.sources.lunar !== null) {
+                if (player.sources.lunar.data.player.online) {
+                    nameRenderer += `<span class='lunar-client-image'>
+                                       <img style='vertical-align:middle;' width='25px' height='25px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag'/>
+                                     </span>`;
+                }
+            }
+
+            if (!player.sources.runApi?.data.blacklist.tagged) {
                 if (player.hypixelPlayer !== null) {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
-                    nameRenderer += `${rank.rankHtml}&nbsp <span style='color: #${rank.colourHex}'>${player.hypixelPlayer.displayname}</span>`;
+                    nameRenderer += `${rank.rankHtml}&nbsp <span style='color: #${rank.colourHex};'>${player.hypixelPlayer.displayname}</span>`;
                 } else {
                     nameRenderer += ``;
                 }
             } else {
                 nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname, "red", player);
             }
+            nameRenderer += `</span>`;
         } else {
             nameRenderer = this.getPlayerTagDivider(player.name, "red", player);
         }
@@ -97,7 +128,7 @@ export class FormatPlayer {
         let renderer: string = this.starterDivider;
         if (!player.nicked) {
             const playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak || 0;
-            if (player.runApi?.data.blacklist.tagged) {
+            if (player.sources.runApi?.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, "red", player);
             } else if (playerValue === 0) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray", player);
@@ -134,7 +165,7 @@ export class FormatPlayer {
             } else if (route.toLowerCase() === "bblr") {
                 playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars || 0);
             }
-            if (player.runApi?.data.blacklist.tagged) {
+            if (player.sources.runApi?.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, "red", player);
             } else if (playerValue === 1) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray", player);
@@ -166,7 +197,7 @@ export class FormatPlayer {
         let renderer = this.starterDivider;
         if (!player.nicked) {
             const playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0);
-            if (player.runApi?.data.blacklist.tagged) {
+            if (player.sources.runApi?.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, "red");
             } else if (playerValue === 1) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray");
@@ -197,63 +228,97 @@ export class FormatPlayer {
     public renderKeathizTags = (player: Player) => {
         let renderer = this.starterDivider;
         const keathizTagArray: Array<string> = [];
-        if (player.keathiz === null) {
+        if (player.sources.keathiz === null || player.sources.keathiz === undefined) {
             keathizTagArray.push(`<span style='color:red;'>ERROR</span>`);
         } else {
-            const keathizTags: KeathizOverlayRun = player.keathiz;
-            const accountType = keathizTags.player.extra.status;
-            if (keathizTags.success) {
+            if (player.sources.keathiz.data.success && player.sources.keathiz.status === 200) {
+                const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
+                const accountType = keathizTags.player.extra.status;
                 if (keathizTags.player.exits.last_10_min >= 1) {
-                    keathizTagArray.push(this.getPlayerTagDivider("E10", MinecraftColours.GOLD.hex));
+                    keathizTagArray.push(this.getPlayerTagDivider("E10", `#${MinecraftColours.GOLD.hex}`));
                 }
                 if (keathizTags.player.queues.total == 0) {
-                    keathizTagArray.push(this.getPlayerTagDivider("ND", MinecraftColours.GOLD.hex));
+                    keathizTagArray.push(this.getPlayerTagDivider("ND", `#${MinecraftColours.GOLD.hex}`));
                 }
                 if (keathizTags.player.queues.last_3_min >= 2) {
                     const count = keathizTags.player.queues.last_3_min;
-                    keathizTagArray.push(this.getPlayerTagDivider(`Q3-${count}`, MinecraftColours.GOLD.hex));
+                    keathizTagArray.push(this.getPlayerTagDivider(`Q3-${count}`, `#${MinecraftColours.GOLD.hex}`));
                 }
                 if (keathizTags.player.queues.last_10_min >= 3) {
                     const count = keathizTags.player.queues.last_10_min;
-                    keathizTagArray.push(this.getPlayerTagDivider(`Q10-${count}`, MinecraftColours.GOLD.hex));
+                    keathizTagArray.push(this.getPlayerTagDivider(`Q10-${count}`, `#${MinecraftColours.GOLD.hex}`));
                 }
                 if (keathizTags.player.queues.last_30_min >= 6) {
                     const count = keathizTags.player.queues.last_30_min;
-                    keathizTagArray.push(this.getPlayerTagDivider(`Q30-${count}`, MinecraftColours.GOLD.hex));
+                    keathizTagArray.push(this.getPlayerTagDivider(`Q30-${count}`, `#${MinecraftColours.GOLD.hex}`));
                 }
                 if (keathizTags.player.queues.last_24_hours >= 75) {
-                    keathizTagArray.push(this.getPlayerTagDivider("Q24", MinecraftColours.GOLD.hex));
+                    keathizTagArray.push(this.getPlayerTagDivider("Q24", `#${MinecraftColours.GOLD.hex}`));
                 }
                 if (keathizTags.player.queues.consecutive_queue_checks.weighted["1_min_requeue"] >= 50) {
-                    keathizTagArray.push(this.getPlayerTagDivider("Z", MinecraftColours.RED.hex));
+                    keathizTagArray.push(this.getPlayerTagDivider("Z", `#${MinecraftColours.RED.hex}`));
                 }
                 if (keathizTags.player.queues.consecutive_queue_checks.last_30_queues["1_min_requeue"] >= 15 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["1_min_requeue"] >= 5 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["2_min_requeue"] >= 6 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["3_min_requeue"] >= 8) {
-                    keathizTagArray.push(this.getPlayerTagDivider("C", MinecraftColours.RED.hex));
+                    keathizTagArray.push(this.getPlayerTagDivider("C", `#${MinecraftColours.RED.hex}`));
                 }
-                if ((keathizTags.player.queues.last_3_min >= 2 && accountType === "mojang" && (player?.hypixelPlayer?.achievements?.bedwars_level ?? 0) <= 12) || accountType === "mojang") {
-                    keathizTagArray.push(this.getPlayerTagDivider("DODGE", MinecraftColours.DARK_RED.hex));
+                if ((keathizTags.player.queues.last_3_min >= 2 && accountType === "mojang" && (player?.hypixelPlayer?.achievements?.bedwars_level ?? 0) <= 12 && keathizTagArray.length > 6) || accountType === "mojang") {
+                    keathizTagArray.push(this.getPlayerTagDivider("DODGE", `#${MinecraftColours.DARK_RED.hex}`));
                 }
             } else {
-                keathizTagArray.push(this.getPlayerTagDivider("FAILED", MinecraftColours.DARK_RED.hex));
+                keathizTagArray.push(this.getPlayerTagDivider("FAILED", `#${MinecraftColours.DARK_RED.hex}`));
             }
         }
-        renderer += keathizTagArray.toString();
+        for (const tag of keathizTagArray) {
+            renderer += tag;
+        }
         renderer += `</div>`;
         return renderer;
     };
 
-    private getPlayerTagDivider = (tag: string | number | undefined, colour: string, player?: Player) => {
-        let htmlResponse = `<div>`,
-            styleString = `color: ${colour}; padding-left: 1px;`;
+    private renderNameChangeTag = (player: Player) => {
+        if (player.sources.playerDb !== undefined && player.sources.playerDb !== null) {
+            if (player.sources.playerDb.data.data.player.meta !== null) {
+                const nameHistory = player.sources.playerDb.data.data.player.meta.name_history;
+                const nameChangeDates: Array<number> = [];
+                for (const item of nameHistory) {
+                    if (item.changedToAt !== undefined) {
+                        const changedTo = item?.changedToAt;
+                        if (changedTo !== undefined) nameChangeDates.push(changedTo);
+                    }
+                }
+                nameChangeDates.sort();
+                const timeNow = Date.now();
+                const nameBefore = new Date(nameChangeDates[nameChangeDates.length - 1]);
+                const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+                return diffInMs / (1000 * 60 * 60 * 24);
+            }
+            return 0;
+        } else return 0;
+    };
+
+    private getPlayerTagDivider = (tag: string | number | unknown, colour: string, player?: Player) => {
+        let htmlResponse = `<span class='playerTagDivider'>`,
+            styleString = `color: ${colour};`;
         if (typeof tag == "number" && !Number.isInteger(tag)) tag = tag.toFixed(2);
-        if (colour == "white") {
+        if (colour === "white") {
             styleString += `opacity: 75%;`;
         }
-        if (player?.runApi?.data.blacklist.tagged) {
+        if (player?.sources.runApi?.data.blacklist.tagged) {
             styleString += `font: bold;`;
         }
-        htmlResponse += `<div style='${styleString}'>${tag}</div>`;
-        htmlResponse += `</div>`;
+        if (tag) {
+            if (typeof tag === "string") {
+                if (tag.length <= 4) {
+                    styleString += `padding-left: 5px;`;
+                } else {
+                    styleString += `padding-left: 1px;`;
+                }
+            } else if (typeof tag === "number") {
+                styleString += `justify-content: center;`;
+            }
+        }
+        htmlResponse += `<span style='${styleString}'>${tag}</span>`;
+        htmlResponse += `</span>`;
         return htmlResponse;
     };
 

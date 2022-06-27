@@ -69,7 +69,7 @@ export class LogFileReader {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = data;
             if (line.toLowerCase().includes("Can't find a player by the name of ".toLowerCase())) {
-                const command = line.split("[CHAT]")[1].split("Can't find a player by the name of ")[1].replaceAll("'","").trim();
+                const command = line.split("[CHAT]")[1].split("can't find a player by the name of ")[1].replaceAll("'", "").trim();
                 const commands = [".c", ".clear", ".h", ".hide", ".s", ".show", ".r"];
                 const command_clean = command.replace(".", "").replace("@", "").replace("-", "").replace(",", "").toLowerCase();
                 if (command === ".c" || command === ".clear") {
