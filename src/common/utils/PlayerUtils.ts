@@ -277,23 +277,27 @@ export class FormatPlayer {
 
     private renderNameChangeTag = (player: Player) => {
         if (player.sources.playerDb !== undefined && player.sources.playerDb !== null) {
-            if (player.sources.playerDb.data.data.player.meta !== null) {
+            if (player.sources.playerDb.data.data.player.meta !== undefined && player.sources.playerDb.data.data.player.meta !== null) {
                 const nameHistory = player.sources.playerDb.data.data.player.meta.name_history;
                 const nameChangeDates: Array<number> = [];
-                for (const item of nameHistory) {
-                    if (item.changedToAt !== undefined) {
-                        const changedTo = item?.changedToAt;
-                        if (changedTo !== undefined) nameChangeDates.push(changedTo);
+                if (nameHistory.length != 1) {
+                    for (const item of nameHistory) {
+                        if (item.changedToAt !== undefined) {
+                            const changedTo = item?.changedToAt;
+                            if (changedTo !== undefined) nameChangeDates.push(changedTo);
+                        }
                     }
+                    nameChangeDates.sort();
+                    const timeNow = Date.now();
+                    const nameBefore = new Date(nameChangeDates[nameChangeDates.length - 1]);
+                    const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+                    return diffInMs / (1000 * 60 * 60 * 24);
                 }
-                nameChangeDates.sort();
-                const timeNow = Date.now();
-                const nameBefore = new Date(nameChangeDates[nameChangeDates.length - 1]);
-                const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-                return diffInMs / (1000 * 60 * 60 * 24);
+                return 11;
             }
-            return 0;
-        } else return 0;
+            console.log(player.name);
+            return 11;
+        } else return 11;
     };
 
     private getPlayerTagDivider = (tag: string | number | unknown, colour: string, player?: Player) => {

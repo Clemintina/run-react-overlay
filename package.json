@@ -43,10 +43,13 @@
 		"browserify": "^17.0.0",
 		"browserify-fs": "^1.0.0",
 		"cache-manager": "^4.0.1",
+		"destr": "^1.1.1",
 		"electron-squirrel-startup": "^1.0.0",
 		"electron-store": "^8.0.2",
 		"electron-updater": "^5.0.1",
 		"electron-window-state": "^5.0.3",
+		"fast-json-stringify": "^5.0.3",
+		"flatstr": "^1.0.12",
 		"http-browserify": "^1.7.0",
 		"https-browserify": "^1.0.0",
 		"interweave": "^13.0.0",
@@ -113,5 +116,6 @@
 		"bracketSpacing": false,
 		"proseWrap": "always",
 		"tabWidth": 4
-	}
+	},
+	"packageManager": "yarn@3.2.1"
 }

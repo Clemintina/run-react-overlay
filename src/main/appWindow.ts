@@ -14,6 +14,7 @@ import AppUpdater from "./AutoUpdate";
 import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
 import {ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
+import {handleIPCSend} from "@main/Utils";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -275,7 +276,7 @@ const registerLogCommunications = () => {
 
             logFileReadline.on("line", async (line) => {
                 if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
-                appWindow?.webContents.send("logFileLine", line);
+                appWindow?.webContents.send("logFileLine", handleIPCSend({data: {message: line}, code: 200}));
             });
         }
     });
@@ -289,6 +290,7 @@ const registerMainWindowCommunications = () => {
         if (process.platform !== "darwin") {
             app.quit();
         }
+        app.quit();
     });
 
     ipcMain.on("windowMinimise", () => {

@@ -1,6 +1,7 @@
 import "@misc/window/windowPreload";
 import {contextBridge, ipcRenderer} from "electron";
 import {IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
+import IpcRendererEvent = Electron.IpcRendererEvent;
 
 /**
  * Allows access to the **ipcRenderer**
@@ -12,7 +13,7 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
      * @param channel
      * @param args
      */
-    invoke: (channel: IPCValidInvokeChannels, ...args: any[]) => {
+    invoke: (channel: IPCValidInvokeChannels, ...args: string[]) => {
         return ipcRenderer.invoke(channel, ...args);
     },
     /**
@@ -21,8 +22,8 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
      * @param channel
      * @param method
      */
-    on: (channel: IPCValidOnChannels, method: any) => {
-        ipcRenderer.on(channel, method);
+    on: (channel: IPCValidOnChannels, method) => {
+        return ipcRenderer.on(channel, method);
     },
     /**
      * Register **sending** data so the **appWindow** file can be used to receive it
@@ -30,7 +31,7 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
      * @param channel
      * @param data
      */
-    send: (channel: IPCValidSendChannels, data: any) => {
+    send: (channel: IPCValidSendChannels, data: string) => {
         ipcRenderer.send(channel, data);
     },
 });

@@ -2,12 +2,13 @@ import store from "@renderer/store";
 import {getPlayerHypixelData, PlayerStoreThunkObject, removePlayerFromOverlay, resetOverlayTable} from "@renderer/store/PlayerStore";
 import {RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Player} from "@common/utils/PlayerUtils";
+import destr from "destr";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export class LogFileReader {
     public startListening = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = data;
+            const line = readLogLine(data);
             if (line.includes("Sending you to")) {
                 store.dispatch(resetOverlayTable());
             }
@@ -16,7 +17,7 @@ export class LogFileReader {
 
     public startJoinHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = data;
+            const line = readLogLine(data);
             if (line.includes(" has joined (")) {
                 const username = line.split(" [CHAT] ")[1].split(" has joined")[0];
                 const obj: PlayerStoreThunkObject = {name: username};
@@ -30,7 +31,7 @@ export class LogFileReader {
 
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = data;
+            const line = readLogLine(data);
             if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 store.dispatch(resetOverlayTable());
@@ -52,14 +53,14 @@ export class LogFileReader {
 
     public startSeraphHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = data;
+            const line = readLogLine(data);
             if (line.includes("FINAL KILL!")) {
                 const lineTemp = line.toString().substring(line.indexOf("[CHAT]"), line.length).replace("[CHAT] ", "");
                 const final_ign = lineTemp.split(" ")[0];
                 const configStore = store.getState().configStore;
                 const player: Player | undefined = store.getState().playerStore.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
                 if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
-                    window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.apiKey, configStore.apiKeyOwner, configStore.runKey, configStore.apiKeyOwner);
+                    await window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.apiKey, configStore.apiKeyOwner, configStore.runKey, configStore.apiKeyOwner);
                 }
             }
         });
@@ -67,7 +68,7 @@ export class LogFileReader {
 
     public startCommandListener = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = data;
+            const line = readLogLine(data);
             if (line.toLowerCase().includes("Can't find a player by the name of ".toLowerCase())) {
                 const command = line.split("[CHAT]")[1].split("can't find a player by the name of ")[1].replaceAll("'", "").trim();
                 const commands = [".c", ".clear", ".h", ".hide", ".s", ".show", ".r"];
@@ -93,7 +94,17 @@ export class LogFileReader {
     public startPartyListener = async () => {
         // TODO Add party handling
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = data;
+            const line = readLogLine(data);
         });
     };
 }
+
+const readLogLine = (data: string) => {
+    const response = destr(data);
+    if (typeof response === "object") {
+        const line = response.data.message;
+        if (typeof line === "string") return line;
+        return response.data;
+    }
+    return null;
+};

@@ -155,7 +155,6 @@ const getRunApi = async (player: Player) => {
 };
 
 const getLunarTags = async (player: Player) => {
-    console.time(`${player.name}-Lunar`);
     let api: IPCResponse<LunarAPIResponse>;
     if (player.hypixelPlayer?.uuid !== undefined) {
         api = await window.ipcRenderer.invoke("lunar", player.hypixelPlayer.uuid);
@@ -178,12 +177,10 @@ const getLunarTags = async (player: Player) => {
             },
         };
     }
-    console.timeEnd(`${player.name}-Lunar`);
     return new Promise<IPCResponse<LunarAPIResponse>>((resolve) => resolve(api));
 };
 
 const getKeathizData = async (player: Player) => {
-    console.time(`${player.name}-Keathiz`);
     let api: IPCResponse<KeathizOverlayRun>;
     if (player.hypixelPlayer?.uuid !== undefined) {
         api = await window.ipcRenderer.invoke("keathiz", player.hypixelPlayer.uuid);
@@ -274,7 +271,6 @@ const getKeathizData = async (player: Player) => {
             },
         };
     }
-    console.timeEnd(`${player.name}-Keathiz`);
     return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve(api));
 };
 

@@ -52,7 +52,7 @@ const TitleBar = () => {
                         }}
                     />
                 </div>
-                <div>
+                <div className='nodrag'>
                     <span>
                         <button
                             className='headerButton'
