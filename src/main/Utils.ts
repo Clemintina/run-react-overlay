@@ -9,7 +9,7 @@ export const handleIPCSend = (data: object) => {
                 type: "object",
                 patternProperties: {
                     "^.*$": {
-                        anyOf: [{type: "string"}, {type: "boolean"}, {type: "number"}],
+                        anyOf: [{type: "string"}, {type: "boolean"}, {type: "number"}, {type: "object"}],
                     },
                 },
                 additionalProperties: false,

@@ -230,7 +230,7 @@ const registerSeraphIPC = () => {
  * Register Store Inter Process Communication
  */
 const registerElectronStore = () => {
-    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: any}) => {
+    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
         electronStore.set(data.key, data.data);
     });
 
@@ -287,9 +287,6 @@ const registerLogCommunications = () => {
  */
 const registerMainWindowCommunications = () => {
     ipcMain.on("windowClose", async () => {
-        if (process.platform !== "darwin") {
-            app.quit();
-        }
         app.quit();
     });
 
