@@ -15,6 +15,8 @@ import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
 import {ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
 import {handleIPCSend} from "@main/Utils";
+import destr from "destr";
+import fastJson from "fast-json-stringify";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -55,8 +57,8 @@ const axiosClient = axios.create({
         "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
         "Run-API-Version": overlayVersion,
     },
-    timeout: 5000,
-    timeoutErrorMessage: "Unable to communicate with the server",
+    timeout: 10000,
+    timeoutErrorMessage: "Connection Timed Out!",
     validateStatus: () => true,
 });
 
@@ -124,8 +126,9 @@ const registerMainIPC = () => {
  * Register Seraph Inter Process Communication
  */
 const registerSeraphIPC = () => {
-    ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, key: string, resource: RequestType, ...args: unknown[]) => {
-        const hypixelClient = new HypixelApi(key, {
+    ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, resource: RequestType, ...args: unknown[]) => {
+        const apiKey: string = electronStore.get("hypixel.apiKey");
+        const hypixelClient = new HypixelApi(apiKey, {
             cache: {
                 get(key) {
                     return playerCache.get(`hypixel:${key}`);
@@ -311,7 +314,14 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = JSON.parse(response.data.replaceAll("'", '"').toLowerCase());
+        const boomzaStringify = fastJson({
+            type: "object",
+            properties: {
+                sniper: {type: "boolean", default: false},
+                report: {type: "number", default: 0},
+            },
+        });
+        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};

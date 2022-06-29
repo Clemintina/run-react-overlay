@@ -49,7 +49,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
     }
 
     try {
-        hypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.UUID, playerData.name.replace("-", ""));
+        hypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
         playerData.hypixelPlayer = hypixelPlayer;
         if (playerData.hypixelPlayer?.uuid === undefined) {
             playerData.nicked = true;
@@ -78,10 +78,12 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
     if (!playerData.nicked) {
         const [boomza, runApi, keathizApi, lunarApi, playerDatabase] = await Promise.all([getBoomza(playerData), getRunApi(playerData), getKeathizData(playerData), getLunarTags(playerData), getPlayerDB(playerData)]);
         playerData.sources.boomza = boomza;
-        playerData.sources.runApi = runApi.data;
+        playerData.sources.runApi = runApi;
         playerData.sources.keathiz = keathizApi;
         playerData.sources.lunar = lunarApi;
         playerData.sources.playerDb = playerDatabase;
+
+        playerData.bot = runApi.data.data.bot.tagged;
     }
 
     return {

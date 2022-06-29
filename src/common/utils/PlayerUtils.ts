@@ -2,6 +2,9 @@ import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
 import {Components, getBedwarsLevelInfo, getPlayerRank} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
+import destr from "destr";
+import {faExchange} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIconProps} from "@fortawesome/react-fontawesome";
 
 export interface Player {
     name: string;
@@ -11,7 +14,7 @@ export interface Player {
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: Components.Schemas.Guild | null;
     sources: {
-        runApi: Blacklist | null;
+        runApi: IPCResponse<Blacklist> | null;
         boomza?: IPCResponse<BoomzaAntisniper> | null;
         keathiz?: IPCResponse<KeathizOverlayRun> | null;
         lunar?: IPCResponse<LunarAPIResponse> | null;
@@ -44,23 +47,32 @@ export class FormatPlayer {
     public renderTags = (player: Player) => {
         let tagRenderer: string = this.starterDivider;
         if (player.sources.runApi != null) {
-            const runApi = player.sources.runApi.data;
+            const runApi = player.sources.runApi.data.data;
             if (runApi.blacklist.tagged) {
                 tagRenderer += this.getPlayerTagDivider("BLACKLISTED", "red", player);
             } else if (runApi.bot.tagged) {
                 tagRenderer += this.getPlayerTagDivider("BOT", "green", player);
             } else {
+                if (player.sources.boomza?.status === 200) {
+                    const boomza = destr(player.sources.boomza.data);
+                    if (boomza.sniper) {
+                        tagRenderer += this.getPlayerTagDivider("S", "red");
+                    }
+                    if (boomza.report) {
+                        tagRenderer += this.getPlayerTagDivider("H", "red");
+                    }
+                }
                 if (runApi.migrated.tagged) {
                     tagRenderer += this.getPlayerTagDivider("M", "green");
                 }
                 if (runApi.safelist.tagged) {
-                    tagRenderer += this.getPlayerTagDivider("S", "green");
+                    tagRenderer += this.getPlayerTagDivider("✓", "green");
                 }
                 if (runApi.annoylist.tagged) {
                     tagRenderer += this.getPlayerTagDivider("A", "red");
                 }
                 if (runApi.statistics.encounters != 0) {
-                    tagRenderer += this.getPlayerTagDivider("E", "red");
+                    tagRenderer += this.getPlayerTagDivider(`E`, "red");
                 }
 
                 if (this.renderNameChangeTag(player) <= 10) {
@@ -82,7 +94,7 @@ export class FormatPlayer {
         let starRenderer: string = this.starterDivider;
         if (!player.nicked && player.hypixelPlayer !== null) {
             const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
-            if (!player.sources.runApi?.data.blacklist.tagged) {
+            if (!player.sources.runApi?.data.data.blacklist.tagged) {
                 starRenderer += this.getPlayerTagDivider(bwLevel.level, "#" + bwLevel.prestigeColourHex);
             } else {
                 starRenderer += this.getPlayerTagDivider(bwLevel.level || 0, "red", player);
@@ -106,7 +118,7 @@ export class FormatPlayer {
                 }
             }
 
-            if (!player.sources.runApi?.data.blacklist.tagged) {
+            if (!player.sources.runApi?.data.data.blacklist.tagged) {
                 if (player.hypixelPlayer !== null) {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
                     nameRenderer += `${rank.rankHtml}&nbsp <span style='color: #${rank.colourHex};'>${player.hypixelPlayer.displayname}</span>`;
@@ -128,7 +140,7 @@ export class FormatPlayer {
         let renderer: string = this.starterDivider;
         if (!player.nicked) {
             const playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak || 0;
-            if (player.sources.runApi?.data.blacklist.tagged) {
+            if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, "red", player);
             } else if (playerValue === 0) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray", player);
@@ -165,7 +177,7 @@ export class FormatPlayer {
             } else if (route.toLowerCase() === "bblr") {
                 playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars || 0);
             }
-            if (player.sources.runApi?.data.blacklist.tagged) {
+            if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, "red", player);
             } else if (playerValue === 1) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray", player);
@@ -193,11 +205,65 @@ export class FormatPlayer {
         return renderer;
     };
 
+    public renderCoreStatsColour = (player: Player, route: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost") => {
+        let renderer = this.starterDivider;
+        let playerValue;
+        if (!player.nicked) {
+            switch (route) {
+                case "wins":
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.wins_bedwars || 0;
+                    break;
+                case "losses":
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.losses_bedwars || 0;
+                    break;
+                case "finalKills":
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0;
+                    break;
+                case "finalDeaths":
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0;
+                    break;
+                case "bedsBroken":
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars || 0;
+                    break;
+                case "bedsLost":
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars || 0;
+                    break;
+                default:
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.games_played_bedwars || 0;
+            }
+            if (player.sources.runApi?.data.data.blacklist.tagged) {
+                renderer += this.getPlayerTagDivider(playerValue, "red", player);
+            } else if (playerValue <= 1000) {
+                renderer += this.getPlayerTagDivider(playerValue, "gray", player);
+            } else if (playerValue <= 2000) {
+                renderer += this.getPlayerTagDivider(playerValue, "gray", player);
+            } else if (playerValue <= 4000) {
+                renderer += this.getPlayerTagDivider(playerValue, "white", player);
+            } else if (playerValue <= 6000) {
+                renderer += this.getPlayerTagDivider(playerValue, "goldenrod", player);
+            } else if (playerValue <= 7000) {
+                renderer += this.getPlayerTagDivider(playerValue, "darkgreen", player);
+            } else if (playerValue <= 10000) {
+                renderer += this.getPlayerTagDivider(playerValue, "red", player);
+            } else if (playerValue <= 15000) {
+                renderer += this.getPlayerTagDivider(playerValue, "darkred", player);
+            } else if (playerValue <= 50000) {
+                renderer += this.getPlayerTagDivider(playerValue, "deeppink", player);
+            } else {
+                renderer += this.getPlayerTagDivider(playerValue, "purple", player);
+            }
+        } else {
+            renderer += this.getPlayerTagDividerNicked();
+        }
+        renderer += `</div>`;
+        return renderer;
+    };
+
     public renderFKDRColour = (player: Player) => {
         let renderer = this.starterDivider;
         if (!player.nicked) {
             const playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0);
-            if (player.sources.runApi?.data.blacklist.tagged) {
+            if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, "red");
             } else if (playerValue === 1) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray");
@@ -226,10 +292,10 @@ export class FormatPlayer {
     };
 
     public renderKeathizTags = (player: Player) => {
-        let renderer = this.starterDivider;
+        let renderer = `<span style='padding-left: 5px;'>`;
         const keathizTagArray: Array<string> = [];
         if (player.sources.keathiz === null || player.sources.keathiz === undefined) {
-            keathizTagArray.push(`<span style='color:red;'>ERROR</span>`);
+            keathizTagArray.push(this.getPlayerTagDivider("ERROR", `#${MinecraftColours.DARK_RED.hex}`));
         } else {
             if (player.sources.keathiz.data.success && player.sources.keathiz.status === 200) {
                 const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
@@ -271,31 +337,34 @@ export class FormatPlayer {
         for (const tag of keathizTagArray) {
             renderer += tag;
         }
-        renderer += `</div>`;
+        renderer += `</span>`;
         return renderer;
     };
 
     private renderNameChangeTag = (player: Player) => {
         if (player.sources.playerDb !== undefined && player.sources.playerDb !== null) {
-            if (player.sources.playerDb.data.data.player.meta !== undefined && player.sources.playerDb.data.data.player.meta !== null) {
-                const nameHistory = player.sources.playerDb.data.data.player.meta.name_history;
-                const nameChangeDates: Array<number> = [];
-                if (nameHistory.length != 1) {
-                    for (const item of nameHistory) {
-                        if (item.changedToAt !== undefined) {
-                            const changedTo = item?.changedToAt;
-                            if (changedTo !== undefined) nameChangeDates.push(changedTo);
+            if (player.sources.playerDb.status === 200) {
+                if (player.sources.playerDb.data.data.player.meta !== undefined && player.sources.playerDb.data.data.player.meta !== null) {
+                    const nameHistory = player.sources.playerDb.data.data.player.meta.name_history;
+                    const nameChangeDates: Array<number> = [];
+                    if (nameHistory.length != 1) {
+                        for (const item of nameHistory) {
+                            if (item.changedToAt !== undefined) {
+                                const changedTo = item?.changedToAt;
+                                if (changedTo !== undefined) nameChangeDates.push(changedTo);
+                            }
                         }
+                        nameChangeDates.sort();
+                        const timeNow = Date.now();
+                        const nameBefore = new Date(nameChangeDates[nameChangeDates.length - 1]);
+                        const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+                        return diffInMs / (1000 * 60 * 60 * 24);
                     }
-                    nameChangeDates.sort();
-                    const timeNow = Date.now();
-                    const nameBefore = new Date(nameChangeDates[nameChangeDates.length - 1]);
-                    const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-                    return diffInMs / (1000 * 60 * 60 * 24);
+                    return 11;
                 }
                 return 11;
             }
-            console.log(player.name);
+            // TODO Add handling for 500 / too many requests
             return 11;
         } else return 11;
     };
@@ -303,11 +372,11 @@ export class FormatPlayer {
     private getPlayerTagDivider = (tag: string | number | unknown, colour: string, player?: Player) => {
         let htmlResponse = `<span class='playerTagDivider'>`,
             styleString = `color: ${colour};`;
-        if (typeof tag == "number" && !Number.isInteger(tag)) tag = tag.toFixed(2);
+        if (typeof tag === "number" && !Number.isInteger(tag)) tag = tag.toFixed(2);
         if (colour === "white") {
             styleString += `opacity: 75%;`;
         }
-        if (player?.sources.runApi?.data.blacklist.tagged) {
+        if (player?.sources.runApi?.data.data.blacklist.tagged) {
             styleString += `font: bold;`;
         }
         if (tag) {
@@ -320,9 +389,9 @@ export class FormatPlayer {
             } else if (typeof tag === "number") {
                 styleString += `justify-content: center;`;
             }
+            htmlResponse += `<span style='${styleString}'>${tag}</span>`;
+            htmlResponse += `</span>`;
         }
-        htmlResponse += `<span style='${styleString}'>${tag}</span>`;
-        htmlResponse += `</span>`;
         return htmlResponse;
     };
 

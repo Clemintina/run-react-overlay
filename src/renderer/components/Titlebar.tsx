@@ -60,7 +60,7 @@ const TitleBar = () => {
                                 window.ipcRenderer.send("windowMinimise");
                             }}
                         >
-                            <FontAwesomeIcon icon={faWindowMinimize}></FontAwesomeIcon>
+                            <FontAwesomeIcon icon={faWindowMinimize} />
                         </button>
                     </span>
                     <span>
@@ -70,7 +70,7 @@ const TitleBar = () => {
                                 window.ipcRenderer.send("windowClose");
                             }}
                         >
-                            <FontAwesomeIcon icon={faWindowClose}></FontAwesomeIcon>
+                            <FontAwesomeIcon icon={faWindowClose} />
                         </button>
                     </span>
                 </div>

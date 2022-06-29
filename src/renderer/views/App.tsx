@@ -11,6 +11,11 @@ import "@inovua/reactdatagrid-community/index.css";
 
 const playerFormatter = new FormatPlayer();
 
+const smallColumnSize = 50;
+const mediumColumnSize = 70;
+const largeColumnSize = 150;
+const extraLargeColumnSize = 200;
+
 const columns: TypeColumn[] = [
     {
         id: "id",
@@ -24,13 +29,14 @@ const columns: TypeColumn[] = [
         header: "Star",
         flex: 1,
         sortName: `Player's Bedwars Level`,
+        maxWidth: smallColumnSize,
         render: ({data}) => <Interweave content={playerFormatter.renderStar(data)} />,
     },
     {
         id: "name",
         header: "Name",
         flex: 1,
-        minWidth: 200,
+        minWidth: extraLargeColumnSize,
         sortName: `Name of the Player`,
         render: ({data}) => <Interweave content={playerFormatter.renderName(data)} />,
     },
@@ -38,7 +44,7 @@ const columns: TypeColumn[] = [
         id: "tags",
         header: "Tag",
         flex: 1,
-        minWidth: 100,
+        minWidth: largeColumnSize,
         sortName: `Tags for the Overlay`,
         render: ({data}) => <Interweave content={playerFormatter.renderTags(data)} />,
         sortable: false,
@@ -48,6 +54,7 @@ const columns: TypeColumn[] = [
         header: "WS",
         flex: 1,
         sortName: `Player's Winstreak`,
+        maxWidth: smallColumnSize,
         render: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)} />,
     },
     {
@@ -55,6 +62,7 @@ const columns: TypeColumn[] = [
         header: "FKDR",
         flex: 1,
         sortName: `Player's Final Kill to Death Ratio`,
+        maxWidth: mediumColumnSize,
         render: ({data}) => <Interweave content={playerFormatter.renderFKDRColour(data)} />,
     },
     {
@@ -62,6 +70,7 @@ const columns: TypeColumn[] = [
         header: "WLR",
         flex: 1,
         sortName: `Player's Win to Loss Ratio`,
+        maxWidth: mediumColumnSize,
         render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")} />,
     },
     {
@@ -69,6 +78,7 @@ const columns: TypeColumn[] = [
         header: "BBLR",
         flex: 1,
         sortName: `Player's Beds Broken to Beds Lost Ratio`,
+        maxWidth: mediumColumnSize,
         render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
     },
     {
@@ -76,14 +86,16 @@ const columns: TypeColumn[] = [
         header: "Wins",
         flex: 1,
         sortName: `Player's Wins`,
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
+        maxWidth: mediumColumnSize,
+        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "wins")} />,
     },
     {
         id: "losses",
         header: "Losses",
         flex: 1,
         sortName: `Player's Losses`,
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
+        maxWidth: mediumColumnSize,
+        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")} />,
     },
 ];
 
@@ -125,7 +137,7 @@ const AppTable = () => {
     return (
         <div>
             <div style={{height: "92vh", width: "100%", color: "grey"}}>
-                <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' style={gridStyle} showColumnMenuTool={false} renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false} showColumnMenuToolOnHover={true} />
+                <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' emptyText='No Players' style={gridStyle} showColumnMenuTool={false} renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false} showColumnMenuToolOnHover={true} enableColumnAutosize={true} />
             </div>
         </div>
     );
