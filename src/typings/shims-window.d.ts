@@ -1,12 +1,13 @@
 import {IpcRendererEvent} from "electron";
 import {IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
+import {RUNElectronStoreTyped} from "@main/appWindow";
 
 declare global {
     interface Window {
         ipcRenderer: SeraphIpcRenderer;
         config: {
-            set(key: string, data: any);
-            get(key: string);
+            set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
+            get(key: RUNElectronStoreTyped | string);
         };
     }
 

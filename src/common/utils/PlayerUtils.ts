@@ -3,8 +3,6 @@ import {Components, getBedwarsLevelInfo, getPlayerRank} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
-import {faExchange} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIconProps} from "@fortawesome/react-fontawesome";
 
 export interface Player {
     name: string;
@@ -110,11 +108,13 @@ export class FormatPlayer {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
             nameRenderer += `<span class='name-span'>`;
-            if (player.sources.lunar !== undefined && player.sources.lunar !== null) {
-                if (player.sources.lunar.data.player.online) {
-                    nameRenderer += `<span class='lunar-client-image'>
+            if (window.config.get("general.tags.name.lunar")) {
+                if (player.sources.lunar !== undefined && player.sources.lunar !== null) {
+                    if (player.sources.lunar.data.player.online) {
+                        nameRenderer += `<span class='lunar-client-image'>
                                        <img style='vertical-align:middle;' width='25px' height='25px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag'/>
                                      </span>`;
+                    }
                 }
             }
 
@@ -344,7 +344,7 @@ export class FormatPlayer {
     private renderNameChangeTag = (player: Player) => {
         if (player.sources.playerDb !== undefined && player.sources.playerDb !== null) {
             if (player.sources.playerDb.status === 200) {
-                if (player.sources.playerDb.data.data.player.meta !== undefined && player.sources.playerDb.data.data.player.meta !== null) {
+                if (player.sources.playerDb.data.data.player.meta ?? false) {
                     const nameHistory = player.sources.playerDb.data.data.player.meta.name_history;
                     const nameChangeDates: Array<number> = [];
                     if (nameHistory.length != 1) {
@@ -362,6 +362,7 @@ export class FormatPlayer {
                     }
                     return 11;
                 }
+                console.log(player.name + " has no name history or failed the NOT NULL check");
                 return 11;
             }
             // TODO Add handling for 500 / too many requests

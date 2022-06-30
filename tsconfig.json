@@ -16,6 +16,7 @@
 		"outDir": "dist",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
+		"strictNullChecks": true,
 		"pretty": true,
 		"removeComments": true,
 		"paths": {

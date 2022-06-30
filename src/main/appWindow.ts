@@ -7,7 +7,7 @@ import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import {RUNElectronStore, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
+import {Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
 import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
@@ -39,8 +39,12 @@ const isDevelopment = process.env.NODE_ENV !== "production";
  * @see RUNElectronStore
  * @see RUNElectronStoreType
  */
-const electronStoreSchema = JSON.parse(JSON.stringify(RUNElectronStore));
+const electronStoreSchema = destr(JSON.stringify(RUNElectronStore));
 const electronStore = new Store<RUNElectronStoreType>({schema: electronStoreSchema.properties});
+/**
+ * Generates typings from the **existing** config.json file
+ */
+export type RUNElectronStoreTyped = Join<PathsToStringProps<typeof electronStore.store>, ".">;
 electronStore.set("run.overlay.version", app.getVersion());
 /**
  * Configures the log reader. See {@link [TailFile](https://www.npmjs.com/package/@logdna/tail-file)} for more information.
@@ -54,7 +58,7 @@ let appWindow: BrowserWindow;
 const axiosClient = axios.create({
     headers: {
         "Content-Type": "application/json",
-        "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+        "User-Agent": "Run-Bedwars-Overlay-React-" + overlayVersion,
         "Run-API-Version": overlayVersion,
     },
     timeout: 10000,
