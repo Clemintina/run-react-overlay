@@ -1,6 +1,6 @@
 import {IpcRendererEvent} from "electron";
 import {IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
-import {RUNElectronStoreTyped} from "@main/appWindow";
+import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
 
 declare global {
     interface Window {
@@ -9,10 +9,15 @@ declare global {
             set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
             get(key: RUNElectronStoreTyped | string);
         };
+        tags: {
+            set(key: RUNElectronStoreTagsTyped | string, data: string | number | object | boolean);
+            get(key: RUNElectronStoreTagsTyped | string);
+        };
     }
 
     interface SeraphIpcRenderer extends NodeJS.EventEmitter {
         invoke(channel: IPCValidInvokeChannels, ...args: any[]): Promise<any>;
+        invoke<T>(channel: IPCValidInvokeChannels, ...args: any[]): Promise<T>;
         on(channel: IPCValidOnChannels, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
         once(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
         postMessage(channel: string, message: any, transfer?: MessagePort[]): void;

@@ -3,6 +3,8 @@ import {Components, getBedwarsLevelInfo, getPlayerRank} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
+import {TagObject} from "@common/utils/Schemas";
+import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 
 export interface Player {
     name: string;
@@ -17,6 +19,9 @@ export interface Player {
         keathiz?: IPCResponse<KeathizOverlayRun> | null;
         lunar?: IPCResponse<LunarAPIResponse> | null;
         playerDb?: IPCResponse<PlayerDB> | null;
+    };
+    overlay: {
+        tags: string;
     };
 }
 
@@ -42,7 +47,10 @@ export class FormatPlayer {
     private starterDivider = `<div style='margin: 0 auto;  display: flex;'>`;
     private utils = new PlayerHypixelUtils();
 
-    public renderTags = (player: Player) => {
+    /*+
+     * Render tags and stuff in the Player Request
+     */
+    public renderTags = async (player: Player) => {
         let tagRenderer: string = this.starterDivider;
         if (player.sources.runApi != null) {
             const runApi = player.sources.runApi.data.data;
@@ -61,16 +69,16 @@ export class FormatPlayer {
                     }
                 }
                 if (runApi.migrated.tagged) {
-                    tagRenderer += this.getPlayerTagDivider("M", "green");
+                    tagRenderer += await this.getTagsFromConfig("run.migration");
                 }
                 if (runApi.safelist.tagged) {
                     tagRenderer += this.getPlayerTagDivider("✓", "green");
                 }
                 if (runApi.annoylist.tagged) {
-                    tagRenderer += this.getPlayerTagDivider("A", "red");
+                    tagRenderer += await this.getTagsFromConfig("run.annoylist");
                 }
                 if (runApi.statistics.encounters != 0) {
-                    tagRenderer += this.getPlayerTagDivider(`E`, "red");
+                    tagRenderer += await this.getTagsFromConfig("run.encounters", runApi.statistics.encounters);
                 }
 
                 if (this.renderNameChangeTag(player) <= 10) {
@@ -88,6 +96,26 @@ export class FormatPlayer {
         return tagRenderer;
     };
 
+    public getTagsFromConfig = async (tagDisplayPath: RUNElectronStoreTagsTyped | string, value?: number) => {
+        const tag = await window.ipcRenderer.invoke<TagObject>("tagsGet", {key: `${tagDisplayPath}`});
+        const tagDisplayIcon = tag.display;
+        const tagArray = tag.colour;
+        if (Array.isArray(tagArray) && value != undefined) {
+            const arr = tagArray.sort((a, b) => b.requirement - a.requirement);
+            for (const {colour, requirement} of arr) {
+                if (value >= requirement) {
+                    return this.getPlayerTagDivider(tagDisplayIcon, `#${colour}`);
+                }
+            }
+        } else {
+            return this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray.toString()}`);
+        }
+        return this.getPlayerTagDivider(tagDisplayIcon, "amber");
+    };
+
+    /**
+     * Render these when the API is done...
+     */
     public renderStar = (player: Player) => {
         let starRenderer: string = this.starterDivider;
         if (!player.nicked && player.hypixelPlayer !== null) {

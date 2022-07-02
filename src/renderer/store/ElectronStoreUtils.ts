@@ -76,6 +76,136 @@ export const RUNElectronStore = Type.Optional(
 
 export type RUNElectronStoreType = Static<typeof RUNElectronStore>;
 
+export const RUNElectronStoreTags = Type.Object({
+    run: Type.Object({
+        annoylist: Type.Object({
+            display: Type.String({
+                description: "How to display the Annoy List tag",
+                default: "A",
+            }),
+            colour: Type.String({
+                description: "The colour for the Annoy List tag",
+                default: "red",
+            }),
+        }),
+        blacklist: Type.Object({
+            display: Type.String({
+                description: "How to display the Blacklist tag",
+                default: "BLACKLISTED",
+            }),
+            colour: Type.String({
+                description: "The colour for the Blacklist tag",
+                default: "red",
+            }),
+        }),
+        migration: Type.Object({
+            display: Type.String({
+                description: "How to display the AnnoyList tag",
+                default: "A",
+            }),
+            colour: Type.String({
+                description: "The colour for the Migration tag",
+                default: "green",
+            }),
+        }),
+        encounters: Type.Object({
+            display: Type.String({
+                description: "How to display the Encounters tag",
+                default: "A",
+            }),
+            colour: Type.Array(
+                Type.Object({
+                    requirement: Type.Number({
+                        description: "The requirement for the Encounters tag",
+                    }),
+                    colour: Type.String({
+                        description: "The colours for the Encounters tag",
+                    }),
+                }),
+                {
+                    description: "Sets the colours for the tags using dynamic values",
+                },
+            ),
+        }),
+        safelist: Type.Object({
+            display: Type.String({
+                description: "How to display the Safelist tag",
+                default: "A",
+            }),
+            colour: Type.Array(
+                Type.Object({
+                    requirement: Type.Number({
+                        description: "The requirement for the Safelist tag",
+                    }),
+                    colour: Type.String({
+                        description: "The colours for the Safelist tag",
+                    }),
+                }),
+                {
+                    description: "Sets the colours for the tags using dynamic values",
+                },
+            ),
+        }),
+    }),
+});
+
+export type RUNElectronStoreTagsType = Static<typeof RUNElectronStoreTags>;
+
+export const getDefaultElectronStoreObject = {
+    run: {
+        annoylist: {
+            display: "A",
+            colour: "FF5555",
+        },
+        blacklist: {
+            display: "BLACKLISTED",
+            colour: "FF5555",
+        },
+        migration: {
+            display: "M",
+            colour: "55FF55",
+        },
+        encounters: {
+            display: "E",
+            colour: [
+                {
+                    requirement: 1,
+                    colour: "AA0000",
+                },
+                {
+                    requirement: 2,
+                    colour: "FFFF55",
+                },
+                {
+                    requirement: 5,
+                    colour: "FF5555",
+                },
+                {
+                    requirement: 10,
+                    colour: "AA0000",
+                },
+            ],
+        },
+        safelist: {
+            display: "✓",
+            colour: [
+                {
+                    requirement: 1,
+                    colour: "FF5555",
+                },
+                {
+                    requirement: 10,
+                    colour: "FFFF55",
+                },
+                {
+                    requirement: 20,
+                    colour: "55FF55",
+                },
+            ],
+        },
+    },
+};
+
 /**
  * Borrowed from
  * {@link [StackOverflow](https://stackoverflow.com/questions/47057649/typescript-string-dot-notation-of-nested-object)}

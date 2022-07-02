@@ -7,8 +7,8 @@ import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import {Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTags, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
+import {IPCResponse, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
 import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
@@ -17,6 +17,8 @@ import * as tunnel from "tunnel";
 import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
 import fastJson from "fast-json-stringify";
+import chalk from "chalk";
+import {Components} from "@common/zikeji";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -40,11 +42,21 @@ const isDevelopment = process.env.NODE_ENV !== "production";
  * @see RUNElectronStoreType
  */
 const electronStoreSchema = destr(JSON.stringify(RUNElectronStore));
-const electronStore = new Store<RUNElectronStoreType>({schema: electronStoreSchema.properties});
+const electronStore = new Store<RUNElectronStoreType>({
+    schema: electronStoreSchema.properties,
+});
+
+const electronStoreTagsSchema = destr(JSON.stringify(RUNElectronStoreTags.properties));
+const electronStoreTags = new Store<RUNElectronStoreTagsType>({
+    schema: electronStoreTagsSchema.properties,
+    defaults: getDefaultElectronStoreObject,
+    name: "tags",
+});
 /**
  * Generates typings from the **existing** config.json file
  */
 export type RUNElectronStoreTyped = Join<PathsToStringProps<typeof electronStore.store>, ".">;
+export type RUNElectronStoreTagsTyped = Join<PathsToStringProps<typeof electronStoreTags.store>, ".">;
 electronStore.set("run.overlay.version", app.getVersion());
 /**
  * Configures the log reader. See {@link [TailFile](https://www.npmjs.com/package/@logdna/tail-file)} for more information.
@@ -163,8 +175,8 @@ const registerSeraphIPC = () => {
                 return await hypixelClient.getClient().player.uuid(uuid ?? name);
             } else {
                 const res = await hypixelClient.getClient().player.username(name);
-                if (res.uuid !== undefined) {
-                    await mojangCache.set(`mojang:${name}`, res.uuid);
+                if (res.data.uuid !== undefined) {
+                    await mojangCache.set(`mojang:${name}`, res.data.uuid);
                 }
                 return res;
             }
@@ -244,6 +256,14 @@ const registerElectronStore = () => {
     ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
         return electronStore.get(data.key);
     });
+
+    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+        electronStoreTags.set(data.key, data.data);
+    });
+
+    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+        return electronStoreTags.get(data.key);
+    });
 };
 
 /**
@@ -317,13 +337,6 @@ const registerExternalApis = () => {
             },
             httpsAgent: getProxyChannel(),
             proxy: false,
-        });
-        const boomzaStringify = fastJson({
-            type: "object",
-            properties: {
-                sniper: {type: "boolean", default: false},
-                report: {type: "number", default: 0},
-            },
         });
         const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;

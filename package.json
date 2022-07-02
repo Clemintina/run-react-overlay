@@ -1,6 +1,7 @@
 {
 	"name": "seraph-overlay",
 	"productName": "Seraph Overlay",
+	"private": true,
 	"author": {
 		"name": "Kay"
 	},
@@ -9,7 +10,7 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.0.19",
+	"version": "1.0.2-BETA",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {

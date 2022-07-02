@@ -36,3 +36,13 @@ export enum ProxyType {
     SOCKS5 = "SOCKS5",
     HTTP = "HTTP",
 }
+
+export interface TagArray {
+    requirement: number;
+    colour: string;
+}
+
+export interface TagObject {
+    display: string;
+    colour: Array<TagArray> | string;
+}

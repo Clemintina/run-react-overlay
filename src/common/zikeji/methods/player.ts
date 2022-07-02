@@ -1,6 +1,7 @@
 import {Components, Paths} from "../types/api";
 import {Method} from "../util/Method";
 import {ResultObject, getResultObject} from "../util/ResultObject";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 export class Player extends Method {
     /**
@@ -12,21 +13,11 @@ export class Player extends Method {
      * ```
      * @category API
      */
-    public async uuid(uuid: Components.Parameters.PlayerUuid.Uuid): Promise<ResultObject<Paths.Player.Get.Responses.$200, ["player"]>> {
-        return getResultObject(
-            await this.client.call<Paths.Player.Get.Responses.$200>("player", {
-                uuid,
-            }),
-            ["player"],
-        ) as never;
+    public async uuid(uuid: Components.Parameters.PlayerUuid.Uuid): Promise<IPCResponse<ResultObject<Paths.Player.Get.Responses.$200, ["player"]>>> {
+        return {data: getResultObject(await this.client.call<Paths.Player.Get.Responses.$200>("player", {uuid}), ["player"]) as never, status: 200};
     }
 
-    public async username(name: string): Promise<ResultObject<Paths.Player.Get.Responses.$200, ["player"]>> {
-        return getResultObject(
-            await this.client.call<Paths.Player.Get.Responses.$200>("player", {
-                name,
-            }),
-            ["player"],
-        ) as never;
+    public async username(name: string): Promise<IPCResponse<ResultObject<Paths.Player.Get.Responses.$200, ["player"]>>> {
+        return {data: getResultObject(await this.client.call<Paths.Player.Get.Responses.$200>("player", {name}), ["player"]) as never, status: 200};
     }
 }

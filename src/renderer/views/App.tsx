@@ -46,7 +46,9 @@ const columns: TypeColumn[] = [
         flex: 1,
         minWidth: largeColumnSize,
         sortName: `Tags for the Overlay`,
-        render: ({data}) => <Interweave content={playerFormatter.renderTags(data)} />,
+        render: ({data}) => {
+            return <Interweave content={data.overlay.tags} />;
+        },
         sortable: false,
     },
     {

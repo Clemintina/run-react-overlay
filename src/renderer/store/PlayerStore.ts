@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {Player} from "@common/utils/PlayerUtils";
+import {FormatPlayer, Player} from "@common/utils/PlayerUtils";
 import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Store} from "./index";
 import {PlayerHandler} from "@common/utils/Schemas";
@@ -24,11 +24,12 @@ const cacheState: PlayerStoreThunkObject = {
     apiKeyOwner: "",
     runKey: "",
 };
+const playerFormatter = new FormatPlayer();
 
 /**
  * Adds players to the Overlay Table.
  */
-export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, {dispatch}) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -39,9 +40,10 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         sources: {
             runApi: null,
         },
+        overlay: {
+            tags: "",
+        },
     };
-    let hypixelPlayer: Components.Schemas.Player;
-
     const apiKey = cacheState.apiKey;
 
     if (apiKey === undefined || apiKey.length !== 36) {
@@ -49,41 +51,43 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
     }
 
     try {
-        hypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
-        playerData.hypixelPlayer = hypixelPlayer;
-        if (playerData.hypixelPlayer?.uuid === undefined) {
+        const ipcHypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke<IPCResponse<Components.Schemas.Player>>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<IPCResponse<Components.Schemas.Player>>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
+        if (ipcHypixelPlayer.data?.uuid === undefined) {
             playerData.nicked = true;
             return {status: 400, cause: "Player is not valid on Hypixel!", data: playerData};
         } else {
-            playerData.id = hypixelPlayer.uuid;
+            playerData.id = ipcHypixelPlayer.data.uuid;
         }
+        playerData.hypixelPlayer = ipcHypixelPlayer.data;
     } catch (e) {
-        const mcUtilsRequest = await window.ipcRenderer.invoke("mcutils", RequestType.USERNAME, playerData.name);
-        const mcUtils: PlayerAPI = mcUtilsRequest.data;
+        const mcUtilsRequest = await window.ipcRenderer.invoke<IPCResponse<PlayerAPI>>("mcutils", RequestType.USERNAME, playerData.name);
+        const mcUtils = mcUtilsRequest.data;
         playerData.nicked = true;
-        if (mcUtilsRequest.status === 400) {
+        if (mcUtilsRequest.status === 200) {
+            playerData.nicked = false;
+            playerData.id = mcUtils.player.uuid;
+            const ipcHypixelPlayer = await window.ipcRenderer.invoke<IPCResponse<Components.Schemas.Player>>("hypixel", apiKey, RequestType.UUID, mcUtils.player.uuid);
+            playerData.hypixelPlayer = ipcHypixelPlayer.data;
+        } else if (mcUtilsRequest.status === 400) {
             return {status: 400, cause: "Player is not valid for Mojang!", data: playerData};
         } else if (mcUtils.player.username === null || mcUtils.player.uuid === null) {
             playerData.nicked = true;
             return {status: 400, cause: "Player is not valid for Mojang!", data: playerData};
-        } else {
-            playerData.nicked = false;
-            playerData.id = mcUtils.player.uuid;
-            hypixelPlayer = await window.ipcRenderer.invoke("hypixel", apiKey, RequestType.UUID, mcUtils.player.uuid);
         }
     }
 
-    playerData.hypixelPlayer = hypixelPlayer;
-
-    if (!playerData.nicked) {
-        const [boomza, runApi, keathizApi, lunarApi, playerDatabase] = await Promise.all([getBoomza(playerData), getRunApi(playerData), getKeathizData(playerData), getLunarTags(playerData), getPlayerDB(playerData)]);
-        playerData.sources.boomza = boomza;
+    if (!playerData.nicked && playerData.hypixelPlayer != null) {
+        const [runApi] = await Promise.all([getRunApi(playerData)]);
         playerData.sources.runApi = runApi;
-        playerData.sources.keathiz = keathizApi;
-        playerData.sources.lunar = lunarApi;
-        playerData.sources.playerDb = playerDatabase;
-
         playerData.bot = runApi.data.data.bot.tagged;
+        if (!playerData.bot) {
+            const [boomza, keathizApi, lunarApi, playerDatabase] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getPlayerDB(playerData)]);
+            playerData.sources.boomza = boomza;
+            playerData.sources.keathiz = keathizApi;
+            playerData.sources.lunar = lunarApi;
+            playerData.sources.playerDb = playerDatabase;
+        }
+        playerData.overlay.tags = await playerFormatter.renderTags(playerData);
     }
 
     return {
@@ -92,6 +96,17 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         data: playerData,
     };
 });
+
+const updatePlayerTags = createAsyncThunk("PlayerStore/updatePlayerTags", async (player: Player) => {
+    const playerData = player;
+    playerData.overlay.tags = await playerFormatter.renderTags(playerData);
+    return {
+        status: 200,
+        cause: "valid request",
+        data: playerData,
+    };
+});
+
 /**
  * Removes a player from the Overlay Table
  */
@@ -323,6 +338,9 @@ const PlayerStore = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getPlayerHypixelData.fulfilled, (state, action: {payload: PlayerHandler}) => {
+                PlayerStore.caseReducers.updatePlayer(state, action);
+            })
+            .addCase(updatePlayerTags.fulfilled, (state, action: {payload: PlayerHandler}) => {
                 PlayerStore.caseReducers.updatePlayer(state, action);
             })
             .addCase(getPlayerHypixelData.rejected, (state, action: {payload}) => {
