@@ -120,8 +120,11 @@ export class FormatPlayer {
         let starRenderer: string = this.starterDivider;
         if (!player.nicked && player.hypixelPlayer !== null) {
             const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
+            let starIcon = '✫'
+            if (bwLevel.level >= 1100 && bwLevel.level < 2100) starIcon = '✪'
+            if (bwLevel.level >= 2100) starIcon = '⚝'
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
-                starRenderer += this.getPlayerTagDivider(bwLevel.level, "#" + bwLevel.prestigeColourHex);
+                starRenderer += this.getPlayerTagDivider(bwLevel.level + starIcon, "#" + bwLevel.prestigeColourHex);
             } else {
                 starRenderer += this.getPlayerTagDivider(bwLevel.level || 0, "red", player);
             }
