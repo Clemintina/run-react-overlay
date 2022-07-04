@@ -1,5 +1,5 @@
 import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
-import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank} from "@common/zikeji";
+import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
@@ -100,25 +100,20 @@ export class FormatPlayer {
         const tag = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
         const tagDisplayIcon = tag.display;
         const tagArray = tag.colour;
-        let tagReturned = this.getPlayerTagDivider(tagDisplayIcon, "#amber");
         if (Array.isArray(tagArray) && value != undefined) {
             const tempArray = [...tagArray];
             const arr = tempArray.sort((a, b) => b.requirement - a.requirement);
             for (const {colour, requirement} of arr) {
                 if (value >= requirement) {
-                    tagReturned = this.getPlayerTagDivider(tagDisplayIcon, `#${colour}`);
-                    break;
+                    return this.getPlayerTagDivider(tagDisplayIcon, `#${colour}`);
                 }
             }
         } else {
-            tagReturned = this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray.toString()}`);
+            return this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray.toString()}`);
         }
-        return tagReturned;
+        return this.getPlayerTagDivider(tagDisplayIcon, "#amber");
     };
 
-    /**
-     * Render these when the API is done...
-     */
     public renderStar = (player: Player) => {
         let starRenderer: string = this.starterDivider;
         if (!player.nicked && player.hypixelPlayer !== null) {
@@ -144,7 +139,7 @@ export class FormatPlayer {
         if (!player.nicked) {
             nameRenderer += `<span class='name-span'>`;
             if (window.config.get("general.tags.name.lunar")) {
-                if (player.sources.lunar !== undefined && player.sources.lunar !== null) {
+                if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
                         nameRenderer += `<span class='lunar-client-image'>
                                        <img style='vertical-align:middle;' width='25px' height='25px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag'/>
@@ -161,11 +156,11 @@ export class FormatPlayer {
                     nameRenderer += ``;
                 }
             } else {
-                nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname, "red", player);
+                nameRenderer = this.getPlayerTagDivider("BLACKLISTED", MinecraftColours.RED.hex);
             }
             nameRenderer += `</span>`;
         } else {
-            nameRenderer = this.getPlayerTagDivider(player.name, "red", player);
+            nameRenderer = this.getPlayerTagDivider("NICKED", MinecraftColours.RED.hex);
         }
         nameRenderer += `</div>`;
         return nameRenderer;
@@ -176,7 +171,7 @@ export class FormatPlayer {
         if (!player.nicked) {
             const playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak || 0;
             if (player.sources.runApi?.data.data.blacklist.tagged) {
-                renderer += this.getPlayerTagDivider(playerValue, "red", player);
+                renderer += this.getTagsFromConfig("run.blacklist", playerValue);
             } else if (playerValue === 0) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray", player);
             } else if (playerValue <= 50) {
@@ -213,7 +208,7 @@ export class FormatPlayer {
                 playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars || 0);
             }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
-                renderer += this.getPlayerTagDivider(playerValue, "red", player);
+                renderer += this.getTagsFromConfig("run.blacklist", playerValue);
             } else if (playerValue === 1) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray", player);
             } else if (playerValue <= 2) {
@@ -299,7 +294,7 @@ export class FormatPlayer {
         if (!player.nicked) {
             const playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0);
             if (player.sources.runApi?.data.data.blacklist.tagged) {
-                renderer += this.getPlayerTagDivider(playerValue, "red");
+                renderer += this.getTagsFromConfig("run.blacklist", playerValue);
             } else if (playerValue === 1) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray");
             } else if (playerValue <= 3) {
