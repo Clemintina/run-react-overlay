@@ -1,4 +1,5 @@
 import {Player} from "./PlayerUtils";
+import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
 
 export interface PlayerHandler {
     status: number;
@@ -45,4 +46,9 @@ export interface TagArray {
 export interface TagObject {
     display: string;
     colour: Array<TagArray> | string;
+}
+
+export interface StoreObject {
+    tags: RUNElectronStoreTagsTyped;
+    config: RUNElectronStoreTyped;
 }

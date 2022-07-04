@@ -133,22 +133,22 @@ export interface BedwarsPrestigeFormats {
     };
 }
 
-export const getHighLevelPrestigeColour = (data: BedwarsLevelInfo, icon: string) => {
+export const getHighLevelPrestigeColour = (data: BedwarsLevelInfo) => {
     const colourFormat: Array<BedwarsPrestigeFormats> = getColourFormats();
     const level = data.level;
     let starIcon;
     if (level >= 1100 && level < 2100) starIcon = "✪";
     if (level >= 2100) starIcon = "❀";
-    if (level >= 2000) {
-        for (const bedwarsPrestigeFormat of colourFormat) {
-            if (bedwarsPrestigeFormat.prestige <= level) {
+    if (level >= 1000) {
+        for (const {format, bracketColour, prestige} of colourFormat) {
+            if (prestige <= level) {
                 const levelSplit: Array<number> = Array.from(level.toString()).map(Number);
-                let html = `<span style='color: #${MinecraftColourAsHex[bedwarsPrestigeFormat.bracketColour.beginning]}'>[</span>`;
+                let html = `<span style='color: #${MinecraftColourAsHex[bracketColour.beginning]}'>[</span>`;
                 for (let i = 0; i < levelSplit.length; i++) {
-                    html += `<span style='color: #${MinecraftColourAsHex[bedwarsPrestigeFormat.format[i]]}'>${levelSplit[i]}</span>`;
+                    html += `<span style='color: #${MinecraftColourAsHex[format[i]]}'>${levelSplit[i]}</span>`;
                 }
-                html += `<span style='color: #${MinecraftColourAsHex[bedwarsPrestigeFormat.format[3]]}'>${starIcon}</span>`;
-                html += `<span style='color: #${MinecraftColourAsHex[bedwarsPrestigeFormat.bracketColour.end]}'>]</span>`;
+                html += `<span style='color: #${MinecraftColourAsHex[format[3]]}'>${starIcon}</span>`;
+                html += `<span style='color: #${MinecraftColourAsHex[bracketColour.end]}'>]</span>`;
                 return html;
             }
         }
@@ -158,17 +158,27 @@ export const getHighLevelPrestigeColour = (data: BedwarsLevelInfo, icon: string)
 
 const getColourFormats = () => {
     const colourFormat: Array<BedwarsPrestigeFormats> = [];
-    // TODO Add colours and correct them
-    colourFormat.push({prestige: 2000, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
-    colourFormat.push({prestige: 2100, format: [MinecraftFormatting.GOLD, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.AQUA], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
-    colourFormat.push({prestige: 2200, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW], bracketColour: {beginning: MinecraftFormatting.GOLD, end: MinecraftFormatting.DARK_AQUA}});
-    colourFormat.push({prestige: 2300, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GRAY], bracketColour: {beginning: MinecraftFormatting.DARK_PURPLE, end: MinecraftFormatting.YELLOW}});
-    colourFormat.push({prestige: 2400, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.AQUA, end: MinecraftFormatting.DARK_GRAY}});
-    colourFormat.push({prestige: 2500, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
-    colourFormat.push({prestige: 2600, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
-    colourFormat.push({prestige: 2700, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
-    colourFormat.push({prestige: 2800, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
-    colourFormat.push({prestige: 2900, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
-    colourFormat.push({prestige: 3000, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
+    colourFormat.push({prestige: 1000, format: [MinecraftFormatting.GOLD, MinecraftFormatting.YELLOW, MinecraftFormatting.GREEN, MinecraftFormatting.AQUA], bracketColour: {beginning: MinecraftFormatting.RED, end: MinecraftFormatting.DARK_PURPLE}});
+    colourFormat.push({prestige: 1100, format: [MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.WHITE}});
+    colourFormat.push({prestige: 1200, format: [MinecraftFormatting.GOLD, MinecraftFormatting.GOLD, MinecraftFormatting.GOLD, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.GOLD, end: MinecraftFormatting.GOLD}});
+    colourFormat.push({prestige: 1300, format: [MinecraftFormatting.AQUA, MinecraftFormatting.AQUA, MinecraftFormatting.AQUA, MinecraftFormatting.AQUA], bracketColour: {beginning: MinecraftFormatting.AQUA, end: MinecraftFormatting.AQUA}});
+    colourFormat.push({prestige: 1400, format: [MinecraftFormatting.DARK_GREEN, MinecraftFormatting.DARK_GREEN, MinecraftFormatting.DARK_GREEN, MinecraftFormatting.DARK_GREEN], bracketColour: {beginning: MinecraftFormatting.DARK_GREEN, end: MinecraftFormatting.DARK_GREEN}});
+    colourFormat.push({prestige: 1500, format: [MinecraftFormatting.DARK_AQUA, MinecraftFormatting.DARK_AQUA, MinecraftFormatting.DARK_AQUA, MinecraftFormatting.DARK_AQUA], bracketColour: {beginning: MinecraftFormatting.DARK_AQUA, end: MinecraftFormatting.DARK_AQUA}});
+    colourFormat.push({prestige: 1600, format: [MinecraftFormatting.DARK_RED, MinecraftFormatting.DARK_RED, MinecraftFormatting.DARK_RED, MinecraftFormatting.DARK_RED], bracketColour: {beginning: MinecraftFormatting.DARK_RED, end: MinecraftFormatting.DARK_RED}});
+    colourFormat.push({prestige: 1700, format: [MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.LIGHT_PURPLE], bracketColour: {beginning: MinecraftFormatting.LIGHT_PURPLE, end: MinecraftFormatting.LIGHT_PURPLE}});
+    colourFormat.push({prestige: 1800, format: [MinecraftFormatting.BLUE, MinecraftFormatting.BLUE, MinecraftFormatting.BLUE, MinecraftFormatting.BLUE], bracketColour: {beginning: MinecraftFormatting.BLUE, end: MinecraftFormatting.BLUE}});
+    colourFormat.push({prestige: 1900, format: [MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE], bracketColour: {beginning: MinecraftFormatting.DARK_PURPLE, end: MinecraftFormatting.DARK_PURPLE}});
+    colourFormat.push({prestige: 2000, format: [MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE], bracketColour: {beginning: MinecraftFormatting.DARK_PURPLE, end: MinecraftFormatting.DARK_PURPLE}});
+
+    colourFormat.push({prestige: 2100, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
+    colourFormat.push({prestige: 2200, format: [MinecraftFormatting.GOLD, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.AQUA], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
+    colourFormat.push({prestige: 2300, format: [MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.DARK_PURPLE, end: MinecraftFormatting.YELLOW}});
+    colourFormat.push({prestige: 2400, format: [MinecraftFormatting.AQUA, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.GRAY], bracketColour: {beginning: MinecraftFormatting.AQUA, end: MinecraftFormatting.DARK_GRAY}});
+    colourFormat.push({prestige: 2500, format: [MinecraftFormatting.WHITE, MinecraftFormatting.GREEN, MinecraftFormatting.GREEN, MinecraftFormatting.DARK_GREEN], bracketColour: {beginning: MinecraftFormatting.AQUA, end: MinecraftFormatting.DARK_GREEN}});
+    colourFormat.push({prestige: 2600, format: [MinecraftFormatting.DARK_RED, MinecraftFormatting.RED, MinecraftFormatting.RED, MinecraftFormatting.LIGHT_PURPLE], bracketColour: {beginning: MinecraftFormatting.DARK_RED, end: MinecraftFormatting.DARK_PURPLE}});
+    colourFormat.push({prestige: 2700, format: [MinecraftFormatting.YELLOW, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.DARK_GRAY], bracketColour: {beginning: MinecraftFormatting.YELLOW, end: MinecraftFormatting.DARK_GRAY}});
+    colourFormat.push({prestige: 2800, format: [MinecraftFormatting.GREEN, MinecraftFormatting.DARK_GREEN, MinecraftFormatting.DARK_GREEN, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.GREEN, end: MinecraftFormatting.YELLOW}});
+    colourFormat.push({prestige: 2900, format: [MinecraftFormatting.AQUA, MinecraftFormatting.DARK_AQUA, MinecraftFormatting.DARK_AQUA, MinecraftFormatting.BLUE], bracketColour: {beginning: MinecraftFormatting.AQUA, end: MinecraftFormatting.BLUE}});
+    colourFormat.push({prestige: 3000, format: [MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD, MinecraftFormatting.GOLD, MinecraftFormatting.RED], bracketColour: {beginning: MinecraftFormatting.YELLOW, end: MinecraftFormatting.DARK_RED}});
     return colourFormat.sort((a, b) => b.prestige - a.prestige);
 };

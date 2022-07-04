@@ -8,7 +8,7 @@ import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
 import {getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTags, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
-import {IPCResponse, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
 import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
@@ -16,9 +16,6 @@ import {ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
 import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
-import fastJson from "fast-json-stringify";
-import chalk from "chalk";
-import {Components} from "@common/zikeji";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -262,7 +259,11 @@ const registerElectronStore = () => {
     });
 
     ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
-        return electronStoreTags.get(data.key);
+        return electronStore.get(data.key);
+    });
+
+    ipcMain.handle("getWholeStore", async (event: IpcMainInvokeEvent) => {
+        return {data: {tags: electronStoreTags.store, config: electronStore.store}, status: 200};
     });
 };
 

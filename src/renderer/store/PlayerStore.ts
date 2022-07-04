@@ -1,8 +1,8 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {FormatPlayer, Player} from "@common/utils/PlayerUtils";
+import {Player} from "@common/utils/PlayerUtils";
 import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Store} from "./index";
-import {PlayerHandler} from "@common/utils/Schemas";
+import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
@@ -24,7 +24,6 @@ const cacheState: PlayerStoreThunkObject = {
     apiKeyOwner: "",
     runKey: "",
 };
-const playerFormatter = new FormatPlayer();
 
 /**
  * Adds players to the Overlay Table.
@@ -87,19 +86,8 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
             playerData.sources.lunar = lunarApi;
             playerData.sources.playerDb = playerDatabase;
         }
-        playerData.overlay.tags = await playerFormatter.renderTags(playerData);
     }
 
-    return {
-        status: 200,
-        cause: "valid request",
-        data: playerData,
-    };
-});
-
-const updatePlayerTags = createAsyncThunk("PlayerStore/updatePlayerTags", async (player: Player) => {
-    const playerData = player;
-    playerData.overlay.tags = await playerFormatter.renderTags(playerData);
     return {
         status: 200,
         cause: "valid request",
@@ -120,10 +108,12 @@ export const resetOverlayTable = createAsyncThunk("PlayerStore/resetOverlayTable
     return true;
 });
 
+export const updatePlayerStores = createAsyncThunk("PlayerStore/updateStore", async () => {
+    return await window.ipcRenderer.invoke<IPCResponse<StoreObject>>("getWholeStore");
+});
+
 export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () => {
-    cacheState.apiKey = await window.config.get("hypixel.apiKey");
-    cacheState.apiKeyOwner = await window.config.get("hypixel.apiKeyOwner");
-    cacheState.runKey = await window.config.get("run.apiKey");
+    [cacheState.apiKey, cacheState.apiKeyOwner, cacheState.runKey] = await Promise.all([window.config.get("hypixel.apiKey"), window.config.get("hypixel.apiKeyOwner"), window.config.get("run.apiKey")]);
     return true;
 });
 
@@ -303,6 +293,10 @@ const PlayerStore = createSlice({
     name: "PlayerStore",
     initialState: {
         players: Array<Player>(),
+        tagStore: {
+            config: {},
+            tags: {},
+        },
     },
     reducers: {
         removePlayer: (state, action: {payload: PlayerStoreThunkObject}) => {
@@ -334,13 +328,16 @@ const PlayerStore = createSlice({
         resetTable: (state) => {
             state.players = [];
         },
+        updateStore: (state, action: {payload: IPCResponse<StoreObject>}) => {
+            const payload: IPCResponse<StoreObject> = action.payload;
+            if (payload !== undefined && payload.status === 200 && payload.data !== undefined) {
+                state.tagStore = payload.data;
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
             .addCase(getPlayerHypixelData.fulfilled, (state, action: {payload: PlayerHandler}) => {
-                PlayerStore.caseReducers.updatePlayer(state, action);
-            })
-            .addCase(updatePlayerTags.fulfilled, (state, action: {payload: PlayerHandler}) => {
                 PlayerStore.caseReducers.updatePlayer(state, action);
             })
             .addCase(getPlayerHypixelData.rejected, (state, action: {payload}) => {
@@ -352,6 +349,9 @@ const PlayerStore = createSlice({
             })
             .addCase(resetOverlayTable.fulfilled, (state) => {
                 PlayerStore.caseReducers.resetTable(state);
+            })
+            .addCase(updatePlayerStores.fulfilled, (state, action: {payload: IPCResponse<StoreObject>}) => {
+                PlayerStore.caseReducers.updateStore(state, action);
             });
     },
 });

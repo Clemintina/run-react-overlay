@@ -8,7 +8,7 @@ import MainSettings from "@renderer/views/MainSettings";
 import store from "@renderer/store";
 import {initScript} from "@renderer/store/ConfigStore";
 import {LogFileReader} from "@common/utils/LogFileReader";
-import {playerInitScript} from "@renderer/store/PlayerStore";
+import {playerInitScript, updatePlayerStores} from "@renderer/store/PlayerStore";
 
 /**
  * Loads the **Initial Script**
@@ -16,6 +16,7 @@ import {playerInitScript} from "@renderer/store/PlayerStore";
  */
 setTimeout(() => store.dispatch(initScript()), 20);
 setTimeout(() => store.dispatch(playerInitScript()), 20);
+setTimeout(() => store.dispatch(updatePlayerStores()), 50);
 
 /**
  * Starts the Log readers

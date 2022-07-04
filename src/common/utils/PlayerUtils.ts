@@ -46,11 +46,13 @@ export class PlayerUtils {
 export class FormatPlayer {
     private starterDivider = `<div style='margin: 0 auto;  display: flex;'>`;
     private utils = new PlayerHypixelUtils();
+    private tagStore;
 
     /*+
      * Render tags and stuff in the Player Request
      */
-    public renderTags = async (player: Player) => {
+    public renderTags = (player: Player, tagStore: RUNElectronStoreTagsTyped) => {
+        this.tagStore = tagStore;
         let tagRenderer: string = this.starterDivider;
         if (player.sources.runApi != null) {
             const runApi = player.sources.runApi.data.data;
@@ -69,22 +71,20 @@ export class FormatPlayer {
                     }
                 }
                 if (runApi.migrated.tagged) {
-                    tagRenderer += await this.getTagsFromConfig("run.migration");
+                    tagRenderer += this.getTagsFromConfig("run.migration");
                 }
                 if (runApi.safelist.tagged) {
                     tagRenderer += this.getPlayerTagDivider("✓", "green");
                 }
                 if (runApi.annoylist.tagged) {
-                    tagRenderer += await this.getTagsFromConfig("run.annoylist");
+                    tagRenderer += this.getTagsFromConfig("run.annoylist");
                 }
                 if (runApi.statistics.encounters != 0) {
-                    tagRenderer += await this.getTagsFromConfig("run.encounters", runApi.statistics.encounters);
+                    tagRenderer += this.getTagsFromConfig("run.encounters", runApi.statistics.encounters);
                 }
-
                 if (this.renderNameChangeTag(player) <= 10) {
                     tagRenderer += this.getPlayerTagDivider("NC", "#FF55FF");
                 }
-
                 if (player.sources.keathiz != null) {
                     tagRenderer += this.renderKeathizTags(player);
                 }
@@ -96,21 +96,24 @@ export class FormatPlayer {
         return tagRenderer;
     };
 
-    public getTagsFromConfig = async (tagDisplayPath: RUNElectronStoreTagsTyped | string, value?: number) => {
-        const tag = await window.ipcRenderer.invoke<TagObject>("tagsGet", {key: `${tagDisplayPath}`});
+    public getTagsFromConfig = (tagDisplayPath: RUNElectronStoreTagsTyped | string, value?: number) => {
+        const tag = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
         const tagDisplayIcon = tag.display;
         const tagArray = tag.colour;
+        let tagReturned = this.getPlayerTagDivider(tagDisplayIcon, "#amber");
         if (Array.isArray(tagArray) && value != undefined) {
-            const arr = tagArray.sort((a, b) => b.requirement - a.requirement);
+            const tempArray = [...tagArray];
+            const arr = tempArray.sort((a, b) => b.requirement - a.requirement);
             for (const {colour, requirement} of arr) {
                 if (value >= requirement) {
-                    return this.getPlayerTagDivider(tagDisplayIcon, `#${colour}`);
+                    tagReturned = this.getPlayerTagDivider(tagDisplayIcon, `#${colour}`);
+                    break;
                 }
             }
         } else {
-            return this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray.toString()}`);
+            tagReturned = this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray.toString()}`);
         }
-        return this.getPlayerTagDivider(tagDisplayIcon, "amber");
+        return tagReturned;
     };
 
     /**
@@ -125,8 +128,7 @@ export class FormatPlayer {
             if (bwLevel.level >= 2100) starIcon = "❀";
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
                 if (bwLevel.level < 1099) starRenderer += this.getPlayerTagDivider(bwLevel.level + starIcon, "#" + bwLevel.prestigeColourHex);
-                else starRenderer += getHighLevelPrestigeColour(bwLevel, starIcon);
-                console.log(starRenderer);
+                else starRenderer += getHighLevelPrestigeColour(bwLevel);
             } else {
                 starRenderer += this.getPlayerTagDivider(bwLevel.level || 0, "red", player);
             }
