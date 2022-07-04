@@ -1,5 +1,5 @@
 import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
-import {Components, getBedwarsLevelInfo, getPlayerRank} from "@common/zikeji";
+import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
@@ -124,7 +124,9 @@ export class FormatPlayer {
             if (bwLevel.level >= 1100 && bwLevel.level < 2100) starIcon = "✪";
             if (bwLevel.level >= 2100) starIcon = "❀";
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
-                starRenderer += this.getPlayerTagDivider(bwLevel.level + starIcon, "#" + bwLevel.prestigeColourHex);
+                if (bwLevel.level < 1099) starRenderer += this.getPlayerTagDivider(bwLevel.level + starIcon, "#" + bwLevel.prestigeColourHex);
+                else starRenderer += getHighLevelPrestigeColour(bwLevel, starIcon);
+                console.log(starRenderer);
             } else {
                 starRenderer += this.getPlayerTagDivider(bwLevel.level || 0, "red", player);
             }

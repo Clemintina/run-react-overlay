@@ -11,7 +11,7 @@ import "@inovua/reactdatagrid-community/index.css";
 
 const playerFormatter = new FormatPlayer();
 
-const smallColumnSize = 50;
+const smallColumnSize = 60;
 const mediumColumnSize = 70;
 const largeColumnSize = 150;
 const extraLargeColumnSize = 200;
