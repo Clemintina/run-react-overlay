@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Player} from "@common/utils/PlayerUtils";
 import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {Store} from "./index";
+import store, {Store} from "./index";
 import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
@@ -114,6 +114,7 @@ export const updatePlayerStores = createAsyncThunk("PlayerStore/updateStore", as
 
 export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () => {
     [cacheState.apiKey, cacheState.apiKeyOwner, cacheState.runKey] = await Promise.all([window.config.get("hypixel.apiKey"), window.config.get("hypixel.apiKeyOwner"), window.config.get("run.apiKey")]);
+    store.dispatch(updatePlayerStores());
     return true;
 });
 

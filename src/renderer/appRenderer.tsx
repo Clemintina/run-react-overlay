@@ -16,7 +16,7 @@ import {playerInitScript, updatePlayerStores} from "@renderer/store/PlayerStore"
  */
 setTimeout(() => store.dispatch(initScript()), 20);
 setTimeout(() => store.dispatch(playerInitScript()), 20);
-setTimeout(() => store.dispatch(updatePlayerStores()), 50);
+setInterval(() => store.dispatch(updatePlayerStores()), 60000);
 
 /**
  * Starts the Log readers

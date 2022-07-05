@@ -174,7 +174,8 @@ export class FormatPlayer {
                     nameRenderer += ``;
                 }
             } else {
-                nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
+                if (this.tagStore.run != undefined) nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
+                else nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname ?? "Unknown", "#FF5555");
             }
             nameRenderer += `</span>`;
         } else {
