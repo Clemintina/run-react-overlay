@@ -3,7 +3,7 @@ import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRa
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
-import {TagObject} from "@common/utils/Schemas";
+import {MetricsObject, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 
 export interface Player {
@@ -100,6 +100,9 @@ export class FormatPlayer {
         const tag = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
         const tagDisplayIcon = tag.display;
         const tagArray = tag.colour;
+        if (tagDisplayPath == "run.blacklist") {
+            return this.getPlayerTagDivider(value, `#${tagArray}`);
+        }
         if (Array.isArray(tagArray) && value != undefined) {
             const tempArray = [...tagArray];
             const arr = tempArray.sort((a, b) => b.requirement - a.requirement);
@@ -112,6 +115,23 @@ export class FormatPlayer {
             return this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray.toString()}`);
         }
         return this.getPlayerTagDivider(tagDisplayIcon, "#amber");
+    };
+
+    public getCoreFromConfig = (tagDisplayPath: RUNElectronStoreTagsTyped | string, value: number) => {
+        const coreMetric: MetricsObject = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
+        const coreArray = coreMetric.colours;
+        if (Array.isArray(coreArray) && value != undefined) {
+            const tempArray = [...coreArray];
+            const arr = tempArray.sort((a, b) => a.requirement - b.requirement);
+            for (const {colour, requirement} of arr) {
+                if (value <= requirement) {
+                    return this.getPlayerTagDivider(value, `#${colour}`);
+                }
+            }
+            return this.getPlayerTagDivider(value, `#${arr[arr.length - 1].colour}`);
+        } else {
+            return this.getPlayerTagDivider(value, `#${coreArray}`);
+        }
     };
 
     public renderStar = (player: Player) => {
@@ -156,7 +176,7 @@ export class FormatPlayer {
                     nameRenderer += ``;
                 }
             } else {
-                nameRenderer = this.getPlayerTagDivider("BLACKLISTED", MinecraftColours.RED.hex);
+                nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
             }
             nameRenderer += `</span>`;
         } else {
@@ -209,24 +229,8 @@ export class FormatPlayer {
             }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
-            } else if (playerValue === 1) {
-                renderer += this.getPlayerTagDivider(playerValue, "gray", player);
-            } else if (playerValue <= 2) {
-                renderer += this.getPlayerTagDivider(playerValue, "gray", player);
-            } else if (playerValue <= 4) {
-                renderer += this.getPlayerTagDivider(playerValue, "white", player);
-            } else if (playerValue <= 6) {
-                renderer += this.getPlayerTagDivider(playerValue, "goldenrod", player);
-            } else if (playerValue <= 7) {
-                renderer += this.getPlayerTagDivider(playerValue, "darkgreen", player);
-            } else if (playerValue <= 10) {
-                renderer += this.getPlayerTagDivider(playerValue, "red", player);
-            } else if (playerValue <= 15) {
-                renderer += this.getPlayerTagDivider(playerValue, "darkred", player);
-            } else if (playerValue <= 50) {
-                renderer += this.getPlayerTagDivider(playerValue, "deeppink", player);
             } else {
-                renderer += this.getPlayerTagDivider(playerValue, "purple", player);
+                renderer = this.getCoreFromConfig(`core.${route.toLowerCase()}`, playerValue);
             }
         } else {
             renderer += this.getPlayerTagDividerNicked();
@@ -295,24 +299,8 @@ export class FormatPlayer {
             const playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0);
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
-            } else if (playerValue === 1) {
-                renderer += this.getPlayerTagDivider(playerValue, "gray");
-            } else if (playerValue <= 3) {
-                renderer += this.getPlayerTagDivider(playerValue, "gray");
-            } else if (playerValue <= 10) {
-                renderer += this.getPlayerTagDivider(playerValue, "white");
-            } else if (playerValue <= 20) {
-                renderer += this.getPlayerTagDivider(playerValue, "goldenrod");
-            } else if (playerValue <= 35) {
-                renderer += this.getPlayerTagDivider(playerValue, "darkgreen");
-            } else if (playerValue <= 60) {
-                renderer += this.getPlayerTagDivider(playerValue, "red");
-            } else if (playerValue <= 100) {
-                renderer += this.getPlayerTagDivider(playerValue, "darkred");
-            } else if (playerValue <= 500) {
-                renderer += this.getPlayerTagDivider(playerValue, "deeppink");
             } else {
-                renderer += this.getPlayerTagDivider(playerValue, "purple");
+                renderer = this.getCoreFromConfig("core.fkdr", playerValue);
             }
         } else {
             renderer += this.getPlayerTagDividerNicked();

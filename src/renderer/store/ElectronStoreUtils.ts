@@ -204,6 +204,47 @@ export const getDefaultElectronStoreObject = {
             ],
         },
     },
+    core: {
+        fkdr: {
+            colours: [
+                {requirement: 1, colour: "AAAAAA", operator: "=="},
+                {requirement: 3, colour: "AAAAAA", operator: "<="},
+                {requirement: 10, colour: "FFFFFF", operator: "<="},
+                {requirement: 20, colour: "FFAA00", operator: "<="},
+                {requirement: 30, colour: "00AA00", operator: "<="},
+                {requirement: 60, colour: "FF5555", operator: "<="},
+                {requirement: 100, colour: "AA0000", operator: "<="},
+                {requirement: 500, colour: "FF55FF", operator: "<="},
+                {requirement: 700, colour: "AA00AA", operator: "<="},
+            ],
+        },
+        bblr: {
+            colours: [
+                {requirement: 1, colour: "AAAAAA", operator: "=="},
+                {requirement: 2, colour: "AAAAAA", operator: "<="},
+                {requirement: 4, colour: "FFFFFF", operator: "<="},
+                {requirement: 6, colour: "FFAA00", operator: "<="},
+                {requirement: 7, colour: "00AA00", operator: "<="},
+                {requirement: 10, colour: "FF5555", operator: "<="},
+                {requirement: 15, colour: "AA0000", operator: "<="},
+                {requirement: 50, colour: "FF55FF", operator: "<="},
+                {requirement: 100, colour: "AA00AA", operator: "<="},
+            ],
+        },
+        wlr: {
+            colours: [
+                {requirement: 1, colour: "AAAAAA", operator: "=="},
+                {requirement: 2, colour: "AAAAAA", operator: "<="},
+                {requirement: 4, colour: "FFFFFF", operator: "<="},
+                {requirement: 6, colour: "FFAA00", operator: "<="},
+                {requirement: 7, colour: "00AA00", operator: "<="},
+                {requirement: 10, colour: "FF5555", operator: "<="},
+                {requirement: 15, colour: "AA0000", operator: "<="},
+                {requirement: 50, colour: "FF55FF", operator: "<="},
+                {requirement: 100, colour: "AA00AA", operator: "<="},
+            ],
+        },
+    },
 };
 
 /**

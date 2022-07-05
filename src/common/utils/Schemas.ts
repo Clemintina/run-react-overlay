@@ -48,6 +48,16 @@ export interface TagObject {
     colour: Array<TagArray> | string;
 }
 
+export interface MetricsObject {
+    colours: Array<MetricsArray>;
+}
+
+export interface MetricsArray {
+    requirement: number;
+    colour: string;
+    operator: string;
+}
+
 export interface StoreObject {
     tags: RUNElectronStoreTagsTyped;
     config: RUNElectronStoreTyped;
