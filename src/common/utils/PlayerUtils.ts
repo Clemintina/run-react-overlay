@@ -140,10 +140,10 @@ export class FormatPlayer {
             if (bwLevel.level >= 1100 && bwLevel.level < 2100) starIcon = "✪";
             if (bwLevel.level >= 2100) starIcon = "❀";
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
-                if (bwLevel.level < 1099) starRenderer += this.getPlayerTagDivider(bwLevel.level + starIcon, "#" + bwLevel.prestigeColourHex);
+                if (bwLevel.level < 1099) starRenderer += this.getPlayerTagDivider(`[${bwLevel.level}${starIcon}]`, "#" + bwLevel.prestigeColourHex);
                 else starRenderer += getHighLevelPrestigeColour(bwLevel);
             } else {
-                starRenderer += this.getPlayerTagDivider(bwLevel.level || 0, "red", player);
+                starRenderer = this.getPlayerTagDivider(bwLevel.level ?? 0, "#" + this.tagStore.run.blacklist.colour);
             }
         } else {
             starRenderer += this.getPlayerTagDividerNicked();
@@ -174,8 +174,7 @@ export class FormatPlayer {
                     nameRenderer += ``;
                 }
             } else {
-                if (this.tagStore.run != undefined) nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
-                else nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname ?? "Unknown", "#FF5555");
+                nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
             }
             nameRenderer += `</span>`;
         } else {
