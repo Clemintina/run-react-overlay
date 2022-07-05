@@ -331,7 +331,7 @@ const PlayerStore = createSlice({
         },
         updateStore: (state, action: {payload: IPCResponse<StoreObject>}) => {
             const payload: IPCResponse<StoreObject> = action.payload;
-            if (payload !== undefined && payload.status === 200 && payload.data !== undefined) {
+            if (payload.status === 200) {
                 state.tagStore = payload.data;
             }
         },

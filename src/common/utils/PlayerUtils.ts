@@ -178,7 +178,7 @@ export class FormatPlayer {
             }
             nameRenderer += `</span>`;
         } else {
-            nameRenderer = this.getPlayerTagDivider("NICKED", MinecraftColours.RED.hex);
+            nameRenderer = this.getPlayerTagDivider(player.name ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
         }
         nameRenderer += `</div>`;
         return nameRenderer;
@@ -190,24 +190,8 @@ export class FormatPlayer {
             const playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak || 0;
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
-            } else if (playerValue === 0) {
-                renderer += this.getPlayerTagDivider(playerValue, "gray", player);
-            } else if (playerValue <= 50) {
-                renderer += this.getPlayerTagDivider(playerValue, "gray", player);
-            } else if (playerValue <= 200) {
-                renderer += this.getPlayerTagDivider(playerValue, "white", player);
-            } else if (playerValue <= 350) {
-                renderer += this.getPlayerTagDivider(playerValue, "goldenrod", player);
-            } else if (playerValue <= 500) {
-                renderer += this.getPlayerTagDivider(playerValue, "darkgreen", player);
-            } else if (playerValue <= 650) {
-                renderer += this.getPlayerTagDivider(playerValue, "red", player);
-            } else if (playerValue <= 800) {
-                renderer += this.getPlayerTagDivider(playerValue, "darkred", player);
-            } else if (playerValue <= 1000) {
-                renderer += this.getPlayerTagDivider(playerValue, "deeppink", player);
             } else {
-                renderer += this.getPlayerTagDivider(playerValue, "purple", player);
+                renderer = this.getCoreFromConfig(`core.winstreak`, playerValue);
             }
         } else {
             renderer += this.getPlayerTagDividerNicked();

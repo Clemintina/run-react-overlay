@@ -244,6 +244,19 @@ export const getDefaultElectronStoreObject = {
                 {requirement: 100, colour: "AA00AA", operator: "<="},
             ],
         },
+        winstreak: {
+            colours: [
+                {requirement: 0, colour: "AAAAAA", operator: "=="},
+                {requirement: 50, colour: "AAAAAA", operator: "<="},
+                {requirement: 200, colour: "FFFFFF", operator: "<="},
+                {requirement: 350, colour: "FFAA00", operator: "<="},
+                {requirement: 500, colour: "00AA00", operator: "<="},
+                {requirement: 650, colour: "FF5555", operator: "<="},
+                {requirement: 800, colour: "AA0000", operator: "<="},
+                {requirement: 1000, colour: "FF55FF", operator: "<="},
+                {requirement: 1500, colour: "AA00AA", operator: "<="},
+            ],
+        },
     },
 };
 

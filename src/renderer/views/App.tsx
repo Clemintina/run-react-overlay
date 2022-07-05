@@ -2,16 +2,13 @@ import "@assets/scss/app.scss";
 import React from "react";
 import store from "@renderer/store";
 import {useSelector} from "react-redux";
-import {FormatPlayer, Player} from "@common/utils/PlayerUtils";
+import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
 import {TypeColumn} from "@inovua/reactdatagrid-community/types/TypeColumn";
-
 import "@inovua/reactdatagrid-community/index.css";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
-import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
 
-const playerFormatter = new FormatPlayer();
+const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 let tagStore;
 
 const smallColumnSize = 60;
