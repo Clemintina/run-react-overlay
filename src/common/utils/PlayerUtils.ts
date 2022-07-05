@@ -5,6 +5,7 @@ import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
 import {MetricsObject, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
+import jsonLogic from "json-logic-js";
 
 export interface Player {
     name: string;
@@ -48,9 +49,6 @@ export class FormatPlayer {
     private utils = new PlayerHypixelUtils();
     private tagStore;
 
-    /*+
-     * Render tags and stuff in the Player Request
-     */
     public renderTags = (player: Player, tagStore: RUNElectronStoreTagsTyped) => {
         this.tagStore = tagStore;
         let tagRenderer: string = this.starterDivider;
@@ -123,8 +121,8 @@ export class FormatPlayer {
         if (Array.isArray(coreArray) && value != undefined) {
             const tempArray = [...coreArray];
             const arr = tempArray.sort((a, b) => a.requirement - b.requirement);
-            for (const {colour, requirement} of arr) {
-                if (value <= requirement) {
+            for (const {colour, requirement, operator} of arr) {
+                if (jsonLogic.apply({[operator]: [value, requirement]})) {
                     return this.getPlayerTagDivider(value, `#${colour}`);
                 }
             }
