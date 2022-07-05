@@ -11,7 +11,9 @@ if (require("electron-squirrel-startup")) {
  * initialization and is ready to create browser windows.
  * Some APIs can only be used after this event occurs.
  */
-app.on("ready", createAppWindow);
+app.on("ready", async () => {
+    createAppWindow();
+});
 
 /**
  * Emitted when the application is activated. Various actions can

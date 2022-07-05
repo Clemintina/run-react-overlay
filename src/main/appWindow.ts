@@ -16,6 +16,7 @@ import {ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
 import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
+import windowStateKeeper from "electron-window-state";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -80,9 +81,15 @@ const axiosClient = axios.create({
  * @returns {BrowserWindow} Application Window Instance
  */
 export const createAppWindow = (): BrowserWindow => {
+    const mainWindowState = windowStateKeeper({
+        defaultWidth: 800,
+        defaultHeight: 600,
+    });
     appWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        x: mainWindowState.x,
+        y: mainWindowState.y,
+        width: mainWindowState.width,
+        height: mainWindowState.height,
         backgroundColor: "#242424",
         show: false,
         autoHideMenuBar: true,
@@ -100,6 +107,7 @@ export const createAppWindow = (): BrowserWindow => {
 
     appWindow.setAlwaysOnTop(true, "floating");
     appWindow.setVisibleOnAllWorkspaces(true);
+    mainWindowState.manage(appWindow);
 
     if (!isDevelopment) {
         if (!require("electron-squirrel-startup") && process.platform === "win32") {
