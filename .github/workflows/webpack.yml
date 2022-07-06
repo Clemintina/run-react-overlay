@@ -21,8 +21,6 @@ jobs:
           - x64
     name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
     steps:
-      - env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - uses: actions/checkout@v3
       - name: Setup node
         uses: actions/setup-node@v3
