@@ -154,7 +154,7 @@ export const getHighLevelPrestigeColour = (data: BedwarsLevelInfo) => {
             }
         }
     }
-    return " ";
+    return "";
 };
 
 const getColourFormats = () => {
