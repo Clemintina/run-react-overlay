@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: self-hosted
     strategy:
       matrix:
         os:
@@ -30,6 +30,6 @@ jobs:
       - run: yarn install --immutable
       - run: yarn make
       - name: Upload the artifacts
-        uses: skx/github-action-publish-binaries@v3
+        uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
