@@ -16,7 +16,7 @@
 	"scripts": {
 		"start": "cross-env NODE_ENV=development electron-forge start",
 		"package": "electron-forge package",
-		"make": "electron-forge make --platform=win32",
+		"make": "electron-forge make",
 		"publish": "electron-forge publish",
 		"lint": "eslint src/ --ext .ts,.js,.tsx,.jsx"
 	},
