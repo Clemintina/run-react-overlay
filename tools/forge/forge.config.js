@@ -8,7 +8,7 @@ module.exports = {
         // Create asar archive for main, renderer process files
         asar: true,
         // Set executable name
-        executableName: "Seraph-Overlay",
+        executableName: "seraph-overlay",
         // Set application copyright
         appCopyright: "Copyright (C) 2022 seraph.si",
         icon: "assets/images/icon.ico",
