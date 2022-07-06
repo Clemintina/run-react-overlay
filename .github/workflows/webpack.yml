@@ -29,3 +29,7 @@ jobs:
           architecture: ${{ matrix.architecture }}
       - run: yarn install --immutable
       - run: yarn make
+      - name: Upload the artifacts
+        uses: skx/github-action-publish-binaries@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
