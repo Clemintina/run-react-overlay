@@ -9,6 +9,7 @@
 
 import {Components} from "../types/api";
 import {MinecraftColourAsHex, MinecraftFormatting} from "@common/zikeji";
+import {number} from "@inovua/reactdatagrid-community/filterTypes";
 
 /** @internal */
 enum BEDWARS_LEVEL_CONSTANTS {
@@ -136,7 +137,7 @@ export interface BedwarsPrestigeFormats {
 export const getHighLevelPrestigeColour = (data: BedwarsLevelInfo) => {
     const colourFormat: Array<BedwarsPrestigeFormats> = getColourFormats();
     const level = data.level;
-    let starIcon;
+    let starIcon = "✫";
     if (level >= 1100 && level < 2100) starIcon = "✪";
     if (level >= 2100) starIcon = "❀";
     if (level >= 1000) {
@@ -168,8 +169,8 @@ const getColourFormats = () => {
     colourFormat.push({prestige: 1700, format: [MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.LIGHT_PURPLE], bracketColour: {beginning: MinecraftFormatting.LIGHT_PURPLE, end: MinecraftFormatting.LIGHT_PURPLE}});
     colourFormat.push({prestige: 1800, format: [MinecraftFormatting.BLUE, MinecraftFormatting.BLUE, MinecraftFormatting.BLUE, MinecraftFormatting.BLUE], bracketColour: {beginning: MinecraftFormatting.BLUE, end: MinecraftFormatting.BLUE}});
     colourFormat.push({prestige: 1900, format: [MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE], bracketColour: {beginning: MinecraftFormatting.DARK_PURPLE, end: MinecraftFormatting.DARK_PURPLE}});
-    colourFormat.push({prestige: 2000, format: [MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.DARK_PURPLE], bracketColour: {beginning: MinecraftFormatting.DARK_PURPLE, end: MinecraftFormatting.DARK_PURPLE}});
 
+    colourFormat.push({prestige: 2000, format: [MinecraftFormatting.GRAY, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.GRAY], bracketColour: {beginning: MinecraftFormatting.DARK_GRAY, end: MinecraftFormatting.DARK_GRAY}});
     colourFormat.push({prestige: 2100, format: [MinecraftFormatting.WHITE, MinecraftFormatting.YELLOW, MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
     colourFormat.push({prestige: 2200, format: [MinecraftFormatting.GOLD, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.AQUA], bracketColour: {beginning: MinecraftFormatting.WHITE, end: MinecraftFormatting.GOLD}});
     colourFormat.push({prestige: 2300, format: [MinecraftFormatting.DARK_PURPLE, MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.LIGHT_PURPLE, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.DARK_PURPLE, end: MinecraftFormatting.YELLOW}});
@@ -179,6 +180,8 @@ const getColourFormats = () => {
     colourFormat.push({prestige: 2700, format: [MinecraftFormatting.YELLOW, MinecraftFormatting.WHITE, MinecraftFormatting.WHITE, MinecraftFormatting.DARK_GRAY], bracketColour: {beginning: MinecraftFormatting.YELLOW, end: MinecraftFormatting.DARK_GRAY}});
     colourFormat.push({prestige: 2800, format: [MinecraftFormatting.GREEN, MinecraftFormatting.DARK_GREEN, MinecraftFormatting.DARK_GREEN, MinecraftFormatting.GOLD], bracketColour: {beginning: MinecraftFormatting.GREEN, end: MinecraftFormatting.YELLOW}});
     colourFormat.push({prestige: 2900, format: [MinecraftFormatting.AQUA, MinecraftFormatting.DARK_AQUA, MinecraftFormatting.DARK_AQUA, MinecraftFormatting.BLUE], bracketColour: {beginning: MinecraftFormatting.AQUA, end: MinecraftFormatting.BLUE}});
+
     colourFormat.push({prestige: 3000, format: [MinecraftFormatting.YELLOW, MinecraftFormatting.GOLD, MinecraftFormatting.GOLD, MinecraftFormatting.RED], bracketColour: {beginning: MinecraftFormatting.YELLOW, end: MinecraftFormatting.DARK_RED}});
-    return colourFormat.sort((a, b) => b.prestige - a.prestige);
+
+    return colourFormat.sort((a: BedwarsPrestigeFormats, b: BedwarsPrestigeFormats) => b.prestige - a.prestige);
 };

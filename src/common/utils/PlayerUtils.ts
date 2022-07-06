@@ -1,11 +1,12 @@
 import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
-import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex} from "@common/zikeji";
+import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
-import {MetricsObject, TagObject} from "@common/utils/Schemas";
+import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 import jsonLogic from "json-logic-js";
+import {Store} from "@renderer/store";
 
 export interface Player {
     name: string;
@@ -48,9 +49,14 @@ export class FormatPlayer {
     private starterDivider = `<div style='margin: 0 auto;  display: flex;'>`;
     private utils = new PlayerHypixelUtils();
     private tagStore;
+    private configStore;
 
-    public renderTags = (player: Player, tagStore: RUNElectronStoreTagsTyped) => {
-        this.tagStore = tagStore;
+    public setConfig = (stores: {config: object; tags: object}) => {
+        this.tagStore = stores.tags;
+        this.configStore = stores.config;
+    };
+
+    public renderTags = (player: Player) => {
         let tagRenderer: string = this.starterDivider;
         if (player.sources.runApi != null) {
             const runApi = player.sources.runApi.data.data;
@@ -81,7 +87,7 @@ export class FormatPlayer {
                     tagRenderer += this.getTagsFromConfig("run.encounters", runApi.statistics.encounters);
                 }
                 if (this.renderNameChangeTag(player) <= 10) {
-                    tagRenderer += this.getPlayerTagDivider("NC", "#FF55FF");
+                    tagRenderer += this.getTagsFromConfig("run.name_change");
                 }
                 if (player.sources.keathiz != null) {
                     tagRenderer += this.renderKeathizTags(player);
@@ -95,9 +101,9 @@ export class FormatPlayer {
     };
 
     public getTagsFromConfig = (tagDisplayPath: RUNElectronStoreTagsTyped | string, value?: number) => {
-        const tag = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
-        const tagDisplayIcon = tag.display;
-        const tagArray = tag.colour;
+        const tag: TagObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
+        const tagDisplayIcon: string | undefined = tag?.display ?? "TAGS";
+        const tagArray: string | Array<TagArray> | undefined = tag?.colour ?? "FF5555";
         if (tagDisplayPath == "run.blacklist") {
             return this.getPlayerTagDivider(value, `#${tagArray}`);
         }
@@ -110,20 +116,20 @@ export class FormatPlayer {
                 }
             }
         } else {
-            return this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray.toString()}`);
+            return this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray?.toString()}`);
         }
         return this.getPlayerTagDivider(tagDisplayIcon, "#amber");
     };
 
     public getCoreFromConfig = (tagDisplayPath: RUNElectronStoreTagsTyped | string, value: number) => {
-        const coreMetric: MetricsObject = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
-        const coreArray = coreMetric.colours;
+        const coreMetric: MetricsObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
+        const coreArray = coreMetric?.colours ?? "FF5555";
         if (Array.isArray(coreArray) && value != undefined) {
             const tempArray = [...coreArray];
             const arr = tempArray.sort((a, b) => a.requirement - b.requirement);
             for (const {colour, requirement, operator} of arr) {
                 if (jsonLogic.apply({[operator]: [value, requirement]})) {
-                    return this.getPlayerTagDivider(value, `#${colour}`);
+                    return this.getPlayerTagDivider(value, `#${colour};`);
                 }
             }
             return this.getPlayerTagDivider(value, `#${arr[arr.length - 1].colour}`);
@@ -136,11 +142,8 @@ export class FormatPlayer {
         let starRenderer: string = this.starterDivider;
         if (!player.nicked && player.hypixelPlayer !== null) {
             const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
-            let starIcon = "✫";
-            if (bwLevel.level >= 1100 && bwLevel.level < 2100) starIcon = "✪";
-            if (bwLevel.level >= 2100) starIcon = "❀";
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
-                if (bwLevel.level < 1099) starRenderer += this.getPlayerTagDivider(`[${bwLevel.level}${starIcon}]`, "#" + bwLevel.prestigeColourHex);
+                if (bwLevel.level < 1000) starRenderer += this.getPlayerTagDivider(`[${bwLevel.level}✫]`, "#" + bwLevel.prestigeColourHex);
                 else starRenderer += getHighLevelPrestigeColour(bwLevel);
             } else {
                 starRenderer = this.getPlayerTagDivider(bwLevel.level ?? 0, "#" + this.tagStore.run.blacklist.colour);
@@ -156,7 +159,7 @@ export class FormatPlayer {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
             nameRenderer += `<span class='name-span'>`;
-            if (window.config.get("general.tags.name.lunar")) {
+            if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
                         nameRenderer += `<span class='lunar-client-image'>
@@ -191,7 +194,7 @@ export class FormatPlayer {
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
             } else {
-                renderer = this.getCoreFromConfig(`core.winstreak`, playerValue);
+                renderer += this.getCoreFromConfig(`core.winstreak`, playerValue);
             }
         } else {
             renderer += this.getPlayerTagDividerNicked();
@@ -342,6 +345,7 @@ export class FormatPlayer {
     };
 
     private renderNameChangeTag = (player: Player) => {
+        const unknownData = 11;
         if (player.sources.playerDb !== undefined && player.sources.playerDb !== null) {
             if (player.sources.playerDb.status === 200) {
                 if (player.sources.playerDb.data.data.player.meta ?? false) {
@@ -360,38 +364,37 @@ export class FormatPlayer {
                         const diffInMs = Math.abs(timeNow - nameBefore.getTime());
                         return diffInMs / (1000 * 60 * 60 * 24);
                     }
-                    return 11;
+                    return unknownData;
                 }
                 console.log(player.name + " has no name history or failed the NOT NULL check");
-                return 11;
+                return unknownData;
             }
             // TODO Add handling for 500 / too many requests
-            return 11;
-        } else return 11;
+            return unknownData;
+        } else return unknownData;
     };
 
     private getPlayerTagDivider = (tag: string | number | unknown, colour: string, player?: Player) => {
-        let htmlResponse = `<span class='playerTagDivider'>`,
+        let htmlResponse = ``,
             styleString = `color: ${colour};`;
-        if (typeof tag === "number" && !Number.isInteger(tag)) tag = tag.toFixed(2);
+        if (typeof tag === "number" && !Number.isInteger(tag) && tag != 0) tag = tag.toFixed(2);
         if (colour === "white") {
             styleString += `opacity: 75%;`;
         }
         if (player?.sources.runApi?.data.data.blacklist.tagged) {
             styleString += `font: bold;`;
         }
-        if (tag) {
+        if (tag !== undefined) {
             if (typeof tag === "string") {
-                if (tag.length <= 4) {
+                if (tag.length == 1) {
+                    // Makes tags have spaces
                     styleString += `padding-left: 5px;`;
-                } else {
-                    styleString += `padding-left: 1px;`;
                 }
             } else if (typeof tag === "number") {
-                styleString += `justify-content: center;`;
+                styleString += `justify-content: center; display: flex; width: 100vw;`;
             }
             htmlResponse += `<span style='${styleString}'>${tag}</span>`;
-            htmlResponse += `</span>`;
+            return htmlResponse;
         }
         return htmlResponse;
     };

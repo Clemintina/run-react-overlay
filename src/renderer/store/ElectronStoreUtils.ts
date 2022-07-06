@@ -71,6 +71,14 @@ export const RUNElectronStore = Type.Optional(
                 ),
             }),
         ),
+        settings: Type.Optional(
+            Type.Object({
+                lunar: Type.Boolean({
+                    description: "Enable Lunar Tags",
+                    default: true,
+                }),
+            }),
+        ),
     }),
 );
 
@@ -101,7 +109,7 @@ export const RUNElectronStoreTags = Type.Object({
         migration: Type.Object({
             display: Type.String({
                 description: "How to display the AnnoyList tag",
-                default: "A",
+                default: "M",
             }),
             colour: Type.String({
                 description: "The colour for the Migration tag",
@@ -111,7 +119,7 @@ export const RUNElectronStoreTags = Type.Object({
         encounters: Type.Object({
             display: Type.String({
                 description: "How to display the Encounters tag",
-                default: "A",
+                default: "E",
             }),
             colour: Type.Array(
                 Type.Object({
@@ -130,7 +138,7 @@ export const RUNElectronStoreTags = Type.Object({
         safelist: Type.Object({
             display: Type.String({
                 description: "How to display the Safelist tag",
-                default: "A",
+                default: "✓",
             }),
             colour: Type.Array(
                 Type.Object({
@@ -146,12 +154,64 @@ export const RUNElectronStoreTags = Type.Object({
                 },
             ),
         }),
+        personal_safelist: Type.Object({
+            display: Type.String({
+                description: "How to display the Personal Safelist tag",
+                default: "S",
+            }),
+            colour: Type.String({
+                description: "The colour of the Personal Safelist Tag",
+                default: "FF5555",
+            }),
+        }),
+        name_change: Type.Object({
+            display: Type.String({description: "If the player recently changed their name", default: "NC"}),
+            colour: Type.String({description: "The colour of this tag", default: "FF55FF"}),
+        }),
+    }),
+    core: Type.Object({
+        fkdr: Type.Object({
+            colours: Type.Array(
+                Type.Object({
+                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
+                    colour: Type.String({description: "What colour should this be."}),
+                    operator: Type.String({description: "Conditional used for this object"}),
+                }),
+            ),
+        }),
+        bblr: Type.Object({
+            colours: Type.Array(
+                Type.Object({
+                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
+                    colour: Type.String({description: "What colour should this be."}),
+                    operator: Type.String({description: "Conditional used for this object"}),
+                }),
+            ),
+        }),
+        wlr: Type.Object({
+            colours: Type.Array(
+                Type.Object({
+                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
+                    colour: Type.String({description: "What colour should this be."}),
+                    operator: Type.String({description: "Conditional used for this object"}),
+                }),
+            ),
+        }),
+        winstreak: Type.Object({
+            colours: Type.Array(
+                Type.Object({
+                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
+                    colour: Type.String({description: "What colour should this be."}),
+                    operator: Type.String({description: "Conditional used for this object"}),
+                }),
+            ),
+        }),
     }),
 });
 
 export type RUNElectronStoreTagsType = Static<typeof RUNElectronStoreTags>;
 
-export const getDefaultElectronStoreObject = {
+export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
     run: {
         annoylist: {
             display: "A",
@@ -202,6 +262,14 @@ export const getDefaultElectronStoreObject = {
                     colour: "55FF55",
                 },
             ],
+        },
+        personal_safelist: {
+            display: "S",
+            colour: "FF5555",
+        },
+        name_change: {
+            display: "NC",
+            colour: "FF55FF",
         },
     },
     core: {

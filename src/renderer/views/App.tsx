@@ -7,9 +7,10 @@ import {Interweave} from "interweave";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
 import {TypeColumn} from "@inovua/reactdatagrid-community/types/TypeColumn";
 import "@inovua/reactdatagrid-community/index.css";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import {StoreObject} from "@common/utils/Schemas";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
-let tagStore;
 
 const smallColumnSize = 60;
 const mediumColumnSize = 70;
@@ -47,7 +48,7 @@ const columns: TypeColumn[] = [
         minWidth: largeColumnSize,
         sortName: `Tags for the Overlay`,
         render: ({data}) => {
-            return <Interweave content={playerFormatter.renderTags(data, tagStore.tags)} />;
+            return <Interweave content={playerFormatter.renderTags(data)} />;
         },
         sortable: false,
     },
@@ -118,7 +119,8 @@ const AppTable = () => {
      * All processing is done in {@link store}
      */
     const players: Array<Player> = useSelector(() => store.getState().playerStore.players);
-    tagStore = useSelector(() => store.getState().playerStore.tagStore);
+    const tagStore = useSelector(() => store.getState().playerStore.tagStore);
+    playerFormatter.setConfig({tags: tagStore.tags, config: tagStore.config});
 
     const renderRowContextMenu = (menuProps, {rowProps}) => {
         menuProps.autoDismiss = true;

@@ -124,10 +124,10 @@ const getBoomza = async (player: Player) => {
 };
 
 const getRunApi = async (player: Player) => {
-    let api: IPCResponse<Blacklist>;
+    let api;
     if (player.hypixelPlayer?.uuid !== undefined) {
         const state = cacheState;
-        api = await window.ipcRenderer.invoke("seraph", RunEndpoints.BLACKLIST, player.hypixelPlayer.uuid, state.apiKey, state.apiKeyOwner, state.runKey, state.apiKeyOwner);
+        api = await window.ipcRenderer.invoke<IPCResponse<Blacklist>>("seraph", RunEndpoints.BLACKLIST, player.hypixelPlayer.uuid, state.apiKey, state.apiKeyOwner, state.runKey, state.apiKeyOwner);
     } else {
         api = {
             data: {
@@ -165,7 +165,7 @@ const getRunApi = async (player: Player) => {
 const getLunarTags = async (player: Player) => {
     let api: IPCResponse<LunarAPIResponse>;
     if (player.hypixelPlayer?.uuid !== undefined) {
-        api = await window.ipcRenderer.invoke("lunar", player.hypixelPlayer.uuid);
+        api = await window.ipcRenderer.invoke<IPCResponse<LunarAPIResponse>>("lunar", player.hypixelPlayer.uuid);
     } else {
         api = {
             status: 400,

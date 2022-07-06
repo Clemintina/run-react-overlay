@@ -1,0 +1,715 @@
+{
+	"XXX": {
+		"length": 16,
+		"microsoft": {
+			"color": "#faff0f",
+			"display": false,
+			"replace": {
+				"tag": "DODGE",
+				"value": true
+			}
+		},
+		"mojang": {
+			"color": "#faff0f",
+			"display": true,
+			"replace": {
+				"tag": "DODGE",
+				"value": true
+			}
+		}
+	},
+	"combined_tag_rules": [
+		{
+			"color": {
+				"microsoft": "#FF5050",
+				"mojang": "#FF5050"
+			},
+			"required_tags": [
+				"S",
+				"H"
+			],
+			"tag": "D"
+		},
+		{
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"required_tags": [
+				"Q3-1",
+				"Q10-1"
+			],
+			"tag": "Q3-1"
+		}
+	],
+	"custom_bots": [],
+	"custom_tag_rules": [
+		{
+			"color": {
+				"microsoft": "#faff0f",
+				"mojang": "#faff0f"
+			},
+			"enabled": {
+				"microsoft": true,
+				"mojang": true
+			},
+			"logic": "AND",
+			"required_values": [
+				{
+					"check": "Q3",
+					"function": ">=",
+					"value": 2
+				},
+				{
+					"check": "star",
+					"function": "<=",
+					"value": 12
+				},
+				{
+					"check": "nicked",
+					"function": "=",
+					"value": false
+				}
+			],
+			"tag": "DODGE"
+		},
+		{
+			"color": {
+				"microsoft": "#ff6600",
+				"mojang": "#ff6600"
+			},
+			"enabled": {
+				"microsoft": true,
+				"mojang": true
+			},
+			"logic": "AND",
+			"required_values": [
+				{
+					"check": "fkdr",
+					"function": ">",
+					"value": 2.4
+				},
+				{
+					"check": "star",
+					"function": "<=",
+					"value": 199
+				},
+				{
+					"check": "nicked",
+					"function": "=",
+					"value": false
+				}
+			],
+			"tag": "R"
+		},
+		{
+			"color": {
+				"microsoft": "#ff6600",
+				"mojang": "#ff6600"
+			},
+			"enabled": {
+				"microsoft": true,
+				"mojang": true
+			},
+			"logic": "AND",
+			"required_values": [
+				{
+					"check": "nicked",
+					"function": "=",
+					"value": true
+				}
+			],
+			"tag": "R"
+		}
+	],
+	"custom_tags": {
+		"Pugrilla": {
+			"tag": "Pug",
+			"color": "#2EFFF9"
+		},
+		"RaulSweats": {
+			"tag": "Pug",
+			"color": "#2EFFF9"
+		},
+		"lillikepanda": {
+			"tag": "Pug",
+			"color": "#2EFFF9"
+		},
+		"Bakanan": {
+			"tag": "Canada",
+			"color": "#FF0000"
+		},
+		"Liahhfan": {
+			"tag": "AFK",
+			"color": "#FBFF00"
+		},
+		"Liahh": {
+			"tag": "JEW",
+			"color": "#FF00DA"
+		},
+		"PANDAHFANTORRI": {
+			"tag": "Ew",
+			"color": "#FF0000"
+		},
+		"SNOOC999": {
+			"tag": "Snooc",
+			"color": "#FF00DA"
+		},
+		"pwandah": {
+			"tag": "Panda",
+			"color": "#7D0EDD"
+		},
+		"ScitusSerpens": {
+			"tag": "Snake ",
+			"color": "#FF0000"
+		},
+		"C1X3": {
+			"tag": "Rich",
+			"color": "#00FFAB"
+		},
+		"C1X4": {
+			"tag": "Rich",
+			"color": "#00FFAB"
+		},
+		"ReonThePug": {
+			"tag": "HOT ",
+			"color": "#0b0b0b"
+		},
+		"LocalLover": {
+			"tag": "Vhole ",
+			"color": "#0b0b0b"
+		},
+		"LoverLocal": {
+			"tag": "Vhole",
+			"color": "#0b0b0b"
+		},
+		"psych0andsam": {
+			"tag": "6665 ",
+			"color": "#8700FF"
+		}
+	},
+	"name": "Pug v1.2",
+	"public": true,
+	"standard_tags": {
+		"API": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"display": false,
+			"replace": {
+				"tag": "S",
+				"value": false
+			}
+		},
+		"CA1": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 200
+			}
+		},
+		"CA2": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 100
+			}
+		},
+		"CA3": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 300
+			}
+		},
+		"CM1": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": true,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 15
+			}
+		},
+		"CM2": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 15
+			}
+		},
+		"CM3": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 20
+			}
+		},
+		"CS1": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": true,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 5
+			}
+		},
+		"CS2": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": true,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 6
+			}
+		},
+		"CS3": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": true,
+			"replace": {
+				"tag": "C",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 8
+			}
+		},
+		"E10": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": true,
+			"replace": {
+				"tag": "E",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 1
+			}
+		},
+		"E24": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "E",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 3
+			}
+		},
+		"E3": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "E",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 1
+			}
+		},
+		"E30": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "E",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 2
+			}
+		},
+		"E48": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "E",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 5
+			}
+		},
+		"ET": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "E",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 8
+			}
+		},
+		"H": {
+			"color": {
+				"microsoft": "#FF5050",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": true,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 1
+			}
+		},
+		"LE": {
+			"color": "#DAA520",
+			"display": false,
+			"replace": {
+				"tag": "Legacy",
+				"value": false
+			}
+		},
+		"ND": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"display": true,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": "<=",
+				"value": 1
+			}
+		},
+		"P": {
+			"color": {
+				"mojang": "#808080"
+			},
+			"display": true,
+			"replace": {
+				"tag": "S",
+				"value": false
+			}
+		},
+		"Q10": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": true,
+			"display": true,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 3
+			}
+		},
+		"Q24": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": true,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 75
+			}
+		},
+		"Q3": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": true,
+			"display": true,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 2
+			}
+		},
+		"Q30": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": true,
+			"display": true,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 6
+			}
+		},
+		"Q48": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": true,
+			"display": false,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 50
+			}
+		},
+		"QT": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": true,
+			"display": false,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": "<=",
+				"value": 32
+			}
+		},
+		"R": {
+			"color": {
+				"mojang": "#FFFF00"
+			},
+			"display": false,
+			"replace": {
+				"tag": "S",
+				"value": false
+			}
+		},
+		"S": {
+			"color": {
+				"microsoft": "#FF5050",
+				"mojang": "#FF5050"
+			},
+			"display": {
+				"microsoft": true,
+				"mojang": true
+			},
+			"replace": {
+				"tag": "Dodge",
+				"value": false
+			}
+		},
+		"T": {
+			"color": {
+				"microsoft": "#FF5050",
+				"mojang": "#FF5050"
+			},
+			"display": false,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": "<",
+				"value": 300
+			}
+		},
+		"TT": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"display": false,
+			"replace": {
+				"tag": "S",
+				"value": false
+			},
+			"required": {
+				"function": "<=",
+				"value": 2000000
+			}
+		},
+		"U": {
+			"color": {
+				"mojang": "#808080"
+			},
+			"display": false,
+			"replace": {
+				"tag": "ND",
+				"value": false
+			}
+		},
+		"Z1": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": true,
+			"replace": {
+				"tag": "Z",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 50
+			}
+		},
+		"Z2": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": false,
+			"display": false,
+			"replace": {
+				"tag": "Z",
+				"value": true
+			},
+			"required": {
+				"function": ">=",
+				"value": 3
+			}
+		},
+		"Z3": {
+			"color": {
+				"microsoft": "#DAA520",
+				"mojang": "#FF5050"
+			},
+			"count": true,
+			"display": false,
+			"replace": {
+				"tag": "Z",
+				"value": false
+			},
+			"required": {
+				"function": ">=",
+				"value": 1
+			}
+		}
+	},
+	"tag_order": [
+		"DODGE",
+		"P",
+		"R",
+		"D",
+		"H",
+		"S",
+		"C",
+		"Q3",
+		"Q10",
+		"Q30"
+	]
+}
