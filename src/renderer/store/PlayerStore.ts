@@ -28,7 +28,7 @@ const cacheState: PlayerStoreThunkObject = {
 /**
  * Adds players to the Overlay Table.
  */
-export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, {dispatch}) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
