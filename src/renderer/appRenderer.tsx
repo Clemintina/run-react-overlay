@@ -34,7 +34,7 @@ reader.startCommandListener();
  */
 createRoot(document.getElementById("app")!).render(
     <Provider store={store}>
-        <div className='mainBody'>
+        <div className='mainBody' style={{backgroundColor: "#242424ff"}}>
             <HashRouter basename='/'>
                 <TitleBar />
                 <Routes>

@@ -1,4 +1,4 @@
-$backgroundColour: #242424;
+$backgroundColour: #242424ff;
 $primaryColour: grey;
 $secondaryColour: aqua;
 
@@ -31,14 +31,11 @@ $secondaryColour: aqua;
   }
 }
 
-
 input {
-  background: transparentize($backgroundColour, 1);
   transition: .2s ease all;
   color: $primaryColour;
 
   &:focus {
-    background: transparentize($backgroundColour, 0.1);
     color: white;
     border: $secondaryColour 1px solid;
   }
@@ -54,7 +51,6 @@ input {
     }
   }
 }
-
 
 *.drag {
   -webkit-app-region: drag;

@@ -6,6 +6,9 @@ import {apiKeyValidator, keathizApiKeyValidator} from "@renderer/store/ConfigSto
 import {useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import {InputTextBox} from "@components/InputTextBox";
+import {InputBoxButton} from "@components/InputBoxButton";
+import {UnderlinedTitle} from "@components/UnderlinedTitle";
 
 const MainSettings = () => {
     const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.apiKey.length === 36);
@@ -14,12 +17,11 @@ const MainSettings = () => {
     // TODO make it look nicer and cleaner
     return (
         <div className='mainSettingsPanel'>
-            <h1 className='underline hover-underline-animation'>Overlay Settings</h1>
+            <UnderlinedTitle text={"Overlay Settings"} options={{text: {size: 30}}} />
             <div className='mainSettingsOption'>
-                <div className='underline'>Hypixel API Key:</div>
-                <input
-                    type='text'
-                    onKeyDown={(event) => {
+                <UnderlinedTitle text={"Hypixel API Key: "}></UnderlinedTitle>
+                <InputTextBox
+                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === "Enter") {
                             store.dispatch(apiKeyValidator(event.currentTarget.value));
                         }
@@ -28,10 +30,9 @@ const MainSettings = () => {
                 {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
             </div>
             <div className='mainSettingsOption'>
-                <div className='underline'>Keathiz Key:</div>
-                <input
-                    type='text'
-                    onKeyDown={(event) => {
+                <UnderlinedTitle text={"Keathiz Key: "}> </UnderlinedTitle>
+                <InputTextBox
+                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === "Enter") {
                             store.dispatch(keathizApiKeyValidator(event.currentTarget.value));
                         }
@@ -40,8 +41,8 @@ const MainSettings = () => {
                 {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
             </div>
             <div className='mainSettingsOption'>
-                <div className='underline'>Overlay Logs:</div>
-                <button
+                <UnderlinedTitle text={"Overlay Logs: "}></UnderlinedTitle>
+                <InputBoxButton
                     onClick={async () => {
                         const path = await window.ipcRenderer.invoke("selectLogFile");
                         if (path.filePaths[0] !== undefined) {
@@ -52,9 +53,8 @@ const MainSettings = () => {
                             }
                         }
                     }}
-                >
-                    Set Log File
-                </button>
+                    text={"Select Log File"}
+                />
                 {<FontAwesomeIcon style={{color: isLogsSet ? "green" : "red"}} icon={faExclamationCircle} />}
             </div>
         </div>
