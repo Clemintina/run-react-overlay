@@ -1,9 +1,13 @@
 import store from "@renderer/store";
 import {getPlayerHypixelData, PlayerStoreThunkObject, removePlayerFromOverlay, resetOverlayTable} from "@renderer/store/PlayerStore";
-import {RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import IpcRendererEvent = Electron.IpcRendererEvent;
+
+export interface LogFileMessage {
+    message: string
+}
 
 export class LogFileReader {
     public startListening = async () => {
@@ -100,11 +104,9 @@ export class LogFileReader {
 }
 
 const readLogLine = (data: string) => {
-    const response = destr(data);
+    const response:IPCResponse<LogFileMessage> = destr(data);
     if (typeof response === "object") {
-        const line = response.data.message;
-        if (typeof line === "string") return line;
-        return response.data;
+        return response.data.message;
     }
-    return null;
+    return "";
 };

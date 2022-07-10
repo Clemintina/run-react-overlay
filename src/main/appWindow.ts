@@ -17,6 +17,7 @@ import * as tunnel from "tunnel";
 import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
+import {LogFileMessage} from "@common/utils/LogFileReader";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -270,7 +271,7 @@ const registerElectronStore = () => {
         return electronStore.get(data.key);
     });
 
-    ipcMain.handle("getWholeStore", async (event: IpcMainInvokeEvent) => {
+    ipcMain.handle("getWholeStore", async () => {
         return {data: {tags: electronStoreTags.store, config: electronStore.store}, status: 200};
     });
 };
@@ -286,7 +287,7 @@ const registerLogCommunications = () => {
             .catch(() => false);
     });
 
-    ipcMain.handle("selectLogFile", async (event: IpcMainInvokeEvent, args: never[]) => {
+    ipcMain.handle("selectLogFile", async () => {
         return await dialog.showOpenDialog(appWindow, {
             defaultPath: app.getPath("appData"),
             filters: [{name: "Logs", extensions: ["log"]}],
@@ -312,7 +313,7 @@ const registerLogCommunications = () => {
 
             logFileReadline.on("line", async (line) => {
                 if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
-                appWindow?.webContents.send("logFileLine", handleIPCSend({data: {message: line}, code: 200}));
+                appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
             });
         }
     });

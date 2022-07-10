@@ -94,8 +94,8 @@ const ConfigStore = createSlice({
                         payload: {
                             code: 403,
                             title: "Invalid API Key",
-                            cause: "The API Key provided was not valid",
-                            detail: "The Hypixel API key inputted was not valid, try a new key.",
+                            cause: "The API Key provided was invalid",
+                            detail: "The Hypixel API key inputted was invalid, try a new key.",
                             referenceId: "extra reducer, rejected promise, invalid key?",
                         },
                     });
@@ -106,8 +106,8 @@ const ConfigStore = createSlice({
                     payload: {
                         code: 403,
                         title: "Invalid API Key",
-                        cause: "The API Key provided was not valid",
-                        detail: "The Hypixel API key inputted was not valid, try a new key.",
+                        cause: "The API Key provided was invalid.",
+                        detail: "The Hypixel API key inputted was invalid, try a new key.",
                         referenceId: "extra reducer, rejected promise, invalid key?",
                     },
                 });

@@ -1,6 +1,7 @@
 import fastJson from "fast-json-stringify";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
-export const handleIPCSend = (data: object) => {
+export const handleIPCSend = <T>(data: IPCResponse<T>) => {
     const stringify = fastJson({
         title: "Json Schema for IPC",
         type: "object",
@@ -14,9 +15,9 @@ export const handleIPCSend = (data: object) => {
                 },
                 additionalProperties: false,
             },
-            code: {type: "number", default: 200},
+            status: {type: "number", default: 200},
         },
-        required: ["data", "code"],
+        required: ["data", "status"],
     });
     return stringify(data);
 };
