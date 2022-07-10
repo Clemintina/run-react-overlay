@@ -43,7 +43,7 @@
 		"axios": "^0.27.2",
 		"browserify": "^17.0.0",
 		"browserify-fs": "^1.0.0",
-		"cache-manager": "^4.0.1",
+		"cache-manager": "^4.1.0",
 		"destr": "^1.1.1",
 		"electron-log": "^4.4.8",
 		"electron-squirrel-startup": "^1.0.0",
