@@ -5,6 +5,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars as headerIcon, faWindowMinimize, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
+import {UnderlinedTitle} from "@components/UnderlinedTitle";
+import {InputTextBox} from "@components/InputTextBox";
 
 const TitleBar = () => {
     const currentRoute = useLocation();
@@ -24,22 +26,18 @@ const TitleBar = () => {
         <div>
             <div className='header drag'>
                 <div className='headerBar'>
-                    <Link to={titlePath} style={{display: "flex"}} className='nodrag'>
+                    <Link to={titlePath} style={{display: "flex", color: store.getState().configStore.colours.primaryColour}} className='nodrag'>
                         <div style={{paddingRight: 5}}>
                             <div className='settings-icon' style={{display: "flex", paddingLeft: 10}}>
                                 {renderCaret}
                             </div>
                         </div>
-                        <div className='underline'>
-                            <header style={{fontSize: 25}}>Seraph</header>
-                        </div>
+                        <UnderlinedTitle text={"Seraph"} options={{text: {size: 25}}} />
                     </Link>
                 </div>
                 <div className='headerSearchBox nodrag'>
-                    <input
-                        type='text'
-                        placeholder='Username...'
-                        className='headerSearchBox'
+                    <InputTextBox
+                        options={{placeholder: "Username...", className: "headerSearchBox"}}
                         onKeyDown={(event) => {
                             if (event.key === "Enter") {
                                 store.dispatch(

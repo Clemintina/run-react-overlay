@@ -36,9 +36,9 @@ const ConfigStore = createSlice({
         apiKeyValid: false,
         apiKeyOwner: "",
         colours: {
-            backgroundColour: "#242424",
-            primaryColour: "#808080FF",
-            secondaryColour: "#00FFFFFF",
+            backgroundColour: "#242424FF",
+            primaryColour: "#808080",
+            secondaryColour: "#00FFFF",
         },
         runKey: "public",
         logPath: "",

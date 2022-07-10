@@ -7,6 +7,7 @@ import {Interweave} from "interweave";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
 import {TypeColumn} from "@inovua/reactdatagrid-community/types/TypeColumn";
 import "@inovua/reactdatagrid-community/index.css";
+import {StatsisticsTooltip} from "@components/StatisticsTooltip";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
@@ -37,7 +38,11 @@ const columns: TypeColumn[] = [
         flex: 1,
         minWidth: extraLargeColumnSize,
         sortName: `Name of the Player`,
-        render: ({data}) => <Interweave content={playerFormatter.renderName(data)} />,
+        render: ({data}) => (
+            <StatsisticsTooltip player={data}>
+                <Interweave content={playerFormatter.renderName(data)} />
+            </StatsisticsTooltip>
+        ),
     },
     {
         id: "tags",
@@ -118,6 +123,7 @@ const AppTable = () => {
      */
     const players: Array<Player> = useSelector(() => store.getState().playerStore.players);
     const tagStore = useSelector(() => store.getState().playerStore.tagStore);
+    const textColour = useSelector(() => store.getState().configStore.colours.primaryColour);
     playerFormatter.setConfig({tags: tagStore.tags, config: tagStore.config});
 
     const renderRowContextMenu = (menuProps, {rowProps}) => {
@@ -139,7 +145,7 @@ const AppTable = () => {
 
     return (
         <div>
-            <div style={{height: "92vh", width: "100%", color: "grey"}}>
+            <div style={{height: "92vh", width: "100%", color: textColour}}>
                 <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' emptyText='No Players' style={gridStyle} showColumnMenuTool={false} renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false} showColumnMenuToolOnHover={true} enableColumnAutosize={true} />
             </div>
         </div>

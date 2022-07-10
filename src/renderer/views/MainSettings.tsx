@@ -23,7 +23,7 @@ const MainSettings = () => {
                 <InputTextBox
                     onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === "Enter") {
-                            store.dispatch(apiKeyValidator(event.currentTarget.value));
+                            store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                         }
                     }}
                 />
@@ -34,7 +34,7 @@ const MainSettings = () => {
                 <InputTextBox
                     onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === "Enter") {
-                            store.dispatch(keathizApiKeyValidator(event.currentTarget.value));
+                            store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                         }
                     }}
                 />
