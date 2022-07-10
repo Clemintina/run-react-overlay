@@ -146,7 +146,7 @@ const AppTable = () => {
     return (
         <div>
             <div style={{height: "92vh", width: "100%", color: textColour}}>
-                <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' emptyText='No Players' style={gridStyle} showColumnMenuTool={false} renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false} showColumnMenuToolOnHover={true} enableColumnAutosize={true} />
+                <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' emptyText='No Players' style={gridStyle} showColumnMenuTool={true} renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false} showColumnMenuToolOnHover={true} enableColumnAutosize={true} />
             </div>
         </div>
     );
