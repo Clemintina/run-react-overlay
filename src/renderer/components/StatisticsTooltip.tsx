@@ -33,7 +33,7 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
     }));
     let renderTooltip, hypixelPlayer;
 
-    if (isPlayerNicked) {
+    if (isPlayerNicked || player.sources.runApi?.data.data.bot.tagged) {
         renderTooltip = props.children;
     } else {
         hypixelPlayer = player.hypixelPlayer;
