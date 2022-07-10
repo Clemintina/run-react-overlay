@@ -3,6 +3,7 @@ import {Player} from "@common/utils/PlayerUtils";
 import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
 import {styled} from "@mui/material";
 import store from "@renderer/store";
+import {getPlayerRank} from "@common/zikeji";
 
 export interface StatisticsTooltip {
     player: Player;
@@ -12,6 +13,7 @@ export interface StatisticsTooltip {
 export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> = (props: StatisticsTooltip) => {
     const player = props.player;
     const colours = store.getState().configStore.colours;
+    const isPlayerNicked = player.nicked;
 
     const CustomToolTip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)(({theme}) => ({
         [`& .${tooltipClasses.tooltip}`]: {
@@ -29,20 +31,31 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
             fontSize: theme.typography.pxToRem(16),
         },
     }));
+    let renderTooltip, hypixelPlayer;
+
+    if (isPlayerNicked) {
+        renderTooltip = props.children;
+    } else {
+        hypixelPlayer = player.hypixelPlayer;
+        renderTooltip = (
+            <CustomToolTip
+                title={
+                    <React.Fragment>
+                        <span style={{color: `#${getPlayerRank(hypixelPlayer).colourHex}`}}>{hypixelPlayer.displayname}</span>
+                        <div>
+                            <span>Data: ....</span>
+                        </div>
+                    </React.Fragment>
+                }
+            >
+                <div>{props.children}</div>
+            </CustomToolTip>
+        );
+    }
 
     return (
         <div>
-            <div>
-                <CustomToolTip
-                    title={
-                        <React.Fragment>
-                            <div>{player.name}</div>
-                        </React.Fragment>
-                    }
-                >
-                    <div>{props.children}</div>
-                </CustomToolTip>
-            </div>
+            <div>{renderTooltip}</div>
         </div>
     );
 };
