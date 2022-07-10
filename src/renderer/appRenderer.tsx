@@ -2,7 +2,7 @@ import React from "react";
 import {createRoot} from "react-dom/client";
 import {Provider} from "react-redux";
 import {HashRouter, Route, Routes} from "react-router-dom";
-import TitleBar from "@components/Titlebar";
+import TitleBar from "@components/ui/Titlebar";
 import App from "@renderer/views/App";
 import MainSettings from "@renderer/views/MainSettings";
 import store from "@renderer/store";

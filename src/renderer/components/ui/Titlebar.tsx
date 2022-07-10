@@ -5,8 +5,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBars as headerIcon, faWindowMinimize, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
-import {UnderlinedTitle} from "@components/UnderlinedTitle";
-import {InputTextBox} from "@components/InputTextBox";
+import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
+import {InputTextBox} from "@components/user/InputTextBox";
 
 const TitleBar = () => {
     const currentRoute = useLocation();

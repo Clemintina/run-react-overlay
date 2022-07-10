@@ -7,7 +7,7 @@ import {Interweave} from "interweave";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
 import {TypeColumn} from "@inovua/reactdatagrid-community/types/TypeColumn";
 import "@inovua/reactdatagrid-community/index.css";
-import {StatsisticsTooltip} from "@components/StatisticsTooltip";
+import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 

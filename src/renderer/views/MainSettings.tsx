@@ -6,9 +6,9 @@ import {apiKeyValidator, keathizApiKeyValidator} from "@renderer/store/ConfigSto
 import {useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
-import {InputTextBox} from "@components/InputTextBox";
-import {InputBoxButton} from "@components/InputBoxButton";
-import {UnderlinedTitle} from "@components/UnderlinedTitle";
+import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
+import {InputTextBox} from "@components/user/InputTextBox";
+import {InputBoxButton} from "@components/user/InputBoxButton";
 
 const MainSettings = () => {
     const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.apiKey.length === 36);
