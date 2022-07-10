@@ -12,6 +12,7 @@ import type {Components, Paths} from "./types/api";
 import {Queue} from "./util/Queue";
 import {request} from "./util/Request";
 import {getResultObject, ResultObject} from "./util/ResultObject";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 /** @internal */
 export interface ActionableCall<T extends Components.Schemas.ApiSuccess> {
@@ -280,8 +281,8 @@ export class Client {
      * ```
      * @category API
      */
-    public async key(): Promise<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> {
-        return getResultObject(await this.call<Paths.Key.Get.Responses.$200>("key"), ["record"]);
+    public async key(): Promise<IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>> {
+        return {data: getResultObject(await this.call<Paths.Key.Get.Responses.$200>("key"), ["record"]), status: 200};
     }
 
     /**

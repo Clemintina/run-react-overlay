@@ -1,6 +1,8 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {RequestType, RunApiKey} from "@common/utils/externalapis/RunApi";
+import {IPCResponse, RequestType, RunApiKey} from "@common/utils/externalapis/RunApi";
 import {DisplayErrorMessage, HypixelApiKey} from "@common//utils/Schemas";
+import {ResultObject} from "@common/zikeji/util/ResultObject";
+import {Paths} from "@common/zikeji";
 
 export interface ConfigStore {
     apiKey: string;
@@ -50,13 +52,13 @@ const ConfigStore = createSlice({
         },
     },
     reducers: {
-        setHypixelApiKey: (state, action: {payload: HypixelApiKey}) => {
-            const payload: HypixelApiKey = action.payload;
+        setHypixelApiKey: (state, action: {payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>}) => {
+            const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
             state.apiKeyValid = true;
-            state.apiKey = payload.key;
-            state.apiKeyOwner = payload.key;
-            window.config.set("hypixel.apiKey", payload.key);
-            window.config.set("hypixel.apiKeyOwner", payload.owner);
+            state.apiKey = payload.data.key;
+            state.apiKeyOwner = payload.data.owner;
+            window.config.set("hypixel.apiKey", payload.data.key);
+            window.config.set("hypixel.apiKeyOwner", payload.data.owner);
         },
         setRunApiKey: (state, action: {payload: RunApiKey}) => {
             const payload: RunApiKey = action.payload;
@@ -82,9 +84,8 @@ const ConfigStore = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(apiKeyValidator.fulfilled, (state, action) => {
-                const payload: HypixelApiKey = action.payload;
-                console.log(payload);
-                if (payload?.key !== undefined) {
+                const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
+                if (payload?.data?.key !== undefined) {
                     ConfigStore.caseReducers.setHypixelApiKey(state, {
                         payload,
                     });
@@ -93,8 +94,8 @@ const ConfigStore = createSlice({
                         payload: {
                             code: 403,
                             title: "Invalid API Key",
-                            cause: "The API Key provided was invalid",
-                            detail: "The Hypixel API key inputted is invalid, try a new key.",
+                            cause: "The API Key provided was not valid",
+                            detail: "The Hypixel API key inputted was not valid, try a new key.",
                             referenceId: "extra reducer, rejected promise, invalid key?",
                         },
                     });
@@ -105,8 +106,8 @@ const ConfigStore = createSlice({
                     payload: {
                         code: 403,
                         title: "Invalid API Key",
-                        cause: "The API Key provided invalid",
-                        detail: "The Hypixel API key inputted was invalid, try a new key.",
+                        cause: "The API Key provided was not valid",
+                        detail: "The Hypixel API key inputted was not valid, try a new key.",
                         referenceId: "extra reducer, rejected promise, invalid key?",
                     },
                 });
@@ -132,7 +133,7 @@ const ConfigStore = createSlice({
  * Validates the Hypixel API Key
  */
 export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", async (hypixelApiKey: string) => {
-    return await window.ipcRenderer.invoke("hypixel", hypixelApiKey, RequestType.KEY);
+    return await window.ipcRenderer.invoke("hypixel", RequestType.KEY, hypixelApiKey);
 });
 /**
  * Validates the Keathiz API Key
