@@ -96,7 +96,7 @@ export const createAppWindow = (): BrowserWindow => {
         autoHideMenuBar: true,
         frame: false,
         titleBarStyle: "hidden",
-        icon: path.resolve("assets/images/icon.ico"),
+        icon: path.join('assets','images','icon.ico'),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
