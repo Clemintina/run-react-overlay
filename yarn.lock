@@ -91,7 +91,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/cli@npm:6.0.0-beta.64":
+"@electron-forge/cli@npm:^6.0.0-beta.64":
   version: 6.0.0-beta.64
   resolution: "@electron-forge/cli@npm:6.0.0-beta.64"
   dependencies:
@@ -249,7 +249,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/maker-deb@npm:6.0.0-beta.64":
+"@electron-forge/maker-deb@npm:^6.0.0-beta.64":
   version: 6.0.0-beta.64
   resolution: "@electron-forge/maker-deb@npm:6.0.0-beta.64"
   dependencies:
@@ -263,7 +263,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/maker-rpm@npm:6.0.0-beta.64":
+"@electron-forge/maker-rpm@npm:^6.0.0-beta.64":
   version: 6.0.0-beta.64
   resolution: "@electron-forge/maker-rpm@npm:6.0.0-beta.64"
   dependencies:
@@ -277,7 +277,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/maker-squirrel@npm:6.0.0-beta.64":
+"@electron-forge/maker-squirrel@npm:^6.0.0-beta.64":
   version: 6.0.0-beta.64
   resolution: "@electron-forge/maker-squirrel@npm:6.0.0-beta.64"
   dependencies:
@@ -292,7 +292,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/maker-zip@npm:6.0.0-beta.64":
+"@electron-forge/maker-zip@npm:^6.0.0-beta.64":
   version: 6.0.0-beta.64
   resolution: "@electron-forge/maker-zip@npm:6.0.0-beta.64"
   dependencies:
@@ -313,7 +313,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron-forge/plugin-webpack@npm:6.0.0-beta.64":
+"@electron-forge/plugin-webpack@npm:^6.0.0-beta.64":
   version: 6.0.0-beta.64
   resolution: "@electron-forge/plugin-webpack@npm:6.0.0-beta.64"
   dependencies:
@@ -513,7 +513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.9.0":
+"@emotion/react@npm:^11.9.3":
   version: 11.9.3
   resolution: "@emotion/react@npm:11.9.3"
   dependencies:
@@ -556,7 +556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/styled@npm:^11.8.1":
+"@emotion/styled@npm:^11.9.3":
   version: 11.9.3
   resolution: "@emotion/styled@npm:11.9.3"
   dependencies:
@@ -847,7 +847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/icons-material@npm:^5.8.2":
+"@mui/icons-material@npm:^5.8.4":
   version: 5.8.4
   resolution: "@mui/icons-material@npm:5.8.4"
   dependencies:
@@ -1003,13 +1003,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/x-data-grid@npm:^5.12.2":
-  version: 5.12.3
-  resolution: "@mui/x-data-grid@npm:5.12.3"
+"@mui/x-data-grid@npm:^5.13.0":
+  version: 5.13.0
+  resolution: "@mui/x-data-grid@npm:5.13.0"
   dependencies:
     "@babel/runtime": ^7.17.2
     "@mui/utils": ^5.4.1
-    clsx: ^1.1.1
+    clsx: ^1.2.1
     prop-types: ^15.8.1
     reselect: ^4.1.6
   peerDependencies:
@@ -1017,7 +1017,7 @@ __metadata:
     "@mui/system": ^5.4.1
     react: ^17.0.2 || ^18.0.0
     react-dom: ^17.0.2 || ^18.0.0
-  checksum: afe320b06aaf70fa8935f7e16f99a664e949d1f9d131d5dbee26fcb2ecc6f1c754cec8445fec7a53925ca9f1242949c70b7786b3f5c79128dac9993ae7aaa9b9
+  checksum: 820dfcafbb14122c61751eaa1685d783ebdbe7c65f3fdf4fea61d0a27415940b2010754b3130ee1a6252a53afb4960e04ee36f7091e492fea65f0cd6e9b78189
   languageName: node
   linkType: hard
 
@@ -1088,7 +1088,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.5":
+"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.7":
   version: 0.5.7
   resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.7"
   dependencies:
@@ -1154,10 +1154,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:^0.24.10":
-  version: 0.24.11
-  resolution: "@sinclair/typebox@npm:0.24.11"
-  checksum: 3ca968facf2cebf5611013da62f7609e3fe8682d1b4a79625001e15a05a5c3127d0f083e8633200389a557e997f4ffcb2fc90b27608e6e3ca3c1ec33181daae1
+"@sinclair/typebox@npm:^0.24.14":
+  version: 0.24.14
+  resolution: "@sinclair/typebox@npm:0.24.14"
+  checksum: 6fb982647be25449230c7d2ac4fa4dac743d57c8610315fd612f0645d31b97c97d0b17f5f10ed28ec579bb19d61242f1aada46dacf6409060f6a4d57739255ac
   languageName: node
   linkType: hard
 
@@ -1193,22 +1193,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-table@npm:^8.1.3":
-  version: 8.1.4
-  resolution: "@tanstack/react-table@npm:8.1.4"
+"@tanstack/react-table@npm:^8.2.2":
+  version: 8.2.2
+  resolution: "@tanstack/react-table@npm:8.2.2"
   dependencies:
-    "@tanstack/table-core": 8.1.4
+    "@tanstack/table-core": 8.2.2
   peerDependencies:
     react: ">=16"
     react-dom: ">=16"
-  checksum: 81a8f0fc1cea5939276350205eb35cb7d5c7288f06c67cea0740f3f58ef82c3d78061e638b5f28ca9f4302f6c7426877202560d762a1cd212789aba52b92d089
+  checksum: 711c4cecb5216037afdf97808f5a373d05a6d3bb72d2b51d845a9467013ed1baebf17c4be4becb1325437a7bd78101521363abe427d933789e5426bc9d4fb765
   languageName: node
   linkType: hard
 
-"@tanstack/table-core@npm:8.1.4":
-  version: 8.1.4
-  resolution: "@tanstack/table-core@npm:8.1.4"
-  checksum: a7b9ba58dc980e255436ca53898e2c6136012d95f4327724bc32fb8816904dff5e47d50f4070d06abafefde7255c8b1b5b47b8f8ac2a6d92b67efca6d783aa4d
+"@tanstack/table-core@npm:8.2.2":
+  version: 8.2.2
+  resolution: "@tanstack/table-core@npm:8.2.2"
+  checksum: da7083c23e1ac808d3a982d32291641db829769b96a37a6ddcc3ef59e7ef922909b92d75ef0372c7a673d94be08f30f77598cd291a5a1cd3c6e54f887c07d5c4
   languageName: node
   linkType: hard
 
@@ -1468,7 +1468,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.0.1":
+"@types/node@npm:*, @types/node@npm:^18.0.3":
   version: 18.0.3
   resolution: "@types/node@npm:18.0.3"
   checksum: 5dec59fbbc1186c808b53df1ca717dad034dbd6a901c75f5b052c845618b531b05f27217122c6254db99529a68618e4cfc534ae3dbf4e88754e9e572df80defa
@@ -1537,7 +1537,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.0.14":
+"@types/react@npm:*, @types/react@npm:^18.0.15":
   version: 18.0.15
   resolution: "@types/react@npm:18.0.15"
   dependencies:
@@ -1620,7 +1620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webpack-env@npm:^1.16.4":
+"@types/webpack-env@npm:^1.17.0":
   version: 1.17.0
   resolution: "@types/webpack-env@npm:1.17.0"
   checksum: 9ad4d208c4429c9427191d1f4c92e4c43e530384c17a6bc298acb89003fc47fcde1d8372e50acefa3061e9100e57fd9d616e96def875afd06c0c2afe508f298e
@@ -2973,14 +2973,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cache-manager@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "cache-manager@npm:4.0.1"
+"cache-manager@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "cache-manager@npm:4.1.0"
   dependencies:
     async: 3.2.3
     lodash.clonedeep: ^4.5.0
     lru-cache: ^7.10.1
-  checksum: 8ca25b1e603111f033d1a3f1463b2a9203e9ea61a0706265a4d4f63d54a8be95f9e79efb04fc43103219becb4903a5db747a346e009e7102767a47e5677219b2
+  checksum: 620636eba25378c0a67933d9d2452f3a63e7f4afe69442112b19cdd6bee5def7846df88d6e086e262695c017250f39da1a49f9fb4fab949ff3ce4920449fba17
   languageName: node
   linkType: hard
 
@@ -3287,7 +3287,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.1, clsx@npm:^1.2.0":
+"clsx@npm:^1.2.0, clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
@@ -4485,7 +4485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^19.0.7":
+"electron@npm:^19.0.8":
   version: 19.0.8
   resolution: "electron@npm:19.0.8"
   dependencies:
@@ -4764,7 +4764,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.29.4":
+"eslint-plugin-react@npm:^7.30.1":
   version: 7.30.1
   resolution: "eslint-plugin-react@npm:7.30.1"
   dependencies:
@@ -5427,7 +5427,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fork-ts-checker-webpack-plugin@npm:^7.2.6":
+"fork-ts-checker-webpack-plugin@npm:^7.2.11":
   version: 7.2.11
   resolution: "fork-ts-checker-webpack-plugin@npm:7.2.11"
   dependencies:
@@ -7251,7 +7251,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"less-loader@npm:11.0.0":
+"less-loader@npm:^11.0.0":
   version: 11.0.0
   resolution: "less-loader@npm:11.0.0"
   dependencies:
@@ -7263,7 +7263,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"less@npm:^4.1.2":
+"less@npm:^4.1.3":
   version: 4.1.3
   resolution: "less@npm:4.1.3"
   dependencies:
@@ -9272,7 +9272,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.7.1":
+"prettier@npm:^2.7.1":
   version: 2.7.1
   resolution: "prettier@npm:2.7.1"
   bin:
@@ -10190,7 +10190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.50.1":
+"sass@npm:^1.53.0":
   version: 1.53.0
   resolution: "sass@npm:1.53.0"
   dependencies:
@@ -10328,14 +10328,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "seraph-overlay@workspace:."
   dependencies:
-    "@electron-forge/cli": 6.0.0-beta.64
-    "@electron-forge/maker-deb": 6.0.0-beta.64
-    "@electron-forge/maker-rpm": 6.0.0-beta.64
-    "@electron-forge/maker-squirrel": 6.0.0-beta.64
-    "@electron-forge/maker-zip": 6.0.0-beta.64
-    "@electron-forge/plugin-webpack": 6.0.0-beta.64
-    "@emotion/react": ^11.9.0
-    "@emotion/styled": ^11.8.1
+    "@electron-forge/cli": ^6.0.0-beta.64
+    "@electron-forge/maker-deb": ^6.0.0-beta.64
+    "@electron-forge/maker-rpm": ^6.0.0-beta.64
+    "@electron-forge/maker-squirrel": ^6.0.0-beta.64
+    "@electron-forge/maker-zip": ^6.0.0-beta.64
+    "@electron-forge/plugin-webpack": ^6.0.0-beta.64
+    "@emotion/react": ^11.9.3
+    "@emotion/styled": ^11.9.3
     "@fortawesome/fontawesome-svg-core": ^6.1.1
     "@fortawesome/free-regular-svg-icons": ^6.1.1
     "@fortawesome/free-solid-svg-icons": ^6.1.1
@@ -10343,32 +10343,32 @@ __metadata:
     "@inovua/reactdatagrid-community": ^4.20.1
     "@logdna/tail-file": ^3.0.0
     "@marshallofsound/webpack-asset-relocator-loader": ^0.5.0
-    "@mui/icons-material": ^5.8.2
+    "@mui/icons-material": ^5.8.4
     "@mui/material": ^5.8.7
     "@mui/styled-engine-sc": ^5.8.0
-    "@mui/x-data-grid": ^5.12.2
-    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.5
+    "@mui/x-data-grid": ^5.13.0
+    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
     "@reduxjs/toolkit": ^1.8.3
-    "@sinclair/typebox": ^0.24.10
-    "@tanstack/react-table": ^8.1.3
+    "@sinclair/typebox": ^0.24.14
+    "@tanstack/react-table": ^8.2.2
     "@types/cache-manager": ^4.0.1
     "@types/json-logic-js": ^2.0.1
-    "@types/node": ^18.0.1
-    "@types/react": ^18.0.14
+    "@types/node": ^18.0.3
+    "@types/react": ^18.0.15
     "@types/react-dom": ^18.0.6
     "@types/uuid": ^8.3.4
-    "@types/webpack-env": ^1.16.4
+    "@types/webpack-env": ^1.17.0
     "@typescript-eslint/eslint-plugin": ^5.30.5
     "@typescript-eslint/parser": ^5.30.5
     axios: ^0.27.2
     browserify: ^17.0.0
     browserify-fs: ^1.0.0
-    cache-manager: ^4.0.1
+    cache-manager: ^4.1.0
     classnames: ^2.3.1
     cross-env: ^7.0.3
     css-loader: ^6.7.1
     destr: ^1.1.1
-    electron: ^19.0.7
+    electron: ^19.0.8
     electron-log: ^4.4.8
     electron-squirrel-startup: ^1.0.0
     electron-store: ^8.0.2
@@ -10377,37 +10377,38 @@ __metadata:
     eslint: ^8.19.0
     eslint-import-resolver-alias: ^1.1.2
     eslint-plugin-import: ^2.26.0
-    eslint-plugin-react: ^7.29.4
+    eslint-plugin-react: ^7.30.1
     fast-json-stringify: ^5.0.6
     file-loader: ^6.2.0
     flatstr: ^1.0.12
-    fork-ts-checker-webpack-plugin: ^7.2.6
+    fork-ts-checker-webpack-plugin: ^7.2.11
     http-browserify: ^1.7.0
     https-browserify: ^1.0.0
     interweave: ^13.0.0
     javascript-obfuscator: ^4.0.0
     json-logic-js: ^2.0.2
-    less: ^4.1.2
-    less-loader: 11.0.0
+    less: ^4.1.3
+    less-loader: ^11.0.0
     node-loader: ^2.0.0
     node-polyfill-webpack-plugin: ^2.0.0
-    prettier: 2.7.1
+    prettier: ^2.7.1
     protodef: ^1.15.0
     react: ^18.2.0
     react-dom: ^18.2.0
     react-redux: ^8.0.2
     react-refresh: ^0.14.0
     react-router-dom: ^6.3.0
-    sass: ^1.50.1
+    sass: ^1.53.0
     sass-loader: ^13.0.2
     style-loader: ^3.3.1
-    ts-loader: 9.3.1
-    tunnel: 0.0.6
+    ts-loader: ^9.3.1
+    tunnel: ^0.0.6
     typescript: ^4.7.4
     url: ^0.11.0
     uuid: ^8.3.2
-    webpack: ^5.72.0
+    webpack: ^5.73.0
     webpack-obfuscator: ^3.5.1
+    yarn-upgrade-all: ^0.7.1
   languageName: unknown
   linkType: soft
 
@@ -11380,7 +11381,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:9.3.1":
+"ts-loader@npm:^9.3.1":
   version: 9.3.1
   resolution: "ts-loader@npm:9.3.1"
   dependencies:
@@ -11455,7 +11456,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tunnel@npm:0.0.6, tunnel@npm:^0.0.6":
+"tunnel@npm:^0.0.6":
   version: 0.0.6
   resolution: "tunnel@npm:0.0.6"
   checksum: c362948df9ad34b649b5585e54ce2838fa583aa3037091aaed66793c65b423a264e5229f0d7e9a95513a795ac2bd4cb72cda7e89a74313f182c1e9ae0b0994fa
@@ -11954,7 +11955,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.69.1, webpack@npm:^5.72.0":
+"webpack@npm:^5.69.1, webpack@npm:^5.73.0":
   version: 5.73.0
   resolution: "webpack@npm:5.73.0"
   dependencies:
@@ -12340,6 +12341,15 @@ __metadata:
     yarn-or-npm: bin/index.js
     yon: bin/index.js
   checksum: 94421b4315520075b4db6c09b6284064c047058d8bbe2663cdd4269491e5f7ea5d2e68eeaa0182a760a8757479cef665b7040a8c9ddb48a3da52587a8b712b27
+  languageName: node
+  linkType: hard
+
+"yarn-upgrade-all@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "yarn-upgrade-all@npm:0.7.1"
+  bin:
+    yarn-upgrade-all: build/index.js
+  checksum: 87168957082306d51825ccfc84fda9d4022e3b522aa4cee7730abc8675980612a36aba0f9516b32f660dcde7e15e8961bd9de14924e29cd01e2b8e7c2bcf5176
   languageName: node
   linkType: hard
 

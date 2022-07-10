@@ -30,21 +30,21 @@ const WindowControls: React.FC<Props> = (props) => {
       <div
         className='control minimize'
         onClick={() => context.minimize()}
-        title={props.tooltips ? 'Minimize' : null}
+        title={props.tooltips ? 'Minimize' : ''}
       >
         ─
       </div>
       <div
         className='control maximize'
         onClick={() => context.toggle_maximize()}
-        title={props.tooltips ? 'Maximize' : null}
+        title={props.tooltips ? 'Maximize' : ''}
       >
         ☐
       </div>
       <div
         className='control close'
         onClick={() => context.exit()}
-        title={props.tooltips ? 'Close' : null}
+        title={props.tooltips ? 'Close' : ''}
       >
         X
       </div>

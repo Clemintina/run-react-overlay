@@ -91,3 +91,8 @@ out/
 dist/
 /dist/
 /out/
+
+#idea
+.idea
+.idea/
+/.idea/
