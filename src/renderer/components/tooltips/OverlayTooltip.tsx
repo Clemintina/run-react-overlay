@@ -1,5 +1,6 @@
 import React, {PropsWithChildren} from "react";
 import {Player} from "@common/utils/PlayerUtils";
+// eslint-disable-next-line import/named
 import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
 import {styled} from "@mui/material";
 import store from "@renderer/store";

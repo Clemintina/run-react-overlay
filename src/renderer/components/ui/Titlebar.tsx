@@ -54,7 +54,7 @@ const TitleBar = () => {
                     <span>
                         <button
                             className='headerButton'
-                            onClick={(event) => {
+                            onClick={() => {
                                 window.ipcRenderer.send("windowMinimise");
                             }}
                         >
@@ -64,7 +64,7 @@ const TitleBar = () => {
                     <span>
                         <button
                             className='headerButton'
-                            onClick={(event) => {
+                            onClick={() => {
                                 window.ipcRenderer.send("windowClose");
                             }}
                         >

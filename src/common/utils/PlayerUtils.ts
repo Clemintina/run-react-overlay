@@ -6,7 +6,6 @@ import destr from "destr";
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 import jsonLogic from "json-logic-js";
-import {Store} from "@renderer/store";
 
 export interface Player {
     name: string;
