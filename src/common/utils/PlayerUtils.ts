@@ -183,6 +183,7 @@ export class FormatPlayer {
         } else {
             nameRenderer = this.getPlayerTagDivider(player.name ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
         }
+        nameRenderer += `<img src="https://crafatar.com/avatars/${player.id}?size=16&overlay=true"; class="skull";></img>`
         nameRenderer += `</div>`;
         return nameRenderer;
     };
