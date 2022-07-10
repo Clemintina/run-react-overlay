@@ -148,7 +148,7 @@ const registerMainIPC = () => {
  */
 const registerSeraphIPC = () => {
     ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, resource: RequestType, ...args: unknown[]) => {
-        const apiKey: string = electronStore.get("hypixel.apiKey");
+        const apiKey: string = electronStore.get("hypixel.apiKey") ?? (args[0] as string);
         const hypixelClient = new HypixelApi(apiKey, {
             cache: {
                 get(key) {
