@@ -4,6 +4,7 @@ import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
 import {styled} from "@mui/material";
 import store from "@renderer/store";
 import {getPlayerRank} from "@common/zikeji";
+import {OverlayTooltip} from "@components/tooltips/OverlayTooltip";
 
 export interface StatisticsTooltip {
     player: Player;
@@ -12,50 +13,26 @@ export interface StatisticsTooltip {
 
 export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> = (props: StatisticsTooltip) => {
     const player = props.player;
-    const colours = store.getState().configStore.colours;
-    const isPlayerNicked = player.nicked;
-
-    const CustomToolTip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)(({theme}) => ({
-        [`& .${tooltipClasses.tooltip}`]: {
-            // backgroundColor: colours.backgroundColour,
-            backgroundColor: "#120211",
-            color: colours.primaryColour,
-            padding: "5px",
-            paddingBottom: "3px",
-            borderRadius: "5px",
-            border: "1px solid #25015b",
-            lineHeight: "17px",
-            left: "350px",
-            paddingRight: "12px",
-            maxWidth: 220,
-            fontSize: theme.typography.pxToRem(16),
-        },
-    }));
-    let renderTooltip, hypixelPlayer;
-
-    if (isPlayerNicked || player.sources.runApi?.data.data.bot.tagged) {
-        renderTooltip = props.children;
-    } else {
-        hypixelPlayer = player.hypixelPlayer;
-        renderTooltip = (
-            <CustomToolTip
-                title={
-                    <React.Fragment>
-                        <span style={{color: `#${getPlayerRank(hypixelPlayer).colourHex}`}}>{hypixelPlayer.displayname}</span>
-                        <div>
-                            <span>Data: ....</span>
-                        </div>
-                    </React.Fragment>
-                }
-            >
-                <div>{props.children}</div>
-            </CustomToolTip>
-        );
-    }
 
     return (
         <div>
-            <div>{renderTooltip}</div>
+            <OverlayTooltip
+                player={player}
+                tooltip={
+                    <div>
+                        {player.hypixelPlayer !== null && (
+                            <span>
+                                <span style={{color: `#${getPlayerRank(player.hypixelPlayer).colourHex}`}}>{player.hypixelPlayer?.displayname}</span>
+                                <div>
+                                    <span>Data: ....</span>
+                                </div>
+                            </span>
+                        )}
+                    </div>
+                }
+            >
+                {props.children}
+            </OverlayTooltip>
         </div>
     );
 };
