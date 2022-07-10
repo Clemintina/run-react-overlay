@@ -22,9 +22,6 @@ export interface Player {
         lunar?: IPCResponse<LunarAPIResponse> | null;
         playerDb?: IPCResponse<PlayerDB> | null;
     };
-    overlay: {
-        tags: string;
-    };
 }
 
 export class PlayerUtils {

@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {IPCResponse, RequestType, RunApiKey} from "@common/utils/externalapis/RunApi";
-import {DisplayErrorMessage, HypixelApiKey} from "@common//utils/Schemas";
+import {DisplayErrorMessage} from "@common//utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 
@@ -25,6 +25,11 @@ interface InitScript {
         external: {
             keathiz: {apiKey: string};
         };
+        settings: {
+            lunar: boolean,
+            keathiz: boolean,
+            boomza: boolean
+        }
     };
 }
 
@@ -49,6 +54,11 @@ const ConfigStore = createSlice({
             title: "",
             cause: "",
             detail: "",
+        },
+        settings: {
+            lunar: true,
+            keathiz: false,
+            boomza: true,
         },
     },
     reducers: {
@@ -133,7 +143,7 @@ const ConfigStore = createSlice({
  * Validates the Hypixel API Key
  */
 export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", async (hypixelApiKey: string) => {
-    return await window.ipcRenderer.invoke("hypixel", RequestType.KEY, hypixelApiKey);
+    return await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixelApiKey);
 });
 /**
  * Validates the Keathiz API Key
@@ -148,6 +158,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const hypixel = {key: "", owner: ""};
     const overlay = {logPath: ""};
     const external = {keathiz: {apiKey: ""}};
+    const settings = await window.config.get("settings");
 
     const runKey = await window.config.get("run.apiKey");
     hypixel.key = await window.config.get("hypixel.apiKey");
@@ -156,7 +167,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
 
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
 
-    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external}};
+    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external, settings}};
     return res;
 });
 

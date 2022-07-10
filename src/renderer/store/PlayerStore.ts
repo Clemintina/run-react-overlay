@@ -39,9 +39,6 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         sources: {
             runApi: null,
         },
-        overlay: {
-            tags: "",
-        },
     };
     const apiKey = cacheState.apiKey;
 
@@ -50,7 +47,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
     }
 
     try {
-        const ipcHypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke<IPCResponse<Components.Schemas.Player>>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<IPCResponse<Components.Schemas.Player>>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
+        const ipcHypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
         if (ipcHypixelPlayer.data?.uuid === undefined) {
             playerData.nicked = true;
             return {status: 400, cause: "Player is not valid on Hypixel!", data: playerData};
@@ -59,13 +56,13 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         }
         playerData.hypixelPlayer = ipcHypixelPlayer.data;
     } catch (e) {
-        const mcUtilsRequest = await window.ipcRenderer.invoke<IPCResponse<PlayerAPI>>("mcutils", RequestType.USERNAME, playerData.name);
+        const mcUtilsRequest = await window.ipcRenderer.invoke<PlayerAPI>("mcutils", RequestType.USERNAME, playerData.name);
         const mcUtils = mcUtilsRequest.data;
         playerData.nicked = true;
         if (mcUtilsRequest.status === 200) {
             playerData.nicked = false;
             playerData.id = mcUtils.player.uuid;
-            const ipcHypixelPlayer = await window.ipcRenderer.invoke<IPCResponse<Components.Schemas.Player>>("hypixel", apiKey, RequestType.UUID, mcUtils.player.uuid);
+            const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", apiKey, RequestType.UUID, mcUtils.player.uuid);
             playerData.hypixelPlayer = ipcHypixelPlayer.data;
         } else if (mcUtilsRequest.status === 400) {
             return {status: 400, cause: "Player is not valid for Mojang!", data: playerData};
@@ -109,7 +106,7 @@ export const resetOverlayTable = createAsyncThunk("PlayerStore/resetOverlayTable
 });
 
 export const updatePlayerStores = createAsyncThunk("PlayerStore/updateStore", async () => {
-    return await window.ipcRenderer.invoke<IPCResponse<StoreObject>>("getWholeStore");
+    return await window.ipcRenderer.invoke<StoreObject>("getWholeStore");
 });
 
 export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () => {
@@ -119,7 +116,12 @@ export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () =>
 });
 
 const getBoomza = async (player: Player) => {
-    const api: IPCResponse<BoomzaAntisniper> = await window.ipcRenderer.invoke("boomza", player.name);
+    let api: IPCResponse<BoomzaAntisniper>;
+    if (player.hypixelPlayer?.displayname && store.getState().configStore.settings.boomza) {
+        api = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
+    } else {
+        api = {data: {sniper: false, report: 0, error: false, username: player.name}, status: store.getState().configStore.settings.boomza ? 417 : 400};
+    }
     return new Promise<IPCResponse<BoomzaAntisniper>>((resolve) => resolve(api));
 };
 
@@ -164,11 +166,11 @@ const getRunApi = async (player: Player) => {
 
 const getLunarTags = async (player: Player) => {
     let api: IPCResponse<LunarAPIResponse>;
-    if (player.hypixelPlayer?.uuid !== undefined) {
-        api = await window.ipcRenderer.invoke<IPCResponse<LunarAPIResponse>>("lunar", player.hypixelPlayer.uuid);
+    if (player.hypixelPlayer?.uuid !== undefined && store.getState().configStore.settings.lunar) {
+        api = await window.ipcRenderer.invoke<LunarAPIResponse>("lunar", player.hypixelPlayer.uuid);
     } else {
         api = {
-            status: 400,
+            status: store.getState().configStore.settings.lunar ? 417 : 400,
             data: {
                 code: 400,
                 msTime: Date.now(),
@@ -190,11 +192,11 @@ const getLunarTags = async (player: Player) => {
 
 const getKeathizData = async (player: Player) => {
     let api: IPCResponse<KeathizOverlayRun>;
-    if (player.hypixelPlayer?.uuid !== undefined) {
-        api = await window.ipcRenderer.invoke("keathiz", player.hypixelPlayer.uuid);
+    if (player.hypixelPlayer?.uuid !== undefined && store.getState().configStore.settings.keathiz) {
+        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", player.hypixelPlayer.uuid);
     } else {
         api = {
-            status: 400,
+            status: store.getState().configStore.settings.keathiz ? 417 : 400,
             data: {
                 success: false,
                 player: {
@@ -283,7 +285,29 @@ const getKeathizData = async (player: Player) => {
 };
 
 const getPlayerDB = async (player: Player) => {
-    const api: IPCResponse<PlayerDB> = await window.ipcRenderer.invoke("playerdb", player.hypixelPlayer?.uuid);
+    let api: IPCResponse<PlayerDB>;
+    if (player.hypixelPlayer?.uuid)
+        api = await window.ipcRenderer.invoke<PlayerDB>("playerdb", player.hypixelPlayer?.uuid);
+    else {
+        api = {
+            data: {
+                code: "400",
+                message: "invalid",
+                data: {
+                    player: {
+                        meta: {
+                            name_history: [],
+                        },
+                        username: "",
+                        id: "",
+                        raw_id: "",
+                        avatar: "",
+                    },
+                },
+                success: false,
+            }, status: 0,
+        };
+    }
     return new Promise<IPCResponse<PlayerDB>>((resolve) => resolve(api));
 };
 
