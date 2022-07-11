@@ -14,6 +14,7 @@ import {ToggleButton} from "@components/user/ToggleButton";
 const MainSettings = () => {
     const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.apiKey.length === 36);
     const isLogsSet: boolean = useSelector(() => store.getState().configStore.logPath.length !== 0);
+    const settings = useSelector(() => store.getState().configStore.settings);
 
     // TODO make it look nicer and cleaner
     return (
@@ -30,7 +31,7 @@ const MainSettings = () => {
                 />
                 {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
             </div>
-            <div className="mainSettingsOption">
+            <div className="mainSettingsOption" style={settings.keathiz ? {} : { display: 'none' }}>
                 <UnderlinedTitle text={"Keathiz Key: "}> </UnderlinedTitle>
                 <InputTextBox
                     onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -60,24 +61,21 @@ const MainSettings = () => {
             </div>
             <div>
                 <ToggleButton text={"Keathiz"} onChange={async (event) => {
-                    const payload: SettingsConfig = {boomza: store.getState().configStore.settings.boomza, keathiz: store.getState().configStore.settings.keathiz, lunar: store.getState().configStore.settings.lunar};
-                    payload.keathiz = event.currentTarget.checked;
+                    const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
                     store.dispatch(setSettingsValue(payload));
-                }} />
+                }} options={{enabled: settings.keathiz}} />
             </div>
             <div>
                 <ToggleButton text={"Lunar"} onChange={async (event) => {
-                    const payload: SettingsConfig = {boomza: store.getState().configStore.settings.boomza, keathiz: store.getState().configStore.settings.keathiz, lunar: store.getState().configStore.settings.lunar};
-                    payload.lunar = event.currentTarget.checked;
+                    const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
                     store.dispatch(setSettingsValue(payload));
-                }} />
+                }} options={{enabled: settings.lunar}} />
             </div>
             <div>
                 <ToggleButton text={"Boomza"} onChange={async (event) => {
-                    const payload: SettingsConfig = {boomza: store.getState().configStore.settings.boomza, keathiz: store.getState().configStore.settings.keathiz, lunar: store.getState().configStore.settings.lunar};
-                    payload.boomza = event.currentTarget.checked;
+                    const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
                     store.dispatch(setSettingsValue(payload));
-                }} />
+                }} options={{enabled: settings.boomza}} />
             </div>
         </div>
     );

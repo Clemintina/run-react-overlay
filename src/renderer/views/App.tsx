@@ -69,7 +69,7 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Final Kill to Death Ratio`,
         maxWidth: mediumColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderFKDRColour(data)} />,
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data,'fkdr')} />,
     },
     {
         id: "wlr",
@@ -105,7 +105,7 @@ const columns: TypeColumn[] = [
     },
     {
         id: "session",
-        header: "Session",
+        header: "Time",
         flex: 1,
         sortName: `Player's Session Time`,
         maxWidth: smallColumnSize,

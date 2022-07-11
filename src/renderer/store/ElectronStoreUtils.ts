@@ -206,6 +206,15 @@ export const RUNElectronStoreTags = Type.Object({
                 }),
             ),
         }),
+        kdr: Type.Object({
+            colours: Type.Array(
+                Type.Object({
+                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
+                    colour: Type.String({description: "What colour should this be."}),
+                    operator: Type.String({description: "Conditional used for this object"}),
+                }),
+            ),
+        }),
     }),
 });
 
@@ -323,6 +332,19 @@ export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
                 {requirement: 800, colour: "AA0000", operator: "<="},
                 {requirement: 1000, colour: "FF55FF", operator: "<="},
                 {requirement: 1500, colour: "AA00AA", operator: "<="},
+            ],
+        },
+        kdr: {
+            colours: [
+                {requirement: 1, colour: "AAAAAA", operator: "=="},
+                {requirement: 2, colour: "AAAAAA", operator: "<="},
+                {requirement: 4, colour: "FFFFFF", operator: "<="},
+                {requirement: 6, colour: "FFAA00", operator: "<="},
+                {requirement: 7, colour: "00AA00", operator: "<="},
+                {requirement: 10, colour: "FF5555", operator: "<="},
+                {requirement: 15, colour: "AA0000", operator: "<="},
+                {requirement: 50, colour: "FF55FF", operator: "<="},
+                {requirement: 100, colour: "AA00AA", operator: "<="},
             ],
         },
     },

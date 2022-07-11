@@ -27,9 +27,12 @@ export class PlayerUtils {
     private readonly formatPlayerInstance: FormatPlayer;
     private readonly playerHypixelUtils: PlayerHypixelUtils;
 
-    constructor() {
+    constructor(stores?: {config: object; tags: object}) {
         this.formatPlayerInstance = new FormatPlayer();
         this.playerHypixelUtils = new PlayerHypixelUtils();
+        if (stores!=undefined){
+            this.formatPlayerInstance.setConfig(stores);
+        }
     }
 
     public getFormatPlayerInstance() {
@@ -117,20 +120,26 @@ export class FormatPlayer {
     };
 
     public getCoreFromConfig = (tagDisplayPath: RUNElectronStoreTagsTyped | string, value: number) => {
-        const coreMetric: MetricsObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
-        const coreArray = coreMetric?.colours ?? "FF5555";
-        if (Array.isArray(coreArray) && value != undefined) {
-            const tempArray = [...coreArray];
-            const arr = tempArray.sort((a, b) => a.requirement - b.requirement);
-            for (const {colour, requirement, operator} of arr) {
-                if (jsonLogic.apply({[operator]: [value, requirement]})) {
-                    return this.getPlayerTagDivider(value, `#${colour};`);
+        try {
+            const coreMetric: MetricsObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore) ?? 0;
+            const coreArray = coreMetric?.colours ?? "FF5555";
+            if (Array.isArray(coreArray) && value != undefined) {
+                const tempArray = [...coreArray];
+                const arr = tempArray.sort((a, b) => a.requirement - b.requirement);
+                for (const {colour, requirement, operator} of arr) {
+                    if (jsonLogic.apply({[operator]: [value, requirement]})) {
+                        return this.getPlayerTagDivider(value, `#${colour};`);
+                    }
                 }
+                return this.getPlayerTagDivider(value, `#${arr[arr.length - 1].colour}`);
+            } else {
+                return this.getPlayerTagDivider(value, `#${coreArray}`);
             }
-            return this.getPlayerTagDivider(value, `#${arr[arr.length - 1].colour}`);
-        } else {
-            return this.getPlayerTagDivider(value, `#${coreArray}`);
+        }catch (e) {
+            console.log(this.tagStore);
+            return this.getPlayerTagDivider(tagDisplayPath, "FF5555");
         }
+
     };
 
     public renderStar = (player: Player) => {
@@ -186,7 +195,7 @@ export class FormatPlayer {
     public renderWinstreak = (player: Player) => {
         let renderer: string = this.starterDivider;
         if (!player.nicked) {
-            const playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak || 0;
+            const playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0;
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
             } else {
@@ -199,19 +208,29 @@ export class FormatPlayer {
         return renderer;
     };
 
-    public renderRatioColour = (player: Player, route: "wlr" | "bblr") => {
+    public renderRatioColour = (player: Player, route: "wlr" | "bblr" | 'kdr' | 'fkdr') => {
         let renderer = this.starterDivider;
         let playerValue;
         if (!player.nicked) {
-            if (route.toLowerCase() === "wlr") {
-                playerValue = (player.hypixelPlayer?.stats.Bedwars?.wins_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.losses_bedwars || 0);
-            } else if (route.toLowerCase() === "bblr") {
-                playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars || 0);
+            switch (route) {
+                case "wlr":
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0);
+                    break;
+                case "bblr":
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0);
+                    break;
+                case "kdr":
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ?? 0);
+                    break;
+                case "fkdr":
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0);
+                    break;
             }
+
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
             } else {
-                renderer = this.getCoreFromConfig(`core.${route.toLowerCase()}`, playerValue);
+                renderer = this.getCoreFromConfig(`core.${route}`, playerValue);
             }
         } else {
             renderer += this.getPlayerTagDividerNicked();
@@ -220,31 +239,37 @@ export class FormatPlayer {
         return renderer;
     };
 
-    public renderCoreStatsColour = (player: Player, route: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost") => {
+    public renderCoreStatsColour = (player: Player, route: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost"|'kills'|'deaths'|'gamesPlayed' ) => {
         let renderer = this.starterDivider;
         let playerValue;
         if (!player.nicked) {
             switch (route) {
                 case "wins":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.wins_bedwars || 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0;
                     break;
                 case "losses":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.losses_bedwars || 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0;
                     break;
                 case "finalKills":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0;
                     break;
                 case "finalDeaths":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0;
                     break;
                 case "bedsBroken":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars || 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0;
                     break;
                 case "bedsLost":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars || 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0;
                     break;
+                case 'kills':
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ??0
+                    break
+                case 'deaths':
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ??0
+                    break
                 default:
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.games_played_bedwars || 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.games_played_bedwars ?? 0;
             }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, "red", player);
@@ -266,22 +291,6 @@ export class FormatPlayer {
                 renderer += this.getPlayerTagDivider(playerValue, "deeppink", player);
             } else {
                 renderer += this.getPlayerTagDivider(playerValue, "purple", player);
-            }
-        } else {
-            renderer += this.getPlayerTagDividerNicked();
-        }
-        renderer += `</div>`;
-        return renderer;
-    };
-
-    public renderFKDRColour = (player: Player) => {
-        let renderer = this.starterDivider;
-        if (!player.nicked) {
-            const playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars || 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars || 0);
-            if (player.sources.runApi?.data.data.blacklist.tagged) {
-                renderer += this.getTagsFromConfig("run.blacklist", playerValue);
-            } else {
-                renderer = this.getCoreFromConfig("core.fkdr", playerValue);
             }
         } else {
             renderer += this.getPlayerTagDividerNicked();
@@ -323,14 +332,14 @@ export class FormatPlayer {
                 if (keathizTags.player.queues.consecutive_queue_checks.weighted["1_min_requeue"] >= 50) {
                     keathizTagArray.push(this.getPlayerTagDivider("Z", `#${MinecraftColours.RED.hex}`));
                 }
-                if (keathizTags.player.queues.consecutive_queue_checks.last_30_queues["1_min_requeue"] >= 15 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["1_min_requeue"] >= 5 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["2_min_requeue"] >= 6 || keathizTags.player.queues.consecutive_queue_checks.last_10_queues["3_min_requeue"] >= 8) {
+                if (keathizTags.player.queues.consecutive_queue_checks.last_30_queues["1_min_requeue"] >= 15 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["1_min_requeue"] >= 5 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["2_min_requeue"] >= 6 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["3_min_requeue"] >= 8) {
                     keathizTagArray.push(this.getPlayerTagDivider("C", `#${MinecraftColours.RED.hex}`));
                 }
-                if ((keathizTags.player.queues.last_3_min >= 2 && accountType === "mojang" && (player?.hypixelPlayer?.achievements?.bedwars_level ?? 0) <= 12 && keathizTagArray.length > 6) || accountType === "mojang") {
+                if ((keathizTags.player.queues.last_3_min >= 2 && accountType === "mojang" && (player?.hypixelPlayer?.achievements?.bedwars_level ?? 0) <= 12 && keathizTagArray.length > 6) ?? accountType === "mojang") {
                     keathizTagArray.push(this.getPlayerTagDivider("DODGE", `#${MinecraftColours.DARK_RED.hex}`));
                 }
             } else {
-                keathizTagArray.push(this.getPlayerTagDivider("FAILED", `#${MinecraftColours.DARK_RED.hex}`));
+                if (this.configStore.settings.keathiz) keathizTagArray.push(this.getPlayerTagDivider("FAILED", `#${MinecraftColours.DARK_RED.hex}`));
             }
         }
         for (const tag of keathizTagArray) {
@@ -407,7 +416,7 @@ export class FormatPlayer {
         const values: [string, string][] = [];
         if (player.hypixelPlayer != null) {
             if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
-                values.push(["Disabled", "ff0000"]);
+                values.push(["N/A", "ff0000"]);
             } else {
                 const lastLoginDate: Date = new Date(0);
                 lastLoginDate.setUTCMilliseconds(player.hypixelPlayer.lastLogin);
@@ -448,7 +457,7 @@ export class PlayerHypixelUtils {
             let format = "";
             if (options.day) {
                 format = d.getDay().toLocaleString().padStart(2, "0");
-                if (options.month || options.year) format += ".";
+                if (options.month ?? options.year) format += ".";
             }
             if (options.month) {
                 const month = d.getMonth() + 1;
