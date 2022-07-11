@@ -65,7 +65,7 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                                 </div>
                                 <br/>
                                 <div>
-                                    <span style={{ color: "white" }}>First Login: {playerFormatter.getPlayerHypixelUtils().getTimeFormatted(player.hypixelPlayer?.lastLogin) ?? 0}</span>
+                                    <span style={{ color: "white" }}>First Login: {playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer?.lastLogin) ?? 0}</span>
                                 </div>
                             </span>
                         )}

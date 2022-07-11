@@ -43,7 +43,6 @@ export class PlayerUtils {
 
 export class FormatPlayer {
     private starterDivider = `<div style="margin: 0 auto;  display: flex;">`;
-    private utils = new PlayerHypixelUtils();
     private tagStore;
     private configStore;
 
@@ -404,7 +403,7 @@ export class FormatPlayer {
         return htmlResponse;
     };
 
-    public renderSessionTime(player: Player) {
+    public renderSessionTime = (player: Player)=> {
         const values: [string, string][] = [];
         if (player.hypixelPlayer != null) {
             if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
@@ -440,7 +439,7 @@ export class FormatPlayer {
 }
 
 export class PlayerHypixelUtils {
-    public getTimeFormatted = (epoch: number | undefined, options?: {day: boolean, month: boolean, year: boolean} | undefined) => {
+    public getDateFormatted = (epoch: number | undefined, options?: {day: boolean, month: boolean, year: boolean} | undefined) => {
         if (epoch === undefined) return "Disabled";
         const d = new Date(0);
         d.setUTCMilliseconds(epoch);

@@ -33,6 +33,12 @@ interface InitScript {
     };
 }
 
+export interface SettingsConfig {
+    lunar: boolean,
+    keathiz: boolean,
+    boomza: boolean
+}
+
 /**
  * The main slice, Used to store API-keys, logs and anything else used by the Overlay which isn't calling players.
  */
@@ -90,6 +96,13 @@ const ConfigStore = createSlice({
         updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
             state.error = action.payload;
         },
+        setSettings: (state, action: {payload: SettingsConfig}) => {
+            const payload = action.payload;
+            console.log(payload);
+            state.settings.lunar = payload.lunar;
+            state.settings.keathiz = payload.keathiz;
+            state.settings.boomza = payload.boomza;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -136,6 +149,9 @@ const ConfigStore = createSlice({
                         referenceId: "init script failed",
                     },
                 });
+            })
+            .addCase(setSettingsValue.fulfilled, (state, action)=>{
+                ConfigStore.caseReducers.setSettings(state, {payload: action.payload.data});
             });
     },
 });
@@ -150,6 +166,9 @@ export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", a
  */
 export const keathizApiKeyValidator = createAsyncThunk("ConfigStore/keathizApiKeyValidator", async (keathizKey: string) => {
     return await window.config.set("external.keathiz.apiKey", keathizKey);
+});
+export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data:SettingsConfig) => {
+    return {data, status: 200}
 });
 /**
  * Called when the Overlay loads, **DO NOT PUT RESOURCE INTENSIVE METHODS IN THIS FUNCTION**
