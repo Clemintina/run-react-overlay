@@ -809,10 +809,10 @@
     redux-thunk "^2.4.1"
     reselect "^4.1.5"
 
-"@sinclair/typebox@^0.24.14":
-  version "0.24.14"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.14.tgz#463720b9209ddf519454ba46e27f86915c8f1b04"
-  integrity sha512-+dld7HhmwiDD8nEYqdUQ/OpCMmiFnuu0huWbZ18hY6RL7ByIc4tdvvEDXPJJyCbbyaKR0R7P6gWmmdpv4btX7A==
+"@sinclair/typebox@^0.24.17":
+  version "0.24.17"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.17.tgz#5e5ac39cc54bdcbb002555a0bdfc79f5188e63e4"
+  integrity sha512-KyXzbBBYly+wSwbhPTKecqIWFST/anAXTlA2o23rDUMzVnFUrDyC0Gk96yL8zQw5O5OqdqALomdih6wwSdRc2Q==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
