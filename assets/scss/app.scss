@@ -31,3 +31,15 @@ div.main {
 .playerTagDivider {
   width: 100vw;
 }
+
+span.statistics-tooltip-inline{
+  display: contents;
+  flex-direction: row;
+  white-space: nowrap;
+}
+
+.statistics-tooltip{
+  display: contents;
+  flex-direction: row;
+  white-space: nowrap;
+}
