@@ -9,7 +9,6 @@
 
 import {Components} from "../types/api";
 import {MinecraftColourAsHex, MinecraftFormatting} from "@common/zikeji";
-import {number} from "@inovua/reactdatagrid-community/filterTypes";
 
 /** @internal */
 enum BEDWARS_LEVEL_CONSTANTS {

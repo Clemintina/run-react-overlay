@@ -9,6 +9,7 @@ import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {InputBoxButton} from "@components/user/InputBoxButton";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 const MainSettings = () => {
     const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.apiKey.length === 36);
@@ -44,11 +45,11 @@ const MainSettings = () => {
                 <UnderlinedTitle text={"Overlay Logs: "}></UnderlinedTitle>
                 <InputBoxButton
                     onClick={async () => {
-                        const path = await window.ipcRenderer.invoke("selectLogFile");
+                        const path:Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke("selectLogFile");
                         if (path.filePaths[0] !== undefined) {
                             const logPath = path.filePaths[0];
-                            const readable: boolean = await window.ipcRenderer.invoke("isFileReadable", logPath);
-                            if (readable) {
+                            const readable = await window.ipcRenderer.invoke<boolean>("isFileReadable", logPath);
+                            if (readable.data) {
                                 window.ipcRenderer.send("logFileSet", logPath);
                             }
                         }

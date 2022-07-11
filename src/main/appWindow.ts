@@ -96,7 +96,7 @@ export const createAppWindow = (): BrowserWindow => {
         autoHideMenuBar: true,
         frame: false,
         titleBarStyle: "hidden",
-        icon: path.join('assets','images','icon.ico'),
+        icon: path.join("assets", "images", "icon.ico"),
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -281,10 +281,7 @@ const registerElectronStore = () => {
  */
 const registerLogCommunications = () => {
     ipcMain.handle("isFileReadable", async (event: IpcMainInvokeEvent, path: string) => {
-        return await fs.promises
-            .access(path, fs.constants.R_OK)
-            .then(() => true)
-            .catch(() => false);
+        return {data: await fs.promises.access(path, fs.constants.R_OK).then(() => true).catch(() => false), status: 200};
     });
 
     ipcMain.handle("selectLogFile", async () => {
@@ -348,7 +345,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};

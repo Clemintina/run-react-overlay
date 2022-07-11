@@ -1,4 +1,3 @@
-import fastJson from "fast-json-stringify";
 import destr from "destr";
 
 /**

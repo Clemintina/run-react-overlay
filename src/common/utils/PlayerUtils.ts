@@ -6,7 +6,6 @@ import destr from "destr";
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 import jsonLogic from "json-logic-js";
-import {Store} from "@renderer/store";
 
 export interface Player {
     name: string;
@@ -21,9 +20,6 @@ export interface Player {
         keathiz?: IPCResponse<KeathizOverlayRun> | null;
         lunar?: IPCResponse<LunarAPIResponse> | null;
         playerDb?: IPCResponse<PlayerDB> | null;
-    };
-    overlay: {
-        tags: string;
     };
 }
 
