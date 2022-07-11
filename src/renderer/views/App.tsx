@@ -103,6 +103,14 @@ const columns: TypeColumn[] = [
         maxWidth: mediumColumnSize,
         render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")} />,
     },
+    {
+        id: "session",
+        header: "Session",
+        flex: 1,
+        sortName: `Player's Session Time`,
+        maxWidth: smallColumnSize,
+        render: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)} />,
+    },
 ];
 
 const gridStyle = {

@@ -42,7 +42,7 @@ export class PlayerUtils {
 }
 
 export class FormatPlayer {
-    private starterDivider = `<div style='margin: 0 auto;  display: flex;'>`;
+    private starterDivider = `<div style="margin: 0 auto;  display: flex;">`;
     private utils = new PlayerHypixelUtils();
     private tagStore;
     private configStore;
@@ -154,13 +154,13 @@ export class FormatPlayer {
     public renderName = (player: Player) => {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
-            nameRenderer += `<span class='name-span'>`;
-            nameRenderer += `<img src="https://crafatar.com/avatars/${player.id}?size=16&overlay=true"; class="skull";></img>`
+            nameRenderer += `<span class="name-span">`;
+            nameRenderer += `<img src="https://crafatar.com/avatars/${player.id}?size=16&overlay=true"; class="skull";></img>`;
             if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
-                        nameRenderer += `<span class='lunar-client-image'>
-                                       <img style='vertical-align:middle;' width='25px' height='25px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag'/>
+                        nameRenderer += `<span class="lunar-client-image">
+                                       <img style="vertical-align:middle;" width="25px" height="25px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag"/>
                                      </span>`;
                     }
                 }
@@ -169,7 +169,7 @@ export class FormatPlayer {
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
                 if (player.hypixelPlayer !== null) {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
-                    nameRenderer += `${rank.rankHtml}&nbsp <span style='color: #${rank.colourHex};'>${player.hypixelPlayer.displayname}</span>`;
+                    nameRenderer += `${rank.rankHtml}&nbsp <span style="color: #${rank.colourHex};">${player.hypixelPlayer.displayname}</span>`;
                 } else {
                     nameRenderer += ``;
                 }
@@ -292,7 +292,7 @@ export class FormatPlayer {
     };
 
     public renderKeathizTags = (player: Player) => {
-        let renderer = `<span style='padding-left: 5px;'>`;
+        let renderer = `<span style="padding-left: 5px;">`;
         const keathizTagArray: Array<string> = [];
         if (player.sources.keathiz === null || player.sources.keathiz === undefined) {
             keathizTagArray.push(this.getPlayerTagDivider("ERROR", `#${MinecraftColours.DARK_RED.hex}`));
@@ -390,7 +390,7 @@ export class FormatPlayer {
             } else if (typeof tag === "number") {
                 styleString += `justify-content: center; display: flex; width: 100vw;`;
             }
-            htmlResponse += `<span style='${styleString}'>${tag}</span>`;
+            htmlResponse += `<span style="${styleString}">${tag}</span>`;
             return htmlResponse;
         }
         return htmlResponse;
@@ -399,13 +399,71 @@ export class FormatPlayer {
     private getPlayerTagDividerNicked = () => {
         const styleString = `color: red; padding-left: 1px;`;
         let htmlResponse = `<div>`;
-        htmlResponse += `<div style='${styleString}'>?</div>`;
+        htmlResponse += `<div style="${styleString}">?</div>`;
         htmlResponse += `</div>`;
         return htmlResponse;
     };
+
+    public renderSessionTime(player: Player) {
+        const values: [string, string][] = [];
+        if (player.hypixelPlayer != null) {
+            if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
+                values.push(["Disabled", "ff0000"]);
+            } else {
+                const lastLoginDate: Date = new Date(0);
+                lastLoginDate.setUTCMilliseconds(player.hypixelPlayer.lastLogin);
+                const now_timezoned: Date = new Date();
+                const now = new Date();
+                now.setUTCMilliseconds(now_timezoned.getUTCMilliseconds());
+
+                if (player.hypixelPlayer.lastLogin > player.hypixelPlayer.lastLogout) {
+                    const timeDiff = new Date((now_timezoned.getTime() - lastLoginDate.getTime()));
+                    if (timeDiff.getUTCHours() >= 3 && timeDiff.getUTCMinutes() >= 30 || timeDiff.getUTCHours() > 4) {
+                        values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "00ff00"]);
+                    } else if (timeDiff.getUTCHours() >= 1 && timeDiff.getUTCMinutes() >= 30 || timeDiff.getUTCHours() > 2) {
+                        values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ffff00"]);
+                    } else {
+                        values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ff0000"]);
+                    }
+                } else {
+                    values.push(["Offline", 'ff0000']);
+                }
+            }
+            let str = ``;
+            for (const value of values) {
+                str += `<span style="color: #${value[1]}">${value[0]}</span>`;
+            }
+            return `<span>${str}</span>`;
+        }
+        return `<span/>`;
+    }
 }
 
-export class PlayerHypixelUtils {}
+export class PlayerHypixelUtils {
+    public getTimeFormatted = (epoch: number | undefined, options?: {day: boolean, month: boolean, year: boolean} | undefined) => {
+        if (epoch === undefined) return "Disabled";
+        const d = new Date(0);
+        d.setUTCMilliseconds(epoch);
+
+        if (options != undefined) {
+            let format = "";
+            if (options.day) {
+                format = d.getDay().toLocaleString().padStart(2, "0");
+                if (options.month || options.year) format += ".";
+            }
+            if (options.month) {
+                const month = d.getMonth() + 1;
+                const monthFormatted = month.toLocaleString().padStart(2, "0");
+                format += monthFormatted;
+                if (options.year) format += ".";
+            }
+            if (options.year) format = format + d.getFullYear().toLocaleString().replace(",", "").replace(".", "");
+            return format.replaceAll(" ", "");
+        } else {
+            return d.toLocaleDateString();
+        }
+    };
+}
 
 export interface MinecraftColoursImpl {
     [colour: string]: {colour: string; hex: string};
