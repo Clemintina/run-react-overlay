@@ -106,7 +106,7 @@ export const createAppWindow = (): BrowserWindow => {
         },
     });
 
-    appWindow.setAlwaysOnTop(true, "floating");
+    appWindow.setAlwaysOnTop(true, "screen-saver");
     appWindow.setVisibleOnAllWorkspaces(true);
     mainWindowState.manage(appWindow);
 
