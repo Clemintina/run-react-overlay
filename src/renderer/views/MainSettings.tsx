@@ -15,6 +15,7 @@ const MainSettings = () => {
     const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.apiKey.length === 36);
     const isLogsSet: boolean = useSelector(() => store.getState().configStore.logPath.length !== 0);
     const settings = useSelector(() => store.getState().configStore.settings);
+    const version = useSelector(()=>store.getState().configStore.version);
 
     // TODO make it look nicer and cleaner
     return (
@@ -76,6 +77,9 @@ const MainSettings = () => {
                     const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
                     store.dispatch(setSettingsValue(payload));
                 }} options={{enabled: settings.boomza}} />
+            </div>
+            <div>
+                <span>Version: {version}</span>
             </div>
         </div>
     );

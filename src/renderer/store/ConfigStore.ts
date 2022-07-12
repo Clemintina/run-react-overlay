@@ -9,6 +9,20 @@ export interface ConfigStore {
     apiKeyValid: boolean;
     apiKeyOwner: string;
     runKey: string;
+    colours:{
+        backgroundColour: string,
+        primaryColour: string,
+        secondaryColour: string
+    },
+    version: string,
+    logPath: string,
+    error: {
+        code: number
+        title: string
+        cause: string
+        detail:string
+    },
+    settings: SettingsConfig
 }
 
 interface InitScript {
@@ -25,6 +39,7 @@ interface InitScript {
         external: {
             keathiz: {apiKey: string};
         };
+        version: string,
         settings: {
             lunar: boolean,
             keathiz: boolean,
@@ -54,6 +69,7 @@ const ConfigStore = createSlice({
             secondaryColour: "#00FFFF",
         },
         runKey: "public",
+        version: '',
         logPath: "",
         error: {
             code: 200,
@@ -82,6 +98,7 @@ const ConfigStore = createSlice({
         },
         setDataFromConfig: (state, action: {payload: InitScript}) => {
             const payload: InitScript = action.payload;
+            state.version = payload.data.version;
             if (payload.data.hypixel.key !== undefined) {
                 state.apiKeyValid = true;
                 state.apiKey = payload.data.hypixel.key;
@@ -166,6 +183,7 @@ export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", a
 export const keathizApiKeyValidator = createAsyncThunk("ConfigStore/keathizApiKeyValidator", async (keathizKey: string) => {
     return await window.config.set("external.keathiz.apiKey", keathizKey);
 });
+
 export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data:SettingsConfig) => {
     return {data, status: 200}
 });
@@ -177,6 +195,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const overlay = {logPath: ""};
     const external = {keathiz: {apiKey: ""}};
     const settings = await window.config.get("settings");
+    const version = await window.config.get('run.overlay.version');
 
     const runKey = await window.config.get("run.apiKey");
     hypixel.key = await window.config.get("hypixel.apiKey");
@@ -185,7 +204,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
 
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
 
-    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external, settings}};
+    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external, settings,version}};
     return res;
 });
 
