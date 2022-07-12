@@ -34,7 +34,7 @@
 		"@inovua/reactdatagrid-community": "^4.20.2",
 		"@logdna/tail-file": "^3.0.0",
 		"@mui/icons-material": "^5.8.4",
-		"@mui/material": "^5.8.7",
+		"@mui/material": "^5.9.0",
 		"@mui/styled-engine-sc": "^5.8.0",
 		"@mui/x-data-grid": "^5.13.0",
 		"@reduxjs/toolkit": "^1.8.3",
