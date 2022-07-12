@@ -98,7 +98,6 @@ const ConfigStore = createSlice({
         },
         setSettings: (state, action: {payload: SettingsConfig}) => {
             const payload = action.payload;
-            console.log(payload);
             state.settings.lunar = payload.lunar;
             state.settings.keathiz = payload.keathiz;
             state.settings.boomza = payload.boomza;

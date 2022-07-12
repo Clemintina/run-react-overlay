@@ -30,7 +30,7 @@ export class PlayerUtils {
     constructor(stores?: {config: object; tags: object}) {
         this.formatPlayerInstance = new FormatPlayer();
         this.playerHypixelUtils = new PlayerHypixelUtils();
-        if (stores!=undefined){
+        if (stores != undefined) {
             this.formatPlayerInstance.setConfig(stores);
         }
     }
@@ -76,7 +76,10 @@ export class FormatPlayer {
                     tagRenderer += this.getTagsFromConfig("run.migration");
                 }
                 if (runApi.safelist.tagged) {
-                    tagRenderer += this.getPlayerTagDivider("✓", "green");
+                    tagRenderer += this.getTagsFromConfig("run.safelist",runApi.safelist.timesKilled);
+                }
+                if(runApi.safelist.personal){
+                    tagRenderer += this.getTagsFromConfig('run.personal_safelist')
                 }
                 if (runApi.annoylist.tagged) {
                     tagRenderer += this.getTagsFromConfig("run.annoylist");
@@ -86,6 +89,9 @@ export class FormatPlayer {
                 }
                 if (this.renderNameChangeTag(player) <= 10) {
                     tagRenderer += this.getTagsFromConfig("run.name_change");
+                }
+                if (player.hypixelPlayer?.channel == "PARTY") {
+                    tagRenderer += this.getTagsFromConfig("hypixel.party");
                 }
                 if (player.sources.keathiz != null) {
                     tagRenderer += this.renderKeathizTags(player);
@@ -100,12 +106,11 @@ export class FormatPlayer {
 
     public getTagsFromConfig = (tagDisplayPath: RUNElectronStoreTagsTyped | string, value?: number) => {
         const tag: TagObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore);
-        const tagDisplayIcon: string | undefined = tag?.display ?? "TAGS";
+        const tagDisplayIcon: string | undefined = tag?.display ?? "?";
         const tagArray: string | Array<TagArray> | undefined = tag?.colour ?? "FF5555";
         if (tagDisplayPath == "run.blacklist") {
             return this.getPlayerTagDivider(value, `#${tagArray}`);
-        }
-        if (Array.isArray(tagArray) && value != undefined) {
+        } else if (Array.isArray(tagArray) && value != undefined) {
             const tempArray = [...tagArray];
             const arr = tempArray.sort((a, b) => b.requirement - a.requirement);
             for (const {colour, requirement} of arr) {
@@ -116,7 +121,7 @@ export class FormatPlayer {
         } else {
             return this.getPlayerTagDivider(tagDisplayIcon, `#${tagArray?.toString()}`);
         }
-        return this.getPlayerTagDivider(tagDisplayIcon, "#amber");
+        return this.getPlayerTagDivider(tagDisplayIcon, "amber");
     };
 
     public getCoreFromConfig = (tagDisplayPath: RUNElectronStoreTagsTyped | string, value: number) => {
@@ -135,7 +140,7 @@ export class FormatPlayer {
             } else {
                 return this.getPlayerTagDivider(value, `#${coreArray}`);
             }
-        }catch (e) {
+        } catch (e) {
             console.log(this.tagStore);
             return this.getPlayerTagDivider(tagDisplayPath, "FF5555");
         }
@@ -208,7 +213,7 @@ export class FormatPlayer {
         return renderer;
     };
 
-    public renderRatioColour = (player: Player, route: "wlr" | "bblr" | 'kdr' | 'fkdr') => {
+    public renderRatioColour = (player: Player, route: "wlr" | "bblr" | "kdr" | "fkdr") => {
         let renderer = this.starterDivider;
         let playerValue;
         if (!player.nicked) {
@@ -239,7 +244,7 @@ export class FormatPlayer {
         return renderer;
     };
 
-    public renderCoreStatsColour = (player: Player, route: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost"|'kills'|'deaths'|'gamesPlayed' ) => {
+    public renderCoreStatsColour = (player: Player, route: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost" | "kills" | "deaths" | "gamesPlayed") => {
         let renderer = this.starterDivider;
         let playerValue;
         if (!player.nicked) {
@@ -262,12 +267,12 @@ export class FormatPlayer {
                 case "bedsLost":
                     playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0;
                     break;
-                case 'kills':
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ??0
-                    break
-                case 'deaths':
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ??0
-                    break
+                case "kills":
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ?? 0;
+                    break;
+                case "deaths":
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ?? 0;
+                    break;
                 default:
                     playerValue = player.hypixelPlayer?.stats.Bedwars?.games_played_bedwars ?? 0;
             }
@@ -412,7 +417,7 @@ export class FormatPlayer {
         return htmlResponse;
     };
 
-    public renderSessionTime = (player: Player)=> {
+    public renderSessionTime = (player: Player) => {
         const values: [string, string][] = [];
         if (player.hypixelPlayer != null) {
             if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
@@ -434,7 +439,7 @@ export class FormatPlayer {
                         values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ff0000"]);
                     }
                 } else {
-                    values.push(["Offline", 'ff0000']);
+                    values.push(["Offline", "ff0000"]);
                 }
             }
             let str = ``;
@@ -444,7 +449,7 @@ export class FormatPlayer {
             return `<span>${str}</span>`;
         }
         return `<span/>`;
-    }
+    };
 }
 
 export class PlayerHypixelUtils {

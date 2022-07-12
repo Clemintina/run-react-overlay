@@ -77,6 +77,14 @@ export const RUNElectronStore = Type.Optional(
                     description: "Enable Lunar Tags",
                     default: true,
                 }),
+                boomza: Type.Boolean({
+                    description: "Enable Boomza API",
+                    default: true,
+                }),
+                keathiz: Type.Boolean({
+                    description: "Enable Keathiz API",
+                    default: false,
+                }),
             }),
         ),
     }),
@@ -216,6 +224,18 @@ export const RUNElectronStoreTags = Type.Object({
             ),
         }),
     }),
+    hypixel: Type.Object({
+        party:Type.Object({
+            display: Type.String({
+                description: "How to display the Party tag",
+                default: "P",
+            }),
+            colour: Type.String({
+                description: "The colour for the Party tag",
+                default: "5555FF",
+            }),
+        }),
+    })
 });
 
 export type RUNElectronStoreTagsType = Static<typeof RUNElectronStoreTags>;
@@ -348,6 +368,12 @@ export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
             ],
         },
     },
+    hypixel: {
+        party: {
+            display: 'P',
+            colour: 'darkblue'
+        }
+    }
 };
 
 /**
