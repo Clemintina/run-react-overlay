@@ -11,7 +11,7 @@ import {getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStor
 import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import {BoomzaAntisniper} from "@common/utils/externalapis/BoomzaApi";
+import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
 import {ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
 import {handleIPCSend} from "@main/Utils";
@@ -355,9 +355,9 @@ const registerExternalApis = () => {
         return {data: json, status: response.status};
     });
 
-    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, uuid: string) => {
+    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string) => {
         const apikey = electronStore.get("external.keathiz.apiKey");
-        const response = await axiosClient(`https://api.antisniper.net/overlay/run?uuid=${uuid}&key=${apikey}`, {
+        const response = await axiosClient(`https://api.antisniper.net/${endpoint}?uuid=${uuid}&key=${apikey}`, {
             headers: {
                 Accept: "application/json",
             },

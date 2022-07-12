@@ -4,7 +4,7 @@ import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEnd
 import store, {Store} from "./index";
 import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
-import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {BoomzaAntisniper, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 
 export interface PlayerStoreThunkObject {
@@ -193,7 +193,7 @@ const getLunarTags = async (player: Player) => {
 const getKeathizData = async (player: Player) => {
     let api: IPCResponse<KeathizOverlayRun>;
     if (player.hypixelPlayer?.uuid !== undefined && store.getState().configStore.settings.keathiz) {
-        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", player.hypixelPlayer.uuid);
+        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz",KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid);
     } else {
         api = {
             status: store.getState().configStore.settings.keathiz ? 417 : 400,

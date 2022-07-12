@@ -87,3 +87,8 @@ export interface KeathizOverlayRun {
         };
     };
 }
+
+export enum KeathizEndpoints{
+    OVERLAY_RUN='overlay/run',
+    DENICK = 'denick'
+}
