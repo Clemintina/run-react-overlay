@@ -5,27 +5,20 @@ import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 
 export interface ConfigStore {
-    apiKey: string;
-    apiKeyValid: boolean;
-    apiKeyOwner: string;
+    hypixel: {
+        apiKey: string;
+        apiKeyValid: boolean;
+        apiKeyOwner: string;
+    }
     runKey: string;
+    version: string;
     colours: {
         backgroundColour: string,
         primaryColour: string,
         secondaryColour: string,
     },
-    logPath: "",
-    error: {
-        code: number,
-        title: string,
-        cause: string,
-        detail: string,
-    },
-    settings: {
-        lunar: boolean,
-        keathiz: boolean,
-        boomza: boolean,
-    },
+    error: DisplayErrorMessage;
+    settings: SettingsConfig;
 }
 
 interface InitScript {
@@ -40,9 +33,10 @@ interface InitScript {
         };
         runKey: string;
         external: {
-            keathiz: {apiKey: string};
+            keathiz: { apiKey: string };
         };
-        settings:SettingsConfig
+        settings: SettingsConfig;
+        version: string;
     };
 }
 
@@ -58,15 +52,18 @@ export interface SettingsConfig {
 const ConfigStore = createSlice({
     name: "ConfigStore",
     initialState: {
-        apiKey: "",
-        apiKeyValid: false,
-        apiKeyOwner: "",
+        hypixel: {
+            apiKey: "",
+            apiKeyValid: false,
+            apiKeyOwner: "",
+        },
         colours: {
             backgroundColour: "#242424FF",
             primaryColour: "#808080",
             secondaryColour: "#00FFFF",
         },
         runKey: "public",
+        version: "",
         logPath: "",
         error: {
             code: 200,
@@ -81,24 +78,25 @@ const ConfigStore = createSlice({
         },
     },
     reducers: {
-        setHypixelApiKey: (state, action: {payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>}) => {
+        setHypixelApiKey: (state, action: { payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> }) => {
             const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
-            state.apiKeyValid = true;
-            state.apiKey = payload.data.key;
-            state.apiKeyOwner = payload.data.owner;
+            state.hypixel.apiKeyValid = true;
+            state.hypixel.apiKey = payload.data.key;
+            state.hypixel.apiKeyOwner = payload.data.owner;
             window.config.set("hypixel.apiKey", payload.data.key);
             window.config.set("hypixel.apiKeyOwner", payload.data.owner);
         },
-        setRunApiKey: (state, action: {payload: RunApiKey}) => {
+        setRunApiKey: (state, action: { payload: RunApiKey }) => {
             const payload: RunApiKey = action.payload;
             state.runKey = payload.key.key;
         },
-        setDataFromConfig: (state, action: {payload: InitScript}) => {
+        setDataFromConfig: (state, action: { payload: InitScript }) => {
             const payload: InitScript = action.payload;
+            state.version = payload.data.version
             if (payload.data.hypixel.key !== undefined) {
-                state.apiKeyValid = true;
-                state.apiKey = payload.data.hypixel.key;
-                state.apiKeyOwner = payload.data.hypixel.owner;
+                state.hypixel.apiKeyValid = true;
+                state.hypixel.apiKey = payload.data.hypixel.key;
+                state.hypixel.apiKeyOwner = payload.data.hypixel.owner;
             }
             if (payload.data.runKey !== undefined) state.runKey = payload.data.runKey;
             if (payload.data.overlay.logPath !== undefined) {
@@ -106,13 +104,13 @@ const ConfigStore = createSlice({
                 window.ipcRenderer.send("logFileSet", state.logPath);
             }
         },
-        updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
+        updateErrorMessage: (state, action: { payload: DisplayErrorMessage }) => {
             state.error.code = action.payload.code;
             state.error.title = action.payload.title;
             state.error.cause = action.payload.cause;
             state.error.detail = action.payload.detail ?? '';
         },
-        setSettings: (state, action: {payload: SettingsConfig}) => {
+        setSettings: (state, action: { payload: SettingsConfig }) => {
             const payload = action.payload;
             state.settings.lunar = payload.lunar;
             state.settings.keathiz = payload.keathiz;
@@ -165,10 +163,13 @@ const ConfigStore = createSlice({
                     },
                 });
             })
-            .addCase(setSettingsValue.fulfilled, (state, action)=>{
-                ConfigStore.caseReducers.setSettings(state, {payload: action.payload.data});
+            .addCase(setSettingsValue.fulfilled, (state, action) => {
+                state.settings = action.payload.data;
+            })
+            .addCase(setErrorMessage.fulfilled, (state, action: { payload: DisplayErrorMessage }) => {
+                ConfigStore.caseReducers.updateErrorMessage(state, action);
             });
-    },
+    }
 });
 /**
  * Validates the Hypixel API Key
@@ -182,8 +183,13 @@ export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", a
 export const keathizApiKeyValidator = createAsyncThunk("ConfigStore/keathizApiKeyValidator", async (keathizKey: string) => {
     return await window.config.set("external.keathiz.apiKey", keathizKey);
 });
-export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data:SettingsConfig) => {
+
+export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data: SettingsConfig) => {
     return {data, status: 200}
+});
+
+export const setErrorMessage = createAsyncThunk("ConfigStore/setErrorMessage", async (errorObject: DisplayErrorMessage) => {
+    return errorObject;
 });
 /**
  * Called when the Overlay loads, **DO NOT PUT RESOURCE INTENSIVE METHODS IN THIS FUNCTION**
@@ -192,6 +198,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const hypixel = {key: "", owner: ""};
     const overlay = {logPath: ""};
     const external = {keathiz: {apiKey: ""}};
+    const version = await window.config.get('run.overlay.version');
     const settings = await window.config.get("settings");
 
     const runKey = await window.config.get("run.apiKey");
@@ -201,7 +208,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
 
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
 
-    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external, settings}};
+    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external, settings, version}};
     return res;
 });
 
