@@ -9,6 +9,23 @@ export interface ConfigStore {
     apiKeyValid: boolean;
     apiKeyOwner: string;
     runKey: string;
+    colours: {
+        backgroundColour: string,
+        primaryColour: string,
+        secondaryColour: string,
+    },
+    logPath: "",
+    error: {
+        code: number,
+        title: string,
+        cause: string,
+        detail: string,
+    },
+    settings: {
+        lunar: boolean,
+        keathiz: boolean,
+        boomza: boolean,
+    },
 }
 
 interface InitScript {
@@ -25,11 +42,7 @@ interface InitScript {
         external: {
             keathiz: {apiKey: string};
         };
-        settings: {
-            lunar: boolean,
-            keathiz: boolean,
-            boomza: boolean
-        }
+        settings:SettingsConfig
     };
 }
 
@@ -94,7 +107,10 @@ const ConfigStore = createSlice({
             }
         },
         updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
-            state.error = action.payload;
+            state.error.code = action.payload.code;
+            state.error.title = action.payload.title;
+            state.error.cause = action.payload.cause;
+            state.error.detail = action.payload.detail ?? '';
         },
         setSettings: (state, action: {payload: SettingsConfig}) => {
             const payload = action.payload;
