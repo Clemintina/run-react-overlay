@@ -88,6 +88,19 @@ export interface KeathizOverlayRun {
     };
 }
 
+export interface KeathizDenick {
+    success:boolean,
+    player:{
+        uuid: string,
+        dashed_uuid: string,
+        nick_uuid:string,
+        dashed_nick_uuid: string,
+        date: number,
+        ign: string,
+        nick: string
+    }
+}
+
 export enum KeathizEndpoints{
     OVERLAY_RUN='overlay/run',
     DENICK = 'denick'

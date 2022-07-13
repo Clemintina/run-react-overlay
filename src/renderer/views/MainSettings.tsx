@@ -1,5 +1,6 @@
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
+import "@assets/index.css";
 import React from "react";
 import store from "@renderer/store";
 import {apiKeyValidator, keathizApiKeyValidator, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
@@ -10,9 +11,11 @@ import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import {ToggleButton} from "@components/user/ToggleButton";
+import {Sidebar} from "flowbite-react/lib/esm/components";
+import {Alert} from "@mui/material";
 
 const MainSettings = () => {
-    const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.apiKey.length === 36);
+    const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.hypixel.apiKey.length === 36);
     const isLogsSet: boolean = useSelector(() => store.getState().configStore.logPath.length !== 0);
     const settings = useSelector(() => store.getState().configStore.settings);
 
@@ -20,7 +23,7 @@ const MainSettings = () => {
     return (
         <div className="mainSettingsPanel">
             <UnderlinedTitle text={"Overlay Settings"} options={{text: {size: 30}}} />
-            <div className="mainSettingsOption">
+            <div className="mainSettingsOption ">
                 <UnderlinedTitle text={"Hypixel API Key: "}></UnderlinedTitle>
                 <InputTextBox
                     onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -76,6 +79,9 @@ const MainSettings = () => {
                     const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
                     store.dispatch(setSettingsValue(payload));
                 }} options={{enabled: settings.boomza}} />
+            </div>
+            <div className="w-fit bg-gray-50">
+
             </div>
         </div>
     );

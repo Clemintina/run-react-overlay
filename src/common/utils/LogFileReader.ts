@@ -64,7 +64,7 @@ export class LogFileReader {
                 const configStore = store.getState().configStore;
                 const player: Player | undefined = store.getState().playerStore.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
                 if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
-                    await window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.apiKey, configStore.apiKeyOwner, configStore.runKey, configStore.apiKeyOwner);
+                    await window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.runKey, configStore.hypixel.apiKeyOwner);
                 }
             }
         });

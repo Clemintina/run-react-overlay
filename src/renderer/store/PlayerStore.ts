@@ -6,6 +6,7 @@ import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
+import {setErrorMessage} from "@renderer/store/ConfigStore";
 
 export interface PlayerStoreThunkObject {
     name: string;
@@ -28,7 +29,7 @@ const cacheState: PlayerStoreThunkObject = {
 /**
  * Adds players to the Overlay Table.
  */
-export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject,{dispatch}) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -47,10 +48,21 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
     }
 
     try {
-        const ipcHypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
-        if (ipcHypixelPlayer.data?.uuid === undefined) {
+        const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
+
+        if (ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) {
+            const data: unknown = ipcHypixelPlayer.data;
+            let cause,code;
+            if (typeof data === "string") {
+                cause = data;
+                code = ipcHypixelPlayer.status;
+            } else {
+                cause = "Player is not valid on Hypixel!";
+                code = 200;
+            }
             playerData.nicked = true;
-            return {status: 400, cause: "Player is not valid on Hypixel!", data: playerData};
+            await dispatch(setErrorMessage({code, title: "Error", cause}));
+            return {status: 400, cause, data: playerData};
         } else {
             playerData.id = ipcHypixelPlayer.data.uuid;
         }
@@ -193,7 +205,7 @@ const getLunarTags = async (player: Player) => {
 const getKeathizData = async (player: Player) => {
     let api: IPCResponse<KeathizOverlayRun>;
     if (player.hypixelPlayer?.uuid !== undefined && store.getState().configStore.settings.keathiz) {
-        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz",KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid);
+        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid);
     } else {
         api = {
             status: store.getState().configStore.settings.keathiz ? 417 : 400,
@@ -286,8 +298,7 @@ const getKeathizData = async (player: Player) => {
 
 const getPlayerDB = async (player: Player) => {
     let api: IPCResponse<PlayerDB>;
-    if (player.hypixelPlayer?.uuid)
-        api = await window.ipcRenderer.invoke<PlayerDB>("playerdb", player.hypixelPlayer?.uuid);
+    if (player.hypixelPlayer?.uuid) api = await window.ipcRenderer.invoke<PlayerDB>("playerdb", player.hypixelPlayer?.uuid);
     else {
         api = {
             data: {
@@ -305,7 +316,8 @@ const getPlayerDB = async (player: Player) => {
                     },
                 },
                 success: false,
-            }, status: 0,
+            },
+            status: 0,
         };
     }
     return new Promise<IPCResponse<PlayerDB>>((resolve) => resolve(api));
@@ -324,10 +336,6 @@ const PlayerStore = createSlice({
         },
     },
     reducers: {
-        removePlayer: (state, action: {payload: PlayerStoreThunkObject}) => {
-            const {name} = action.payload;
-            state.players = state.players.filter((player: Player) => player.name !== name);
-        },
         updatePlayer: (state, action: {payload: PlayerHandler}) => {
             const payload: PlayerHandler = action.payload;
             if (payload !== undefined && payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
@@ -349,14 +357,8 @@ const PlayerStore = createSlice({
                     }
                 }
             }
-        },
-        resetTable: (state) => {
-            state.players = [];
-        },
-        updateStore: (state, action: {payload: IPCResponse<StoreObject>}) => {
-            const payload: IPCResponse<StoreObject> = action.payload;
-            if (payload.status === 200) {
-                state.tagStore = payload.data;
+            if (payload.status != 200 && payload.status != 400) {
+                // (setErrorMessage({title: 'Player Error', cause: payload.cause, code: payload.status, detail: 'Please report this.'}))
             }
         },
     },
@@ -370,13 +372,17 @@ const PlayerStore = createSlice({
             })
             .addCase(removePlayerFromOverlay.fulfilled, (state, action) => {
                 const payload: PlayerStoreThunkObject = action.payload;
-                PlayerStore.caseReducers.removePlayer(state, {payload});
+                const {name} = payload;
+                state.players = state.players.filter((player: Player) => player.name !== name);
             })
             .addCase(resetOverlayTable.fulfilled, (state) => {
-                PlayerStore.caseReducers.resetTable(state);
+                state.players = [];
             })
             .addCase(updatePlayerStores.fulfilled, (state, action: {payload: IPCResponse<StoreObject>}) => {
-                PlayerStore.caseReducers.updateStore(state, action);
+                const payload: IPCResponse<StoreObject> = action.payload;
+                if (payload.status === 200) {
+                    state.tagStore = payload.data;
+                }
             });
     },
 });

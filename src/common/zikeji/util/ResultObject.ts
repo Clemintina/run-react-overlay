@@ -1,5 +1,6 @@
 import {DefaultMeta} from "../types/DefaultMeta";
 import {Components} from "../types/api";
+import destr from "destr";
 
 /**
  * Generic intersection type for result objects to include metadata as a non-enumerable property.
@@ -17,12 +18,11 @@ export type ResultObject<T extends Components.Schemas.ApiSuccess, K extends (key
 };
 
 /** @hidden */
-export function getResultObject<T extends Components.Schemas.ApiSuccess, K extends (keyof T)[]>(response: T & DefaultMeta, keys: K): ResultObject<T, K> {
-    const clonedResponse: typeof response = JSON.parse(JSON.stringify(response));
+export const getResultObject = <T extends Components.Schemas.ApiSuccess, K extends (keyof T)[]>(response: T & DefaultMeta, keys: K): ResultObject<T, K> => {
+    const clonedResponse: typeof response = destr(JSON.stringify(response));
     if (!keys.every((key) => key in clonedResponse)) {
         throw new TypeError(`One or more key in "${keys.join('"," ')}" was not in the response.`);
     }
-
     const obj: ResultObject<T, K> = {} as ResultObject<T, K>;
     const {ratelimit, cached, cloudflareCache} = clonedResponse;
     const meta: DefaultMeta & Record<string | number | symbol, unknown> = {};
@@ -73,4 +73,4 @@ export function getResultObject<T extends Components.Schemas.ApiSuccess, K exten
         value: meta,
     });
     return obj;
-}
+};

@@ -133,15 +133,14 @@ export class FormatPlayer {
                 const arr = tempArray.sort((a, b) => a.requirement - b.requirement);
                 for (const {colour, requirement, operator} of arr) {
                     if (jsonLogic.apply({[operator]: [value, requirement]})) {
-                        return this.getPlayerTagDivider(value, `#${colour};`);
+                        return this.getPlayerTagDivider(value, `#${colour}`);
                     }
                 }
-                return this.getPlayerTagDivider(value, `#${arr[arr.length - 1].colour}`);
+                return this.getPlayerTagDivider(value, `#555555`);
             } else {
                 return this.getPlayerTagDivider(value, `#${coreArray}`);
             }
         } catch (e) {
-            console.log(this.tagStore);
             return this.getPlayerTagDivider(tagDisplayPath, "FF5555");
         }
 
@@ -235,7 +234,7 @@ export class FormatPlayer {
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
             } else {
-                renderer = this.getCoreFromConfig(`core.${route}`, playerValue);
+                renderer += this.getCoreFromConfig(`core.${route}`, playerValue);
             }
         } else {
             renderer += this.getPlayerTagDividerNicked();

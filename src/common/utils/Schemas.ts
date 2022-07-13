@@ -19,7 +19,7 @@ export interface DisplayErrorMessage {
     code: number;
     title: string;
     cause: string;
-    detail: string;
+    detail?: string;
     referenceId?: string | number;
 }
 

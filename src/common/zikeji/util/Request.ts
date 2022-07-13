@@ -1,116 +1,76 @@
-import {request as httpsRequest} from "https";
-import {GenericHTTPError} from "../errors/GenericHTTPError";
-import {InvalidKeyError} from "../errors/InvalidKeyError";
-import {RateLimitError} from "../errors/RateLimitError";
+import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
 import type {DefaultMeta, RequestOptions} from "../Client";
 import {Components} from "../types/api";
+import axios from "axios";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 /** @internal */
 const CACHE_CONTROL_REGEX = /s-maxage=(\d+)/;
 
 /** @internal */
-export function request<
-    T extends Components.Schemas.ApiSuccess & {cause?: string} & {
-        cloudflareCache?: DefaultMeta["cloudflareCache"];
-    },
->(options: RequestOptions): Promise<T> {
-    return new Promise((resolve, reject) => {
-        const clientRequest = httpsRequest(
-            options.url,
-            {
-                method: "GET",
-                timeout: options.timeout,
-                headers: {
-                    "User-Agent": options.userAgent,
-                    Accept: "application/json",
-                },
-            },
-            (incomingMessage) => {
-                let responseBody = "";
-
-                incomingMessage.on("data", (chunk) => {
-                    responseBody += chunk;
-                });
-
-                incomingMessage.on("end", () => {
-                    if (!options.noRateLimit) {
-                        options.getRateLimitHeaders(incomingMessage.headers as Record<string, string>);
-                    }
-
-                    if (typeof responseBody !== "string" || responseBody.trim().length === 0) {
-                        return reject(new Error(`No response body received.`));
-                    }
-
-                    let responseObject: T | undefined;
-                    try {
-                        responseObject = JSON.parse(responseBody);
-                    } catch (e) {
-                        console.log(e);
-                    }
-
-                    if (incomingMessage.statusCode !== 200) {
-                        /* istanbul ignore next */
-                        if (incomingMessage.statusCode === 429) {
-                            return reject(new RateLimitError(`Hit key throttle.`));
-                        }
-
-                        if (incomingMessage.statusCode === 403) {
-                            return reject(new InvalidKeyError("Invalid API Key"));
-                        }
-
-                        if (responseObject?.cause && typeof incomingMessage.statusCode === "number") {
-                            return reject(new GenericHTTPError(incomingMessage.statusCode, responseObject.cause));
-                        }
-
-                        /**
-                         * Generic catch all that probably should never be caught.
-                         */
-                        return reject(new Error(`${incomingMessage.statusCode} ${incomingMessage.statusMessage}. Response: ${responseBody}`));
-                    }
-
-                    if (typeof responseObject === "undefined") {
-                        return reject(new Error(`Invalid JSON response received. Response: ${responseBody}`));
-                    }
-
-                    if (incomingMessage.headers["cf-cache-status"]) {
-                        const age = parseInt(incomingMessage.headers.age as string, 10);
-                        const maxAge = CACHE_CONTROL_REGEX.exec(incomingMessage.headers["cache-control"] as string);
-                        responseObject.cloudflareCache = {
-                            status: incomingMessage.headers["cf-cache-status"] as never,
-                            ...(typeof age === "number" && !Number.isNaN(age) && {age}),
-                            ...(incomingMessage.headers["cf-cache-status"] === "HIT" && (typeof age !== "number" || Number.isNaN(age)) && {age: 0}),
-                            ...(maxAge &&
-                                typeof maxAge === "object" &&
-                                maxAge.length === 2 &&
-                                parseInt(maxAge[1], 10) > 0 && {
-                                    maxAge: parseInt(maxAge[1], 10),
-                                }),
-                        };
-                    }
-
-                    return resolve(responseObject);
-                });
-            },
-        );
-
-        let abortError: Error;
-        /* istanbul ignore next */
-        clientRequest.once("abort", () => {
-            abortError = abortError ?? new Error("Client aborted this request.");
-            reject(abortError);
-        });
-
-        /* istanbul ignore next */
-        clientRequest.once("error", (error) => {
-            abortError = error;
-            clientRequest.abort();
-        });
-
-        clientRequest.setTimeout(options.timeout, () => {
-            abortError = new Error("Hit configured timeout.");
-            clientRequest.abort();
-        });
-
-        clientRequest.end();
+export const request = async <T extends Components.Schemas.ApiSuccess & {cause?: string} & {cloudflareCache?: DefaultMeta["cloudflareCache"]}>(options: RequestOptions): Promise<T> => {
+    let axiosError: Error;
+    const axiosClient = axios.create({
+        headers: {
+            "Content-Type": "application/json",
+            "User-Agent": options.userAgent,
+            Accept: "application/json",
+        },
+        timeout: options.timeout,
+        timeoutErrorMessage: JSON.stringify({status: 408, data: {success: false}}),
+        validateStatus: () => true,
     });
-}
+    const axiosResponse = await axiosClient.get(options.url);
+
+    if (!options.noRateLimit) {
+        options.getRateLimitHeaders(axiosResponse.headers);
+    }
+
+    let responseObject: T | undefined;
+    try {
+        responseObject = axiosResponse.data;
+    } catch (e) {
+        console.log(e);
+    }
+
+    if (axiosResponse.status !== 200) {
+        if (axiosResponse.status === 429) {
+            axiosError = new RateLimitError(`Hit key throttle.`);
+        } else if (axiosResponse.status === 403) {
+            axiosError = new InvalidKeyError("Invalid Hypixel API Key");
+        } else if (responseObject?.cause) {
+            axiosError = new GenericHTTPError(axiosResponse.status, responseObject.cause);
+        } else {
+            /**
+             * Generic catch all that probably should never be caught.
+             */
+            axiosError = new Error(`${axiosResponse.status} ${axiosResponse.statusText}. Response: ${responseObject}`);
+        }
+    }
+
+    if (typeof responseObject === "undefined") {
+        axiosError = new Error(`Invalid JSON response received. Response: ${responseObject}`);
+    }
+
+    if (axiosResponse.headers["cf-cache-status"] && responseObject != undefined) {
+        const age = parseInt(axiosResponse.headers.age as string, 10);
+        const maxAge = CACHE_CONTROL_REGEX.exec(axiosResponse.headers["cache-control"] as string);
+        responseObject.cloudflareCache = {
+            status: axiosResponse.headers["cf-cache-status"] as never,
+            ...(typeof age === "number" && !Number.isNaN(age) && {age}),
+            ...(axiosResponse.headers["cf-cache-status"] === "HIT" && (typeof age !== "number" || Number.isNaN(age)) && {age: 0}),
+            ...(maxAge &&
+                typeof maxAge === "object" &&
+                maxAge.length === 2 &&
+                parseInt(maxAge[1], 10) > 0 && {
+                    maxAge: parseInt(maxAge[1], 10),
+                }),
+        };
+    }
+
+    return new Promise<T>((resolve, reject) => {
+        if (axiosResponse.status != 200) return reject(axiosError);
+        else if (axiosResponse.status == 200 && responseObject != null) return resolve(responseObject);
+        else reject(axiosError);
+    });
+};

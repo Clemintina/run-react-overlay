@@ -2,15 +2,22 @@ import "@assets/scss/titlebar.scss";
 import store from "@renderer/store";
 import {Link, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBars as headerIcon, faWindowMinimize, faWindowClose} from "@fortawesome/free-solid-svg-icons";
+import {faBars as headerIcon, faWindowClose, faWindowMinimize} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
 import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
 import {InputTextBox} from "@components/user/InputTextBox";
+import {Alert} from "@mui/material";
+import {useSelector} from "react-redux";
+import {setErrorMessage} from "@renderer/store/ConfigStore";
 
 const TitleBar = () => {
     const currentRoute = useLocation();
-    const errorMessageCode = store.getState().configStore.error.code;
+    const errorMessageCode = useSelector(() => store.getState().configStore.error.code);
+
+    if (errorMessageCode != 200) {
+        setTimeout(() => store.dispatch(setErrorMessage({code: 200, title: "", cause: "", detail: ""})), 5000);
+    }
 
     let renderCaret: JSX.Element;
     let titlePath: string;
@@ -73,19 +80,17 @@ const TitleBar = () => {
                     </span>
                 </div>
             </div>
-            <div className='error'>
+            <div className='w-full flex'>
                 {errorMessageCode != 200 ? (
-                    <div className='errorBox'>
-                        <div className='underline'>
-                            Code: <span className='errorMessage'> {store.getState().configStore.error.code}</span>
-                        </div>
-                        <div className='underline'>
-                            Description: <span className='errorMessage'> {store.getState().configStore.error.title}</span>
-                        </div>
-                        <div className='underline'>
-                            Detail: <span className='errorMessage'> {store.getState().configStore.error.detail}</span>
-                        </div>
-                        <br />
+                    <div className='w-full flex'>
+                        <Alert color='error'>
+                            <span>
+                                <span className='font-medium'>
+                                    Code: <span className='errorMessage'> {store.getState().configStore.error.code}</span>
+                                </span>{" "}
+                                    Cause: <span className='errorMessage'> {store.getState().configStore.error.cause}</span>
+                            </span>
+                        </Alert>
                     </div>
                 ) : (
                     <div></div>

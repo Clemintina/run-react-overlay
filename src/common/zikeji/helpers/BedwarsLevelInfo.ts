@@ -35,7 +35,7 @@ export interface BedwarsLevelInfo {
  * @category Helper
  */
 export const getBedwarsLevelInfo = (data: Components.Schemas.Player | number): BedwarsLevelInfo => {
-    const currentExp = typeof data === "number" ? data : data.stats.Bedwars?.Experience ?? data.stats.Bedwars?.Experience_new;
+    const currentExp = typeof data === "number" ? data : data.stats?.Bedwars?.Experience ?? data.stats?.Bedwars?.Experience_new?? 0;
     if (typeof currentExp !== "number" || Number.isNaN(currentExp)) {
         const prestigeColour = MinecraftFormatting.GRAY;
         return {

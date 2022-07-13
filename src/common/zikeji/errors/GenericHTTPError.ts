@@ -6,4 +6,9 @@ export class GenericHTTPError extends Error {
         this.code = code;
         Object.setPrototypeOf(this, GenericHTTPError.prototype);
     }
+
+    public getJson(){
+        return {data: this.message, status: this.code}
+    }
+
 }

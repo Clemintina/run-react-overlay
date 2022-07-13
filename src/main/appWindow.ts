@@ -18,6 +18,7 @@ import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
 import {LogFileMessage} from "@common/utils/LogFileReader";
+import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -149,7 +150,7 @@ const registerMainIPC = () => {
  */
 const registerSeraphIPC = () => {
     ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, resource: RequestType, ...args: unknown[]) => {
-        const apiKey: string = electronStore.get("hypixel.apiKey") ?? (args[0] as string);
+        const apiKey:string = resource == RequestType.KEY ? (args[0] as string) : electronStore.get("hypixel.apiKey");
         const hypixelClient = new HypixelApi(apiKey, {
             cache: {
                 get(key) {
@@ -173,22 +174,38 @@ const registerSeraphIPC = () => {
         });
         const client = hypixelClient.getClient();
         if (resource === RequestType.KEY) {
-            return await client.key();
+            try {
+                return await client.key();
+            } catch (e) {
+                return getErrorHandler(e);
+            }
         } else if (resource === RequestType.USERNAME) {
             const [name] = args as [string];
             const uuid: string | undefined = await mojangCache.get(`mojang:${name}`);
             if (uuid !== undefined || name.length == 32) {
-                return await hypixelClient.getClient().player.uuid(uuid ?? name);
-            } else {
-                const res = await hypixelClient.getClient().player.username(name);
-                if (res.data.uuid !== undefined) {
-                    await mojangCache.set(`mojang:${name}`, res.data.uuid);
+                try {
+                    return await hypixelClient.getClient().player.uuid(uuid ?? name);
+                } catch (e) {
+                    return getErrorHandler(e);
                 }
-                return res;
+            } else {
+                try {
+                    const res = await hypixelClient.getClient().player.username(name);
+                    if (res?.data?.uuid) {
+                        await mojangCache.set(`mojang:${name}`, res.data.uuid);
+                    }
+                    return res;
+                } catch (e) {
+                    return getErrorHandler(e);
+                }
             }
         } else if (resource === RequestType.UUID) {
             const [uuid] = args as [string];
-            return await hypixelClient.getClient().player.uuid(uuid);
+            try {
+                return await hypixelClient.getClient().player.uuid(uuid);
+            } catch (e) {
+                return getErrorHandler(e);
+            }
         }
         return null;
     });
@@ -281,7 +298,13 @@ const registerElectronStore = () => {
  */
 const registerLogCommunications = () => {
     ipcMain.handle("isFileReadable", async (event: IpcMainInvokeEvent, path: string) => {
-        return {data: await fs.promises.access(path, fs.constants.R_OK).then(() => true).catch(() => false), status: 200};
+        return {
+            data: await fs.promises
+                .access(path, fs.constants.R_OK)
+                .then(() => true)
+                .catch(() => false),
+            status: 200,
+        };
     });
 
     ipcMain.handle("selectLogFile", async () => {
@@ -345,7 +368,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};
@@ -419,4 +442,11 @@ const getProxyChannel = () => {
             proxyAuth: proxyStore.username + ":" + proxyStore.password,
         },
     });
+};
+
+const getErrorHandler = (e) => {
+    if (e instanceof RateLimitError) return e.getJson();
+    else if (e instanceof InvalidKeyError) return e.getJson();
+    else if (e instanceof GenericHTTPError) return e.getJson();
+    else return {data: undefined, status: 400};
 };
