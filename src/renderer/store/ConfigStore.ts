@@ -5,20 +5,10 @@ import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 
 export interface ConfigStore {
-    hypixel: {
-        apiKey: string;
-        apiKeyValid: boolean;
-        apiKeyOwner: string;
-    };
+    apiKey: string;
+    apiKeyValid: boolean;
+    apiKeyOwner: string;
     runKey: string;
-    colours:{
-        backgroundColour: string,
-        primaryColour: string,
-        secondaryColour: string,
-    };
-    logPath: string;
-    error: DisplayErrorMessage
-    settings: SettingsConfig
 }
 
 interface InitScript {
@@ -36,17 +26,17 @@ interface InitScript {
             keathiz: {apiKey: string};
         };
         settings: {
-            lunar: boolean;
-            keathiz: boolean;
-            boomza: boolean;
-        };
+            lunar: boolean,
+            keathiz: boolean,
+            boomza: boolean
+        }
     };
 }
 
 export interface SettingsConfig {
-    lunar: boolean;
-    keathiz: boolean;
-    boomza: boolean;
+    lunar: boolean,
+    keathiz: boolean,
+    boomza: boolean
 }
 
 /**
@@ -55,11 +45,9 @@ export interface SettingsConfig {
 const ConfigStore = createSlice({
     name: "ConfigStore",
     initialState: {
-        hypixel: {
-            apiKey: "",
-            apiKeyValid: false,
-            apiKeyOwner: "",
-        },
+        apiKey: "",
+        apiKeyValid: false,
+        apiKeyOwner: "",
         colours: {
             backgroundColour: "#242424FF",
             primaryColour: "#808080",
@@ -81,13 +69,12 @@ const ConfigStore = createSlice({
     },
     reducers: {
         setHypixelApiKey: (state, action: {payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>}) => {
-            const payload = action.payload;
-            state.hypixel.apiKeyValid = true;
-            state.hypixel.apiKey = payload.data.key;
-            state.hypixel.apiKeyOwner = payload.data.owner;
+            const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
+            state.apiKeyValid = true;
+            state.apiKey = payload.data.key;
+            state.apiKeyOwner = payload.data.owner;
             window.config.set("hypixel.apiKey", payload.data.key);
             window.config.set("hypixel.apiKeyOwner", payload.data.owner);
-            console.log(state);
         },
         setRunApiKey: (state, action: {payload: RunApiKey}) => {
             const payload: RunApiKey = action.payload;
@@ -96,9 +83,9 @@ const ConfigStore = createSlice({
         setDataFromConfig: (state, action: {payload: InitScript}) => {
             const payload: InitScript = action.payload;
             if (payload.data.hypixel.key !== undefined) {
-                state.hypixel.apiKeyValid = true;
-                state.hypixel.apiKey = payload.data.hypixel.key;
-                state.hypixel.apiKeyOwner = payload.data.hypixel.owner;
+                state.apiKeyValid = true;
+                state.apiKey = payload.data.hypixel.key;
+                state.apiKeyOwner = payload.data.hypixel.owner;
             }
             if (payload.data.runKey !== undefined) state.runKey = payload.data.runKey;
             if (payload.data.overlay.logPath !== undefined) {
@@ -107,11 +94,13 @@ const ConfigStore = createSlice({
             }
         },
         updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
+            state.error = action.payload;
+        },
+        setSettings: (state, action: {payload: SettingsConfig}) => {
             const payload = action.payload;
-            state.error.code = payload.code;
-            state.error.title = payload.title;
-            state.error.cause = payload.cause;
-            state.error.detail = payload?.detail ?? "";
+            state.settings.lunar = payload.lunar;
+            state.settings.keathiz = payload.keathiz;
+            state.settings.boomza = payload.boomza;
         },
     },
     extraReducers: (builder) => {
@@ -119,7 +108,9 @@ const ConfigStore = createSlice({
             .addCase(apiKeyValidator.fulfilled, (state, action) => {
                 const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
                 if (payload?.data?.key !== undefined) {
-                    ConfigStore.caseReducers.setHypixelApiKey(state, action);
+                    ConfigStore.caseReducers.setHypixelApiKey(state, {
+                        payload,
+                    });
                 } else {
                     ConfigStore.caseReducers.updateErrorMessage(state, {
                         payload: {
@@ -158,17 +149,10 @@ const ConfigStore = createSlice({
                     },
                 });
             })
-            .addCase(setSettingsValue.fulfilled, (state, action) => {
-                state.settings = action.payload.data;
-            })
-            .addCase(setErrorMessage.fulfilled, (state, action: {payload: DisplayErrorMessage}) => {
-                ConfigStore.caseReducers.updateErrorMessage(state, action);
+            .addCase(setSettingsValue.fulfilled, (state, action)=>{
+                ConfigStore.caseReducers.setSettings(state, {payload: action.payload.data});
             });
     },
-});
-
-export const setErrorMessage = createAsyncThunk("ConfigStore/setErrorMessage", async (errorObject: DisplayErrorMessage) => {
-    return errorObject;
 });
 /**
  * Validates the Hypixel API Key
@@ -182,8 +166,8 @@ export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", a
 export const keathizApiKeyValidator = createAsyncThunk("ConfigStore/keathizApiKeyValidator", async (keathizKey: string) => {
     return await window.config.set("external.keathiz.apiKey", keathizKey);
 });
-export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data: SettingsConfig) => {
-    return {data, status: 200};
+export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data:SettingsConfig) => {
+    return {data, status: 200}
 });
 /**
  * Called when the Overlay loads, **DO NOT PUT RESOURCE INTENSIVE METHODS IN THIS FUNCTION**

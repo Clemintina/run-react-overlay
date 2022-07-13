@@ -1,6 +1,5 @@
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
-import "@assets/index.css";
 import React from "react";
 import store from "@renderer/store";
 import {apiKeyValidator, keathizApiKeyValidator, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
@@ -18,6 +17,7 @@ const MainSettings = () => {
     const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.hypixel.apiKey.length === 36);
     const isLogsSet: boolean = useSelector(() => store.getState().configStore.logPath.length !== 0);
     const settings = useSelector(() => store.getState().configStore.settings);
+    const version = useSelector(()=>store.getState().configStore.version);
 
     // TODO make it look nicer and cleaner
     return (
@@ -82,6 +82,9 @@ const MainSettings = () => {
             </div>
             <div className="w-fit bg-gray-50">
 
+            </div>
+            <div>
+                <span>Version: {version}</span>
             </div>
         </div>
     );
