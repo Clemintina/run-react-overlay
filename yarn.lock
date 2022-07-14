@@ -907,10 +907,10 @@
     redux-thunk "^2.4.1"
     reselect "^4.1.5"
 
-"@sinclair/typebox@^0.24.17":
-  version "0.24.17"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.17.tgz#5e5ac39cc54bdcbb002555a0bdfc79f5188e63e4"
-  integrity sha512-KyXzbBBYly+wSwbhPTKecqIWFST/anAXTlA2o23rDUMzVnFUrDyC0Gk96yL8zQw5O5OqdqALomdih6wwSdRc2Q==
+"@sinclair/typebox@^0.24.19":
+  version "0.24.19"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.19.tgz#5297278e0d8a1aea084685a3216074910ac6c113"
+  integrity sha512-gHJu8cdYTD5p4UqmQHrxaWrtb/jkH5imLXzuBypWhKzNkW0qfmgz+w1xaJccWVuJta1YYUdlDiPHXRTR4Ku0MQ==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -1159,10 +1159,10 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.5.tgz#1001cc5e6a3704b83c236027e77f2f58ea010f40"
   integrity sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==
 
-"@types/node@*", "@types/node@>=12", "@types/node@^18.0.3":
-  version "18.0.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.3.tgz#463fc47f13ec0688a33aec75d078a0541a447199"
-  integrity sha512-HzNRZtp4eepNitP+BD6k2L6DROIDG4Q0fm4x+dwfsr6LGmROENnok75VGw40628xf+iR24WeMFcHuuBDUAzzsQ==
+"@types/node@*", "@types/node@>=12", "@types/node@^18.0.4":
+  version "18.0.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.4.tgz#48aedbf35efb3af1248e4cd4d792c730290cd5d6"
+  integrity sha512-M0+G6V0Y4YV8cqzHssZpaNCqvYwlCiulmm0PwpNLF55r/+cT8Ol42CHRU1SEaYFH2rTwiiE1aYg/2g2rrtGdPA==
 
 "@types/node@^16.11.26":
   version "16.11.43"
