@@ -39,7 +39,7 @@
 		"@mui/x-data-grid": "^5.13.0",
 		"@reduxjs/toolkit": "^1.8.3",
 		"@sinclair/typebox": "^0.24.19",
-		"@tanstack/react-table": "^8.2.3",
+		"@tanstack/react-table": "^8.2.6",
 		"axios": "^0.27.2",
 		"browserify": "^17.0.0",
 		"browserify-fs": "^1.0.0",
