@@ -49,7 +49,6 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
 
     try {
         const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
-
         if (ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) {
             const data: unknown = ipcHypixelPlayer.data;
             let cause,code;
@@ -61,7 +60,6 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
                 code = 200;
             }
             playerData.nicked = true;
-            await dispatch(setErrorMessage({code, title: "Error", cause}));
             return {status: 400, cause, data: playerData};
         } else {
             playerData.id = ipcHypixelPlayer.data.uuid;
@@ -357,8 +355,8 @@ const PlayerStore = createSlice({
                     }
                 }
             }
-            if (payload.status != 200 && payload.status != 400) {
-                // (setErrorMessage({title: 'Player Error', cause: payload.cause, code: payload.status, detail: 'Please report this.'}))
+            if (payload!=undefined && payload.status != 200 && payload.status != 400) {
+                setErrorMessage({title: 'Player Error', cause: payload.cause, code: payload.status, detail: 'Please report this.'})
             }
         },
     },

@@ -128,6 +128,9 @@ export class FormatPlayer {
         try {
             const coreMetric: MetricsObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore) ?? 0;
             const coreArray = coreMetric?.colours ?? "FF5555";
+
+            value = ~~Number((((0-18)/0)*100).toFixed(2));
+
             if (Array.isArray(coreArray) && value != undefined) {
                 const tempArray = [...coreArray];
                 const arr = tempArray.sort((a, b) => a.requirement - b.requirement);
