@@ -26,6 +26,10 @@ export interface ConfigStore {
         key: string;
         valid: boolean;
     };
+    browserWindow:{
+      width: number,
+      height: number
+    };
     error: DisplayErrorMessage;
     settings: SettingsConfig;
 }
@@ -47,6 +51,10 @@ interface InitScript {
                 apiKey: string;
                 valid: boolean;
             };
+        };
+        browserWindow:{
+            width: number,
+            height: number
         };
         settings: SettingsConfig;
         version: string;
@@ -91,6 +99,10 @@ const ConfigStore = createSlice({
             key: "",
             valid: false,
         },
+        browserWindow:{
+            width: 600,
+            height: 800
+        },
         settings: {
             lunar: true,
             keathiz: false,
@@ -124,6 +136,7 @@ const ConfigStore = createSlice({
                 state.logs.readable = payload.data.overlay.readable;
                 window.ipcRenderer.send("logFileSet", state.logs.logPath);
             }
+            state.browserWindow = payload.data.browserWindow;
         },
         updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
             state.error.code = action.payload.code;
@@ -232,6 +245,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const external = {keathiz: {apiKey: "", valid: false}};
     const version = await window.config.get("run.overlay.version");
     const settings = await window.config.get("settings");
+    const browserWindow = await window.config.get('run.overlay.browserWindow');
 
     const runKey = await window.config.get("run.apiKey");
     hypixel.key = await window.config.get("hypixel.apiKey");
@@ -242,7 +256,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
     external.keathiz.valid = (await window.config.get("external.keathiz.valid")) ?? false;
 
-    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external, settings, version}};
+    const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external, settings, version,browserWindow}};
     return res;
 });
 

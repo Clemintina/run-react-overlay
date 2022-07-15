@@ -87,6 +87,8 @@ export const createAppWindow = (): BrowserWindow => {
         defaultWidth: 800,
         defaultHeight: 600,
     });
+    electronStore.set('run.overlay.browserWindow.width',mainWindowState.width)
+    electronStore.set('run.overlay.browserWindow.height',mainWindowState.height)
     appWindow = new BrowserWindow({
         x: mainWindowState.x,
         y: mainWindowState.y,

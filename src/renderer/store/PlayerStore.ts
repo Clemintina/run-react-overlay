@@ -17,7 +17,75 @@ export interface PlayerStoreThunkObject {
 
 export interface PlayerStore {
     players: Array<Player>;
+    tagStore: {
+        config:object,
+        tags: object
+    }
 }
+
+/**
+ * Creates a **slice** which, is specific to storing player data within the overlay.
+ */
+const PlayerStore = createSlice({
+    name: "PlayerStore",
+    initialState: {
+        players: Array<Player>(),
+        tagStore: {
+            config: {},
+            tags: {},
+        },
+    },
+    reducers: {
+        updatePlayer: (state, action: {payload: PlayerHandler}) => {
+            const payload: PlayerHandler = action.payload;
+            if (payload !== undefined && payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
+                const playerPayload: Player = payload.data;
+                const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
+                if (doesPlayerExist !== -1) {
+                    state.players[doesPlayerExist] = payload.data;
+                } else {
+                    state.players.push(playerPayload);
+                }
+            } else {
+                if (payload !== undefined && payload.status === 400 && payload.data !== undefined) {
+                    const playerPayload: Player = payload.data;
+                    const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
+                    if (doesPlayerExist !== -1) {
+                        state.players[doesPlayerExist] = playerPayload;
+                    } else {
+                        state.players.push(playerPayload);
+                    }
+                }
+            }
+            if (payload!=undefined && payload.status != 200 && payload.status != 400) {
+                setErrorMessage({title: 'Player Error', cause: payload.cause, code: payload.status, detail: 'Please report this.'})
+            }
+        },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(getPlayerHypixelData.fulfilled, (state, action: {payload: PlayerHandler}) => {
+                PlayerStore.caseReducers.updatePlayer(state, action);
+            })
+            .addCase(getPlayerHypixelData.rejected, (state, action: {payload}) => {
+                PlayerStore.caseReducers.updatePlayer(state, action);
+            })
+            .addCase(removePlayerFromOverlay.fulfilled, (state, action) => {
+                const payload: PlayerStoreThunkObject = action.payload;
+                const {name} = payload;
+                state.players = state.players.filter((player: Player) => player.name !== name);
+            })
+            .addCase(resetOverlayTable.fulfilled, (state) => {
+                state.players = [];
+            })
+            .addCase(updatePlayerStores.fulfilled, (state, action: {payload: IPCResponse<StoreObject>}) => {
+                const payload: IPCResponse<StoreObject> = action.payload;
+                if (payload.status === 200) {
+                    state.tagStore = payload.data;
+                }
+            });
+    },
+});
 
 const cacheState: PlayerStoreThunkObject = {
     name: "",
@@ -320,69 +388,5 @@ const getPlayerDB = async (player: Player) => {
     }
     return new Promise<IPCResponse<PlayerDB>>((resolve) => resolve(api));
 };
-
-/**
- * Creates a **slice** which, is specific to storing player data within the overlay.
- */
-const PlayerStore = createSlice({
-    name: "PlayerStore",
-    initialState: {
-        players: Array<Player>(),
-        tagStore: {
-            config: {},
-            tags: {},
-        },
-    },
-    reducers: {
-        updatePlayer: (state, action: {payload: PlayerHandler}) => {
-            const payload: PlayerHandler = action.payload;
-            if (payload !== undefined && payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
-                const playerPayload: Player = payload.data;
-                const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
-                if (doesPlayerExist !== -1) {
-                    state.players[doesPlayerExist] = payload.data;
-                } else {
-                    state.players.push(playerPayload);
-                }
-            } else {
-                if (payload !== undefined && payload.status === 400 && payload.data !== undefined) {
-                    const playerPayload: Player = payload.data;
-                    const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
-                    if (doesPlayerExist !== -1) {
-                        state.players[doesPlayerExist] = playerPayload;
-                    } else {
-                        state.players.push(playerPayload);
-                    }
-                }
-            }
-            if (payload!=undefined && payload.status != 200 && payload.status != 400) {
-                setErrorMessage({title: 'Player Error', cause: payload.cause, code: payload.status, detail: 'Please report this.'})
-            }
-        },
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(getPlayerHypixelData.fulfilled, (state, action: {payload: PlayerHandler}) => {
-                PlayerStore.caseReducers.updatePlayer(state, action);
-            })
-            .addCase(getPlayerHypixelData.rejected, (state, action: {payload}) => {
-                PlayerStore.caseReducers.updatePlayer(state, action);
-            })
-            .addCase(removePlayerFromOverlay.fulfilled, (state, action) => {
-                const payload: PlayerStoreThunkObject = action.payload;
-                const {name} = payload;
-                state.players = state.players.filter((player: Player) => player.name !== name);
-            })
-            .addCase(resetOverlayTable.fulfilled, (state) => {
-                state.players = [];
-            })
-            .addCase(updatePlayerStores.fulfilled, (state, action: {payload: IPCResponse<StoreObject>}) => {
-                const payload: IPCResponse<StoreObject> = action.payload;
-                if (payload.status === 200) {
-                    state.tagStore = payload.data;
-                }
-            });
-    },
-});
 
 export default PlayerStore.reducer;

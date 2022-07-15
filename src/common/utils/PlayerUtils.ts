@@ -169,9 +169,9 @@ export class FormatPlayer {
     public renderName = (player: Player) => {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
-            nameRenderer += `<span class="name-span">`;
-            if (this.configStore.settings.lunar &&player.nicked) {
-                nameRenderer += `<img src="https://crafatar.com/avatars/${player.id}?size=16&overlay=true" class="skull"/>`;
+            nameRenderer += `<span class="name-span flex">`;
+            nameRenderer += `<img src="https://crafatar.com/avatars/${player.id}?size=16&overlay=true"/>`
+            if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
                         nameRenderer += `<span class="lunar-client-image">

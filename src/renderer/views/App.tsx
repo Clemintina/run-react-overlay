@@ -1,6 +1,6 @@
 import "@assets/scss/app.scss";
-import React from "react";
-import store from "@renderer/store";
+import React, {useEffect, useState} from "react";
+import store, {Store} from "@renderer/store";
 import {useSelector} from "react-redux";
 import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
@@ -8,6 +8,8 @@ import ReactDataGrid from "@inovua/reactdatagrid-community";
 import {TypeColumn} from "@inovua/reactdatagrid-community/types/TypeColumn";
 import "@inovua/reactdatagrid-community/index.css";
 import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowDown, faArrowUp} from "@fortawesome/free-solid-svg-icons";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
@@ -29,8 +31,10 @@ const columns: TypeColumn[] = [
         header: "Star",
         flex: 1,
         sortName: `Player's Bedwars Level`,
-        maxWidth: smallColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderStar(data)} />,
+        sortable: true,
+        minWidth: smallColumnSize,
+        type: 'number',
+        render: ({data}) => <Interweave content={playerFormatter.renderStar(data)}/>,
     },
     {
         id: "name",
@@ -38,9 +42,10 @@ const columns: TypeColumn[] = [
         flex: 1,
         minWidth: extraLargeColumnSize,
         sortName: `Name of the Player`,
+        type: 'string',
         render: ({data}) => (
             <StatsisticsTooltip player={data}>
-                <Interweave content={playerFormatter.renderName(data)} />
+                <Interweave content={playerFormatter.renderName(data)}/>
             </StatsisticsTooltip>
         ),
     },
@@ -51,7 +56,7 @@ const columns: TypeColumn[] = [
         minWidth: largeColumnSize,
         sortName: `Tags for the Overlay`,
         render: ({data}) => {
-            return <Interweave content={playerFormatter.renderTags(data)} />;
+            return <Interweave content={playerFormatter.renderTags(data)}/>;
         },
         sortable: false,
     },
@@ -60,57 +65,64 @@ const columns: TypeColumn[] = [
         header: "WS",
         flex: 1,
         sortName: `Player's Winstreak`,
-        maxWidth: smallColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)} />,
+        minWidth: smallColumnSize,
+        type: 'number',
+        render: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)}/>,
     },
     {
         id: "fkdr",
         header: "FKDR",
         flex: 1,
         sortName: `Player's Final Kill to Death Ratio`,
-        maxWidth: mediumColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "fkdr")} />,
+        defaultWidth: mediumColumnSize,
+        type: 'number',
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "fkdr")}/>,
     },
     {
         id: "wlr",
         header: "WLR",
         flex: 1,
         sortName: `Player's Win to Loss Ratio`,
-        maxWidth: mediumColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")} />,
+        minWidth: mediumColumnSize,
+        type: 'number',
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")}/>,
     },
     {
         id: "bblr",
         header: "BBLR",
         flex: 1,
         sortName: `Player's Beds Broken to Beds Lost Ratio`,
-        maxWidth: mediumColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
+        minWidth: mediumColumnSize,
+        type: 'number',
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")}/>,
     },
     {
         id: "wins",
         header: "Wins",
         flex: 1,
         sortName: `Player's Wins`,
-        maxWidth: mediumColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "wins")} />,
+        defaultWidth: mediumColumnSize,
+        type: 'number',
+        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "wins")}/>,
     },
     {
         id: "losses",
         header: "Losses",
         flex: 1,
         sortName: `Player's Losses`,
-        maxWidth: mediumColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")} />,
+        minWidth: mediumColumnSize,
+        type: 'number',
+        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")}/>,
     },
     {
         id: "session",
         header: "Time",
         flex: 1,
         sortName: `Player's Session Time`,
-        maxWidth: smallColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)} />,
-    },
+        minWidth: smallColumnSize,
+        type: 'number',
+        render: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)}/>,
+    }
 ];
 
 const getNickedPlayerSortingResponse = (params) => {
@@ -125,10 +137,16 @@ const AppTable = () => {
      * All **css** is done in {@link assets/scss/app}
      * All processing is done in {@link store}
      */
-    const players: Array<Player> = useSelector(() => store.getState().playerStore.players);
-    const tagStore = useSelector(() => store.getState().playerStore.tagStore);
-    const textColour = useSelector(() => store.getState().configStore.colours.primaryColour);
+    const localStore: Store = useSelector(() => store.getState())
+    const players: Array<Player> = localStore.playerStore.players;
+    const tagStore = localStore.playerStore.tagStore;
     playerFormatter.setConfig({tags: tagStore.tags, config: tagStore.config});
+
+    const renderSortTool = (direction) => {
+        return (<div>
+            {direction === -1 ? <FontAwesomeIcon icon={faArrowUp}/> : <FontAwesomeIcon icon={faArrowDown}/>}
+        </div>)
+    }
 
     const renderRowContextMenu = (menuProps, {rowProps}) => {
         menuProps.autoDismiss = true;
@@ -148,13 +166,28 @@ const AppTable = () => {
     };
 
     const gridStyle = {
-        minHeight: window.outerHeight,
+        minHeight: localStore.configStore.browserWindow.height - 40,
     };
 
     return (
         <div>
             <div className='w-full h-full'>
-                <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' emptyText='No Players' style={gridStyle} showColumnMenuTool={true} renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false} showColumnMenuToolOnHover={true} enableColumnAutosize={true} />
+                <span className='overflow-hidden'>
+                <ReactDataGrid theme='default-dark' className='overflow-hidden'
+                               dataSource={players} columns={columns} rowHeight={33}
+                               idProperty='name' emptyText='No Players' style={gridStyle} showColumnMenuTool={true}
+                               renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false}
+                               showColumnMenuToolOnHover={true} enableColumnAutosize={true}
+                               renderSortTool={renderSortTool}
+                               onColumnOrderChange={(columnOrder) => {
+                                   console.log(columnOrder)
+                               }}
+                               allowUnsort={false}
+                               onSortInfoChange={(sortInfo) => {
+                                   console.log(sortInfo)
+                               }}
+                />
+                </span>
             </div>
         </div>
     );

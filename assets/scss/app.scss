@@ -43,3 +43,7 @@ span.statistics-tooltip-inline{
   flex-direction: row;
   white-space: nowrap;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
