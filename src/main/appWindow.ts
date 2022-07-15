@@ -115,6 +115,8 @@ export const createAppWindow = (): BrowserWindow => {
         if (!require("electron-squirrel-startup") && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
+            autoUpdater.on('checking-for-update',async ()=>console.log('Checking for updates...'))
+            autoUpdater.on('update-available', async () => console.log('Update available'));
             autoUpdater.on('update-downloaded',async ()=>{
                 autoUpdater.quitAndInstall();
             })
