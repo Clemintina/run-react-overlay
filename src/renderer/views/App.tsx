@@ -69,7 +69,7 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Final Kill to Death Ratio`,
         maxWidth: mediumColumnSize,
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data,'fkdr')} />,
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "fkdr")} />,
     },
     {
         id: "wlr",
@@ -113,10 +113,6 @@ const columns: TypeColumn[] = [
     },
 ];
 
-const gridStyle = {
-    minHeight: 550,
-};
-
 const getNickedPlayerSortingResponse = (params) => {
     return 0;
 };
@@ -151,9 +147,13 @@ const AppTable = () => {
         ];
     };
 
+    const gridStyle = {
+        minHeight: window.outerHeight,
+    };
+
     return (
         <div>
-            <div style={{height: "92vh", width: "100%", color: textColour}}>
+            <div className='w-full h-full'>
                 <ReactDataGrid theme='default-dark' dataSource={players} columns={columns} rowHeight={33} idProperty='name' emptyText='No Players' style={gridStyle} showColumnMenuTool={true} renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false} showColumnMenuToolOnHover={true} enableColumnAutosize={true} />
             </div>
         </div>

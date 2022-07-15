@@ -9,6 +9,7 @@ import store from "@renderer/store";
 import {initScript} from "@renderer/store/ConfigStore";
 import {LogFileReader} from "@common/utils/LogFileReader";
 import {playerInitScript, updatePlayerStores} from "@renderer/store/PlayerStore";
+import "@assets/index.css";
 
 /**
  * Loads the **Initial Script**
@@ -34,7 +35,7 @@ reader.startCommandListener();
  */
 createRoot(document.getElementById("app")!).render(
     <Provider store={store}>
-        <div className='mainBody' style={{backgroundColor: store.getState().configStore.colours.backgroundColour}}>
+        <div className='mainBody' style={{backgroundColor: store.getState().configStore.colours.backgroundColour, color: store.getState().configStore.colours.primaryColour}}>
             <HashRouter basename='/'>
                 <TitleBar />
                 <Routes>

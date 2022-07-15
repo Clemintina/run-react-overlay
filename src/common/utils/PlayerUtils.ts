@@ -129,7 +129,7 @@ export class FormatPlayer {
             const coreMetric: MetricsObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore) ?? 0;
             const coreArray = coreMetric?.colours ?? "FF5555";
 
-            value = ~~Number((((0-18)/0)*100).toFixed(2));
+            if (!isFinite(value))value = ~~Number((((0-18)/0)*100).toFixed(2));
 
             if (Array.isArray(coreArray) && value != undefined) {
                 const tempArray = [...coreArray];
@@ -170,8 +170,8 @@ export class FormatPlayer {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
             nameRenderer += `<span class="name-span">`;
-            nameRenderer += `<img src="https://crafatar.com/avatars/${player.id}?size=16&overlay=true"; class="skull";></img>`;
-            if (this.configStore.settings.lunar) {
+            if (this.configStore.settings.lunar &&player.nicked) {
+                nameRenderer += `<img src="https://crafatar.com/avatars/${player.id}?size=16&overlay=true" class="skull"/>`;
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
                         nameRenderer += `<span class="lunar-client-image">

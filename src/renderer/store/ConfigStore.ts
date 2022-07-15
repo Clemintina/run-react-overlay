@@ -3,20 +3,29 @@ import {IPCResponse, RequestType, RunApiKey} from "@common/utils/externalapis/Ru
 import {DisplayErrorMessage} from "@common//utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
+import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 
 export interface ConfigStore {
     hypixel: {
         apiKey: string;
         apiKeyValid: boolean;
         apiKeyOwner: string;
-    }
+    };
     runKey: string;
     version: string;
+    logs: {
+        logPath: string;
+        readable: boolean;
+    };
     colours: {
-        backgroundColour: string,
-        primaryColour: string,
-        secondaryColour: string,
-    },
+        backgroundColour: string;
+        primaryColour: string;
+        secondaryColour: string;
+    };
+    keathiz: {
+        key: string;
+        valid: boolean;
+    };
     error: DisplayErrorMessage;
     settings: SettingsConfig;
 }
@@ -30,10 +39,14 @@ interface InitScript {
         };
         overlay: {
             logPath: string;
+            readable: boolean;
         };
         runKey: string;
         external: {
-            keathiz: { apiKey: string };
+            keathiz: {
+                apiKey: string;
+                valid: boolean;
+            };
         };
         settings: SettingsConfig;
         version: string;
@@ -41,9 +54,9 @@ interface InitScript {
 }
 
 export interface SettingsConfig {
-    lunar: boolean,
-    keathiz: boolean,
-    boomza: boolean
+    lunar: boolean;
+    keathiz: boolean;
+    boomza: boolean;
 }
 
 /**
@@ -64,12 +77,19 @@ const ConfigStore = createSlice({
         },
         runKey: "public",
         version: "",
-        logPath: "",
+        logs: {
+            logPath: "",
+            readable: false,
+        },
         error: {
             code: 200,
             title: "",
             cause: "",
             detail: "",
+        },
+        keathiz: {
+            key: "",
+            valid: false,
         },
         settings: {
             lunar: true,
@@ -78,7 +98,7 @@ const ConfigStore = createSlice({
         },
     },
     reducers: {
-        setHypixelApiKey: (state, action: { payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> }) => {
+        setHypixelApiKey: (state, action: {payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>}) => {
             const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
             state.hypixel.apiKeyValid = true;
             state.hypixel.apiKey = payload.data.key;
@@ -86,13 +106,13 @@ const ConfigStore = createSlice({
             window.config.set("hypixel.apiKey", payload.data.key);
             window.config.set("hypixel.apiKeyOwner", payload.data.owner);
         },
-        setRunApiKey: (state, action: { payload: RunApiKey }) => {
+        setRunApiKey: (state, action: {payload: RunApiKey}) => {
             const payload: RunApiKey = action.payload;
             state.runKey = payload.key.key;
         },
-        setDataFromConfig: (state, action: { payload: InitScript }) => {
+        setDataFromConfig: (state, action: {payload: InitScript}) => {
             const payload: InitScript = action.payload;
-            state.version = payload.data.version
+            state.version = payload.data.version;
             if (payload.data.hypixel.key !== undefined) {
                 state.hypixel.apiKeyValid = true;
                 state.hypixel.apiKey = payload.data.hypixel.key;
@@ -100,21 +120,27 @@ const ConfigStore = createSlice({
             }
             if (payload.data.runKey !== undefined) state.runKey = payload.data.runKey;
             if (payload.data.overlay.logPath !== undefined) {
-                state.logPath = payload.data.overlay.logPath;
-                window.ipcRenderer.send("logFileSet", state.logPath);
+                state.logs.logPath = payload.data.overlay.logPath;
+                state.logs.readable = payload.data.overlay.readable;
+                window.ipcRenderer.send("logFileSet", state.logs.logPath);
             }
         },
-        updateErrorMessage: (state, action: { payload: DisplayErrorMessage }) => {
+        updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
             state.error.code = action.payload.code;
             state.error.title = action.payload.title;
             state.error.cause = action.payload.cause;
-            state.error.detail = action.payload.detail ?? '';
+            state.error.detail = action.payload.detail ?? "";
         },
-        setSettings: (state, action: { payload: SettingsConfig }) => {
+        setSettings: (state, action: {payload: SettingsConfig}) => {
             const payload = action.payload;
             state.settings.lunar = payload.lunar;
             state.settings.keathiz = payload.keathiz;
             state.settings.boomza = payload.boomza;
+        },
+        setKeathizApi: (state, action: {payload: IPCResponse<{apiKey: string; valid: boolean}>}) => {
+            const payload = action.payload.data;
+            state.keathiz.key = payload.apiKey;
+            state.keathiz.valid = payload.valid;
         },
     },
     extraReducers: (builder) => {
@@ -166,10 +192,13 @@ const ConfigStore = createSlice({
             .addCase(setSettingsValue.fulfilled, (state, action) => {
                 state.settings = action.payload.data;
             })
-            .addCase(setErrorMessage.fulfilled, (state, action: { payload: DisplayErrorMessage }) => {
+            .addCase(setErrorMessage.fulfilled, (state, action: {payload: DisplayErrorMessage}) => {
                 ConfigStore.caseReducers.updateErrorMessage(state, action);
+            })
+            .addCase(keathizApiKeyValidator.fulfilled, (state, action) => {
+                ConfigStore.caseReducers.setKeathizApi(state, action);
             });
-    }
+    },
 });
 /**
  * Validates the Hypixel API Key
@@ -181,11 +210,14 @@ export const apiKeyValidator = createAsyncThunk("ConfigStore/apiKeyValidator", a
  * Validates the Keathiz API Key
  */
 export const keathizApiKeyValidator = createAsyncThunk("ConfigStore/keathizApiKeyValidator", async (keathizKey: string) => {
-    return await window.config.set("external.keathiz.apiKey", keathizKey);
+    await window.config.set("external.keathiz.apiKey", keathizKey);
+    const validKey = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5");
+    await window.config.set("external.keathiz.valid", validKey.status == 200);
+    return {data: {apiKey: keathizKey, valid: validKey.status == 200}, status: 200};
 });
 
 export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data: SettingsConfig) => {
-    return {data, status: 200}
+    return {data, status: 200};
 });
 
 export const setErrorMessage = createAsyncThunk("ConfigStore/setErrorMessage", async (errorObject: DisplayErrorMessage) => {
@@ -196,17 +228,19 @@ export const setErrorMessage = createAsyncThunk("ConfigStore/setErrorMessage", a
  */
 export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const hypixel = {key: "", owner: ""};
-    const overlay = {logPath: ""};
-    const external = {keathiz: {apiKey: ""}};
-    const version = await window.config.get('run.overlay.version');
+    const overlay = {logPath: "", readable: false};
+    const external = {keathiz: {apiKey: "", valid: false}};
+    const version = await window.config.get("run.overlay.version");
     const settings = await window.config.get("settings");
 
     const runKey = await window.config.get("run.apiKey");
     hypixel.key = await window.config.get("hypixel.apiKey");
     hypixel.owner = await window.config.get("hypixel.apiKeyOwner");
     overlay.logPath = await window.config.get("overlay.logPath");
+    overlay.readable = await window.config.get("overlay.readable");
 
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
+    external.keathiz.valid = (await window.config.get("external.keathiz.valid")) ?? false;
 
     const res: InitScript = {status: 200, data: {runKey, hypixel, overlay, external, settings, version}};
     return res;

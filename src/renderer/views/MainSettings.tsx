@@ -2,7 +2,7 @@ import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import React from "react";
 import store from "@renderer/store";
-import {apiKeyValidator, keathizApiKeyValidator, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
+import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
@@ -10,42 +10,56 @@ import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import {ToggleButton} from "@components/user/ToggleButton";
-import {Sidebar} from "flowbite-react/lib/esm/components";
-import {Alert} from "@mui/material";
+import {SettingCard} from "@components/user/settings/SettingCard";
+import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
 
 const MainSettings = () => {
-    const isHypixelKeySet: boolean = useSelector(() => store.getState().configStore.hypixel.apiKey.length === 36);
-    const isLogsSet: boolean = useSelector(() => store.getState().configStore.logPath.length !== 0);
-    const settings = useSelector(() => store.getState().configStore.settings);
-    const version = useSelector(()=>store.getState().configStore.version);
+    const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
+    const isHypixelKeySet: boolean = localConfigStore.hypixel.apiKeyValid;
+    const isLogsSet: boolean = useSelector(() => store.getState().configStore.logs.logPath.length !== 0);
+    const settings = localConfigStore.settings;
+    const version = localConfigStore.version;
+    const colours = localConfigStore.colours;
 
     // TODO make it look nicer and cleaner
+    //  <UnderlinedTitle text={"Overlay Settings"} options={{text: {size: 30}}} />
+
     return (
-        <div className="mainSettingsPanel">
-            <UnderlinedTitle text={"Overlay Settings"} options={{text: {size: 30}}} />
-            <div className="mainSettingsOption ">
-                <UnderlinedTitle text={"Hypixel API Key: "}></UnderlinedTitle>
-                <InputTextBox
-                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (event.key === "Enter") {
-                            store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
-                        }
-                    }}
-                />
-                {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
-            </div>
-            <div className="mainSettingsOption" style={settings.keathiz ? {} : { display: 'none' }}>
-                <UnderlinedTitle text={"Keathiz Key: "}> </UnderlinedTitle>
-                <InputTextBox
-                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (event.key === "Enter") {
-                            store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
-                        }
-                    }}
-                />
-                {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
-            </div>
-            <div className="mainSettingsOption">
+        <div style={{color: colours.primaryColour, fontSize: "x-large"}} className='w-full h-full p-2 flex flex-col space-y-2'>
+            <div className='text-3xl font-bold underlineText'>Overlay Settings</div>
+
+            <SettingCard>
+                <span className=''>Hypixel API Key</span>
+                <span className=''></span>
+                <span>
+                    <InputTextBox
+                        onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (event.key === "Enter") {
+                                store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                            }
+                        }}
+                        options={{placeholder: "Hypixel API Key"}}
+                    />
+                    {<ValidationIcon valid={isHypixelKeySet} />}
+                </span>
+            </SettingCard>
+
+            <SettingCard options={{shown: settings.keathiz}}>
+                <span>Keathiz API Key</span>
+                <span></span>
+                <span>
+                    <InputTextBox
+                        onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (event.key === "Enter") {
+                                store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                            }
+                        }}
+                    />
+                    {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
+                </span>
+            </SettingCard>
+
+            <div className='mainSettingsOption'>
                 <UnderlinedTitle text={"Overlay Logs: "}></UnderlinedTitle>
                 <InputBoxButton
                     onClick={async () => {
@@ -62,28 +76,38 @@ const MainSettings = () => {
                 />
                 {<FontAwesomeIcon style={{color: isLogsSet ? "green" : "red"}} icon={faExclamationCircle} />}
             </div>
-            <div>
-                <ToggleButton text={"Keathiz"} onChange={async (event) => {
-                    const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
-                    store.dispatch(setSettingsValue(payload));
-                }} options={{enabled: settings.keathiz}} />
+            <div className='option'>
+                <ToggleButton
+                    text={"Keathiz"}
+                    onChange={async (event) => {
+                        const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
+                        store.dispatch(setSettingsValue(payload));
+                    }}
+                    options={{enabled: settings.keathiz}}
+                />
             </div>
-            <div>
-                <ToggleButton text={"Lunar"} onChange={async (event) => {
-                    const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
-                    store.dispatch(setSettingsValue(payload));
-                }} options={{enabled: settings.lunar}} />
+            <div className='option'>
+                <ToggleButton
+                    text={"Lunar"}
+                    onChange={async (event) => {
+                        const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
+                        store.dispatch(setSettingsValue(payload));
+                    }}
+                    options={{enabled: settings.lunar}}
+                />
             </div>
-            <div>
-                <ToggleButton text={"Boomza"} onChange={async (event) => {
-                    const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
-                    store.dispatch(setSettingsValue(payload));
-                }} options={{enabled: settings.boomza}} />
+            <div className='option'>
+                <ToggleButton
+                    text={"Boomza"}
+                    onChange={async (event) => {
+                        const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
+                        store.dispatch(setSettingsValue(payload));
+                    }}
+                    options={{enabled: settings.boomza}}
+                />
             </div>
-            <div className="w-fit bg-gray-50">
-
-            </div>
-            <div>
+            <div className='w-fit bg-gray-50'></div>
+            <div className={"option"}>
                 <span>Version: {version}</span>
             </div>
         </div>

@@ -35,7 +35,7 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
             <input
                 type='text'
                 onKeyDown={props.onKeyDown}
-                style={{backgroundColor: `${colours.backgroundColour}`, color: `${colours.primaryColour}`}}
+                style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}}
                 onFocus={(event) => {
                     event.currentTarget.style.color = `white`;
                     event.currentTarget.style.border = `${colours.secondaryColour} 1px solid`;
@@ -49,7 +49,7 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                 onMouseOver={handleMouseOver}
                 onMouseOut={handleMouseOut}
                 placeholder={props?.options?.placeholder ?? ""}
-                className={props?.options?.className ?? "underline"}
+                className={props?.options?.className ?? "underlineText"}
             />
         </span>
     );

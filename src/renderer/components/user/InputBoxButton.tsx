@@ -10,7 +10,7 @@ export interface InputBoxButton {
 export const InputBoxButton: React.ElementType = (props: InputBoxButton) => {
     const colours = useSelector(() => store.getState().configStore.colours);
     return (
-        <button onClick={props.onClick} style={{backgroundColor: "#242424ff", color: `${store.getState().configStore.colours.primaryColour}`}}>
+        <button onClick={props.onClick} style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}}>
             {props.text}
         </button>
     );
