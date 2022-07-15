@@ -13,5 +13,5 @@ export const ValidationIcon: React.ElementType = (props: ValidationIcon) => {
     } else {
         html = <FontAwesomeIcon style={{color: "red"}} icon={faExclamationCircle} />;
     }
-    return <span>{html}</span>;
+    return <span className={'p-1'}>{html}</span>;
 };

@@ -9,7 +9,7 @@ import {useSelector} from "react-redux";
 export interface ToggleButton {
     onClick?: (input) => void;
     onChange?: (input) => void;
-    text: string;
+    text?: string;
     options: {
         text?: {
             size?: number;
@@ -20,10 +20,11 @@ export interface ToggleButton {
 
 export const ToggleButton: React.ElementType = (props: ToggleButton) => {
     const colours = useSelector(() => store.getState().configStore.colours);
+    const message = props?.text ?? "";
     return (
         <label>
-            {props.text}
-            <Checkbox {...{"aria-label": props.text}} icon={<VisibilityOff />} checkedIcon={<Visibility />} onClick={props?.onClick ?? undefined} onChange={props?.onChange ?? undefined} checked={props.options.enabled} style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}} />
+            {message}
+            <Checkbox {...{"aria-label": message}} icon={<VisibilityOff />} checkedIcon={<Visibility />} onClick={props?.onClick ?? undefined} onChange={props?.onChange ?? undefined} checked={props.options.enabled} style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}} />
         </label>
     );
 };

@@ -29,8 +29,8 @@ const MainSettings = () => {
             <div className='text-3xl font-bold underlineText'>Overlay Settings</div>
 
             <SettingCard>
-                <span className=''>Hypixel API Key</span>
-                <span className=''></span>
+                <span>Hypixel API Key</span>
+                <span/>
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -38,7 +38,7 @@ const MainSettings = () => {
                                 store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                             }
                         }}
-                        options={{placeholder: "Hypixel API Key"}}
+                        options={{placeholder: localConfigStore.hypixel.apiKeyValid ?localConfigStore.hypixel.apiKey : "Hypixel API Key"}}
                     />
                     {<ValidationIcon valid={isHypixelKeySet} />}
                 </span>
@@ -46,7 +46,7 @@ const MainSettings = () => {
 
             <SettingCard options={{shown: settings.keathiz}}>
                 <span>Keathiz API Key</span>
-                <span></span>
+                <span/>
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -54,62 +54,75 @@ const MainSettings = () => {
                                 store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                             }
                         }}
+                        options={{placeholder: localConfigStore.keathiz.valid ?localConfigStore.keathiz.key : "Keathiz API Key"}}
                     />
                     {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
                 </span>
             </SettingCard>
 
-            <div className='mainSettingsOption'>
-                <UnderlinedTitle text={"Overlay Logs: "}></UnderlinedTitle>
-                <InputBoxButton
-                    onClick={async () => {
-                        const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke("selectLogFile");
-                        if (path.filePaths[0] !== undefined) {
-                            const logPath = path.filePaths[0];
-                            const readable = await window.ipcRenderer.invoke<boolean>("isFileReadable", logPath);
-                            if (readable.data) {
-                                window.ipcRenderer.send("logFileSet", logPath);
+            <SettingCard>
+                <span>Overlay Logs</span>
+                <span/>
+                <span>
+                    <InputBoxButton
+                        onClick={async () => {
+                            const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke("selectLogFile");
+                            if (path.filePaths[0] !== undefined) {
+                                const logPath = path.filePaths[0];
+                                const readable = await window.ipcRenderer.invoke<boolean>("isFileReadable", logPath);
+                                if (readable.data) {
+                                    window.ipcRenderer.send("logFileSet", logPath);
+                                }
                             }
-                        }
-                    }}
-                    text={"Select Log File"}
-                />
-                {<FontAwesomeIcon style={{color: isLogsSet ? "green" : "red"}} icon={faExclamationCircle} />}
-            </div>
-            <div className='option'>
+                        }}
+                        text={"Select Log File"}
+                    />
+                    {<ValidationIcon valid={isLogsSet} />}
+                </span>
+            </SettingCard>
+
+            <SettingCard>
+                <span>Keathiz</span>
+                <span/>
                 <ToggleButton
-                    text={"Keathiz"}
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
                         store.dispatch(setSettingsValue(payload));
                     }}
                     options={{enabled: settings.keathiz}}
                 />
-            </div>
-            <div className='option'>
+            </SettingCard>
+
+            <SettingCard>
+                <span>Lunar</span>
+                <span/>
                 <ToggleButton
-                    text={"Lunar"}
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
                         store.dispatch(setSettingsValue(payload));
                     }}
                     options={{enabled: settings.lunar}}
                 />
-            </div>
-            <div className='option'>
+            </SettingCard>
+
+            <SettingCard>
+                <span>Boomza</span>
+                <span/>
                 <ToggleButton
-                    text={"Boomza"}
+                    text={""}
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
                         store.dispatch(setSettingsValue(payload));
                     }}
                     options={{enabled: settings.boomza}}
                 />
-            </div>
-            <div className='w-fit bg-gray-50'></div>
-            <div className={"option"}>
-                <span>Version: {version}</span>
-            </div>
+            </SettingCard>
+
+            <SettingCard>
+                <span>Version:</span>
+                <span/>
+                <span>{version}</span>
+            </SettingCard>
         </div>
     );
 };

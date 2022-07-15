@@ -9,7 +9,7 @@ import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {Alert} from "@mui/material";
 import {useSelector} from "react-redux";
-import {ConfigStore} from "@renderer/store/ConfigStore";
+import {ConfigStore, setErrorMessage} from "@renderer/store/ConfigStore";
 
 const TitleBar = () => {
     const currentRoute = useLocation();
@@ -17,7 +17,7 @@ const TitleBar = () => {
     const errorMessageCode = localStore.error.code;
 
     if (errorMessageCode != 200) {
-        // setTimeout(() => store.dispatch(setErrorMessage({code: 200, title: "", cause: "", detail: ""})), 5000);
+        setTimeout(() => store.dispatch(setErrorMessage({code: 200, title: "", cause: "", detail: ""})), 5000);
     }
 
     let renderCaret: JSX.Element;
@@ -32,61 +32,61 @@ const TitleBar = () => {
 
     return (
         <div>
-            <div className='flex w-full drag border-cyan-500 border-2'>
-                <div className='flex w-80 border-pink-500 border-2'>
-                    <Link to={titlePath} style={{display: "flex", color: store.getState().configStore.colours.primaryColour}} className='nodrag'>
-                        <div style={{paddingRight: 5}}>
-                            <div className='settings-icon' style={{display: "flex", paddingLeft: 10}}>
-                                {renderCaret}
+            <nav className='bg-grey-500 shadow-lg drag'>
+                <div className='max-w-6xl mx-auto px-4'>
+                    <div className='flex justify-between'>
+                        <div className='flex space-x-7'>
+                            <div>
+                                <Link to={titlePath} className='nodrag'>
+                                    <span>
+                                        {renderCaret}
+                                    </span>
+                                    <UnderlinedTitle text={"Seraph"} options={{text: {size: 25}}} />
+                                </Link>
+                            </div>
+                            <div className='md:flex items-center space-x-1'></div>
+                        </div>
+                        <div className='md:flex items-center space-x-3 nodrag'>
+                            <span>
+                                <InputTextBox
+                                    options={{placeholder: "Username...", className: "headerSearchBox"}}
+                                    onKeyDown={(event) => {
+                                        if (event.key === "Enter") {
+                                            store.dispatch(
+                                                getPlayerHypixelData({
+                                                    name: event.currentTarget.value,
+                                                }),
+                                            );
+                                            event.currentTarget.value = "";
+                                        }
+                                    }}
+                                />
+                            </span>
+                            <div>
+                                <button
+                                    className='hover:text-cyan-500'
+                                    onClick={() => {
+                                        window.ipcRenderer.send("windowMinimise");
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faWindowMinimize} />
+                                </button>
+                            </div>
+                            <div>
+                                <button
+                                    className='hover:text-cyan-500'
+                                    onClick={() => {
+                                        window.ipcRenderer.send("windowClose");
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faWindowClose} />
+                                </button>
                             </div>
                         </div>
-                        <UnderlinedTitle text={"Seraph"} options={{text: {size: 25}}} />
-                    </Link>
-                </div>
-                <div className='flex w-60'>
-
-                </div>
-                <div className='flex w-20 border-orange-500 border-2'>
-                    <div className='w-full h-full nodrag'>
-                        <InputTextBox
-                            options={{placeholder: "Username...", className: "headerSearchBox"}}
-                            onKeyDown={(event) => {
-                                if (event.key === "Enter") {
-                                    store.dispatch(
-                                        getPlayerHypixelData({
-                                            name: event.currentTarget.value,
-                                        }),
-                                    );
-                                    event.currentTarget.value = "";
-                                }
-                            }}
-                        />
                     </div>
                 </div>
-                <div className='flex w-20 nodrag text-white'>
-                    <div>
-                        <button
-                            className='headerButton'
-                            onClick={() => {
-                                window.ipcRenderer.send("windowMinimise");
-                            }}
-                        >
-                            <FontAwesomeIcon icon={faWindowMinimize} />
-                        </button>
-                    </div>
-                    <div>
-                        <button
-                            className='headerButton'
-                            onClick={() => {
-                                window.ipcRenderer.send("windowClose");
-                            }}
-                        >
-                            <FontAwesomeIcon icon={faWindowClose} />
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div className='flex w-full '>
+            </nav>
+            <div className='flex w-full'>
                 {errorMessageCode != 200 ? (
                     <div className='w-full'>
                         <Alert color='error'>
