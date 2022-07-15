@@ -17,7 +17,9 @@ export const SettingCard: React.ElementType = (props: SettingCard) => {
         <div style={showSetting ? {} : {display: "none"}}>
             <div style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}}>
                 <div className={"hover:border-cyan-500 hover:text-white border-transparent border-2"}>
-                    <div className='grid grid-cols-3 gap-3 text-lg'>{props.children}</div>
+                    <div className='grid grid-cols-3 gap-3 text-lg'>
+                        {props.children}
+                    </div>
                 </div>
             </div>
         </div>

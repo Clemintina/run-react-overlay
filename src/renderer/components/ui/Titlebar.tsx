@@ -47,9 +47,9 @@ const TitleBar = () => {
                             <div className='md:flex items-center space-x-1'></div>
                         </div>
                         <div className='md:flex items-center space-x-3 nodrag'>
-                            <span>
+                            <span className='flex'>
                                 <InputTextBox
-                                    options={{placeholder: "Username...", className: "headerSearchBox"}}
+                                    options={{placeholder: "Username..."}}
                                     onKeyDown={(event) => {
                                         if (event.key === "Enter") {
                                             store.dispatch(

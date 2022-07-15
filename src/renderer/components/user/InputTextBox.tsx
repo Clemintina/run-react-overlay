@@ -15,23 +15,19 @@ export interface InputTextBox {
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
     const colours = useSelector(() => store.getState().configStore.colours);
 
-    const [isHovering, setIsHovering] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const handleMouseOver = (event) => {
-        event.currentTarget.style.border = `${colours.secondaryColour} 1px solid`;
         event.currentTarget.style.color = `white`;
-        setIsHovering(true);
     };
     const handleMouseOut = (event) => {
         if (!isFocused) {
             event.currentTarget.style.border = `${colours.secondaryColour} 0px solid`;
             event.currentTarget.style.color = `${colours.primaryColour}`;
         }
-        setIsHovering(false);
     };
 
     return (
-        <span className={props?.options?.className}>
+        <span className='hover:border-cyan-500 hover:border-2'>
             <input
                 type='text'
                 onKeyDown={props.onKeyDown}

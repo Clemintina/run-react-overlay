@@ -6,12 +6,12 @@ import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, setSettingsValue, 
 import {useSelector} from "react-redux";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
-import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import {ToggleButton} from "@components/user/ToggleButton";
-import {SettingCard} from "@components/user/settings/SettingCard";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
+import {SettingHeader} from "@components/user/settings/components/SettingHeader";
 
 const MainSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
@@ -27,10 +27,9 @@ const MainSettings = () => {
     return (
         <div style={{color: colours.primaryColour, fontSize: "x-large"}} className='w-full h-full p-2 flex flex-col space-y-2'>
             <div className='text-3xl font-bold underlineText'>Overlay Settings</div>
-
             <SettingCard>
                 <span>Hypixel API Key</span>
-                <span/>
+                <span />
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -38,15 +37,14 @@ const MainSettings = () => {
                                 store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                             }
                         }}
-                        options={{placeholder: localConfigStore.hypixel.apiKeyValid ?localConfigStore.hypixel.apiKey : "Hypixel API Key"}}
+                        options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.hypixel.apiKey : "Hypixel API Key"}}
                     />
                     {<ValidationIcon valid={isHypixelKeySet} />}
                 </span>
             </SettingCard>
-
             <SettingCard options={{shown: settings.keathiz}}>
                 <span>Keathiz API Key</span>
-                <span/>
+                <span />
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -54,15 +52,14 @@ const MainSettings = () => {
                                 store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                             }
                         }}
-                        options={{placeholder: localConfigStore.keathiz.valid ?localConfigStore.keathiz.key : "Keathiz API Key"}}
+                        options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
                     />
-                    {<FontAwesomeIcon style={{color: isHypixelKeySet ? "green" : "red"}} icon={faExclamationCircle} />}
+                    {<ValidationIcon valid={localConfigStore.keathiz.valid} />}
                 </span>
             </SettingCard>
-
             <SettingCard>
                 <span>Overlay Logs</span>
-                <span/>
+                <span />
                 <span>
                     <InputBoxButton
                         onClick={async () => {
@@ -80,10 +77,14 @@ const MainSettings = () => {
                     {<ValidationIcon valid={isLogsSet} />}
                 </span>
             </SettingCard>
-
+            <SettingHeader>
+                <span/>
+                <span>Apis</span>
+                <span/>
+            </SettingHeader>
             <SettingCard>
                 <span>Keathiz</span>
-                <span/>
+                <span />
                 <ToggleButton
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
@@ -92,10 +93,9 @@ const MainSettings = () => {
                     options={{enabled: settings.keathiz}}
                 />
             </SettingCard>
-
             <SettingCard>
                 <span>Lunar</span>
-                <span/>
+                <span />
                 <ToggleButton
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
@@ -104,10 +104,9 @@ const MainSettings = () => {
                     options={{enabled: settings.lunar}}
                 />
             </SettingCard>
-
             <SettingCard>
                 <span>Boomza</span>
-                <span/>
+                <span />
                 <ToggleButton
                     text={""}
                     onChange={async (event) => {
@@ -117,10 +116,9 @@ const MainSettings = () => {
                     options={{enabled: settings.boomza}}
                 />
             </SettingCard>
-
             <SettingCard>
                 <span>Version:</span>
-                <span/>
+                <span />
                 <span>{version}</span>
             </SettingCard>
         </div>
