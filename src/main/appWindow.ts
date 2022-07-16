@@ -118,7 +118,10 @@ export const createAppWindow = (): BrowserWindow => {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             autoUpdater.checkForUpdates();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
-            autoUpdater.on('checking-for-update',async ()=>console.log('Checking for updates...'))
+            autoUpdater.on('checking-for-update',async ()=> {
+                console.log('Checking for updates...');
+
+            })
             autoUpdater.on('update-available', async () => console.log('Update available'));
             autoUpdater.on('update-downloaded',async ()=>{
                 autoUpdater.quitAndInstall();
