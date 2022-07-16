@@ -16,6 +16,7 @@ export interface ConfigStore {
     logs: {
         logPath: string;
         readable: boolean;
+        clientName: string;
     };
     colours: {
         backgroundColour: string;
@@ -96,6 +97,7 @@ const ConfigStore = createSlice({
         logs: {
             logPath: "",
             readable: false,
+            clientName: ''
         },
         error: {
             code: 200,
