@@ -45,13 +45,15 @@ export class PlayerUtils {
 }
 
 export class FormatPlayer {
-    private starterDivider = `<div style="margin: 0 auto;  display: flex;">`;
+    private isOverlayStats = false;
+    private starterDivider = `<span style="margin: 0 auto;" class="${this.isOverlayStats?'flex':''}">`;
     private tagStore;
     private configStore;
 
-    public setConfig = (stores: {config: object; tags: object}) => {
+    public setConfig = (stores: {config: object; tags: object},options?:{subMenu?: boolean}) => {
         this.tagStore = stores.tags;
         this.configStore = stores.config;
+        this.isOverlayStats = options?.subMenu ?? false;
     };
 
     public renderTags = (player: Player) => {
@@ -100,7 +102,7 @@ export class FormatPlayer {
         } else {
             tagRenderer = this.getPlayerTagDivider("NICKED", "red");
         }
-        tagRenderer += `</div>`;
+        tagRenderer += `</span>`;
         return tagRenderer;
     };
 
@@ -162,7 +164,7 @@ export class FormatPlayer {
         } else {
             starRenderer += this.getPlayerTagDividerNicked();
         }
-        starRenderer += `</div>`;
+        starRenderer += `</span>`;
         return starRenderer;
     };
 
@@ -195,7 +197,7 @@ export class FormatPlayer {
         } else {
             nameRenderer = this.getPlayerTagDivider(player.name ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
         }
-        nameRenderer += `</div>`;
+        nameRenderer += `</span>`;
         return nameRenderer;
     };
 
@@ -211,7 +213,7 @@ export class FormatPlayer {
         } else {
             renderer += this.getPlayerTagDividerNicked();
         }
-        renderer += `</div>`;
+        renderer += `</span>`;
         return renderer;
     };
 
@@ -242,7 +244,7 @@ export class FormatPlayer {
         } else {
             renderer += this.getPlayerTagDividerNicked();
         }
-        renderer += `</div>`;
+        renderer += `</span>`;
         return renderer;
     };
 
@@ -302,7 +304,7 @@ export class FormatPlayer {
         } else {
             renderer += this.getPlayerTagDividerNicked();
         }
-        renderer += `</div>`;
+        renderer += `</span>`;
         return renderer;
     };
 
@@ -388,24 +390,25 @@ export class FormatPlayer {
 
     private getPlayerTagDivider = (tag: string | number | unknown, colour: string, player?: Player) => {
         let htmlResponse = ``,
-            styleString = `color: ${colour};`;
+            styleString = `color: ${colour};`, classNameData=``;
         if (typeof tag === "number" && !Number.isInteger(tag) && tag != 0) tag = tag.toFixed(2);
         if (colour === "white") {
             styleString += `opacity: 75%;`;
         }
         if (player?.sources.runApi?.data.data.blacklist.tagged) {
-            styleString += `font: bold;`;
+            styleString += `font-bold`;
         }
         if (tag !== undefined) {
             if (typeof tag === "string") {
                 if (tag.length == 1) {
                     // Makes tags have spaces
-                    styleString += `padding-left: 5px;`;
+                    classNameData += `pl-1 `;
                 }
             } else if (typeof tag === "number") {
-                styleString += `justify-content: center; display: flex; width: 100vw;`;
+                classNameData += `justify-center w-full`;
+                if (this.isOverlayStats) classNameData +=` flex`
             }
-            htmlResponse += `<span style="${styleString}">${tag}</span>`;
+            htmlResponse += `<span class="${classNameData}" style="${styleString}">${tag}</span>`;
             return htmlResponse;
         }
         return htmlResponse;
@@ -415,7 +418,7 @@ export class FormatPlayer {
         const styleString = `color: red; padding-left: 1px;`;
         let htmlResponse = `<div>`;
         htmlResponse += `<div style="${styleString}">?</div>`;
-        htmlResponse += `</div>`;
+        htmlResponse += `</span>`;
         return htmlResponse;
     };
 

@@ -331,7 +331,10 @@ const registerLogCommunications = () => {
         logFileTail = null;
 
         if (path !== null) {
-            logFileTail = new TailFile(path.replace("\\", "/"));
+            logFileTail = new TailFile(path.replace("\\", "/"), {
+                pollFileIntervalMs: 20,
+                encoding: "utf-8",
+            });
             await logFileTail.start();
 
             logFileReadline = readline.createInterface({

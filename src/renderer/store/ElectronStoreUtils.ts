@@ -9,6 +9,10 @@ export const RUNElectronStore = Type.Optional(
                         description: "Overlay Version",
                         default: "Unknown",
                     }),
+                    browserWindow: Type.Object({
+                        width: Type.Number({default: 600}),
+                        height: Type.Number({default: 800}),
+                    }),
                 }),
                 apiKey: Type.String({
                     description: "RUN API Key",
@@ -67,6 +71,7 @@ export const RUNElectronStore = Type.Optional(
                             default: "",
                             description: "Keathiz Api Key for https://api.antisniper.net",
                         }),
+                        valid: Type.Boolean({default:false})
                     }),
                 ),
             }),

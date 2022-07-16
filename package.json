@@ -10,7 +10,7 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.0.33-BETA",
+	"version": "1.0.34-BETA",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
@@ -74,6 +74,7 @@
 		"@electron-forge/maker-rpm": "^6.0.0-beta.64",
 		"@electron-forge/maker-squirrel": "^6.0.0-beta.64",
 		"@electron-forge/maker-zip": "^6.0.0-beta.64",
+		"@electron-forge/maker-dmg": "^6.0.0-beta.64",
 		"@electron-forge/plugin-webpack": "^6.0.0-beta.64",
 		"@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
 		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",

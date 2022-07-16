@@ -42,6 +42,21 @@ const MainSettings = () => {
                     {<ValidationIcon valid={isHypixelKeySet} />}
                 </span>
             </SettingCard>
+            <SettingCard>
+                <span>RUN API Key</span>
+                <span />
+                <span>
+                    <InputTextBox
+                        onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (event.key === "Enter") {
+                                store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                            }
+                        }}
+                        options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.runKey : "RUN API Key"}}
+                    />
+                    {<ValidationIcon valid={isHypixelKeySet} />}
+                </span>
+            </SettingCard>
             <SettingCard options={{shown: settings.keathiz}}>
                 <span>Keathiz API Key</span>
                 <span />
@@ -83,14 +98,15 @@ const MainSettings = () => {
                 <span/>
             </SettingHeader>
             <SettingCard>
-                <span>Keathiz</span>
+                <span>Boomza</span>
                 <span />
                 <ToggleButton
+                    text={""}
                     onChange={async (event) => {
-                        const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
+                        const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
                         store.dispatch(setSettingsValue(payload));
                     }}
-                    options={{enabled: settings.keathiz}}
+                    options={{enabled: settings.boomza}}
                 />
             </SettingCard>
             <SettingCard>
@@ -105,15 +121,14 @@ const MainSettings = () => {
                 />
             </SettingCard>
             <SettingCard>
-                <span>Boomza</span>
+                <span>Keathiz</span>
                 <span />
                 <ToggleButton
-                    text={""}
                     onChange={async (event) => {
-                        const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
+                        const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
                         store.dispatch(setSettingsValue(payload));
                     }}
-                    options={{enabled: settings.boomza}}
+                    options={{enabled: settings.keathiz}}
                 />
             </SettingCard>
             <SettingCard>

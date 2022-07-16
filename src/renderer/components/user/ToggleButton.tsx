@@ -9,6 +9,7 @@ import {useSelector} from "react-redux";
 export interface ToggleButton {
     onClick?: (input) => void;
     onChange?: (input) => void;
+    className?: string;
     text?: string;
     options: {
         text?: {
@@ -22,7 +23,7 @@ export const ToggleButton: React.ElementType = (props: ToggleButton) => {
     const colours = useSelector(() => store.getState().configStore.colours);
     const message = props?.text ?? "";
     return (
-        <label>
+        <label className={props.className??''}>
             {message}
             <Checkbox {...{"aria-label": message}} icon={<VisibilityOff />} checkedIcon={<Visibility />} onClick={props?.onClick ?? undefined} onChange={props?.onChange ?? undefined} checked={props.options.enabled} style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}} />
         </label>

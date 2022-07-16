@@ -48,6 +48,18 @@ module.exports = {
                 name: "Seraph-Overlay",
             },
         },
+        {
+            name: '@electron-forge/maker-deb',
+            config: {
+                options: {
+                    maintainer: 'Kay & Arman',
+                    homepage: 'https://antisniper.seraph.si/api/'
+                }
+            }
+        },
+        {
+            name: '@electron-forge/maker-dmg'
+        }
     ],
     // Forge Plugins
     plugins: [
