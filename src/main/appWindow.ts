@@ -87,8 +87,8 @@ export const createAppWindow = (): BrowserWindow => {
         defaultWidth: 800,
         defaultHeight: 600,
     });
-    electronStore.set('run.overlay.browserWindow.width',mainWindowState.width)
-    electronStore.set('run.overlay.browserWindow.height',mainWindowState.height)
+    electronStore.set("run.overlay.browserWindow.width", mainWindowState.width);
+    electronStore.set("run.overlay.browserWindow.height", mainWindowState.height);
     appWindow = new BrowserWindow({
         x: mainWindowState.x,
         y: mainWindowState.y,
@@ -118,14 +118,13 @@ export const createAppWindow = (): BrowserWindow => {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             autoUpdater.checkForUpdates();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
-            autoUpdater.on('checking-for-update',async ()=> {
-                console.log('Checking for updates...');
-
-            })
-            autoUpdater.on('update-available', async () => console.log('Update available'));
-            autoUpdater.on('update-downloaded',async ()=>{
+            autoUpdater.on("checking-for-update", async () => {
+                console.log("Checking for updates...");
+            });
+            autoUpdater.on("update-available", async () => console.log("Update available"));
+            autoUpdater.on("update-downloaded", async () => {
                 autoUpdater.quitAndInstall();
-            })
+            });
         }
     }
 
@@ -161,7 +160,7 @@ const registerMainIPC = () => {
  */
 const registerSeraphIPC = () => {
     ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, resource: RequestType, ...args: unknown[]) => {
-        const apiKey:string = resource == RequestType.KEY ? (args[0] as string) : electronStore.get("hypixel.apiKey");
+        const apiKey: string = resource == RequestType.KEY ? (args[0] as string) : electronStore.get("hypixel.apiKey");
         const hypixelClient = new HypixelApi(apiKey, {
             cache: {
                 get(key) {
@@ -350,6 +349,25 @@ const registerLogCommunications = () => {
                 appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
             });
         }
+    });
+
+    ipcMain.handle("getFilePath", async (event: IpcMainInvokeEvent, request: string) => {
+        let appPath;
+        switch (request) {
+            case "home":
+                appPath = app.getPath("home").replace(/\\/g, "/");
+                break;
+            case "userData":
+                appPath = app.getPath("userData").replace(/\\/g, "/");
+                break;
+            case "appData":
+                appPath = app.getPath("appData").replace(/\\/g, "/");
+                break;
+            default:
+                appPath = null;
+                break;
+        }
+        return {data: appPath, status: 200};
     });
 };
 

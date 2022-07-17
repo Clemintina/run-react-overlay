@@ -9,10 +9,12 @@ export const RUNElectronStore = Type.Optional(
                         description: "Overlay Version",
                         default: "Unknown",
                     }),
-                    browserWindow: Type.Object({
-                        width: Type.Number({default: 600}),
-                        height: Type.Number({default: 800}),
-                    }),
+                    browserWindow: Type.Optional(
+                        Type.Object({
+                            width: Type.Number({default: 600}),
+                            height: Type.Number({default: 800}),
+                        }),
+                    ),
                 }),
                 apiKey: Type.String({
                     description: "RUN API Key",
@@ -71,7 +73,7 @@ export const RUNElectronStore = Type.Optional(
                             default: "",
                             description: "Keathiz Api Key for https://api.antisniper.net",
                         }),
-                        valid: Type.Boolean({default:false})
+                        valid: Type.Boolean({default: false}),
                     }),
                 ),
             }),
@@ -230,7 +232,7 @@ export const RUNElectronStoreTags = Type.Object({
         }),
     }),
     hypixel: Type.Object({
-        party:Type.Object({
+        party: Type.Object({
             display: Type.String({
                 description: "How to display the Party tag",
                 default: "P",
@@ -240,7 +242,7 @@ export const RUNElectronStoreTags = Type.Object({
                 default: "5555FF",
             }),
         }),
-    })
+    }),
 });
 
 export type RUNElectronStoreTagsType = Static<typeof RUNElectronStoreTags>;
@@ -375,10 +377,10 @@ export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
     },
     hypixel: {
         party: {
-            display: 'P',
-            colour: 'darkblue'
-        }
-    }
+            display: "P",
+            colour: "darkblue",
+        },
+    },
 };
 
 /**

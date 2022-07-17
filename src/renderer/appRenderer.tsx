@@ -10,6 +10,7 @@ import {initScript} from "@renderer/store/ConfigStore";
 import {LogFileReader} from "@common/utils/LogFileReader";
 import {playerInitScript, updatePlayerStores} from "@renderer/store/PlayerStore";
 import "@assets/index.css";
+import {createTheme, ThemeProvider} from "@mui/material";
 
 /**
  * Loads the **Initial Script**
@@ -30,11 +31,19 @@ reader.startListHandler();
 reader.startSeraphHandler();
 reader.startCommandListener();
 
+
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+    },
+});
+
 /**
  * Renders the document in the DOM and creates our React application.
  */
 createRoot(document.getElementById("app")!).render(
     <Provider store={store}>
+        <ThemeProvider theme={darkTheme}>
         <div className='mainBody' style={{backgroundColor: store.getState().configStore.colours.backgroundColour, color: store.getState().configStore.colours.primaryColour}}>
             <HashRouter basename='/'>
                 <TitleBar />
@@ -44,5 +53,6 @@ createRoot(document.getElementById("app")!).render(
                 </Routes>
             </HashRouter>
         </div>
+        </ThemeProvider>
     </Provider>,
 );

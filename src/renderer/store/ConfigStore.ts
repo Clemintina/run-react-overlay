@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {IPCResponse, RequestType, RunApiKey} from "@common/utils/externalapis/RunApi";
-import {DisplayErrorMessage, HypixelApiKey} from "@common//utils/Schemas";
+import {DisplayErrorMessage} from "@common//utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
@@ -13,11 +13,7 @@ export interface ConfigStore {
     };
     runKey: string;
     version: string;
-    logs: {
-        logPath: string;
-        readable: boolean;
-        clientName: string;
-    };
+    logs: ClientSetting;
     colours: {
         backgroundColour: string;
         primaryColour: string;
@@ -37,6 +33,18 @@ export interface ConfigStore {
     };
     error: DisplayErrorMessage;
     settings: SettingsConfig;
+}
+
+export interface SettingsConfig {
+    lunar: boolean;
+    keathiz: boolean;
+    boomza: boolean;
+}
+
+export interface ClientSetting {
+    clientName: string;
+    logPath: string;
+    readable: boolean;
 }
 
 interface InitScript {
@@ -70,12 +78,6 @@ interface InitScript {
     };
 }
 
-export interface SettingsConfig {
-    lunar: boolean;
-    keathiz: boolean;
-    boomza: boolean;
-}
-
 /**
  * The main slice, Used to store API-keys, logs and anything else used by the Overlay which isn't calling players.
  */
@@ -97,7 +99,7 @@ const ConfigStore = createSlice({
         logs: {
             logPath: "",
             readable: false,
-            clientName: ''
+            clientName: "",
         },
         error: {
             code: 200,
@@ -109,9 +111,9 @@ const ConfigStore = createSlice({
             key: "",
             valid: false,
         },
-        run:{
-          apiKey: "",
-          valid: false
+        run: {
+            apiKey: "",
+            valid: false,
         },
         browserWindow: {
             width: 600,
@@ -173,6 +175,16 @@ const ConfigStore = createSlice({
             state.keathiz.key = payload.apiKey;
             state.keathiz.valid = payload.valid;
         },
+        setClient: (state, action: {payload: ClientSetting}) => {
+            const payload = action.payload;
+            if (payload.readable) {
+                state.logs = action.payload;
+            } else {
+                state.error.code = 400;
+                state.error.title = "Bad Log File";
+                state.error.cause = "This log file is unable to be read, Please ensure this is the correct client, or the overlay has sufficient privileges to read this file.";
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -228,6 +240,9 @@ const ConfigStore = createSlice({
             })
             .addCase(keathizApiKeyValidator.fulfilled, (state, action) => {
                 ConfigStore.caseReducers.setKeathizApi(state, action);
+            })
+            .addCase(setClient.fulfilled, (state, action) => {
+                ConfigStore.caseReducers.setClient(state, action);
             });
     },
 });
@@ -254,24 +269,32 @@ export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue",
 export const setErrorMessage = createAsyncThunk("ConfigStore/setErrorMessage", async (errorObject: DisplayErrorMessage) => {
     return errorObject;
 });
+
+export const setClient = createAsyncThunk("ConfigStore/setClient", async (client: ClientSetting) => {
+    return client;
+});
+
 /**
  * Called when the Overlay loads, **DO NOT PUT RESOURCE INTENSIVE METHODS IN THIS FUNCTION**
  */
 export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
-    const hypixel = {key: "", owner: "",valid: false};
+    const hypixel = {key: "", owner: "", valid: false};
     const overlay = {logPath: "", readable: false};
     const external = {keathiz: {apiKey: "", valid: false}};
     const version = await window.config.get("run.overlay.version");
     const settings = await window.config.get("settings");
     const browserWindow = await window.config.get("run.overlay.browserWindow");
 
-    const run = {apiKey: "",valid: false}
+    const run = {apiKey: "", valid: false};
     run.apiKey = await window.config.get("run.apiKey");
-    if (run.apiKey=='public') run.valid = true;
+    if (run.apiKey == "public") run.valid = true;
 
     hypixel.key = await window.config.get("hypixel.apiKey");
     hypixel.owner = await window.config.get("hypixel.apiKeyOwner");
-    hypixel.valid = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixel.key).then(r=>r.status==200).catch(()=>false);
+    hypixel.valid = await window.ipcRenderer
+        .invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixel.key)
+        .then((r) => r.status == 200)
+        .catch(() => false);
     overlay.logPath = await window.config.get("overlay.logPath");
     overlay.readable = await window.config.get("overlay.readable");
 

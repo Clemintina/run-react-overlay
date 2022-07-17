@@ -1,7 +1,7 @@
 /**
  * Adds intellisense to each IpcRenderer
  */
-const IPCValidInvokeArray = ["hypixel", "seraph", "mcutils", "selectLogFile", "isFileReadable", "boomza", "keathiz", "observer", "lunar", "playerdb", "tagsGet", "getWholeStore"] as const;
+const IPCValidInvokeArray = ["hypixel", "seraph", "mcutils", "selectLogFile", "isFileReadable", "boomza", "keathiz", "observer", "lunar", "playerdb", "tagsGet", "getWholeStore", "getFilePath"] as const;
 export type IPCValidInvokeChannels = typeof IPCValidInvokeArray[number];
 
 const IPCValidOnArray = ["logFileLine"] as const;

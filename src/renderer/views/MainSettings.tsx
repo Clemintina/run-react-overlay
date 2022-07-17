@@ -5,25 +5,21 @@ import store from "@renderer/store";
 import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import {InputTextBox} from "@components/user/InputTextBox";
-import {InputBoxButton} from "@components/user/InputBoxButton";
 import {ToggleButton} from "@components/user/ToggleButton";
 import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
 import {SettingHeader} from "@components/user/settings/components/SettingHeader";
-import FormControl from "@mui/material/FormControl";
-import {InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui/material";
+import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
 
 const MainSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
     const isHypixelKeySet: boolean = localConfigStore.hypixel.apiKeyValid;
-    const isLogsSet: boolean = useSelector(() => store.getState().configStore.logs.logPath.length !== 0);
-    const [client, setClient] = React.useState('');
+    const isLogsSet: boolean =localConfigStore.logs.readable
     const settings = localConfigStore.settings;
     const version = localConfigStore.version;
     const colours = localConfigStore.colours;
 
     // TODO make it look nicer and cleaner
-    //  <UnderlinedTitle text={"Overlay Settings"} options={{text: {size: 30}}} />
 
     return (
         <div style={{color: colours.primaryColour, fontSize: "x-large"}} className='w-full h-full p-2 flex flex-col space-y-2'>
@@ -77,20 +73,10 @@ const MainSettings = () => {
                 <span>Overlay Logs</span>
                 <span/>
                 <span>
-                   <InputBoxButton
-                       onClick={async () => {
-                           const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke("selectLogFile");
-                           if (path.filePaths[0] !== undefined) {
-                               const logPath = path.filePaths[0];
-                               const readable = await window.ipcRenderer.invoke<boolean>("isFileReadable", logPath);
-                               if (readable.data) {
-                                   window.ipcRenderer.send("logFileSet", logPath);
-                               }
-                           }
-                       }}
-                       text={"Select Log File"}
-                   />
-                    {<ValidationIcon valid={isLogsSet} />}
+                    <span className={'inline-flex flex'}>
+                        <LogSelectorModal/>
+                        {<ValidationIcon valid={isLogsSet} />}
+                    </span>
                 </span>
             </SettingCard>
             <SettingHeader>
