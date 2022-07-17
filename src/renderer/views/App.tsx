@@ -1,178 +1,148 @@
 import "@assets/scss/app.scss";
+import "@assets/index.css";
 import React from "react";
 import store, {Store} from "@renderer/store";
 import {useSelector} from "react-redux";
 import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
-import ReactDataGrid from "@inovua/reactdatagrid-community";
-import {TypeColumn} from "@inovua/reactdatagrid-community/types/TypeColumn";
-import "@inovua/reactdatagrid-community/index.css";
 import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowDown, faArrowUp} from "@fortawesome/free-solid-svg-icons";
-import {TypeSortInfo} from "@inovua/reactdatagrid-community/types";
+import {AgGridReact} from "ag-grid-react";
+import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
+import {saveTableColumnState, TableState} from "@renderer/store/ConfigStore";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
 const smallColumnSize = 60;
-const mediumColumnSize = 70;
-const largeColumnSize = 150;
+const mediumColumnSize = 60;
+const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
-const columns: TypeColumn[] = [
+const defaultColDefs: ColDef = {
+    resizable: true,
+    sortingOrder: ["asc", "desc"],
+    sortable: true,
+};
+
+const columns: ColDef[] = [
     {
-        id: "id",
-        header: "ID",
-        defaultVisible: false,
-        showInContextMenu: false,
-        render: ({data}) => data.uuid,
+        field: "id",
+        hide: true,
+        cellRenderer: ({data}) => data.uuid,
     },
     {
-        id: "star",
-        header: "Star",
+        field: "star",
         flex: 1,
-        sortName: `Player's Bedwars Level`,
-        sortable: true,
         minWidth: smallColumnSize,
         type: "number",
-        sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1: Player = nodeA;
-            const player2: Player = nodeB;
-            const p1:number = (player1.hypixelPlayer?.achievements?.bedwars_level ?? 0)
-            const p2:number =  (player2.hypixelPlayer?.achievements?.bedwars_level ?? 0)
-            return p1 -p2
-        },
-        render: ({data}) => <Interweave content={playerFormatter.renderStar(data)} />,
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderStar(data)} />,
     },
     {
-        id: "name",
-        header: "Name",
+        field: "name",
         flex: 1,
         minWidth: extraLargeColumnSize,
-        sortName: `Name of the Player`,
         type: "string",
-        sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1: Player = nodeA;
-            const player2: Player = nodeB;
-            return player1.name < player2.name ? -1 : player1.name > player2.name ? 1 : 0;
-        },
-        render: ({data}) => (
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
+        cellRenderer: ({data}) => (
             <StatsisticsTooltip player={data}>
                 <Interweave content={playerFormatter.renderName(data)} />
             </StatsisticsTooltip>
         ),
     },
     {
-        id: "tags",
-        header: "Tag",
+        field: "tags",
         flex: 1,
         minWidth: largeColumnSize,
-        sortName: `Tags for the Overlay`,
-        render: ({data}) => {
+        cellRenderer: ({data}) => {
             return <Interweave content={playerFormatter.renderTags(data)} />;
         },
         sortable: false,
     },
     {
-        id: "winstreak",
-        header: "WS",
+        field: "WS",
         flex: 1,
-        sortName: `Player's Winstreak`,
         minWidth: smallColumnSize,
         type: "number",
-        sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1: Player = nodeA;
-            const player2: Player = nodeB;
-            return (player1.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0) - (player2.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0);
-        },
-        render: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)} />,
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)} />,
     },
     {
-        id: "fkdr",
-        header: "FKDR",
+        field: "FKDR",
         flex: 1,
-        sortName: `Player's Final Kill to Death Ratio`,
-        defaultWidth: mediumColumnSize,
-        type: "number",
-        sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1: Player = nodeA;
-            const player2: Player = nodeB;
-            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0);
-            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0);
-            return p1 - p2;
-        },
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "fkdr")} />,
-    },
-    {
-        id: "wlr",
-        header: "WLR",
-        flex: 1,
-        sortName: `Player's Win to Loss Ratio`,
         minWidth: mediumColumnSize,
         type: "number",
-        sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1: Player = nodeA;
-            const player2: Player = nodeB;
-            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0);
-            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0);
-            return p1 - p2;
-        },
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")} />,
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "fkdr")} />,
     },
     {
-        id: "bblr",
-        header: "BBLR",
+        field: "WLR",
         flex: 1,
-        sortName: `Player's Beds Broken to Beds Lost Ratio`,
         minWidth: mediumColumnSize,
         type: "number",
-        sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1: Player = nodeA;
-            const player2: Player = nodeB;
-            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0);
-            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0);
-            return p1 - p2;
-        },
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")} />,
     },
     {
-        id: "wins",
-        header: "Wins",
+        field: "BBLR",
         flex: 1,
-        sortName: `Player's Wins`,
-        defaultWidth: mediumColumnSize,
-        type: "number",
-        sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1: Player = nodeA;
-            const player2: Player = nodeB;
-            return (player1.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) - (player2.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0);
-        },
-        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "wins")} />,
-    },
-    {
-        id: "losses",
-        header: "Losses",
-        flex: 1,
-        sortName: `Player's Losses`,
         minWidth: mediumColumnSize,
         type: "number",
-        sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1: Player = nodeA;
-            const player2: Player = nodeB;
-            return (player1.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (player2.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
-        },
-        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")} />,
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
     },
     {
-        id: "session",
-        header: "Time",
+        field: "wins",
         flex: 1,
-        sortName: `Player's Session Time`,
+        minWidth: mediumColumnSize,
+        type: "number",
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "wins")} />,
+    },
+    {
+        field: "losses",
+        flex: 1,
+        minWidth: mediumColumnSize,
+        type: "number",
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")} />,
+    },
+    {
+        field: "session",
+        flex: 1,
         minWidth: smallColumnSize,
         type: "number",
-        render: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)} />,
+        sortable: false,
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)} />,
     },
 ];
+
+const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "bblr" | "wins" | "losses") => {
+    const p1: Player = nodeA.data,
+        p2: Player = nodeB.data;
+    if (p1.sources.runApi?.data.data.blacklist.tagged || p1.nicked) {
+        return isDescending ? 1 : -1;
+    } else if (p2.sources.runApi?.data.data.blacklist.tagged || p2.nicked) {
+        return isDescending ? -1 : 1;
+    }
+    if (sortingData == "star") {
+        return (p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0) - (p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0);
+    } else if (sortingData == "name") {
+        return p1.name.localeCompare(p2.name);
+    } else if (sortingData == "winstreak") {
+        return (p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0);
+    } else if (sortingData == "fkdr") {
+        return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0);
+    } else if (sortingData == "wlr") {
+        return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
+    } else if (sortingData == "bblr") {
+        return (p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0);
+    } else if (sortingData == "wins") {
+        return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0);
+    } else if (sortingData == "losses") {
+        return (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
+    }
+    return 0;
+};
 
 const getNickedPlayerSortingResponse = (params) => {
     return 0;
@@ -191,63 +161,39 @@ const AppTable = () => {
     const tagStore = localStore.playerStore.tagStore;
     playerFormatter.setConfig({tags: tagStore.tags, config: tagStore.config});
 
-    const renderSortTool = (direction) => {
-        return <div>{direction === -1 ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}</div>;
-    };
+    const onSaveGridColumnState=(e:ColumnApi) =>{
+        const columnState = e.getColumnState();
+        const res: TableState = {columnState}
+        store.dispatch(saveTableColumnState(res))
+    }
 
-    const renderRowContextMenu = (menuProps, {rowProps}) => {
-        menuProps.autoDismiss = true;
-        menuProps.items = [
-            {
-                label: "Hi " + rowProps.rowIndex,
-            },
-        ];
-    };
+    const gridOptions: GridOptions = {
+        onGridReady(event: GridReadyEvent) {
+            console.log(localStore.configStore.table.columnState);
+            event.columnApi.applyColumnState({state: localStore.configStore.table.columnState, applyOrder: true});
+        },
+        onFirstDataRendered(event: FirstDataRenderedEvent) {
+            event.columnApi.applyColumnState({state: localStore.configStore.table.columnState, applyOrder: true});
 
-    const renderColumnContextMenu = (menuProps, rowProps) => {
-        menuProps.items = [
-            {
-                label: "Row " + rowProps.rowIndex,
-            },
-        ];
-    };
-
-    const defaultSortInfo:TypeSortInfo = { name: 'fkdr', dir: 1 }
-
-    const gridStyle = {
-        minHeight: localStore.configStore.browserWindow.height - 40,
+        },
+        onGridColumnsChanged(event: GridColumnsChangedEvent) {
+            onSaveGridColumnState(event.columnApi)
+        },
+        onColumnMoved(event: ColumnMovedEvent) {
+            onSaveGridColumnState(event.columnApi)
+        },
+        columnDefs: columns,
+        defaultColDef: defaultColDefs,
+        animateRows: true,
+        autoSizePadding: 0,
     };
 
     return (
         <div>
             <div className='w-full h-full'>
-                <span className='overflow-hidden'>
-                    <ReactDataGrid
-                        theme='default-dark'
-                        className='overflow-hidden'
-                        dataSource={players}
-                        columns={columns}
-                        rowHeight={33}
-                        idProperty='name'
-                        emptyText='No Players'
-                        style={gridStyle}
-                        showColumnMenuTool={true}
-                        renderRowContextMenu={renderRowContextMenu}
-                        showColumnMenuLockOptions={false}
-                        showColumnMenuGroupOptions={false}
-                        showColumnMenuToolOnHover={true}
-                        enableColumnAutosize={true}
-                        renderSortTool={renderSortTool}
-                        onColumnOrderChange={(columnOrder) => {
-
-                        }}
-                        defaultSortInfo={defaultSortInfo}
-                        allowUnsort={false}
-                        onSortInfoChange={(sortInfo) => {
-
-                        }}
-                    />
-                </span>
+                <div className=' ag-theme-alpine-dark' style={{height: localStore.configStore.browserWindow.height - 38, overflowX: "hidden"}}>
+                    <AgGridReact gridOptions={gridOptions} rowData={players} />
+                </div>
             </div>
         </div>
     );

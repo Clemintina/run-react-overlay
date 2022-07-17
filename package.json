@@ -10,7 +10,7 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.0.35-BETA",
+	"version": "1.0.36-BETA",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
@@ -32,6 +32,8 @@
 		"@fortawesome/free-solid-svg-icons": "^6.1.1",
 		"@fortawesome/react-fontawesome": "^0.2.0",
 		"@inovua/reactdatagrid-community": "^4.20.3",
+		"ag-grid-community": "^27.0. 1",
+		"ag-grid-react": "^27.0.1",
 		"@logdna/tail-file": "^3.0.0",
 		"@mui/icons-material": "^5.8.4",
 		"@mui/material": "^5.9.0",
@@ -39,7 +41,6 @@
 		"@mui/x-data-grid": "^5.13.0",
 		"@reduxjs/toolkit": "^1.8.3",
 		"@sinclair/typebox": "^0.24.20",
-		"@tanstack/react-table": "^8.2.6",
 		"axios": "^0.27.2",
 		"browserify": "^17.0.0",
 		"browserify-fs": "^1.0.0",

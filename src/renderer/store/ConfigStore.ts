@@ -4,6 +4,8 @@ import {DisplayErrorMessage} from "@common//utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {ColumnState} from "ag-grid-community";
+import {useState} from "react";
 
 export interface ConfigStore {
     hypixel: {
@@ -14,6 +16,7 @@ export interface ConfigStore {
     runKey: string;
     version: string;
     logs: ClientSetting;
+    table: TableState;
     colours: {
         backgroundColour: string;
         primaryColour: string;
@@ -47,6 +50,10 @@ export interface ClientSetting {
     readable: boolean;
 }
 
+export interface TableState {
+    columnState: Array<ColumnState>;
+}
+
 interface InitScript {
     status: number;
     data: {
@@ -75,6 +82,9 @@ interface InitScript {
             height: number;
         };
         settings: SettingsConfig;
+        table: {
+            columns: [];
+        };
         version: string;
     };
 }
@@ -120,6 +130,9 @@ const ConfigStore = createSlice({
             width: 600,
             height: 800,
         },
+        table: {
+            columnState: [{colId: 'id'}],
+        },
         settings: {
             lunar: true,
             keathiz: false,
@@ -127,7 +140,7 @@ const ConfigStore = createSlice({
         },
     },
     reducers: {
-        setHypixelApiKey: (state, action: { payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> }) => {
+        setHypixelApiKey: (state, action: {payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>}) => {
             const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
             state.hypixel.apiKeyValid = true;
             state.hypixel.apiKey = payload.data.key;
@@ -135,11 +148,11 @@ const ConfigStore = createSlice({
             window.config.set("hypixel.apiKey", payload.data.key);
             window.config.set("hypixel.apiKeyOwner", payload.data.owner);
         },
-        setRunApiKey: (state, action: { payload: RunApiKey }) => {
+        setRunApiKey: (state, action: {payload: RunApiKey}) => {
             const payload: RunApiKey = action.payload;
             state.runKey = payload.key.key;
         },
-        setDataFromConfig: (state, action: { payload: InitScript }) => {
+        setDataFromConfig: (state, action: {payload: InitScript}) => {
             const payload: InitScript = action.payload;
             state.version = payload.data.version;
             if (payload.data.hypixel.key !== undefined) {
@@ -158,26 +171,29 @@ const ConfigStore = createSlice({
                 state.logs.clientName = payload.data.overlay.clientName;
                 window.ipcRenderer.send("logFileSet", state.logs.logPath);
             }
+            if (payload.data.table!=undefined){
+                state.table.columnState = payload.data.table.columns
+            }
             state.browserWindow = payload.data.browserWindow;
         },
-        updateErrorMessage: (state, action: { payload: DisplayErrorMessage }) => {
+        updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
             state.error.code = action.payload.code;
             state.error.title = action.payload.title;
             state.error.cause = action.payload.cause;
             state.error.detail = action.payload.detail ?? "";
         },
-        setSettings: (state, action: { payload: SettingsConfig }) => {
+        setSettings: (state, action: {payload: SettingsConfig}) => {
             const payload = action.payload;
             state.settings.lunar = payload.lunar;
             state.settings.keathiz = payload.keathiz;
             state.settings.boomza = payload.boomza;
         },
-        setKeathizApi: (state, action: { payload: IPCResponse<{ apiKey: string; valid: boolean }> }) => {
+        setKeathizApi: (state, action: {payload: IPCResponse<{apiKey: string; valid: boolean}>}) => {
             const payload = action.payload.data;
             state.keathiz.key = payload.apiKey;
             state.keathiz.valid = payload.valid;
         },
-        setClient: (state, action: { payload: ClientSetting }) => {
+        setClient: (state, action: {payload: ClientSetting}) => {
             const payload = action.payload;
             if (payload.readable) {
                 state.logs = action.payload;
@@ -186,6 +202,9 @@ const ConfigStore = createSlice({
                 state.error.title = "Bad Log File";
                 state.error.cause = "This log file is unable to be read, Please ensure this is the correct client, or the overlay has sufficient privileges to read this file.";
             }
+        },
+        saveTableColumnState: (state, action:{payload: TableState}) => {
+            state.table.columnState = action.payload.columnState
         },
     },
     extraReducers: (builder) => {
@@ -237,7 +256,7 @@ const ConfigStore = createSlice({
             .addCase(setSettingsValue.fulfilled, (state, action) => {
                 state.settings = action.payload.data;
             })
-            .addCase(setErrorMessage.fulfilled, (state, action: { payload: DisplayErrorMessage }) => {
+            .addCase(setErrorMessage.fulfilled, (state, action: {payload: DisplayErrorMessage}) => {
                 ConfigStore.caseReducers.updateErrorMessage(state, action);
             })
             .addCase(keathizApiKeyValidator.fulfilled, (state, action) => {
@@ -245,6 +264,9 @@ const ConfigStore = createSlice({
             })
             .addCase(setClient.fulfilled, (state, action) => {
                 ConfigStore.caseReducers.setClient(state, action);
+            })
+            .addCase(saveTableColumnState.fulfilled, (state, action) => {
+                ConfigStore.caseReducers.saveTableColumnState(state, action);
             });
     },
 });
@@ -273,10 +295,15 @@ export const setErrorMessage = createAsyncThunk("ConfigStore/setErrorMessage", a
 });
 
 export const setClient = createAsyncThunk("ConfigStore/setClient", async (client: ClientSetting) => {
-    await window.config.set('overlay.logPath', client.logPath)
-    await window.config.set('overlay.clientName', client.clientName)
-    await window.config.set('overlay.readable', client.readable)
+    await window.config.set("overlay.logPath", client.logPath);
+    await window.config.set("overlay.clientName", client.clientName);
+    await window.config.set("overlay.readable", client.readable);
     return client;
+});
+
+export const saveTableColumnState = createAsyncThunk("ConfigStore/saveTableColumnState", async (data: TableState) => {
+    await window.config.set("overlay.table", data);
+    return data;
 });
 
 /**
@@ -284,11 +311,12 @@ export const setClient = createAsyncThunk("ConfigStore/setClient", async (client
  */
 export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const hypixel = {key: "", owner: "", valid: false};
-    const overlay = {logPath: "", readable: false, clientName: ''};
+    const overlay = {logPath: "", readable: false, clientName: ""};
     const external = {keathiz: {apiKey: "", valid: false}};
     const version = await window.config.get("run.overlay.version");
     const settings = await window.config.get("settings");
     const browserWindow = await window.config.get("run.overlay.browserWindow");
+    const table = await window.config.get("overlay.table");
 
     const run = {apiKey: "", valid: false};
     run.apiKey = await window.config.get("run.apiKey");
@@ -302,12 +330,12 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
         .catch(() => false);
     overlay.logPath = await window.config.get("overlay.logPath");
     overlay.readable = await window.config.get("overlay.readable");
-    overlay.clientName = await window.config.get('overlay.clientName');
+    overlay.clientName = await window.config.get("overlay.clientName");
 
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
     external.keathiz.valid = (await window.config.get("external.keathiz.valid")) ?? false;
 
-    const res: InitScript = {status: 200, data: {run, hypixel, overlay, external, settings, version, browserWindow}};
+    const res: InitScript = {status: 200, data: {run, hypixel, overlay, external, settings, version, browserWindow, table}};
     return res;
 });
 

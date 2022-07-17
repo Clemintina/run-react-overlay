@@ -1,5 +1,7 @@
 @use "constants";
 @use "titlebar";
+@import "ag-grid-community/dist/styles/ag-grid.scss";
+@import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 div.main {
   background: constants.$backgroundColour;

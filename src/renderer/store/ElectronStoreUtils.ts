@@ -40,6 +40,11 @@ export const RUNElectronStore = Type.Optional(
                     description: "The Logs path which the overlay uses to read players",
                     default: "",
                 }),
+                table: Type.Optional(
+                    Type.Object({
+                        columns:Type.Optional(Type.Array(Type.Any()))
+                    })
+                )
             }),
         ),
         external: Type.Optional(
