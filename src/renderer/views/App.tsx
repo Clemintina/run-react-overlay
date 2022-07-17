@@ -1,5 +1,5 @@
 import "@assets/scss/app.scss";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import store, {Store} from "@renderer/store";
 import {useSelector} from "react-redux";
 import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
@@ -33,8 +33,13 @@ const columns: TypeColumn[] = [
         sortName: `Player's Bedwars Level`,
         sortable: true,
         minWidth: smallColumnSize,
-        type: 'number',
-        render: ({data}) => <Interweave content={playerFormatter.renderStar(data)}/>,
+        type: "number",
+        sort: (valueA, valueB, nodeA, nodeB) => {
+            const player1:Player = nodeA;
+            const player2:Player = nodeB;
+            return (player1.hypixelPlayer?.achievements?.bedwars_level??0) - (player2.hypixelPlayer?.achievements?.bedwars_level??0);
+        },
+        render: ({data}) => <Interweave content={playerFormatter.renderStar(data)} />,
     },
     {
         id: "name",
@@ -42,10 +47,15 @@ const columns: TypeColumn[] = [
         flex: 1,
         minWidth: extraLargeColumnSize,
         sortName: `Name of the Player`,
-        type: 'string',
+        type: "string",
+        sort: (valueA, valueB, nodeA, nodeB) => {
+            const player1:Player = nodeA;
+            const player2:Player = nodeB;
+            return player1.name.localeCompare(player2.name) ? 1 : -1;
+        },
         render: ({data}) => (
             <StatsisticsTooltip player={data}>
-                <Interweave content={playerFormatter.renderName(data)}/>
+                <Interweave content={playerFormatter.renderName(data)} />
             </StatsisticsTooltip>
         ),
     },
@@ -56,7 +66,7 @@ const columns: TypeColumn[] = [
         minWidth: largeColumnSize,
         sortName: `Tags for the Overlay`,
         render: ({data}) => {
-            return <Interweave content={playerFormatter.renderTags(data)}/>;
+            return <Interweave content={playerFormatter.renderTags(data)} />;
         },
         sortable: false,
     },
@@ -66,8 +76,13 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Winstreak`,
         minWidth: smallColumnSize,
-        type: 'number',
-        render: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)}/>,
+        type: "number",
+        sort: (valueA, valueB, nodeA, nodeB) => {
+            const player1:Player = nodeA;
+            const player2:Player = nodeB;
+            return (player1.hypixelPlayer?.stats.Bedwars?.winstreak??0) - (player2.hypixelPlayer?.stats.Bedwars?.winstreak??0);
+        },
+        render: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)} />,
     },
     {
         id: "fkdr",
@@ -75,8 +90,15 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Final Kill to Death Ratio`,
         defaultWidth: mediumColumnSize,
-        type: 'number',
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "fkdr")}/>,
+        type: "number",
+        sort: (valueA, valueB, nodeA, nodeB) => {
+            const player1:Player = nodeA;
+            const player2:Player = nodeB;
+            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0)
+            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0)
+            return p1 - p2;
+        },
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "fkdr")} />,
     },
     {
         id: "wlr",
@@ -84,8 +106,15 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Win to Loss Ratio`,
         minWidth: mediumColumnSize,
-        type: 'number',
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")}/>,
+        type: "number",
+        sort: (valueA, valueB, nodeA, nodeB) => {
+            const player1:Player = nodeA;
+            const player2:Player = nodeB;
+            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0)
+            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0)
+            return p1 - p2;
+        },
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")} />,
     },
     {
         id: "bblr",
@@ -93,8 +122,15 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Beds Broken to Beds Lost Ratio`,
         minWidth: mediumColumnSize,
-        type: 'number',
-        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")}/>,
+        type: "number",
+        sort: (valueA, valueB, nodeA, nodeB) => {
+            const player1:Player = nodeA;
+            const player2:Player = nodeB;
+            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0)
+            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0)
+            return p1 - p2;
+        },
+        render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
     },
     {
         id: "wins",
@@ -102,8 +138,13 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Wins`,
         defaultWidth: mediumColumnSize,
-        type: 'number',
-        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "wins")}/>,
+        type: "number",
+        sort: (valueA, valueB, nodeA, nodeB) => {
+            const player1:Player = nodeA;
+            const player2:Player = nodeB;
+            return (player1.hypixelPlayer?.stats.Bedwars?.wins_bedwars??0) - (player2.hypixelPlayer?.stats?.Bedwars?.wins_bedwars??0);
+        },
+        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "wins")} />,
     },
     {
         id: "losses",
@@ -111,8 +152,13 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Losses`,
         minWidth: mediumColumnSize,
-        type: 'number',
-        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")}/>,
+        type: "number",
+        sort: (valueA, valueB, nodeA, nodeB) => {
+            const player1:Player = nodeA;
+            const player2:Player = nodeB;
+            return (player1.hypixelPlayer?.stats?.Bedwars?.losses_bedwars??0) - (player2.hypixelPlayer?.stats?.Bedwars?.losses_bedwars??0);
+        },
+        render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")} />,
     },
     {
         id: "session",
@@ -120,9 +166,9 @@ const columns: TypeColumn[] = [
         flex: 1,
         sortName: `Player's Session Time`,
         minWidth: smallColumnSize,
-        type: 'number',
-        render: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)}/>,
-    }
+        type: "number",
+        render: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)} />,
+    },
 ];
 
 const getNickedPlayerSortingResponse = (params) => {
@@ -137,16 +183,14 @@ const AppTable = () => {
      * All **css** is done in {@link assets/scss/app}
      * All processing is done in {@link store}
      */
-    const localStore: Store = useSelector(() => store.getState())
+    const localStore: Store = useSelector(() => store.getState());
     const players: Array<Player> = localStore.playerStore.players;
     const tagStore = localStore.playerStore.tagStore;
     playerFormatter.setConfig({tags: tagStore.tags, config: tagStore.config});
 
     const renderSortTool = (direction) => {
-        return (<div>
-            {direction === -1 ? <FontAwesomeIcon icon={faArrowUp}/> : <FontAwesomeIcon icon={faArrowDown}/>}
-        </div>)
-    }
+        return <div>{direction === -1 ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}</div>;
+    };
 
     const renderRowContextMenu = (menuProps, {rowProps}) => {
         menuProps.autoDismiss = true;
@@ -173,20 +217,30 @@ const AppTable = () => {
         <div>
             <div className='w-full h-full'>
                 <span className='overflow-hidden'>
-                <ReactDataGrid theme='default-dark' className='overflow-hidden'
-                               dataSource={players} columns={columns} rowHeight={33}
-                               idProperty='name' emptyText='No Players' style={gridStyle} showColumnMenuTool={true}
-                               renderRowContextMenu={renderRowContextMenu} showColumnMenuLockOptions={false} showColumnMenuGroupOptions={false}
-                               showColumnMenuToolOnHover={true} enableColumnAutosize={true}
-                               renderSortTool={renderSortTool}
-                               onColumnOrderChange={(columnOrder) => {
-                                   console.log(columnOrder)
-                               }}
-                               allowUnsort={false}
-                               onSortInfoChange={(sortInfo) => {
-                                   console.log(sortInfo)
-                               }}
-                />
+                    <ReactDataGrid
+                        theme='default-dark'
+                        className='overflow-hidden'
+                        dataSource={players}
+                        columns={columns}
+                        rowHeight={33}
+                        idProperty='name'
+                        emptyText='No Players'
+                        style={gridStyle}
+                        showColumnMenuTool={true}
+                        renderRowContextMenu={renderRowContextMenu}
+                        showColumnMenuLockOptions={false}
+                        showColumnMenuGroupOptions={false}
+                        showColumnMenuToolOnHover={true}
+                        enableColumnAutosize={true}
+                        renderSortTool={renderSortTool}
+                        onColumnOrderChange={(columnOrder) => {
+                            console.log(columnOrder);
+                        }}
+                        allowUnsort={false}
+                        onSortInfoChange={(sortInfo) => {
+                            console.log(sortInfo);
+                        }}
+                    />
                 </span>
             </div>
         </div>
