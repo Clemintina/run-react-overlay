@@ -58,6 +58,7 @@ interface InitScript {
         overlay: {
             logPath: string;
             readable: boolean;
+            clientName: string;
         };
         run: {
             apiKey: string;
@@ -126,7 +127,7 @@ const ConfigStore = createSlice({
         },
     },
     reducers: {
-        setHypixelApiKey: (state, action: {payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>}) => {
+        setHypixelApiKey: (state, action: { payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> }) => {
             const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
             state.hypixel.apiKeyValid = true;
             state.hypixel.apiKey = payload.data.key;
@@ -134,11 +135,11 @@ const ConfigStore = createSlice({
             window.config.set("hypixel.apiKey", payload.data.key);
             window.config.set("hypixel.apiKeyOwner", payload.data.owner);
         },
-        setRunApiKey: (state, action: {payload: RunApiKey}) => {
+        setRunApiKey: (state, action: { payload: RunApiKey }) => {
             const payload: RunApiKey = action.payload;
             state.runKey = payload.key.key;
         },
-        setDataFromConfig: (state, action: {payload: InitScript}) => {
+        setDataFromConfig: (state, action: { payload: InitScript }) => {
             const payload: InitScript = action.payload;
             state.version = payload.data.version;
             if (payload.data.hypixel.key !== undefined) {
@@ -154,28 +155,29 @@ const ConfigStore = createSlice({
             if (payload.data.overlay.logPath !== undefined) {
                 state.logs.logPath = payload.data.overlay.logPath;
                 state.logs.readable = payload.data.overlay.readable;
+                state.logs.clientName = payload.data.overlay.clientName;
                 window.ipcRenderer.send("logFileSet", state.logs.logPath);
             }
             state.browserWindow = payload.data.browserWindow;
         },
-        updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
+        updateErrorMessage: (state, action: { payload: DisplayErrorMessage }) => {
             state.error.code = action.payload.code;
             state.error.title = action.payload.title;
             state.error.cause = action.payload.cause;
             state.error.detail = action.payload.detail ?? "";
         },
-        setSettings: (state, action: {payload: SettingsConfig}) => {
+        setSettings: (state, action: { payload: SettingsConfig }) => {
             const payload = action.payload;
             state.settings.lunar = payload.lunar;
             state.settings.keathiz = payload.keathiz;
             state.settings.boomza = payload.boomza;
         },
-        setKeathizApi: (state, action: {payload: IPCResponse<{apiKey: string; valid: boolean}>}) => {
+        setKeathizApi: (state, action: { payload: IPCResponse<{ apiKey: string; valid: boolean }> }) => {
             const payload = action.payload.data;
             state.keathiz.key = payload.apiKey;
             state.keathiz.valid = payload.valid;
         },
-        setClient: (state, action: {payload: ClientSetting}) => {
+        setClient: (state, action: { payload: ClientSetting }) => {
             const payload = action.payload;
             if (payload.readable) {
                 state.logs = action.payload;
@@ -235,7 +237,7 @@ const ConfigStore = createSlice({
             .addCase(setSettingsValue.fulfilled, (state, action) => {
                 state.settings = action.payload.data;
             })
-            .addCase(setErrorMessage.fulfilled, (state, action: {payload: DisplayErrorMessage}) => {
+            .addCase(setErrorMessage.fulfilled, (state, action: { payload: DisplayErrorMessage }) => {
                 ConfigStore.caseReducers.updateErrorMessage(state, action);
             })
             .addCase(keathizApiKeyValidator.fulfilled, (state, action) => {
@@ -271,6 +273,9 @@ export const setErrorMessage = createAsyncThunk("ConfigStore/setErrorMessage", a
 });
 
 export const setClient = createAsyncThunk("ConfigStore/setClient", async (client: ClientSetting) => {
+    await window.config.set('overlay.logPath', client.logPath)
+    await window.config.set('overlay.clientName', client.clientName)
+    await window.config.set('overlay.readable', client.readable)
     return client;
 });
 
@@ -279,7 +284,7 @@ export const setClient = createAsyncThunk("ConfigStore/setClient", async (client
  */
 export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const hypixel = {key: "", owner: "", valid: false};
-    const overlay = {logPath: "", readable: false};
+    const overlay = {logPath: "", readable: false, clientName: ''};
     const external = {keathiz: {apiKey: "", valid: false}};
     const version = await window.config.get("run.overlay.version");
     const settings = await window.config.get("settings");
@@ -297,6 +302,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
         .catch(() => false);
     overlay.logPath = await window.config.get("overlay.logPath");
     overlay.readable = await window.config.get("overlay.readable");
+    overlay.clientName = await window.config.get('overlay.clientName');
 
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
     external.keathiz.valid = (await window.config.get("external.keathiz.valid")) ?? false;
