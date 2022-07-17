@@ -10,6 +10,7 @@ import "@inovua/reactdatagrid-community/index.css";
 import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowDown, faArrowUp} from "@fortawesome/free-solid-svg-icons";
+import {TypeSortInfo} from "@inovua/reactdatagrid-community/types";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
@@ -211,6 +212,8 @@ const AppTable = () => {
         ];
     };
 
+    const defaultSortInfo:TypeSortInfo = { name: 'fkdr', dir: 1 }
+
     const gridStyle = {
         minHeight: localStore.configStore.browserWindow.height - 40,
     };
@@ -238,6 +241,7 @@ const AppTable = () => {
                         onColumnOrderChange={(columnOrder) => {
 
                         }}
+                        defaultSortInfo={defaultSortInfo}
                         allowUnsort={false}
                         onSortInfoChange={(sortInfo) => {
 
