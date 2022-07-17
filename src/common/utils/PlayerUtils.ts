@@ -204,7 +204,11 @@ export class FormatPlayer {
     public renderWinstreak = (player: Player) => {
         let renderer: string = this.starterDivider;
         if (!player.nicked) {
-            const playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0;
+            let playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0;
+            if (player.sources.keathiz != null) {
+                const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
+                if (keathizTags.player.winstreak != null && keathizTags.player.winstreak.accurate == false) playerValue = keathizTags.player.winstreak.estimates.overall_winstreak
+            }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
             } else {
@@ -316,14 +320,13 @@ export class FormatPlayer {
         } else {
             if (player.sources.keathiz.data.success && player.sources.keathiz.status === 200) {
                 const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-                const accountType = keathizTags.player.extra.status;
                 if (keathizTags.player.exits.last_10_min >= 1) {
                     keathizTagArray.push(this.getPlayerTagDivider("E10", `#${MinecraftColours.GOLD.hex}`));
                 }
                 if (keathizTags.player.queues.total == 0) {
                     keathizTagArray.push(this.getPlayerTagDivider("ND", `#${MinecraftColours.GOLD.hex}`));
                 }
-                if (keathizTags.player.queues.last_3_min >= 2) {
+                if (keathizTags.player.queues.last_3_min >= 1) {
                     const count = keathizTags.player.queues.last_3_min;
                     keathizTagArray.push(this.getPlayerTagDivider(`Q3-${count}`, `#${MinecraftColours.GOLD.hex}`));
                 }
@@ -343,9 +346,6 @@ export class FormatPlayer {
                 }
                 if (keathizTags.player.queues.consecutive_queue_checks.last_30_queues["1_min_requeue"] >= 15 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["1_min_requeue"] >= 5 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["2_min_requeue"] >= 6 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["3_min_requeue"] >= 8) {
                     keathizTagArray.push(this.getPlayerTagDivider("C", `#${MinecraftColours.RED.hex}`));
-                }
-                if ((keathizTags.player.queues.last_3_min >= 2 && accountType === "mojang" && (player?.hypixelPlayer?.achievements?.bedwars_level ?? 0) <= 12 && keathizTagArray.length > 6) ?? accountType === "mojang") {
-                    keathizTagArray.push(this.getPlayerTagDivider("DODGE", `#${MinecraftColours.DARK_RED.hex}`));
                 }
             } else {
                 if (this.configStore.settings.keathiz) keathizTagArray.push(this.getPlayerTagDivider("FAILED", `#${MinecraftColours.DARK_RED.hex}`));

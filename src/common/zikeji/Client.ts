@@ -2,10 +2,8 @@ import {EventEmitter} from "events";
 import {GenericHTTPError} from "./errors/GenericHTTPError";
 import {InvalidKeyError} from "./errors/InvalidKeyError";
 import {FindGuild} from "./methods/findGuild";
-import {Friends} from "./methods/friends";
 import {Guild} from "./methods/guild";
 import {Player} from "./methods/player";
-import {RecentGames} from "./methods/recentGames";
 import {Resources} from "./methods/resources";
 import {Status} from "./methods/status";
 import type {Components, Paths} from "./types/api";
@@ -238,16 +236,7 @@ export class Client {
      */
     public findGuild: FindGuild = new FindGuild(this);
 
-    /**
-     * Returns friendships for given player.
-     * @example
-     * ```typescript
-     * const friends = await client.friends.uuid("20934ef9488c465180a78f861586b4cf");
-     * console.log(friends);
-     * ```
-     * @category API
-     */
-    public friends: Friends = new Friends(this);
+
 
     /**
      * Returns the current player count along with the player count of each public game + mode on the server.
@@ -322,16 +311,7 @@ export class Client {
         return getResultObject(await this.call<Paths.PlayerCount.Get.Responses.$200>("playerCount"), ["success"]);
     }
 
-    /**
-     * Returns recent games of a player. A maximum of 100 games are returned and recent games are only stored for up to 3 days at this time.
-     * @example
-     * ```typescript
-     * const response = await client.recentGames.uuid("20934ef9488c465180a78f861586b4cf");
-     * console.log(response);
-     * ```
-     * @category API
-     */
-    public recentGames: RecentGames = new RecentGames(this);
+
 
     /**
      * Relatively static Hypixel resources that don't change often at all.
