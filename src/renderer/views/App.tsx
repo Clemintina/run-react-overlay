@@ -35,9 +35,11 @@ const columns: TypeColumn[] = [
         minWidth: smallColumnSize,
         type: "number",
         sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1:Player = nodeA;
-            const player2:Player = nodeB;
-            return (player1.hypixelPlayer?.achievements?.bedwars_level??0) - (player2.hypixelPlayer?.achievements?.bedwars_level??0);
+            const player1: Player = nodeA;
+            const player2: Player = nodeB;
+            const p1:number = (player1.hypixelPlayer?.achievements?.bedwars_level ?? 0)
+            const p2:number =  (player2.hypixelPlayer?.achievements?.bedwars_level ?? 0)
+            return p1 -p2
         },
         render: ({data}) => <Interweave content={playerFormatter.renderStar(data)} />,
     },
@@ -49,9 +51,9 @@ const columns: TypeColumn[] = [
         sortName: `Name of the Player`,
         type: "string",
         sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1:Player = nodeA;
-            const player2:Player = nodeB;
-            return player1.name.localeCompare(player2.name) ? 1 : -1;
+            const player1: Player = nodeA;
+            const player2: Player = nodeB;
+            return player1.name < player2.name ? -1 : player1.name > player2.name ? 1 : 0;
         },
         render: ({data}) => (
             <StatsisticsTooltip player={data}>
@@ -78,9 +80,9 @@ const columns: TypeColumn[] = [
         minWidth: smallColumnSize,
         type: "number",
         sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1:Player = nodeA;
-            const player2:Player = nodeB;
-            return (player1.hypixelPlayer?.stats.Bedwars?.winstreak??0) - (player2.hypixelPlayer?.stats.Bedwars?.winstreak??0);
+            const player1: Player = nodeA;
+            const player2: Player = nodeB;
+            return (player1.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0) - (player2.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0);
         },
         render: ({data}) => <Interweave content={playerFormatter.renderWinstreak(data)} />,
     },
@@ -92,10 +94,10 @@ const columns: TypeColumn[] = [
         defaultWidth: mediumColumnSize,
         type: "number",
         sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1:Player = nodeA;
-            const player2:Player = nodeB;
-            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0)
-            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0)
+            const player1: Player = nodeA;
+            const player2: Player = nodeB;
+            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0);
+            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0);
             return p1 - p2;
         },
         render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "fkdr")} />,
@@ -108,10 +110,10 @@ const columns: TypeColumn[] = [
         minWidth: mediumColumnSize,
         type: "number",
         sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1:Player = nodeA;
-            const player2:Player = nodeB;
-            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0)
-            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0)
+            const player1: Player = nodeA;
+            const player2: Player = nodeB;
+            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0);
+            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0);
             return p1 - p2;
         },
         render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "wlr")} />,
@@ -124,10 +126,10 @@ const columns: TypeColumn[] = [
         minWidth: mediumColumnSize,
         type: "number",
         sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1:Player = nodeA;
-            const player2:Player = nodeB;
-            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0)
-            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0)
+            const player1: Player = nodeA;
+            const player2: Player = nodeB;
+            const p1 = (player1.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player1.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0);
+            const p2 = (player2.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player2.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0);
             return p1 - p2;
         },
         render: ({data}) => <Interweave content={playerFormatter.renderRatioColour(data, "bblr")} />,
@@ -140,9 +142,9 @@ const columns: TypeColumn[] = [
         defaultWidth: mediumColumnSize,
         type: "number",
         sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1:Player = nodeA;
-            const player2:Player = nodeB;
-            return (player1.hypixelPlayer?.stats.Bedwars?.wins_bedwars??0) - (player2.hypixelPlayer?.stats?.Bedwars?.wins_bedwars??0);
+            const player1: Player = nodeA;
+            const player2: Player = nodeB;
+            return (player1.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) - (player2.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0);
         },
         render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "wins")} />,
     },
@@ -154,9 +156,9 @@ const columns: TypeColumn[] = [
         minWidth: mediumColumnSize,
         type: "number",
         sort: (valueA, valueB, nodeA, nodeB) => {
-            const player1:Player = nodeA;
-            const player2:Player = nodeB;
-            return (player1.hypixelPlayer?.stats?.Bedwars?.losses_bedwars??0) - (player2.hypixelPlayer?.stats?.Bedwars?.losses_bedwars??0);
+            const player1: Player = nodeA;
+            const player2: Player = nodeB;
+            return (player1.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (player2.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
         },
         render: ({data}) => <Interweave content={playerFormatter.renderCoreStatsColour(data, "losses")} />,
     },
@@ -234,11 +236,11 @@ const AppTable = () => {
                         enableColumnAutosize={true}
                         renderSortTool={renderSortTool}
                         onColumnOrderChange={(columnOrder) => {
-                            console.log(columnOrder);
+
                         }}
                         allowUnsort={false}
                         onSortInfoChange={(sortInfo) => {
-                            console.log(sortInfo);
+
                         }}
                     />
                 </span>
