@@ -7,6 +7,7 @@ import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
 import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
 import {AgGridReact} from "ag-grid-react";
+// eslint-disable-next-line import/named
 import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
 import {saveTableColumnState, TableState} from "@renderer/store/ConfigStore";
 
