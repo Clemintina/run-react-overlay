@@ -21,6 +21,8 @@ const MainSettings = () => {
     const version = localConfigStore.version;
     const colours = localConfigStore.colours;
 
+    const [opacityValue, setOpacityValue] = React.useState(localConfigStore.browserWindow.opacity);
+
     // TODO make it look nicer and cleaner
 
     return (
@@ -28,7 +30,7 @@ const MainSettings = () => {
             <div className='text-3xl font-bold underlineText'>Overlay Settings</div>
             <SettingCard>
                 <span>Hypixel API Key</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -38,12 +40,12 @@ const MainSettings = () => {
                         }}
                         options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.hypixel.apiKey : "Hypixel API Key"}}
                     />
-                    {<ValidationIcon valid={isHypixelKeySet} />}
+                    {<ValidationIcon valid={isHypixelKeySet}/>}
                 </span>
             </SettingCard>
             <SettingCard>
                 <span>RUN API Key</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -53,12 +55,12 @@ const MainSettings = () => {
                         }}
                         options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.runKey : "RUN API Key"}}
                     />
-                    {<ValidationIcon valid={isHypixelKeySet} />}
+                    {<ValidationIcon valid={isHypixelKeySet}/>}
                 </span>
             </SettingCard>
             <SettingCard options={{shown: settings.keathiz}}>
                 <span>Keathiz API Key</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -68,27 +70,27 @@ const MainSettings = () => {
                         }}
                         options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
                     />
-                    {<ValidationIcon valid={localConfigStore.keathiz.valid} />}
+                    {<ValidationIcon valid={localConfigStore.keathiz.valid}/>}
                 </span>
             </SettingCard>
             <SettingCard>
                 <span>Overlay Logs</span>
-                <span />
+                <span/>
                 <span>
                     <span className={"inline-flex flex"}>
-                        <LogSelectorModal />
-                        {<ValidationIcon valid={isLogsSet} />}
+                        <LogSelectorModal/>
+                        {<ValidationIcon valid={isLogsSet}/>}
                     </span>
                 </span>
             </SettingCard>
             <SettingHeader>
-                <span />
+                <span/>
                 <span>Apis</span>
-                <span />
+                <span/>
             </SettingHeader>
             <SettingCard>
                 <span>Boomza</span>
-                <span />
+                <span/>
                 <ToggleButton
                     text={""}
                     onChange={async (event) => {
@@ -100,7 +102,7 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Lunar</span>
-                <span />
+                <span/>
                 <ToggleButton
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
@@ -111,7 +113,7 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Keathiz</span>
-                <span />
+                <span/>
                 <ToggleButton
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
@@ -121,13 +123,13 @@ const MainSettings = () => {
                 />
             </SettingCard>
             <SettingHeader>
-                <span />
+                <span/>
                 <span>Un-categorised</span>
-                <span />
+                <span/>
             </SettingHeader>
             <SettingCard>
                 <span>Background Colour</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         options={{placeholder: "Background Colour"}}
@@ -144,7 +146,7 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Primary Colour</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         options={{placeholder: "Text Colour"}}
@@ -161,7 +163,7 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Secondary Colour</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         options={{placeholder: "Secondary Colour"}}
@@ -178,21 +180,23 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Opacity</span>
-                <span />
+                <span/>
                 <span>
                     <Slider
                         aria-label='Opacity'
-                        value={localConfigStore.browserWindow.opacity}
-                        onChange={(event,value) => {
-                            const opacityValue: number = isArray(value)?  value[0]:value;
-                            console.log(opacityValue);
+                        value={opacityValue}
+                        onChange={(event, value) => {
+                            const opacityValue: number = typeof value == 'number' ? value : value[0];
+                            setOpacityValue(opacityValue)
+                        }}
+                        onBlur={()=>{
+                            if (opacityValue<20) setOpacityValue(20);
+                            window.ipcRenderer.send('opacity', opacityValue/100);
                             store.dispatch(setBrowserWindow({height: localConfigStore.browserWindow.height, opacity: opacityValue, width: localConfigStore.browserWindow.width}));
                         }}
-                        getAriaValueText={(value)=>{
-                            return `${value}`;
-                        }}
+                        getAriaValueText={(value) => `${value}`}
                         valueLabelDisplay="auto"
-                        valueLabelFormat={(value: number)=> {
+                        valueLabelFormat={(value: number) => {
                             return value;
                         }}
                     />
@@ -200,11 +204,23 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Version</span>
-                <span />
+                <span/>
                 <span>{version}</span>
             </SettingCard>
         </div>
     );
+};
+
+const hexToRGB = (hex, alpha) => {
+    const r = parseInt(hex.slice(1, 3), 16),
+        g = parseInt(hex.slice(3, 5), 16),
+        b = parseInt(hex.slice(5, 7), 16);
+
+    if (alpha) {
+        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+    } else {
+        return "rgb(" + r + ", " + g + ", " + b + ")";
+    }
 };
 
 export default MainSettings;

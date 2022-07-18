@@ -4,8 +4,8 @@ import {DisplayErrorMessage} from "@common//utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+// eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
-import {useState} from "react";
 
 export interface ConfigStore {
     hypixel: {
@@ -321,7 +321,7 @@ export const saveTableColumnState = createAsyncThunk("ConfigStore/saveTableColum
 });
 
 export const setBrowserWindow = createAsyncThunk("ConfigStore/setBrowserWindow", async (data: BrowserWindowSettings) => {
-    await window.config.set("overlay.table", data);
+    await window.config.set("run.overlay.browserWindow", data);
     return data;
 });
 

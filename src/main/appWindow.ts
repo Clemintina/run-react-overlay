@@ -110,7 +110,6 @@ export const createAppWindow = (): BrowserWindow => {
         },
     });
 
-    appWindow.webContents.openDevTools({mode:'undocked'})
     appWindow.setAlwaysOnTop(true, "screen-saver");
     appWindow.setVisibleOnAllWorkspaces(true);
     mainWindowState.manage(appWindow);
@@ -284,19 +283,19 @@ const registerSeraphIPC = () => {
  * Register Store Inter Process Communication
  */
 const registerElectronStore = () => {
-    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStore.set(data.key, data.data);
     });
 
-    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
         return electronStore.get(data.key);
     });
 
-    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStoreTags.set(data.key, data.data);
     });
 
-    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
         return electronStore.get(data.key);
     });
 
@@ -388,6 +387,10 @@ const registerMainWindowCommunications = () => {
     ipcMain.on("windowMaximise", () => {
         appWindow?.showInactive();
     });
+
+    ipcMain.on('opacity', async (event, ...args) => {
+        appWindow.setOpacity(args[0]);
+    })
 };
 
 /**
