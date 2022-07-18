@@ -13,7 +13,11 @@ export interface PlayerStoreThunkObject {
     apiKey?: string | undefined;
     apiKeyOwner?: string | undefined;
     runKey?: string | undefined;
-    settings?: SettingsConfig
+    settings?: SettingsConfig,
+    tagStore?: {
+        config?: object,
+        tags?: object
+    }
 }
 
 export interface PlayerStore {
@@ -93,12 +97,21 @@ const cacheState: PlayerStoreThunkObject = {
     apiKey: "",
     apiKeyOwner: "",
     runKey: "",
+    settings: {
+        keathiz: false,
+        lunar: true,
+        boomza: false
+    },
+    tagStore: {
+        config: {},
+        tags: {},
+    },
 };
 
 /**
  * Adds players to the Overlay Table.
  */
-export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, {getState}) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -106,6 +119,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>
         bot: false,
         hypixelGuild: null,
         hypixelPlayer: null,
+        denicked: false,
         sources: {
             runApi: null,
         },
@@ -119,7 +133,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>
     try {
         const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
         // Checking if the player is invalid
-        if (ipcHypixelPlayer?.data?.uuid == null && cacheState.settings?.keathiz ) {
+        if (ipcHypixelPlayer?.data?.uuid == null && getState().configStore.settings.keathiz) {
             // Since player is null, we check Kethiz and see if they have data on this nick
             const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>('keathiz', KeathizEndpoints.DENICK, playerData.name);
             // Check if they have data on the player
@@ -127,10 +141,13 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>
                 // Resend to Hypixel
                 const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>('hypixel', RequestType.UUID, ipcKeathizDenicker.data.player.uuid);
                 // If player is valid on Hypixel, Add to player method otherwise ignore
-                if (newIpcHypixelPlayer?.data?.uuid != null) playerData.hypixelPlayer = newIpcHypixelPlayer.data;
+                if (newIpcHypixelPlayer?.data?.uuid != null) {
+                    playerData.hypixelPlayer = newIpcHypixelPlayer.data;
+                    playerData.denicked = true
+                }
             }
         }
-        if (ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) {
+        if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
             const data: unknown = ipcHypixelPlayer.data;
             let cause, code;
             if (typeof data === "string") {
@@ -143,9 +160,11 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>
             playerData.nicked = true;
             return {status: 400, cause, data: playerData};
         } else {
-            playerData.id = ipcHypixelPlayer.data.uuid;
+            if (!playerData.denicked){
+                playerData.id = ipcHypixelPlayer.data.uuid;
+                playerData.hypixelPlayer = ipcHypixelPlayer.data;
+            }
         }
-        playerData.hypixelPlayer = ipcHypixelPlayer.data;
     } catch (e) {
         const mcUtilsRequest = await window.ipcRenderer.invoke<PlayerAPI>("mcutils", RequestType.USERNAME, playerData.name);
         const mcUtils = mcUtilsRequest.data;
@@ -203,6 +222,7 @@ export const updatePlayerStores = createAsyncThunk("PlayerStore/updateStore", as
 export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () => {
     [cacheState.apiKey, cacheState.apiKeyOwner, cacheState.runKey, cacheState.settings] = await Promise.all([window.config.get("hypixel.apiKey"), window.config.get("hypixel.apiKeyOwner"), window.config.get("run.apiKey"), window.config.get('settings')]);
     store.dispatch(updatePlayerStores());
+    cacheState.tagStore = store.getState().playerStore.tagStore;
     return true;
 });
 

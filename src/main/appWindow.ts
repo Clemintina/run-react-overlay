@@ -421,7 +421,7 @@ const registerExternalApis = () => {
         if (endpoint == KeathizEndpoints.OVERLAY_RUN){
             params = `&uuid=${uuid}`
         }else if (endpoint == KeathizEndpoints.DENICK){
-            params = `&name=${uuid}`
+            params = `&nick=${uuid}`
         }
         const response = await axiosClient(`https://api.antisniper.net/${endpoint}?key=${apikey}${params}`, {
             headers: {
