@@ -359,6 +359,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
     external.keathiz.valid = (await window.config.get("external.keathiz.valid")) ?? false;
 
+    window.ipcRenderer.send('opacity', browserWindow.opacity);
     const res: InitScript = {status: 200, data: {run, hypixel, overlay, external, settings, version, browserWindow, table}};
     return res;
 });
