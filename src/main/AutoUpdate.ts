@@ -4,7 +4,7 @@ import AutoUpdater = Electron.AutoUpdater;
 export default class AppUpdater {
     private readonly appUpdater;
     private readonly constants = {
-        url: "https://dl.seraph.si/overlay",
+        url: "https://dl.seraph.si/overlay/",
     };
 
     constructor() {

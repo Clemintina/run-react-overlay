@@ -277,6 +277,10 @@ const registerSeraphIPC = () => {
         const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`);
         return {status: response.status, data: response.data};
     });
+
+    ipcMain.on('ContactStaff', async (event, ...args)=>{
+        await axiosClient.post('https://antisniper.seraph.si/api/v4/contact',args[0])
+    })
 };
 
 /**

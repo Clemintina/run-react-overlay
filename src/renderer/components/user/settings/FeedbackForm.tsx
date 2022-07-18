@@ -13,7 +13,7 @@ export interface FeedbackForm {
 export const FeedbackForm: React.ElementType = (props: FeedbackForm) =>{
     return (
         <FormControl>
-            <InputLabel htmlFor="overlay-feedback">{props.options.text ?? 'Feedback'}</InputLabel>
+            <InputLabel htmlFor="overlay-feedback">{props?.options?.text ?? 'Feedback'}</InputLabel>
             <Input id="overlay-feedback" aria-describedby="overlay-feedback-text" onChange={props.onChange} />
             <FormHelperText id="overlay-feedback-text">Please write as descriptively as possible</FormHelperText>
         </FormControl>
