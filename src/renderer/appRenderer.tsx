@@ -44,7 +44,7 @@ const darkTheme = createTheme({
 createRoot(document.getElementById("app")!).render(
     <Provider store={store}>
         <ThemeProvider theme={darkTheme}>
-        <div className='mainBody' style={{backgroundColor: store.getState().configStore.colours.backgroundColour, color: store.getState().configStore.colours.primaryColour}}>
+        <div className='mainBody'>
             <HashRouter basename='/'>
                 <TitleBar />
                 <Routes>

@@ -98,6 +98,7 @@ export const createAppWindow = (): BrowserWindow => {
         show: false,
         autoHideMenuBar: true,
         frame: false,
+        transparent: true,
         titleBarStyle: "hidden",
         icon: path.join("assets", "images", "icon.ico"),
         webPreferences: {
@@ -109,6 +110,7 @@ export const createAppWindow = (): BrowserWindow => {
         },
     });
 
+    appWindow.webContents.openDevTools({mode:'undocked'})
     appWindow.setAlwaysOnTop(true, "screen-saver");
     appWindow.setVisibleOnAllWorkspaces(true);
     mainWindowState.manage(appWindow);

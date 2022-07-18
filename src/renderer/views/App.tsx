@@ -189,7 +189,7 @@ const AppTable = () => {
     };
 
     return (
-        <div>
+        <div style={{backgroundColor: localStore.configStore.colours.backgroundColour, color: localStore.configStore.colours.primaryColour, opacity: 10}}>
             <div className='w-full h-full'>
                 <div className=' ag-theme-alpine-dark' style={{height: localStore.configStore.browserWindow.height - 38, overflowX: "hidden"}}>
                     <AgGridReact gridOptions={gridOptions} rowData={players} />

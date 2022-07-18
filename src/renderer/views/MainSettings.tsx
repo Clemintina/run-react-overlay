@@ -2,7 +2,7 @@ import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import React from "react";
 import store from "@renderer/store";
-import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
+import {apiKeyValidator, ColourSettings, ConfigStore, keathizApiKeyValidator, setBrowserWindow, setColours, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {ToggleButton} from "@components/user/ToggleButton";
@@ -10,11 +10,13 @@ import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
 import {SettingHeader} from "@components/user/settings/components/SettingHeader";
 import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
+import {Slider} from "@mui/material";
+import {isArray} from "util";
 
 const MainSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
     const isHypixelKeySet: boolean = localConfigStore.hypixel.apiKeyValid;
-    const isLogsSet: boolean =localConfigStore.logs.readable
+    const isLogsSet: boolean = localConfigStore.logs.readable;
     const settings = localConfigStore.settings;
     const version = localConfigStore.version;
     const colours = localConfigStore.colours;
@@ -22,7 +24,7 @@ const MainSettings = () => {
     // TODO make it look nicer and cleaner
 
     return (
-        <div style={{color: colours.primaryColour, fontSize: "x-large"}} className='w-full h-full p-2 flex flex-col space-y-2'>
+        <div style={{color: colours.primaryColour, backgroundColor: colours.backgroundColour}} className='w-full h-full p-2 flex flex-col space-y-2'>
             <div className='text-3xl font-bold underlineText'>Overlay Settings</div>
             <SettingCard>
                 <span>Hypixel API Key</span>
@@ -71,10 +73,10 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Overlay Logs</span>
-                <span/>
+                <span />
                 <span>
-                    <span className={'inline-flex flex'}>
-                        <LogSelectorModal/>
+                    <span className={"inline-flex flex"}>
+                        <LogSelectorModal />
                         {<ValidationIcon valid={isLogsSet} />}
                     </span>
                 </span>
@@ -118,8 +120,86 @@ const MainSettings = () => {
                     options={{enabled: settings.keathiz}}
                 />
             </SettingCard>
+            <SettingHeader>
+                <span />
+                <span>Un-categorised</span>
+                <span />
+            </SettingHeader>
             <SettingCard>
-                <span>Version:</span>
+                <span>Background Colour</span>
+                <span />
+                <span>
+                    <InputTextBox
+                        options={{placeholder: "Background Colour"}}
+                        onKeyDown={(event) => {
+                            const payload: ColourSettings = {
+                                backgroundColour: event.target.value,
+                                primaryColour: localConfigStore.colours.primaryColour,
+                                secondaryColour: localConfigStore.colours.secondaryColour,
+                            };
+                            store.dispatch(setColours(payload));
+                        }}
+                    />
+                </span>
+            </SettingCard>
+            <SettingCard>
+                <span>Primary Colour</span>
+                <span />
+                <span>
+                    <InputTextBox
+                        options={{placeholder: "Text Colour"}}
+                        onKeyDown={(event) => {
+                            const payload: ColourSettings = {
+                                backgroundColour: localConfigStore.colours.backgroundColour,
+                                primaryColour: event.target.value,
+                                secondaryColour: localConfigStore.colours.secondaryColour,
+                            };
+                            store.dispatch(setColours(payload));
+                        }}
+                    />
+                </span>
+            </SettingCard>
+            <SettingCard>
+                <span>Secondary Colour</span>
+                <span />
+                <span>
+                    <InputTextBox
+                        options={{placeholder: "Secondary Colour"}}
+                        onKeyDown={(event) => {
+                            const payload: ColourSettings = {
+                                backgroundColour: localConfigStore.colours.backgroundColour,
+                                primaryColour: localConfigStore.colours.primaryColour,
+                                secondaryColour: event.target.value,
+                            };
+                            store.dispatch(setColours(payload));
+                        }}
+                    />
+                </span>
+            </SettingCard>
+            <SettingCard>
+                <span>Opacity</span>
+                <span />
+                <span>
+                    <Slider
+                        aria-label='Opacity'
+                        value={localConfigStore.browserWindow.opacity}
+                        onChange={(event,value) => {
+                            const opacityValue: number = isArray(value)?  value[0]:value;
+                            console.log(opacityValue);
+                            store.dispatch(setBrowserWindow({height: localConfigStore.browserWindow.height, opacity: opacityValue, width: localConfigStore.browserWindow.width}));
+                        }}
+                        getAriaValueText={(value)=>{
+                            return `${value}`;
+                        }}
+                        valueLabelDisplay="auto"
+                        valueLabelFormat={(value: number)=> {
+                            return value;
+                        }}
+                    />
+                </span>
+            </SettingCard>
+            <SettingCard>
+                <span>Version</span>
                 <span />
                 <span>{version}</span>
             </SettingCard>
