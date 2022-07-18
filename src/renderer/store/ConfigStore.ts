@@ -4,8 +4,8 @@ import {DisplayErrorMessage} from "@common//utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+// eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
-import {useState} from "react";
 
 export interface ConfigStore {
     hypixel: {
@@ -17,11 +17,7 @@ export interface ConfigStore {
     version: string;
     logs: ClientSetting;
     table: TableState;
-    colours: {
-        backgroundColour: string;
-        primaryColour: string;
-        secondaryColour: string;
-    };
+    colours: ColourSettings;
     keathiz: {
         key: string;
         valid: boolean;
@@ -30,10 +26,7 @@ export interface ConfigStore {
         apiKey: string;
         valid: boolean;
     };
-    browserWindow: {
-        width: number;
-        height: number;
-    };
+    browserWindow: BrowserWindowSettings;
     error: DisplayErrorMessage;
     settings: SettingsConfig;
 }
@@ -48,6 +41,18 @@ export interface ClientSetting {
     clientName: string;
     logPath: string;
     readable: boolean;
+}
+
+export interface ColourSettings {
+    backgroundColour: string;
+    primaryColour: string;
+    secondaryColour: string;
+}
+
+export interface BrowserWindowSettings {
+    width: number;
+    height: number;
+    opacity: number;
 }
 
 export interface TableState {
@@ -77,10 +82,7 @@ interface InitScript {
                 valid: boolean;
             };
         };
-        browserWindow: {
-            width: number;
-            height: number;
-        };
+        browserWindow: BrowserWindowSettings;
         settings: SettingsConfig;
         table: {
             columns: [];
@@ -129,6 +131,7 @@ const ConfigStore = createSlice({
         browserWindow: {
             width: 600,
             height: 800,
+            opacity: 100,
         },
         table: {
             columnState: [{colId: 'id'}],
@@ -197,6 +200,7 @@ const ConfigStore = createSlice({
             const payload = action.payload;
             if (payload.readable) {
                 state.logs = action.payload;
+                state.error.code = 200;
             } else {
                 state.error.code = 400;
                 state.error.title = "Bad Log File";
@@ -206,6 +210,12 @@ const ConfigStore = createSlice({
         saveTableColumnState: (state, action:{payload: TableState}) => {
             state.table.columnState = action.payload.columnState
         },
+        setColours: (state, action:{payload: ColourSettings}) => {
+            state.colours = action.payload
+        },
+        setBrowserWindow: (state, action:{payload: BrowserWindowSettings}) => {
+            state.browserWindow = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -267,7 +277,11 @@ const ConfigStore = createSlice({
             })
             .addCase(saveTableColumnState.fulfilled, (state, action) => {
                 ConfigStore.caseReducers.saveTableColumnState(state, action);
-            });
+            })
+            .addCase(setColours.fulfilled,(state, action)=>{
+                ConfigStore.caseReducers.setColours(state, action);
+            })
+            .addCase(setBrowserWindow.fulfilled,(state, action)=>{ConfigStore.caseReducers.setBrowserWindow(state,action)})
     },
 });
 /**
@@ -303,6 +317,16 @@ export const setClient = createAsyncThunk("ConfigStore/setClient", async (client
 
 export const saveTableColumnState = createAsyncThunk("ConfigStore/saveTableColumnState", async (data: TableState) => {
     await window.config.set("overlay.table", data);
+    return data;
+});
+
+export const setBrowserWindow = createAsyncThunk("ConfigStore/setBrowserWindow", async (data: BrowserWindowSettings) => {
+    await window.config.set("run.overlay.browserWindow", data);
+    return data;
+});
+
+export const setColours = createAsyncThunk("ConfigStore/setColours", async (data: ColourSettings) => {
+    await window.config.set("run.overlay.browserWindow", data);
     return data;
 });
 

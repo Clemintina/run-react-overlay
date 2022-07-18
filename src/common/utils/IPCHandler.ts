@@ -7,5 +7,5 @@ export type IPCValidInvokeChannels = typeof IPCValidInvokeArray[number];
 const IPCValidOnArray = ["logFileLine"] as const;
 export type IPCValidOnChannels = typeof IPCValidOnArray[number];
 
-const IPCValidSendArray = ["logFileSet", "windowMinimise", "windowMaximise", "windowClose", "tagsSet"] as const;
+const IPCValidSendArray = ["logFileSet", "windowMinimise", "windowMaximise", "windowClose", "tagsSet",'opacity'] as const;
 export type IPCValidSendChannels = typeof IPCValidSendArray[number];

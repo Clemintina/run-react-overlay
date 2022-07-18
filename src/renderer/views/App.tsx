@@ -150,6 +150,18 @@ const getNickedPlayerSortingResponse = (params) => {
 
 // a2db40d5-d629-4042-9d1a-6963b2a7e000
 
+const hexToRGB = (hex, alpha) => {
+    const r = parseInt(hex.slice(1, 3), 16),
+        g = parseInt(hex.slice(3, 5), 16),
+        b = parseInt(hex.slice(5, 7), 16);
+
+    if (alpha) {
+        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+    } else {
+        return "rgb(" + r + ", " + g + ", " + b + ")";
+    }
+};
+
 const AppTable = () => {
     /**
      * Creates the rendered Homepage
@@ -190,7 +202,7 @@ const AppTable = () => {
 
     return (
         <div>
-            <div className='w-full h-full'>
+            <div className='w-full h-full' style={{background: localStore.configStore.colours.backgroundColour, color: localStore.configStore.colours.primaryColour}}>
                 <div className=' ag-theme-alpine-dark' style={{height: localStore.configStore.browserWindow.height - 38, overflowX: "hidden"}}>
                     <AgGridReact gridOptions={gridOptions} rowData={players} />
                 </div>

@@ -2,7 +2,7 @@ import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import React from "react";
 import store from "@renderer/store";
-import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
+import {apiKeyValidator, ColourSettings, ConfigStore, keathizApiKeyValidator, setBrowserWindow, setColours, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {ToggleButton} from "@components/user/ToggleButton";
@@ -10,23 +10,27 @@ import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
 import {SettingHeader} from "@components/user/settings/components/SettingHeader";
 import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
+import {Slider} from "@mui/material";
+import {isArray} from "util";
 
 const MainSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
     const isHypixelKeySet: boolean = localConfigStore.hypixel.apiKeyValid;
-    const isLogsSet: boolean =localConfigStore.logs.readable
+    const isLogsSet: boolean = localConfigStore.logs.readable;
     const settings = localConfigStore.settings;
     const version = localConfigStore.version;
     const colours = localConfigStore.colours;
 
+    const [opacityValue, setOpacityValue] = React.useState(localConfigStore.browserWindow.opacity);
+
     // TODO make it look nicer and cleaner
 
     return (
-        <div style={{color: colours.primaryColour, fontSize: "x-large"}} className='w-full h-full p-2 flex flex-col space-y-2'>
+        <div style={{color: colours.primaryColour, backgroundColor: colours.backgroundColour}} className='w-full h-full p-2 flex flex-col space-y-2'>
             <div className='text-3xl font-bold underlineText'>Overlay Settings</div>
             <SettingCard>
                 <span>Hypixel API Key</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -36,12 +40,12 @@ const MainSettings = () => {
                         }}
                         options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.hypixel.apiKey : "Hypixel API Key"}}
                     />
-                    {<ValidationIcon valid={isHypixelKeySet} />}
+                    {<ValidationIcon valid={isHypixelKeySet}/>}
                 </span>
             </SettingCard>
             <SettingCard>
                 <span>RUN API Key</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -51,12 +55,12 @@ const MainSettings = () => {
                         }}
                         options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.runKey : "RUN API Key"}}
                     />
-                    {<ValidationIcon valid={isHypixelKeySet} />}
+                    {<ValidationIcon valid={isHypixelKeySet}/>}
                 </span>
             </SettingCard>
             <SettingCard options={{shown: settings.keathiz}}>
                 <span>Keathiz API Key</span>
-                <span />
+                <span/>
                 <span>
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -66,27 +70,27 @@ const MainSettings = () => {
                         }}
                         options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
                     />
-                    {<ValidationIcon valid={localConfigStore.keathiz.valid} />}
+                    {<ValidationIcon valid={localConfigStore.keathiz.valid}/>}
                 </span>
             </SettingCard>
             <SettingCard>
                 <span>Overlay Logs</span>
                 <span/>
                 <span>
-                    <span className={'inline-flex flex'}>
+                    <span className={"inline-flex flex"}>
                         <LogSelectorModal/>
-                        {<ValidationIcon valid={isLogsSet} />}
+                        {<ValidationIcon valid={isLogsSet}/>}
                     </span>
                 </span>
             </SettingCard>
             <SettingHeader>
-                <span />
+                <span/>
                 <span>Apis</span>
-                <span />
+                <span/>
             </SettingHeader>
             <SettingCard>
                 <span>Boomza</span>
-                <span />
+                <span/>
                 <ToggleButton
                     text={""}
                     onChange={async (event) => {
@@ -98,7 +102,7 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Lunar</span>
-                <span />
+                <span/>
                 <ToggleButton
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
@@ -109,7 +113,7 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Keathiz</span>
-                <span />
+                <span/>
                 <ToggleButton
                     onChange={async (event) => {
                         const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
@@ -118,13 +122,105 @@ const MainSettings = () => {
                     options={{enabled: settings.keathiz}}
                 />
             </SettingCard>
+            <SettingHeader>
+                <span/>
+                <span>Un-categorised</span>
+                <span/>
+            </SettingHeader>
             <SettingCard>
-                <span>Version:</span>
-                <span />
+                <span>Background Colour</span>
+                <span/>
+                <span>
+                    <InputTextBox
+                        options={{placeholder: "Background Colour"}}
+                        onKeyDown={(event) => {
+                            const payload: ColourSettings = {
+                                backgroundColour: event.target.value,
+                                primaryColour: localConfigStore.colours.primaryColour,
+                                secondaryColour: localConfigStore.colours.secondaryColour,
+                            };
+                            store.dispatch(setColours(payload));
+                        }}
+                    />
+                </span>
+            </SettingCard>
+            <SettingCard>
+                <span>Primary Colour</span>
+                <span/>
+                <span>
+                    <InputTextBox
+                        options={{placeholder: "Text Colour"}}
+                        onKeyDown={(event) => {
+                            const payload: ColourSettings = {
+                                backgroundColour: localConfigStore.colours.backgroundColour,
+                                primaryColour: event.target.value,
+                                secondaryColour: localConfigStore.colours.secondaryColour,
+                            };
+                            store.dispatch(setColours(payload));
+                        }}
+                    />
+                </span>
+            </SettingCard>
+            <SettingCard>
+                <span>Secondary Colour</span>
+                <span/>
+                <span>
+                    <InputTextBox
+                        options={{placeholder: "Secondary Colour"}}
+                        onKeyDown={(event) => {
+                            const payload: ColourSettings = {
+                                backgroundColour: localConfigStore.colours.backgroundColour,
+                                primaryColour: localConfigStore.colours.primaryColour,
+                                secondaryColour: event.target.value,
+                            };
+                            store.dispatch(setColours(payload));
+                        }}
+                    />
+                </span>
+            </SettingCard>
+            <SettingCard>
+                <span>Opacity</span>
+                <span/>
+                <span>
+                    <Slider
+                        aria-label='Opacity'
+                        value={opacityValue}
+                        onChange={(event, value) => {
+                            const opacityValue: number = typeof value == 'number' ? value : value[0];
+                            setOpacityValue(opacityValue)
+                        }}
+                        onBlur={()=>{
+                            if (opacityValue<20) setOpacityValue(20);
+                            window.ipcRenderer.send('opacity', opacityValue/100);
+                            store.dispatch(setBrowserWindow({height: localConfigStore.browserWindow.height, opacity: opacityValue, width: localConfigStore.browserWindow.width}));
+                        }}
+                        getAriaValueText={(value) => `${value}`}
+                        valueLabelDisplay="auto"
+                        valueLabelFormat={(value: number) => {
+                            return value;
+                        }}
+                    />
+                </span>
+            </SettingCard>
+            <SettingCard>
+                <span>Version</span>
+                <span/>
                 <span>{version}</span>
             </SettingCard>
         </div>
     );
+};
+
+const hexToRGB = (hex, alpha) => {
+    const r = parseInt(hex.slice(1, 3), 16),
+        g = parseInt(hex.slice(3, 5), 16),
+        b = parseInt(hex.slice(5, 7), 16);
+
+    if (alpha) {
+        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+    } else {
+        return "rgb(" + r + ", " + g + ", " + b + ")";
+    }
 };
 
 export default MainSettings;

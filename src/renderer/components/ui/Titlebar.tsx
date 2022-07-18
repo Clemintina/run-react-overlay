@@ -32,7 +32,7 @@ const TitleBar = () => {
 
     return (
         <div>
-            <nav className='bg-grey-500 shadow-lg drag'>
+            <nav className='bg-grey-500 shadow-lg drag' style={{backgroundColor: localStore.colours.backgroundColour, color: localStore.colours.primaryColour, opacity: 10}}>
                 <div className='max-w-6xl mx-auto px-4'>
                     <div className='flex justify-between'>
                         <div className='flex space-x-7'>
