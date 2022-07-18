@@ -4,7 +4,7 @@ import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEnd
 import store, {Store} from "./index";
 import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
-import {BoomzaAntisniper, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import {setErrorMessage} from "@renderer/store/ConfigStore";
 
@@ -18,7 +18,7 @@ export interface PlayerStoreThunkObject {
 export interface PlayerStore {
     players: Array<Player>;
     tagStore: {
-        config:object,
+        config: object,
         tags: object
     }
 }
@@ -36,7 +36,7 @@ const PlayerStore = createSlice({
         },
     },
     reducers: {
-        updatePlayer: (state, action: {payload: PlayerHandler}) => {
+        updatePlayer: (state, action: { payload: PlayerHandler }) => {
             const payload: PlayerHandler = action.payload;
             if (payload !== undefined && payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
                 const playerPayload: Player = payload.data;
@@ -57,17 +57,17 @@ const PlayerStore = createSlice({
                     }
                 }
             }
-            if (payload!=undefined && payload.status != 200 && payload.status != 400) {
+            if (payload != undefined && payload.status != 200 && payload.status != 400) {
                 setErrorMessage({title: 'Player Error', cause: payload.cause, code: payload.status, detail: 'Please report this.'})
             }
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getPlayerHypixelData.fulfilled, (state, action: {payload: PlayerHandler}) => {
+            .addCase(getPlayerHypixelData.fulfilled, (state, action: { payload: PlayerHandler }) => {
                 PlayerStore.caseReducers.updatePlayer(state, action);
             })
-            .addCase(getPlayerHypixelData.rejected, (state, action: {payload}) => {
+            .addCase(getPlayerHypixelData.rejected, (state, action: { payload }) => {
                 PlayerStore.caseReducers.updatePlayer(state, action);
             })
             .addCase(removePlayerFromOverlay.fulfilled, (state, action) => {
@@ -78,7 +78,7 @@ const PlayerStore = createSlice({
             .addCase(resetOverlayTable.fulfilled, (state) => {
                 state.players = [];
             })
-            .addCase(updatePlayerStores.fulfilled, (state, action: {payload: IPCResponse<StoreObject>}) => {
+            .addCase(updatePlayerStores.fulfilled, (state, action: { payload: IPCResponse<StoreObject> }) => {
                 const payload: IPCResponse<StoreObject> = action.payload;
                 if (payload.status === 200) {
                     state.tagStore = payload.data;
@@ -97,7 +97,7 @@ const cacheState: PlayerStoreThunkObject = {
 /**
  * Adds players to the Overlay Table.
  */
-export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject,{dispatch}) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, {dispatch}) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -117,9 +117,21 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
 
     try {
         const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
+        // Checking if the player is invalid
+        if (ipcHypixelPlayer?.data?.uuid == null) {
+            // Since player is null, we check Kethiz and see if they have data on this nick
+            const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>('keathiz', KeathizEndpoints.DENICK, playerData.name);
+            // Check if they have data on the player
+            if (ipcKeathizDenicker.data?.player?.uuid) {
+                // Resend to Hypixel
+                const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>('hypixel', RequestType.UUID, ipcKeathizDenicker.data.player.uuid);
+                // If player is valid on Hypixel, Add to player method otherwise ignore
+                if (newIpcHypixelPlayer?.data?.uuid != null) playerData.hypixelPlayer = newIpcHypixelPlayer.data;
+            }
+        }
         if (ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) {
             const data: unknown = ipcHypixelPlayer.data;
-            let cause,code;
+            let cause, code;
             if (typeof data === "string") {
                 cause = data;
                 code = ipcHypixelPlayer.status;

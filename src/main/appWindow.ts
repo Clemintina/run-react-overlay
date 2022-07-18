@@ -417,7 +417,13 @@ const registerExternalApis = () => {
 
     ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string) => {
         const apikey = electronStore.get("external.keathiz.apiKey");
-        const response = await axiosClient(`https://api.antisniper.net/${endpoint}?uuid=${uuid}&key=${apikey}`, {
+        let params;
+        if (endpoint == KeathizEndpoints.OVERLAY_RUN){
+            params = `&uuid=${uuid}`
+        }else if (endpoint == KeathizEndpoints.DENICK){
+            params = `&name=${uuid}`
+        }
+        const response = await axiosClient(`https://api.antisniper.net/${endpoint}?key=${apikey}${params}`, {
             headers: {
                 Accept: "application/json",
             },
