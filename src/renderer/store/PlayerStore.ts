@@ -6,13 +6,14 @@ import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
-import {setErrorMessage} from "@renderer/store/ConfigStore";
+import {setErrorMessage, SettingsConfig} from "@renderer/store/ConfigStore";
 
 export interface PlayerStoreThunkObject {
     name: string;
     apiKey?: string | undefined;
     apiKeyOwner?: string | undefined;
     runKey?: string | undefined;
+    settings?: SettingsConfig
 }
 
 export interface PlayerStore {
@@ -97,7 +98,7 @@ const cacheState: PlayerStoreThunkObject = {
 /**
  * Adds players to the Overlay Table.
  */
-export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, {dispatch}) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -118,7 +119,7 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>
     try {
         const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
         // Checking if the player is invalid
-        if (ipcHypixelPlayer?.data?.uuid == null) {
+        if (ipcHypixelPlayer?.data?.uuid == null && cacheState.settings?.keathiz ) {
             // Since player is null, we check Kethiz and see if they have data on this nick
             const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>('keathiz', KeathizEndpoints.DENICK, playerData.name);
             // Check if they have data on the player
@@ -200,7 +201,7 @@ export const updatePlayerStores = createAsyncThunk("PlayerStore/updateStore", as
 });
 
 export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () => {
-    [cacheState.apiKey, cacheState.apiKeyOwner, cacheState.runKey] = await Promise.all([window.config.get("hypixel.apiKey"), window.config.get("hypixel.apiKeyOwner"), window.config.get("run.apiKey")]);
+    [cacheState.apiKey, cacheState.apiKeyOwner, cacheState.runKey, cacheState.settings] = await Promise.all([window.config.get("hypixel.apiKey"), window.config.get("hypixel.apiKeyOwner"), window.config.get("run.apiKey"), window.config.get('settings')]);
     store.dispatch(updatePlayerStores());
     return true;
 });
