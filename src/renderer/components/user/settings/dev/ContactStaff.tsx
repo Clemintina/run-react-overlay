@@ -74,7 +74,6 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                                 }
                             }
                             const strinyBody = JSON.stringify(body)
-                            console.log(strinyBody);
                             await window.ipcRenderer.send('ContactStaff', strinyBody);
                         }} text={'Submit'}/>
                     </Typography>
