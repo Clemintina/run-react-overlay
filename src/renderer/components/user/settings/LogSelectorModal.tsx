@@ -50,7 +50,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                     path += userHome + "/.lunarclient/offline/1.8/logs/";
                     break;
                 case "lunar_mlv":
-                    path += appData + "/.lunarclient/offline/files/1.8/logs/";
+                    path += appData + "/.lunarclient/offline/1.8.9/multiver/logs/";
                     break;
             }
             path += "latest.log";
