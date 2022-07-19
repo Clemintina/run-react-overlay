@@ -83,22 +83,20 @@ export const RUNElectronStore = Type.Optional(
                 ),
             }),
         ),
-        settings: Type.Optional(
-            Type.Object({
-                lunar: Type.Boolean({
-                    description: "Enable Lunar Tags",
-                    default: true,
-                }),
-                boomza: Type.Boolean({
-                    description: "Enable Boomza API",
-                    default: true,
-                }),
-                keathiz: Type.Boolean({
-                    description: "Enable Keathiz API",
-                    default: false,
-                }),
+        settings: Type.Object({
+            lunar: Type.Boolean({
+                description: "Enable Lunar Tags",
+                default: true,
             }),
-        ),
+            boomza: Type.Boolean({
+                description: "Enable Boomza API",
+                default: true,
+            }),
+            keathiz: Type.Boolean({
+                description: "Enable Keathiz API",
+                default: false,
+            }),
+        })
     }),
 );
 
