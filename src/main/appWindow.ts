@@ -168,7 +168,7 @@ const registerSeraphIPC = () => {
                 apiKey = args.length !== 0 ? (args[0] as string) : electronStore.get("hypixel.apiKey");
                 break;
             default:
-                apiKey = args.length >1 ? (args[1] as string) : electronStore.get("hypixel.apiKey");
+                apiKey = args.length > 1 ? (args[1] as string) : electronStore.get("hypixel.apiKey");
                 break;
         }
         const hypixelClient = new HypixelApi(apiKey, {
@@ -193,7 +193,6 @@ const registerSeraphIPC = () => {
             timeout: 7200,
         });
         const client = hypixelClient.getClient();
-        console.log(apiKey);
         if (resource === RequestType.KEY) {
             try {
                 const key = await client.key();
@@ -295,7 +294,7 @@ const registerSeraphIPC = () => {
         const hypixelApiKeyOwner: string = await electronStore.get("hypixel.apiKeyOwner");
         const runApiKey: string = await electronStore.get("run.apiKey");
 
-        const res = await axiosClient.post("https://antisniper.seraph.si/api/v4/contact", destr(args[0]), {
+        await axiosClient.post("https://antisniper.seraph.si/api/v4/contact", destr(args[0]), {
             headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
@@ -307,7 +306,6 @@ const registerSeraphIPC = () => {
                 "RUN-API-UUID": hypixelApiKeyOwner,
             },
         });
-        console.log(res);
     });
 };
 

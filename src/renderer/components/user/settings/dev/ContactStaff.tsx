@@ -20,9 +20,13 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false);
+        setFeedbackResponse(false);
+    };
     const [feedbackType, setFeedbackType] = React.useState('');
     const [feedbackTypeMessage, setFeedbackTypeMessage] = React.useState('');
+    const [feedbackResponse, setFeedbackResponse] = React.useState(false);
 
     const handleChange = async (event: SelectChangeEvent) => {
         setFeedbackType(event.target.value);
@@ -43,10 +47,10 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
 
     return (
         <div>
-            <InputBoxButton onClick={handleOpen} text={"Contact Us"}/>
+            <InputBoxButton onClick={handleOpen} text={"Tester Feedback"}/>
             <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
                 <Box sx={style}>
-                    <Typography sx={{mt: 0}}><FormLabel>Feedback Form</FormLabel></Typography>
+                    <Typography sx={{mt: 0}}><FormLabel title={'Tester Feedback'}>Feedback Form</FormLabel></Typography>
 
                     <Typography sx={{mt: 2}}>
                         <FormControl fullWidth>
@@ -60,22 +64,26 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                             </FormHelperText>
                             <FeedbackForm options={{text: feedbackType}} onChange={(event)=>setFeedbackTypeMessage(event.target.value)} />
                         </FormControl>
-                        <InputBoxButton onClick={async ()=>{
-                            const body = {
-                                overlay:{
-                                    version: configStore.version,
-                                    owner: configStore.hypixel.apiKeyOwner,
-                                    run: configStore.runKey,
-                                    settings: configStore.settings
-                                },
-                                user:{
-                                    type: feedbackType,
-                                    message: feedbackTypeMessage
+                        <span>
+                            <InputBoxButton onClick={async ()=>{
+                                const body = {
+                                    overlay:{
+                                        version: configStore.version,
+                                        owner: configStore.hypixel.apiKeyOwner,
+                                        run: configStore.runKey,
+                                        settings: configStore.settings
+                                    },
+                                    user:{
+                                        type: feedbackType,
+                                        message: feedbackTypeMessage
+                                    }
                                 }
-                            }
-                            const strinyBody = JSON.stringify(body)
-                            await window.ipcRenderer.send('ContactStaff', strinyBody);
-                        }} text={'Submit'}/>
+                                const strinyBody = JSON.stringify(body)
+                                await window.ipcRenderer.send('ContactStaff', strinyBody);
+                                setTimeout(() => setFeedbackResponse(true), 2000);
+                            }} text={'Submit'}/>
+                            <span style={feedbackResponse ? {} : {display: "none"}} className='pl-2 text-green-500'>✓</span>
+                        </span>
                     </Typography>
 
                 </Box>

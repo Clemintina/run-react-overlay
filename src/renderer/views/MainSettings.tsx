@@ -216,11 +216,6 @@ const MainSettings = () => {
                 <span/>
                 <span>{version}</span>
             </SettingCard>
-            <SettingCard>
-                <span>Contact Staff</span>
-                <span/>
-                <span><ContactStaff/></span>
-            </SettingCard>
         </div>
     );
 };

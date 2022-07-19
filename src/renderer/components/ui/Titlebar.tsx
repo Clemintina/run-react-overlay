@@ -10,6 +10,7 @@ import {InputTextBox} from "@components/user/InputTextBox";
 import {Alert} from "@mui/material";
 import {useSelector} from "react-redux";
 import {ConfigStore, setErrorMessage} from "@renderer/store/ConfigStore";
+import {ContactStaff} from "@components/user/settings/dev/ContactStaff";
 
 const TitleBar = () => {
     const currentRoute = useLocation();
@@ -44,7 +45,9 @@ const TitleBar = () => {
                                     <UnderlinedTitle text={"Seraph"} options={{text: {size: 25}}} />
                                 </Link>
                             </div>
-                            <div className='md:flex items-center space-x-1'></div>
+                            <div className='md:flex items-center space-x-1'>
+                                <ContactStaff/>
+                            </div>
                         </div>
                         <div className='md:flex items-center space-x-3 nodrag'>
                             <span className='flex'>
