@@ -83,7 +83,7 @@ export const RUNElectronStore = Type.Optional(
                 ),
             }),
         ),
-        settings: Type.Object({
+        settings: Type.Optional(Type.Object({
             lunar: Type.Boolean({
                 description: "Enable Lunar Tags",
                 default: true,
@@ -96,9 +96,18 @@ export const RUNElectronStore = Type.Optional(
                 description: "Enable Keathiz API",
                 default: false,
             }),
-        })
+        }))
     }),
 );
+
+export const getDefaultElectronStore: RUNElectronStoreType = {
+    settings: {
+        lunar: true,
+        boomza: true,
+        keathiz: false
+    }
+}
+
 
 export type RUNElectronStoreType = Static<typeof RUNElectronStore>;
 

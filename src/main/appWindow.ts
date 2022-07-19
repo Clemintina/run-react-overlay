@@ -7,7 +7,7 @@ import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import {getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTags, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
+import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTags, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
 import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
@@ -44,6 +44,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 const electronStoreSchema = destr(JSON.stringify(RUNElectronStore));
 const electronStore = new Store<RUNElectronStoreType>({
     schema: electronStoreSchema.properties,
+    defaults: getDefaultElectronStore
 });
 
 const electronStoreTagsSchema = destr(JSON.stringify(RUNElectronStoreTags.properties));
