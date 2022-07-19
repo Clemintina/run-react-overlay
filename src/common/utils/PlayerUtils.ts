@@ -12,6 +12,7 @@ export interface Player {
     id: string | null;
     nicked: boolean | null;
     bot: boolean | null;
+    denicked: boolean | null;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: Components.Schemas.Guild | null;
     sources: {
@@ -27,7 +28,7 @@ export class PlayerUtils {
     private readonly formatPlayerInstance: FormatPlayer;
     private readonly playerHypixelUtils: PlayerHypixelUtils;
 
-    constructor(stores?: {config: object; tags: object}) {
+    constructor(stores?: { config: object; tags: object }) {
         this.formatPlayerInstance = new FormatPlayer();
         this.playerHypixelUtils = new PlayerHypixelUtils();
         if (stores != undefined) {
@@ -46,11 +47,11 @@ export class PlayerUtils {
 
 export class FormatPlayer {
     private isOverlayStats = false;
-    private starterDivider = `<span style="margin: 0 auto;" class="${this.isOverlayStats?'flex':''}">`;
+    private starterDivider = `<span style="margin: 0 auto;" class="${this.isOverlayStats ? 'flex' : ''}">`;
     private tagStore;
     private configStore;
 
-    public setConfig = (stores: {config: object; tags: object},options?:{subMenu?: boolean}) => {
+    public setConfig = (stores: { config: object; tags: object }, options?: { subMenu?: boolean }) => {
         this.tagStore = stores.tags;
         this.configStore = stores.config;
         this.isOverlayStats = options?.subMenu ?? false;
@@ -78,9 +79,9 @@ export class FormatPlayer {
                     tagRenderer += this.getTagsFromConfig("run.migration");
                 }
                 if (runApi.safelist.tagged) {
-                    tagRenderer += this.getTagsFromConfig("run.safelist",runApi.safelist.timesKilled);
+                    tagRenderer += this.getTagsFromConfig("run.safelist", runApi.safelist.timesKilled);
                 }
-                if(runApi.safelist.personal){
+                if (runApi.safelist.personal) {
                     tagRenderer += this.getTagsFromConfig('run.personal_safelist')
                 }
                 if (runApi.annoylist.tagged) {
@@ -131,7 +132,7 @@ export class FormatPlayer {
             const coreMetric: MetricsObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], this.tagStore) ?? 0;
             const coreArray = coreMetric?.colours ?? "FF5555";
 
-            if (!isFinite(value))value = ~~Number((((0-18)/0)*100).toFixed(2));
+            if (!isFinite(value)) value = ~~Number((((0 - 18) / 0) * 100).toFixed(2));
 
             if (Array.isArray(coreArray) && value != undefined) {
                 const tempArray = [...coreArray];
@@ -172,7 +173,7 @@ export class FormatPlayer {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
             nameRenderer += `<span class="name-span flex">`;
-            nameRenderer += `<img src="https://crafatar.com/avatars/${player.id}?size=16&overlay=true"/>`
+            nameRenderer += `<img src="https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true"/>`;
             if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
@@ -187,6 +188,9 @@ export class FormatPlayer {
                 if (player.hypixelPlayer !== null) {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
                     nameRenderer += `${rank.rankHtml}&nbsp <span style="color: #${rank.colourHex};">${player.hypixelPlayer.displayname}</span>`;
+                    if (player.denicked) {
+                        nameRenderer += `<span style="color:darkred;"> (D) </span>`;
+                    }
                 } else {
                     nameRenderer += ``;
                 }
@@ -390,7 +394,7 @@ export class FormatPlayer {
 
     private getPlayerTagDivider = (tag: string | number | unknown, colour: string, player?: Player) => {
         let htmlResponse = ``,
-            styleString = `color: ${colour};`, classNameData=``;
+            styleString = `color: ${colour};`, classNameData = ``;
         if (typeof tag === "number" && !Number.isInteger(tag) && tag != 0) tag = tag.toFixed(2);
         if (colour === "white") {
             styleString += `opacity: 75%;`;
@@ -406,7 +410,7 @@ export class FormatPlayer {
                 }
             } else if (typeof tag === "number") {
                 classNameData += `justify-center w-full`;
-                if (this.isOverlayStats) classNameData +=` flex`
+                if (this.isOverlayStats) classNameData += ` flex`
             }
             htmlResponse += `<span class="${classNameData}" style="${styleString}">${tag}</span>`;
             return htmlResponse;
@@ -458,7 +462,7 @@ export class FormatPlayer {
 }
 
 export class PlayerHypixelUtils {
-    public getDateFormatted = (epoch: number | undefined, options?: {day: boolean, month: boolean, year: boolean} | undefined) => {
+    public getDateFormatted = (epoch: number | undefined, options?: { day: boolean, month: boolean, year: boolean } | undefined) => {
         if (epoch === undefined) return "Disabled";
         const d = new Date(0);
         d.setUTCMilliseconds(epoch);
@@ -484,7 +488,7 @@ export class PlayerHypixelUtils {
 }
 
 export interface MinecraftColoursImpl {
-    [colour: string]: {colour: string; hex: string};
+    [colour: string]: { colour: string; hex: string };
 }
 
 export const MinecraftColours: MinecraftColoursImpl = {

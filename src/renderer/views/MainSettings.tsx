@@ -12,6 +12,8 @@ import {SettingHeader} from "@components/user/settings/components/SettingHeader"
 import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
 import {Slider} from "@mui/material";
 import {isArray} from "util";
+import {FeedbackForm} from "@components/user/settings/FeedbackForm";
+import {ContactStaff} from "@components/user/settings/dev/ContactStaff";
 
 const MainSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
@@ -124,7 +126,7 @@ const MainSettings = () => {
             </SettingCard>
             <SettingHeader>
                 <span/>
-                <span>Un-categorised</span>
+                <span>Customise the Overlay</span>
                 <span/>
             </SettingHeader>
             <SettingCard>
@@ -202,10 +204,20 @@ const MainSettings = () => {
                     />
                 </span>
             </SettingCard>
+            <SettingHeader>
+                <span/>
+                <span>Misc</span>
+                <span/>
+            </SettingHeader>
             <SettingCard>
                 <span>Version</span>
                 <span/>
                 <span>{version}</span>
+            </SettingCard>
+            <SettingCard>
+                <span>Contact Staff</span>
+                <span/>
+                <span><ContactStaff/></span>
             </SettingCard>
         </div>
     );
