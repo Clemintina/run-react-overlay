@@ -1,6 +1,6 @@
 import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
 import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank} from "@common/zikeji";
-import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {BoomzaAntisniper, KeathizOverlayRun, KeathizDenick} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";

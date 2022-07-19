@@ -4,7 +4,7 @@ import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEnd
 import store, {Store} from "./index";
 import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
-import {BoomzaAntisniper, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {BoomzaAntisniper, KeathizEndpoints, KeathizOverlayRun, KeathizDenick} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import {setErrorMessage} from "@renderer/store/ConfigStore";
 
