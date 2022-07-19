@@ -58,9 +58,9 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                             <FormHelperText className={"text-red-500 font-bold"}>
                                 {"The type of report you'd like to submit!"}
                             </FormHelperText>
-                            <FeedbackForm options={{text: feedbackType}} onChange={setFeedbackTypeMessage} />
+                            <FeedbackForm options={{text: feedbackType}} onChange={(event)=>setFeedbackTypeMessage(event.target.value)} />
                         </FormControl>
-                        <InputBoxButton onClick={()=>{
+                        <InputBoxButton onClick={async ()=>{
                             const body = {
                                 overlay:{
                                     version: configStore.version,
@@ -73,8 +73,9 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                                     message: feedbackTypeMessage
                                 }
                             }
-                            window.ipcRenderer.send('ContactStaff', body);
-                        }} text={'Submt'}/>
+                            const strinyBody = JSON.stringify(body)
+                            await window.ipcRenderer.send('ContactStaff', strinyBody);
+                        }} text={'Submit'}/>
                     </Typography>
 
                 </Box>

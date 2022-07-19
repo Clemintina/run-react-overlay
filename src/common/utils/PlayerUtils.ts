@@ -1,6 +1,6 @@
 import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
 import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank} from "@common/zikeji";
-import {BoomzaAntisniper, KeathizOverlayRun, KeathizDenick} from "@common/utils/externalapis/BoomzaApi";
+import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
@@ -74,6 +74,9 @@ export class FormatPlayer {
                     if (boomza.report) {
                         tagRenderer += this.getPlayerTagDivider("H", "red");
                     }
+                }
+                if (runApi.migrated.tagged) {
+                    tagRenderer += this.getTagsFromConfig("run.migration");
                 }
                 if (runApi.safelist.tagged) {
                     tagRenderer += this.getTagsFromConfig("run.safelist", runApi.safelist.timesKilled);
