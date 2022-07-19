@@ -47,7 +47,7 @@ export class PlayerUtils {
 
 export class FormatPlayer {
     private isOverlayStats = false;
-    private starterDivider = `<span style="margin: 0 auto;" class="${this.isOverlayStats ? 'flex' : ''}">`;
+    private starterDivider = `<span style="margin: auto;" class="${this.isOverlayStats ? 'flex' : ''}">`;
     private tagStore;
     private configStore;
 
@@ -169,18 +169,20 @@ export class FormatPlayer {
     public renderName = (player: Player) => {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
-            nameRenderer += `<span class="name-span flex">`;
-            nameRenderer += `<img src="https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true"/>`;
+
+            nameRenderer += `<span class="name-span justify-content-start" style = "align-left">`;
+            //nameRenderer += `<span><img width = "16" height = "16" src="https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" style = "margin:0px"/></span>`;
+            nameRenderer += `<img src = "https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" style= "margin-right: 2px; display: inline;"/>`
+            
             if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
                         nameRenderer += `<span class="lunar-client-image">
-                                       <img style="vertical-align:middle;" width="25px" height="25px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag"/>
+                                       <img style="display: inline;" width="18px" height="18px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />
                                      </span>`;
                     }
                 }
             }
-
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
                 if (player.hypixelPlayer !== null) {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
