@@ -278,28 +278,44 @@ const registerSeraphIPC = () => {
         return {status: response.status, data: response.data};
     });
 
-    ipcMain.on('ContactStaff', async (event, ...args)=>{
-        await axiosClient.post('https://antisniper.seraph.si/api/v4/contact',args[0])
-    })
+    ipcMain.on("ContactStaff", async (event, ...args) => {
+        const hypixelApiKey:string = await electronStore.get("hypixel.apiKey");
+        const hypixelApiKeyOwner:string = await electronStore.get("hypixel.apiKeyOwner");
+        const runApiKey:string = await electronStore.get("run.apiKey");
+
+        const res = await axiosClient.post("https://antisniper.seraph.si/api/v4/contact", destr(args[0]), {
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+                "API-Key": hypixelApiKey,
+                "API-Key-Owner": hypixelApiKeyOwner,
+                "Run-API-Key": runApiKey,
+                "Run-API-Version": overlayVersion,
+                "RUN-API-UUID": hypixelApiKeyOwner,
+            },
+        });
+        console.log(res);
+    });
 };
 
 /**
  * Register Store Inter Process Communication
  */
 const registerElectronStore = () => {
-    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
+    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
         electronStore.set(data.key, data.data);
     });
 
-    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
+    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
         return electronStore.get(data.key);
     });
 
-    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
+    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
         electronStoreTags.set(data.key, data.data);
     });
 
-    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
+    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
         return electronStore.get(data.key);
     });
 
@@ -392,9 +408,9 @@ const registerMainWindowCommunications = () => {
         appWindow?.showInactive();
     });
 
-    ipcMain.on('opacity', async (event, ...args) => {
+    ipcMain.on("opacity", async (event, ...args) => {
         appWindow.setOpacity(args[0]);
-    })
+    });
 };
 
 /**
@@ -422,10 +438,10 @@ const registerExternalApis = () => {
     ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string) => {
         const apikey = electronStore.get("external.keathiz.apiKey");
         let params;
-        if (endpoint == KeathizEndpoints.OVERLAY_RUN){
-            params = `&uuid=${uuid}`
-        }else if (endpoint == KeathizEndpoints.DENICK){
-            params = `&nick=${uuid}`
+        if (endpoint == KeathizEndpoints.OVERLAY_RUN) {
+            params = `&uuid=${uuid}`;
+        } else if (endpoint == KeathizEndpoints.DENICK) {
+            params = `&nick=${uuid}`;
         }
         const response = await axiosClient(`https://api.antisniper.net/${endpoint}?key=${apikey}${params}`, {
             headers: {
