@@ -46,7 +46,7 @@ const TitleBar = () => {
                                 </Link>
                             </div>
                             <div className='md:flex items-center space-x-1'>
-                                <ContactStaff/>
+                                <span className={'nodrag'}><ContactStaff/></span>
                             </div>
                         </div>
                         <div className='md:flex items-center space-x-3 nodrag'>
