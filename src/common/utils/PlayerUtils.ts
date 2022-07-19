@@ -75,6 +75,9 @@ export class FormatPlayer {
                         tagRenderer += this.getPlayerTagDivider("H", "red");
                     }
                 }
+                if (runApi.migrated.tagged) {
+                    tagRenderer += this.getTagsFromConfig("run.migration");
+                }
                 if (runApi.safelist.tagged) {
                     tagRenderer += this.getTagsFromConfig("run.safelist", runApi.safelist.timesKilled);
                 }
@@ -205,8 +208,7 @@ export class FormatPlayer {
     public renderWinstreak = (player: Player) => {
         let renderer: string = this.starterDivider;
         if (!player.nicked) {
-            console.log(player.hypixelPlayer?.stats?.Bedwars?.winstreak);
-            let playerValue = player.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
+            let playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0;
             if (player.sources.keathiz != null && this.configStore.settings.keathiz) {
                 const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
                 if (keathizTags.player.winstreak != null && keathizTags.player.winstreak.accurate == false) playerValue = keathizTags.player.winstreak.estimates.overall_winstreak
