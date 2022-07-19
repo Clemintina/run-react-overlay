@@ -108,7 +108,6 @@ export const getDefaultElectronStore: RUNElectronStoreType = {
     }
 }
 
-
 export type RUNElectronStoreType = Static<typeof RUNElectronStore>;
 
 export const RUNElectronStoreTags = Type.Object({

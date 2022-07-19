@@ -44,7 +44,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 const electronStoreSchema = destr(JSON.stringify(RUNElectronStore));
 const electronStore = new Store<RUNElectronStoreType>({
     schema: electronStoreSchema.properties,
-    defaults: getDefaultElectronStore
+    defaults: getDefaultElectronStore,
 });
 
 const electronStoreTagsSchema = destr(JSON.stringify(RUNElectronStoreTags.properties));
@@ -162,7 +162,15 @@ const registerMainIPC = () => {
  */
 const registerSeraphIPC = () => {
     ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, resource: RequestType, ...args: unknown[]) => {
-        const apiKey: string = resource == RequestType.KEY ? (args[0] as string) : electronStore.get("hypixel.apiKey");
+        let apiKey: string;
+        switch (resource) {
+            case RequestType.KEY:
+                apiKey = args.length !== 0 ? (args[0] as string) : electronStore.get("hypixel.apiKey");
+                break;
+            default:
+                apiKey = args.length >1 ? (args[1] as string) : electronStore.get("hypixel.apiKey");
+                break;
+        }
         const hypixelClient = new HypixelApi(apiKey, {
             cache: {
                 get(key) {
@@ -185,9 +193,12 @@ const registerSeraphIPC = () => {
             timeout: 7200,
         });
         const client = hypixelClient.getClient();
+        console.log(apiKey);
         if (resource === RequestType.KEY) {
             try {
-                return await client.key();
+                const key = await client.key();
+                if (key.data?.key != undefined) electronStore.set("hypixel.apiKey", key.data.key);
+                return key;
             } catch (e) {
                 return getErrorHandler(e);
             }
@@ -280,9 +291,9 @@ const registerSeraphIPC = () => {
     });
 
     ipcMain.on("ContactStaff", async (event, ...args) => {
-        const hypixelApiKey:string = await electronStore.get("hypixel.apiKey");
-        const hypixelApiKeyOwner:string = await electronStore.get("hypixel.apiKeyOwner");
-        const runApiKey:string = await electronStore.get("run.apiKey");
+        const hypixelApiKey: string = await electronStore.get("hypixel.apiKey");
+        const hypixelApiKeyOwner: string = await electronStore.get("hypixel.apiKeyOwner");
+        const runApiKey: string = await electronStore.get("run.apiKey");
 
         const res = await axiosClient.post("https://antisniper.seraph.si/api/v4/contact", destr(args[0]), {
             headers: {

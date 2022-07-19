@@ -6,7 +6,7 @@ import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
-import {setErrorMessage, SettingsConfig} from "@renderer/store/ConfigStore";
+import {initScript, setErrorMessage, SettingsConfig} from "@renderer/store/ConfigStore";
 
 export interface PlayerStoreThunkObject {
     name: string;
@@ -62,9 +62,6 @@ const PlayerStore = createSlice({
                     }
                 }
             }
-            if (payload != undefined && payload.status != 200 && payload.status != 400) {
-                setErrorMessage({title: 'Player Error', cause: payload.cause, code: payload.status, detail: 'Please report this.'})
-            }
         },
     },
     extraReducers: (builder) => {
@@ -111,7 +108,7 @@ const cacheState: PlayerStoreThunkObject = {
 /**
  * Adds players to the Overlay Table.
  */
-export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject, {getState}) => {
+export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
     const playerData: Player = {
         name: thunkObject.name,
         id: null,
@@ -125,22 +122,22 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>
         },
     };
     const apiKey = cacheState.apiKey;
-
+    console.log(apiKey);
     if (apiKey === undefined || apiKey.length !== 36) {
         return {status: 403, cause: "No API Key", data: null};
     }
 
     try {
-        const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""));
+        const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name,cacheState.apiKey) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""),cacheState.apiKey);
         // Checking if the player is invalid
-        if (ipcHypixelPlayer?.data?.uuid == null && getState().configStore.settings.keathiz) {
+        if (ipcHypixelPlayer?.data?.uuid == null && cacheState?.settings?.keathiz) {
             // Since player is null, we check Kethiz and see if they have data on this nick
             const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>('keathiz', KeathizEndpoints.DENICK, playerData.name);
             // Check if they have data on the player
             if (ipcKeathizDenicker.data?.player?.uuid) {
                 // Resend to Hypixel
                 const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>('hypixel', RequestType.UUID, ipcKeathizDenicker.data.player.uuid);
-                // If player is valid on Hypixel, Add to player method otherwise ignore
+                // If the player is valid on Hypixel, Add to player method otherwise ignore
                 if (newIpcHypixelPlayer?.data?.uuid != null) {
                     playerData.hypixelPlayer = newIpcHypixelPlayer.data;
                     playerData.denicked = true
@@ -216,6 +213,7 @@ export const resetOverlayTable = createAsyncThunk("PlayerStore/resetOverlayTable
 });
 
 export const updatePlayerStores = createAsyncThunk("PlayerStore/updateStore", async () => {
+    cacheState.apiKey = await window.config.get("hypixel.apiKey");
     return await window.ipcRenderer.invoke<StoreObject>("getWholeStore");
 });
 
@@ -225,6 +223,12 @@ export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () =>
     cacheState.tagStore = store.getState().playerStore.tagStore;
     return true;
 });
+
+export const updateCachedState = () => {
+    store.dispatch(playerInitScript);
+    store.dispatch(initScript);
+    window.location.reload();
+}
 
 const getBoomza = async (player: Player) => {
     let api: IPCResponse<BoomzaAntisniper>;

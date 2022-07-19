@@ -14,6 +14,7 @@ import {Slider} from "@mui/material";
 import {isArray} from "util";
 import {FeedbackForm} from "@components/user/settings/FeedbackForm";
 import {ContactStaff} from "@components/user/settings/dev/ContactStaff";
+import {updateCachedState} from "@renderer/store/PlayerStore";
 
 const MainSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
@@ -38,6 +39,7 @@ const MainSettings = () => {
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                             if (event.key === "Enter") {
                                 store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                                setTimeout(() => updateCachedState(), 1000);
                             }
                         }}
                         options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.hypixel.apiKey : "Hypixel API Key"}}
