@@ -8,7 +8,7 @@ import {Interweave} from "interweave";
 import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
 import {AgGridReact} from "ag-grid-react";
 // eslint-disable-next-line import/named
-import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
+import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
 import {saveTableColumnState, TableState} from "@renderer/store/ConfigStore";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
@@ -174,31 +174,35 @@ const AppTable = () => {
     const tagStore = localStore.playerStore.tagStore;
     playerFormatter.setConfig({tags: tagStore.tags, config: tagStore.config});
 
-    const onSaveGridColumnState=(e:ColumnApi) =>{
+    let gridApi: GridApi;
+
+    const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
-        const res: TableState = {columnState}
-        store.dispatch(saveTableColumnState(res))
-    }
+        const res: TableState = {columnState};
+        store.dispatch(saveTableColumnState(res));
+    };
 
     const gridOptions: GridOptions = {
         onGridReady(event: GridReadyEvent) {
-            console.log(localStore.configStore.table.columnState);
+            gridApi = event.api;
             event.columnApi.applyColumnState({state: localStore.configStore.table.columnState, applyOrder: true});
+            event.api.setRowData(players);
         },
         onFirstDataRendered(event: FirstDataRenderedEvent) {
             event.columnApi.applyColumnState({state: localStore.configStore.table.columnState, applyOrder: true});
-
         },
         onGridColumnsChanged(event: GridColumnsChangedEvent) {
-            onSaveGridColumnState(event.columnApi)
+            onSaveGridColumnState(event.columnApi);
         },
         onColumnMoved(event: ColumnMovedEvent) {
-            onSaveGridColumnState(event.columnApi)
+            onSaveGridColumnState(event.columnApi);
         },
         columnDefs: columns,
         defaultColDef: defaultColDefs,
         animateRows: true,
         autoSizePadding: 0,
+        rowData: players,
+        getRowId: (params: GetRowIdParams<Player>) => params.data.name,
     };
 
     return (

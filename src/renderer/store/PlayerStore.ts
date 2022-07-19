@@ -122,7 +122,6 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, { state: Store }>
         },
     };
     const apiKey = cacheState.apiKey;
-    console.log(apiKey);
     if (apiKey === undefined || apiKey.length !== 36) {
         return {status: 403, cause: "No API Key", data: null};
     }
