@@ -2,7 +2,7 @@ import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import React from "react";
 import store from "@renderer/store";
-import {apiKeyValidator, ColourSettings, ConfigStore, keathizApiKeyValidator, setBrowserWindow, setColours, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
+import {apiKeyValidator, ColourSettings, ConfigStore, keathizApiKeyValidator, runApiKeyValidator, setBrowserWindow, setColours, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {ToggleButton} from "@components/user/ToggleButton";
@@ -56,7 +56,7 @@ const MainSettings = () => {
                     <InputTextBox
                         onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                             if (event.key === "Enter") {
-                                store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                                store.dispatch(runApiKeyValidator({runApiKey: event.currentTarget.value.replaceAll(" ", ""),state: localConfigStore}));
                             }
                         }}
                         options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.runKey : "RUN API Key"}}

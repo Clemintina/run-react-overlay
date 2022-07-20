@@ -40,11 +40,12 @@ export const RUNElectronStore = Type.Optional(
                     description: "The Logs path which the overlay uses to read players",
                     default: "",
                 }),
+                first_launch: Type.Boolean({default: true}),
                 table: Type.Optional(
                     Type.Object({
-                        columns:Type.Optional(Type.Array(Type.Any()))
-                    })
-                )
+                        columns: Type.Optional(Type.Array(Type.Any())),
+                    }),
+                ),
             }),
         ),
         external: Type.Optional(
@@ -83,30 +84,36 @@ export const RUNElectronStore = Type.Optional(
                 ),
             }),
         ),
-        settings: Type.Optional(Type.Object({
-            lunar: Type.Boolean({
-                description: "Enable Lunar Tags",
-                default: true,
+        settings: Type.Optional(
+            Type.Object({
+                lunar: Type.Boolean({
+                    description: "Enable Lunar Tags",
+                    default: true,
+                }),
+                boomza: Type.Boolean({
+                    description: "Enable Boomza API",
+                    default: true,
+                }),
+                keathiz: Type.Boolean({
+                    description: "Enable Keathiz API",
+                    default: false,
+                }),
             }),
-            boomza: Type.Boolean({
-                description: "Enable Boomza API",
-                default: true,
-            }),
-            keathiz: Type.Boolean({
-                description: "Enable Keathiz API",
-                default: false,
-            }),
-        }))
+        ),
     }),
 );
 
 export const getDefaultElectronStore: RUNElectronStoreType = {
+    overlay: {
+        logPath: "",
+        first_launch: true,
+    },
     settings: {
         lunar: true,
         boomza: true,
-        keathiz: false
-    }
-}
+        keathiz: false,
+    },
+};
 
 export type RUNElectronStoreType = Static<typeof RUNElectronStore>;
 

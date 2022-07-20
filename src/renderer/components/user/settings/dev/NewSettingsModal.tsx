@@ -41,68 +41,22 @@ export const NewSettingsModal: React.ElementType = (props: NewSettingsModal) => 
                                 <div className='bg-cyan-500 max-w-sm rounded overflow-hidden shadow-lg '>
                                     <div className='px-6 py-4'>
                                         <div className='font-bold text-xl mb-2'>APIs</div>
-                                        <p className='text-cyan-700 text-base'>Configure the APIs the Overlay uses.</p>
                                     </div>
                                 </div>
                             </div>
                             <div className='p-4 rounded-md flex items-center justify-center'>
                                 <div className='bg-cyan-500 max-w-sm rounded overflow-hidden shadow-lg '>
                                     <div className='px-6 py-4'>
-                                        <div className='font-bold text-xl mb-2'>APIs</div>
-                                        <p className='text-cyan-700 text-base'>Configure the APIs the Overlay uses.</p>
+                                        <div className='font-bold text-xl mb-2'>Tags</div>
                                     </div>
                                 </div>
                             </div>
                             <div className='p-4 rounded-md flex items-center justify-center'>
-                                <div className='bg-cyan-500 max-w-sm rounded overflow-hidden shadow-lg '>
+                                <div className='max-w-sm rounded overflow-hidden shadow-lg hover:border-cyan-500 hover:border-2 '>
                                     <div className='px-6 py-4'>
-                                        <div className='font-bold text-xl mb-2'>APIs</div>
-                                        <p className='text-cyan-700 text-base'>Configure the APIs the Overlay uses.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='p-4 rounded-md flex items-center justify-center'>
-                                <div className='bg-cyan-500 max-w-sm rounded overflow-hidden shadow-lg '>
-                                    <div className='px-6 py-4'>
-                                        <div className='font-bold text-xl mb-2'>APIs</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='p-4 rounded-md flex items-center justify-center'>
-                                <div className='bg-cyan-500 max-w-sm rounded overflow-hidden shadow-lg '>
-                                    <div className='px-6 py-4'>
-                                        <div className='font-bold text-xl mb-2'>APIs</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='p-4 rounded-md flex items-center justify-center'>
-                                <div className='bg-cyan-500 max-w-sm rounded overflow-hidden shadow-lg '>
-                                    <div className='px-6 py-4'>
-                                        <div className='font-bold text-xl mb-2'>APIs</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='p-4 bg-cyan-400 rounded-md flex items-center justify-center'>
-                                <div className='max-w-sm rounded overflow-hidden shadow-lg '>
-                                    <div className='px-6 py-4'>
-                                        <div className='font-bold text-xl mb-2'>APIs</div>
-                                        <p className='text-cyan-700 text-base'>Configure the APIs the Overlay uses.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='p-4 bg-cyan-400 rounded-md flex items-center justify-center'>
-                                <div className='max-w-sm rounded overflow-hidden shadow-lg '>
-                                    <div className='px-6 py-4'>
-                                        <div className='font-bold text-xl mb-2'>APIs</div>
-                                        <p className='text-cyan-700 text-base'>Configure the APIs the Overlay uses.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='p-4 bg-cyan-400 rounded-md flex items-center justify-center'>
-                                <div className='max-w-sm rounded overflow-hidden shadow-lg '>
-                                    <div className='px-6 py-4'>
-                                        <div className='font-bold text-xl mb-2'>APIs</div>
-                                        <p className='text-cyan-700 text-base'>Configure the APIs the Overlay uses.</p>
+                                        <div className='font-bold text-xl mb-2'>
+                                            <InputBoxButton text={'Overlay'}/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

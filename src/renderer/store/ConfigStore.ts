@@ -1,11 +1,12 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {IPCResponse, RequestType, RunApiKey} from "@common/utils/externalapis/RunApi";
+import {IPCResponse, RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {DisplayErrorMessage} from "@common//utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
+import {Store} from "@renderer/store/index";
 
 export interface ConfigStore {
     hypixel: {
@@ -59,6 +60,11 @@ export interface TableState {
     columnState: Array<ColumnState>;
 }
 
+export interface ValidateRun {
+    runApiKey: string;
+    state: ConfigStore;
+}
+
 interface InitScript {
     status: number;
     data: {
@@ -90,6 +96,7 @@ interface InitScript {
         version: string;
     };
 }
+
 
 /**
  * The main slice, Used to store API-keys, logs and anything else used by the Overlay which isn't calling players.
@@ -134,7 +141,7 @@ const ConfigStore = createSlice({
             opacity: 100,
         },
         table: {
-            columnState: [{colId: 'id'}],
+            columnState: [{colId: "id"}],
         },
         settings: {
             lunar: true,
@@ -151,8 +158,8 @@ const ConfigStore = createSlice({
             window.config.set("hypixel.apiKey", payload.data.key);
             window.config.set("hypixel.apiKeyOwner", payload.data.owner);
         },
-        setRunApiKey: (state, action: {payload: RunApiKey}) => {
-            const payload: RunApiKey = action.payload;
+        setRunApiKey: (state, action: {payload: IPCResponse<RunApiKey>}) => {
+            const payload: RunApiKey = action.payload.data;
             state.runKey = payload.key.key;
         },
         setDataFromConfig: (state, action: {payload: InitScript}) => {
@@ -174,8 +181,8 @@ const ConfigStore = createSlice({
                 state.logs.clientName = payload.data.overlay.clientName;
                 window.ipcRenderer.send("logFileSet", state.logs.logPath);
             }
-            if (payload.data.table!=undefined){
-                state.table.columnState = payload.data.table.columns
+            if (payload.data.table != undefined) {
+                state.table.columnState = payload.data.table.columns;
             }
             state.browserWindow = payload.data.browserWindow;
         },
@@ -207,15 +214,15 @@ const ConfigStore = createSlice({
                 state.error.cause = "This log file is unable to be read, Please ensure this is the correct client, or the overlay has sufficient privileges to read this file.";
             }
         },
-        saveTableColumnState: (state, action:{payload: TableState}) => {
-            state.table.columnState = action.payload.columnState
+        saveTableColumnState: (state, action: {payload: TableState}) => {
+            state.table.columnState = action.payload.columnState;
         },
-        setColours: (state, action:{payload: ColourSettings}) => {
-            state.colours = action.payload
+        setColours: (state, action: {payload: ColourSettings}) => {
+            state.colours = action.payload;
         },
-        setBrowserWindow: (state, action:{payload: BrowserWindowSettings}) => {
+        setBrowserWindow: (state, action: {payload: BrowserWindowSettings}) => {
             state.browserWindow = action.payload;
-        }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -244,6 +251,35 @@ const ConfigStore = createSlice({
                         title: "Invalid API Key",
                         cause: "The API Key provided was invalid.",
                         detail: "The Hypixel API key inputted was invalid, try a new key.",
+                        referenceId: "extra reducer, rejected promise, invalid key?",
+                    },
+                });
+            })
+            .addCase(runApiKeyValidator.fulfilled, (state, action) => {
+                const payload: IPCResponse<RunApiKey> = action.payload;
+                if (payload?.data?.key !== undefined) {
+                    ConfigStore.caseReducers.setRunApiKey(state, {
+                        payload,
+                    });
+                } else {
+                    ConfigStore.caseReducers.updateErrorMessage(state, {
+                        payload: {
+                            code: 403,
+                            title: "Invalid RUN API Key",
+                            cause: "The API Key provided was invalid",
+                            detail: "The RUN API key inputted was invalid, try a new key.",
+                            referenceId: "extra reducer, rejected promise, invalid key?",
+                        },
+                    });
+                }
+            })
+            .addCase(runApiKeyValidator.rejected, (state) => {
+                ConfigStore.caseReducers.updateErrorMessage(state, {
+                    payload: {
+                        code: 403,
+                        title: "Invalid RUN API Key",
+                        cause: "The API Key provided was invalid",
+                        detail: "The RUN API key inputted was invalid, try a new key.",
                         referenceId: "extra reducer, rejected promise, invalid key?",
                     },
                 });
@@ -278,10 +314,12 @@ const ConfigStore = createSlice({
             .addCase(saveTableColumnState.fulfilled, (state, action) => {
                 ConfigStore.caseReducers.saveTableColumnState(state, action);
             })
-            .addCase(setColours.fulfilled,(state, action)=>{
+            .addCase(setColours.fulfilled, (state, action) => {
                 ConfigStore.caseReducers.setColours(state, action);
             })
-            .addCase(setBrowserWindow.fulfilled,(state, action)=>{ConfigStore.caseReducers.setBrowserWindow(state,action)})
+            .addCase(setBrowserWindow.fulfilled, (state, action) => {
+                ConfigStore.caseReducers.setBrowserWindow(state, action);
+            });
     },
 });
 /**
@@ -298,6 +336,12 @@ export const keathizApiKeyValidator = createAsyncThunk("ConfigStore/keathizApiKe
     const validKey = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5");
     await window.config.set("external.keathiz.valid", validKey.status == 200);
     return {data: {apiKey: keathizKey, valid: validKey.status == 200}, status: 200};
+});
+/**
+ * Validates the RUN API Key
+ */
+export const runApiKeyValidator = createAsyncThunk("ConfigStore/runApiKeyValidator", async (validateRun: ValidateRun) => {
+    return await window.ipcRenderer.invoke<RunApiKey>("seraph", RunEndpoints.KEY, "", validateRun.state.hypixel.apiKey, validateRun.state.hypixel.apiKeyOwner, validateRun.runApiKey, validateRun.state.hypixel.apiKeyOwner);
 });
 
 export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data: SettingsConfig) => {
@@ -359,7 +403,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     external.keathiz.apiKey = await window.config.get("external.keathiz.apiKey");
     external.keathiz.valid = (await window.config.get("external.keathiz.valid")) ?? false;
 
-    window.ipcRenderer.send('opacity', browserWindow.opacity);
+    window.ipcRenderer.send("opacity", browserWindow.opacity);
     const res: InitScript = {status: 200, data: {run, hypixel, overlay, external, settings, version, browserWindow, table}};
     return res;
 });
