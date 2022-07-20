@@ -15,6 +15,7 @@ import {isArray} from "util";
 import {FeedbackForm} from "@components/user/settings/FeedbackForm";
 import {ContactStaff} from "@components/user/settings/dev/ContactStaff";
 import {updateCachedState} from "@renderer/store/PlayerStore";
+import {NewSettingsModal} from "@components/user/settings/dev/NewSettingsModal";
 
 const MainSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
@@ -132,6 +133,11 @@ const MainSettings = () => {
                 <span/>
             </SettingHeader>
             <SettingCard>
+                <span>New Settings</span>
+                <span/>
+                <span><NewSettingsModal/></span>
+            </SettingCard>
+            <SettingCard>
                 <span>Background Colour</span>
                 <span/>
                 <span>
@@ -218,18 +224,6 @@ const MainSettings = () => {
             </SettingCard>
         </div>
     );
-};
-
-const hexToRGB = (hex, alpha) => {
-    const r = parseInt(hex.slice(1, 3), 16),
-        g = parseInt(hex.slice(3, 5), 16),
-        b = parseInt(hex.slice(5, 7), 16);
-
-    if (alpha) {
-        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-    } else {
-        return "rgb(" + r + ", " + g + ", " + b + ")";
-    }
 };
 
 export default MainSettings;

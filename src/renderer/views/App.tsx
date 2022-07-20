@@ -10,6 +10,7 @@ import {AgGridReact} from "ag-grid-react";
 // eslint-disable-next-line import/named
 import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
 import {saveTableColumnState, TableState} from "@renderer/store/ConfigStore";
+import {PlayerOptionsModal} from "@components/user/PlayerOptionsModal";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
@@ -115,6 +116,13 @@ const columns: ColDef[] = [
         sortable: false,
         cellRenderer: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)} />,
     },
+    {
+        field: "extra",
+        flex: 1,
+        minWidth: 20,
+        sortable: false,
+        cellRenderer: ({data}) => <PlayerOptionsModal data={data}/>,
+    },
 ];
 
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "bblr" | "wins" | "losses") => {
@@ -150,18 +158,6 @@ const getNickedPlayerSortingResponse = (params) => {
 };
 
 // a2db40d5-d629-4042-9d1a-6963b2a7e000
-
-const hexToRGB = (hex, alpha) => {
-    const r = parseInt(hex.slice(1, 3), 16),
-        g = parseInt(hex.slice(3, 5), 16),
-        b = parseInt(hex.slice(5, 7), 16);
-
-    if (alpha) {
-        return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-    } else {
-        return "rgb(" + r + ", " + g + ", " + b + ")";
-    }
-};
 
 const AppTable = () => {
     /**

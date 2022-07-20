@@ -28,7 +28,7 @@ export class PlayerUtils {
     private readonly formatPlayerInstance: FormatPlayer;
     private readonly playerHypixelUtils: PlayerHypixelUtils;
 
-    constructor(stores?: { config: object; tags: object }) {
+    constructor(stores?: {config: object; tags: object}) {
         this.formatPlayerInstance = new FormatPlayer();
         this.playerHypixelUtils = new PlayerHypixelUtils();
         if (stores != undefined) {
@@ -47,11 +47,11 @@ export class PlayerUtils {
 
 export class FormatPlayer {
     private isOverlayStats = false;
-    private starterDivider = `<span style="margin: 0 auto;" class="${this.isOverlayStats ? 'flex' : ''}">`;
+    private starterDivider = `<span style="margin: 0 auto;" class="${this.isOverlayStats ? "flex" : ""}">`;
     private tagStore;
     private configStore;
 
-    public setConfig = (stores: { config: object; tags: object }, options?: { subMenu?: boolean }) => {
+    public setConfig = (stores: {config: object; tags: object}, options?: {subMenu?: boolean}) => {
         this.tagStore = stores.tags;
         this.configStore = stores.config;
         this.isOverlayStats = options?.subMenu ?? false;
@@ -82,7 +82,7 @@ export class FormatPlayer {
                     tagRenderer += this.getTagsFromConfig("run.safelist", runApi.safelist.timesKilled);
                 }
                 if (runApi.safelist.personal) {
-                    tagRenderer += this.getTagsFromConfig('run.personal_safelist')
+                    tagRenderer += this.getTagsFromConfig("run.personal_safelist");
                 }
                 if (runApi.annoylist.tagged) {
                     tagRenderer += this.getTagsFromConfig("run.annoylist");
@@ -149,7 +149,6 @@ export class FormatPlayer {
         } catch (e) {
             return this.getPlayerTagDivider(tagDisplayPath, "FF5555");
         }
-
     };
 
     public renderStar = (player: Player) => {
@@ -172,11 +171,8 @@ export class FormatPlayer {
     public renderName = (player: Player) => {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
-
-            nameRenderer += `<span class="name-span justify-content-start" style = "align-left">`;
-            //nameRenderer += `<span><img width = "16" height = "16" src="https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" style = "margin:0px"/></span>`;
-            nameRenderer += `<img src = "https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" style= "margin-right: 2px; display: inline;"/>`
-
+            nameRenderer += `<span class="name-span justify-content-start">`;
+            nameRenderer += `<img src = "https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" style= "margin-right: 2px; display: inline;"/>`;
             if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
@@ -213,7 +209,7 @@ export class FormatPlayer {
             let playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0;
             if (player.sources.keathiz != null && this.configStore.settings.keathiz) {
                 const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-                if (keathizTags.player.winstreak != null && keathizTags.player.winstreak.accurate == false) playerValue = keathizTags.player.winstreak.estimates.overall_winstreak
+                if (keathizTags.player.winstreak != null && keathizTags.player.winstreak.accurate == false) playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
             }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
@@ -396,7 +392,8 @@ export class FormatPlayer {
 
     private getPlayerTagDivider = (tag: string | number | unknown, colour: string, player?: Player) => {
         let htmlResponse = ``,
-            styleString = `color: ${colour};`, classNameData = ``;
+            styleString = `color: ${colour};`,
+            classNameData = ``;
         if (typeof tag === "number" && !Number.isInteger(tag) && tag != 0) tag = tag.toFixed(2);
         if (colour === "white") {
             styleString += `opacity: 75%;`;
@@ -412,7 +409,7 @@ export class FormatPlayer {
                 }
             } else if (typeof tag === "number") {
                 classNameData += `justify-center w-full`;
-                if (this.isOverlayStats) classNameData += ` flex`
+                if (this.isOverlayStats) classNameData += ` flex`;
             }
             htmlResponse += `<span class="${classNameData}" style="${styleString}">${tag}</span>`;
             return htmlResponse;
@@ -441,10 +438,10 @@ export class FormatPlayer {
                 now.setUTCMilliseconds(now_timezoned.getUTCMilliseconds());
 
                 if (player.hypixelPlayer.lastLogin > player.hypixelPlayer.lastLogout) {
-                    const timeDiff = new Date((now_timezoned.getTime() - lastLoginDate.getTime()));
-                    if (timeDiff.getUTCHours() >= 3 && timeDiff.getUTCMinutes() >= 30 || timeDiff.getUTCHours() > 4) {
+                    const timeDiff = new Date(now_timezoned.getTime() - lastLoginDate.getTime());
+                    if ((timeDiff.getUTCHours() >= 3 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 4) {
                         values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "00ff00"]);
-                    } else if (timeDiff.getUTCHours() >= 1 && timeDiff.getUTCMinutes() >= 30 || timeDiff.getUTCHours() > 2) {
+                    } else if ((timeDiff.getUTCHours() >= 1 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 2) {
                         values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ffff00"]);
                     } else {
                         values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ff0000"]);
@@ -464,7 +461,7 @@ export class FormatPlayer {
 }
 
 export class PlayerHypixelUtils {
-    public getDateFormatted = (epoch: number | undefined, options?: { day: boolean, month: boolean, year: boolean } | undefined) => {
+    public getDateFormatted = (epoch: number | undefined, options?: {day: boolean; month: boolean; year: boolean} | undefined) => {
         if (epoch === undefined) return "Disabled";
         const d = new Date(0);
         d.setUTCMilliseconds(epoch);
@@ -490,7 +487,7 @@ export class PlayerHypixelUtils {
 }
 
 export interface MinecraftColoursImpl {
-    [colour: string]: { colour: string; hex: string };
+    [colour: string]: {colour: string; hex: string};
 }
 
 export const MinecraftColours: MinecraftColoursImpl = {

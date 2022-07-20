@@ -39,7 +39,7 @@ const TitleBar = () => {
                         <div className='flex space-x-7'>
                             <div>
                                 <Link to={titlePath} className='nodrag'>
-                                    <span>
+                                    <span className={'pr-2'}>
                                         {renderCaret}
                                     </span>
                                     <UnderlinedTitle text={"Seraph"} options={{text: {size: 25}}} />
