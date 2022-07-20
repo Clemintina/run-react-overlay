@@ -16,6 +16,7 @@ import {FeedbackForm} from "@components/user/settings/FeedbackForm";
 import {ContactStaff} from "@components/user/settings/dev/ContactStaff";
 import {updateCachedState} from "@renderer/store/PlayerStore";
 import {NewSettingsModal} from "@components/user/settings/dev/NewSettingsModal";
+import {InputBoxButton} from "@components/user/InputBoxButton";
 
 const MainSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
@@ -25,7 +26,7 @@ const MainSettings = () => {
     const version = localConfigStore.version;
     const colours = localConfigStore.colours;
 
-    const [opacityValue, setOpacityValue] = React.useState(localConfigStore.browserWindow.opacity);
+    const [opacityValue, setOpacityValue] = React.useState(localConfigStore.browserWindow.opacity ?? 20);
 
     // TODO make it look nicer and cleaner
 
@@ -197,15 +198,16 @@ const MainSettings = () => {
                         value={opacityValue}
                         onChange={(event, value) => {
                             const opacityValue: number = typeof value == 'number' ? value : value[0];
-                            setOpacityValue(opacityValue)
+                            setOpacityValue(opacityValue);
+                            window.ipcRenderer.send('opacity', opacityValue / 100);
                         }}
-                        onBlur={()=>{
-                            if (opacityValue<20) setOpacityValue(20);
-                            window.ipcRenderer.send('opacity', opacityValue/100);
+                        onBlur={() => {
+                            if (opacityValue < 20) setOpacityValue(20);
                             store.dispatch(setBrowserWindow({height: localConfigStore.browserWindow.height, opacity: opacityValue, width: localConfigStore.browserWindow.width}));
                         }}
                         getAriaValueText={(value) => `${value}`}
                         valueLabelDisplay="auto"
+                        min={20}
                         valueLabelFormat={(value: number) => {
                             return value;
                         }}
@@ -221,6 +223,16 @@ const MainSettings = () => {
                 <span>Version</span>
                 <span/>
                 <span>{version}</span>
+            </SettingCard>
+            <SettingCard>
+                <span>Open Config</span>
+                <span/>
+                <span><InputBoxButton text={'Open'} onClick={() => window.ipcRenderer.send('openExternal', 'config_file')}/></span>
+            </SettingCard>
+            <SettingCard>
+                <span>Open Tags</span>
+                <span/>
+                <span><InputBoxButton text={'Open'} onClick={() => window.ipcRenderer.send('openExternal', 'tag_file')}/></span>
             </SettingCard>
         </div>
     );

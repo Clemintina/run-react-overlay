@@ -24,7 +24,7 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                 tooltip={
                     <div>
                         {player.hypixelPlayer !== null && (
-                            <div className={"statistics-tooltip"}>
+                            <div className={"statistics-tooltip text-center"}>
                                 <span className={"statistics-tooltip-inline"} style={{color: `#${getPlayerRank(player.hypixelPlayer).colourHex}`}}>{player.hypixelPlayer.displayname}</span>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>Games Played: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "gamesPlayed")} /></span>

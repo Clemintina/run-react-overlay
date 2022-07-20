@@ -62,7 +62,7 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                             <FormHelperText className={"text-red-500 font-bold"}>
                                 {"The type of report you'd like to submit!"}
                             </FormHelperText>
-                            <FeedbackForm options={{text: feedbackType}} onChange={(event)=>setFeedbackTypeMessage(event.target.value)} />
+                            <FeedbackForm options={{text: feedbackType, formHelper: 'Please write as descriptively as possible'}}  onChange={(event)=>setFeedbackTypeMessage(event.target.value)} />
                         </FormControl>
                         <span>
                             <InputBoxButton onClick={async ()=>{

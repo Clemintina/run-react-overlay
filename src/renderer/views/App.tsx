@@ -14,6 +14,7 @@ import {PlayerOptionsModal} from "@components/user/PlayerOptionsModal";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
+const tinyColumnSize = 30;
 const smallColumnSize = 60;
 const mediumColumnSize = 60;
 const largeColumnSize = 130;
@@ -30,6 +31,13 @@ const columns: ColDef[] = [
         field: "id",
         hide: true,
         cellRenderer: ({data}) => data.uuid,
+    },
+    {
+        field: "head",
+        flex: 1,
+        minWidth: tinyColumnSize,
+        sortable: false,
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderPlayerHead(data)}/>,
     },
     {
         field: "star",
@@ -119,7 +127,7 @@ const columns: ColDef[] = [
     {
         field: "extra",
         flex: 1,
-        minWidth: 20,
+        minWidth: tinyColumnSize,
         sortable: false,
         cellRenderer: ({data}) => <PlayerOptionsModal data={data}/>,
     },
@@ -198,6 +206,7 @@ const AppTable = () => {
         animateRows: true,
         autoSizePadding: 0,
         rowData: players,
+        rowHeight: 25,
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
     };
 

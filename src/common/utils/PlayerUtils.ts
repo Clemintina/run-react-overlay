@@ -28,7 +28,7 @@ export class PlayerUtils {
     private readonly formatPlayerInstance: FormatPlayer;
     private readonly playerHypixelUtils: PlayerHypixelUtils;
 
-    constructor(stores?: {config: object; tags: object}) {
+    constructor(stores?: { config: object; tags: object }) {
         this.formatPlayerInstance = new FormatPlayer();
         this.playerHypixelUtils = new PlayerHypixelUtils();
         if (stores != undefined) {
@@ -47,11 +47,11 @@ export class PlayerUtils {
 
 export class FormatPlayer {
     private isOverlayStats = false;
-    private starterDivider = `<span style="margin: 0 auto;" class="${this.isOverlayStats ? "flex" : ""}">`;
+    private starterDivider = `<span class="${this.isOverlayStats ? "flex" : ""} text-left">`;
     private tagStore;
     private configStore;
 
-    public setConfig = (stores: {config: object; tags: object}, options?: {subMenu?: boolean}) => {
+    public setConfig = (stores: { config: object; tags: object }, options?: { subMenu?: boolean }) => {
         this.tagStore = stores.tags;
         this.configStore = stores.config;
         this.isOverlayStats = options?.subMenu ?? false;
@@ -168,20 +168,30 @@ export class FormatPlayer {
         return starRenderer;
     };
 
-    public renderName = (player: Player) => {
-        let nameRenderer = this.starterDivider;
+    public renderPlayerHead = (player: Player) => {
+        let renderer = this.starterDivider;
         if (!player.nicked) {
-            nameRenderer += `<span class="name-span justify-content-start">`;
-            nameRenderer += `<img src = "https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" style= "margin-right: 2px; display: inline;"/>`;
+            renderer += `<span class="inline flex">`;
+            renderer += `<img src="https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" class="text-center"/>`;
             if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
-                        nameRenderer += `<span class="lunar-client-image">
-                                       <img style="display: inline;" width="18px" height="18px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />
-                                     </span>`;
+                        renderer+=`<span>`
+                        renderer += `<img width="18px" height="18px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />`;
+                        renderer += `</span>`
                     }
                 }
             }
+            renderer += `</span>`;
+        }
+        renderer += `</span>`;
+        return renderer;
+    }
+
+    public renderName = (player: Player) => {
+        let nameRenderer = this.starterDivider;
+        if (!player.nicked) {
+            nameRenderer += `<span class="justify-content-start">`;
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
                 if (player.hypixelPlayer !== null) {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
@@ -461,7 +471,7 @@ export class FormatPlayer {
 }
 
 export class PlayerHypixelUtils {
-    public getDateFormatted = (epoch: number | undefined, options?: {day: boolean; month: boolean; year: boolean} | undefined) => {
+    public getDateFormatted = (epoch: number | undefined, options?: { day: boolean; month: boolean; year: boolean } | undefined) => {
         if (epoch === undefined) return "Disabled";
         const d = new Date(0);
         d.setUTCMilliseconds(epoch);
@@ -487,7 +497,7 @@ export class PlayerHypixelUtils {
 }
 
 export interface MinecraftColoursImpl {
-    [colour: string]: {colour: string; hex: string};
+    [colour: string]: { colour: string; hex: string };
 }
 
 export const MinecraftColours: MinecraftColoursImpl = {

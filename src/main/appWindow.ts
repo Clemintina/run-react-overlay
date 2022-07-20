@@ -1,4 +1,4 @@
-import {app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions} from "electron";
+import {app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
 import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
 import path from "path";
 import axios from "axios";
@@ -313,19 +313,19 @@ const registerSeraphIPC = () => {
  * Register Store Inter Process Communication
  */
 const registerElectronStore = () => {
-    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStore.set(data.key, data.data);
     });
 
-    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
         return electronStore.get(data.key);
     });
 
-    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStoreTags.set(data.key, data.data);
     });
 
-    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
         return electronStore.get(data.key);
     });
 
@@ -421,6 +421,14 @@ const registerMainWindowCommunications = () => {
     ipcMain.on("opacity", async (event, ...args) => {
         appWindow.setOpacity(args[0]);
     });
+
+    ipcMain.on('openExternal', async (event, type: 'config_file' | 'tag_file', ...args) => {
+        if (type == 'config_file') {
+            await shell.openExternal(electronStore.path);
+        } else if (type == 'tag_file') {
+            await shell.openExternal(electronStoreTags.path);
+        }
+    })
 };
 
 /**
