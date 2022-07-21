@@ -122,7 +122,6 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         },
     };
     const apiKey = cacheState.apiKey;
-    console.log(playerData.name)
     if (apiKey === undefined || apiKey.length !== 36) {
         return {status: 403, cause: "No API Key", data: null};
     }
@@ -305,102 +304,98 @@ const getLunarTags = async (player: Player) => {
 };
 
 const getKeathizData = async (player: Player) => {
-    let api: IPCResponse<{uuid: string; data: KeathizOverlayRun}>;
+    let api;
     if (player.hypixelPlayer?.uuid !== undefined && store.getState().configStore.settings.keathiz) {
         const state = cacheState;
-        api = await window.ipcRenderer.invoke<{uuid: string; data: KeathizOverlayRun}>("seraph", RunEndpoints.KEATHIZ_PROXY, player.hypixelPlayer.uuid, state.apiKey, state.apiKeyOwner, state.apiKey, state.apiKeyOwner);
+        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("seraph", RunEndpoints.KEATHIZ_PROXY, player.hypixelPlayer.uuid, state.apiKey, state.apiKeyOwner, state.apiKey, state.apiKeyOwner);
     } else {
         api = {
             status: store.getState().configStore.settings.keathiz ? 417 : 400,
             data: {
-                uuid: '',
-                data: {
-                    success: false,
-                    player: {
-                        ign_lower: player.name,
-                        queues: {
-                            last_3_min: 0,
-                            last_10_min: 0,
-                            last_30_min: 0,
-                            last_24_hours: 0,
-                            last_48_hours: 0,
-                            total: 0,
-                            consecutive_queue_checks: {
-                                last_1000_queues: {
-                                    "1_min_requeue": 0,
-                                    "2_min_requeue": 0,
-                                    "3_min_requeue": 0,
-                                },
-                                last_30_queues: {
-                                    "1_min_requeue": 0,
-                                    "2_min_requeue": 0,
-                                    "3_min_requeue": 0,
-                                },
-                                last_10_queues: {
-                                    "1_min_requeue": 0,
-                                    "2_min_requeue": 0,
-                                    "3_min_requeue": 0,
-                                },
-                                weighted: {
-                                    "1_min_requeue": 0,
-                                    "2_min_requeue": 0,
-                                    "3_min_requeue": 0,
-                                },
+                success: false,
+                player: {
+                    ign_lower: player.name,
+                    queues: {
+                        last_3_min: 0,
+                        last_10_min: 0,
+                        last_30_min: 0,
+                        last_24_hours: 0,
+                        last_48_hours: 0,
+                        total: 0,
+                        consecutive_queue_checks: {
+                            last_1000_queues: {
+                                "1_min_requeue": 0,
+                                "2_min_requeue": 0,
+                                "3_min_requeue": 0,
+                            },
+                            last_30_queues: {
+                                "1_min_requeue": 0,
+                                "2_min_requeue": 0,
+                                "3_min_requeue": 0,
+                            },
+                            last_10_queues: {
+                                "1_min_requeue": 0,
+                                "2_min_requeue": 0,
+                                "3_min_requeue": 0,
+                            },
+                            weighted: {
+                                "1_min_requeue": 0,
+                                "2_min_requeue": 0,
+                                "3_min_requeue": 0,
                             },
                         },
-                        exits: {
-                            last_3_min: 0,
-                            last_10_min: 0,
-                            last_30_min: 0,
-                            last_24_hours: 0,
-                            last_48_hours: 0,
-                            total: 0,
-                            short_exits: 0,
+                    },
+                    exits: {
+                        last_3_min: 0,
+                        last_10_min: 0,
+                        last_30_min: 0,
+                        last_24_hours: 0,
+                        last_48_hours: 0,
+                        total: 0,
+                        short_exits: 0,
+                    },
+                    winstreak: {
+                        accurate: false,
+                        date: 0,
+                        estimates: {
+                            overall_winstreak: 0,
+                            eight_one_winstreak: 0,
+                            eight_two_winstreak: 0,
+                            four_three_winstreak: 0,
+                            four_four_winstreak: 0,
+                            two_four_winstreak: 0,
+                            castle_winstreak: 0,
+                            eight_one_rush_winstreak: 0,
+                            eight_two_rush_winstreak: 0,
+                            four_four_rush_winstreak: 0,
+                            eight_one_ultimate_winstreak: 0,
+                            eight_two_ultimate_winstreak: 0,
+                            four_four_ultimate_winstreak: 0,
+                            eight_two_armed_winstreak: 0,
+                            four_four_armed_winstreak: 0,
+                            eight_two_lucky_winstreak: 0,
+                            four_four_lucky_winstreak: 0,
+                            eight_two_voidless_winstreak: 0,
+                            four_four_voidless_winstreak: 0,
+                            tourney_bedwars_two_four_0_winstreak: 0,
+                            tourney_bedwars4s_0_winstreak: 0,
+                            tourney_bedwars4s_1_winstreak: 0,
+                            eight_two_underworld_winstreak: 0,
+                            four_four_underworld_winstreak: 0,
+                            eight_two_swap_winstreak: 0,
+                            four_four_swap_winstreak: 0,
                         },
-                        winstreak: {
-                            accurate: false,
-                            date: 0,
-                            estimates: {
-                                overall_winstreak: 0,
-                                eight_one_winstreak: 0,
-                                eight_two_winstreak: 0,
-                                four_three_winstreak: 0,
-                                four_four_winstreak: 0,
-                                two_four_winstreak: 0,
-                                castle_winstreak: 0,
-                                eight_one_rush_winstreak: 0,
-                                eight_two_rush_winstreak: 0,
-                                four_four_rush_winstreak: 0,
-                                eight_one_ultimate_winstreak: 0,
-                                eight_two_ultimate_winstreak: 0,
-                                four_four_ultimate_winstreak: 0,
-                                eight_two_armed_winstreak: 0,
-                                four_four_armed_winstreak: 0,
-                                eight_two_lucky_winstreak: 0,
-                                four_four_lucky_winstreak: 0,
-                                eight_two_voidless_winstreak: 0,
-                                four_four_voidless_winstreak: 0,
-                                tourney_bedwars_two_four_0_winstreak: 0,
-                                tourney_bedwars4s_0_winstreak: 0,
-                                tourney_bedwars4s_1_winstreak: 0,
-                                eight_two_underworld_winstreak: 0,
-                                four_four_underworld_winstreak: 0,
-                                eight_two_swap_winstreak: 0,
-                                four_four_swap_winstreak: 0,
-                            },
-                        },
-                        extra: {
-                            last_seen_lobby: "",
-                            blacklisted: false,
-                            status: "",
-                        },
+                    },
+                    extra: {
+                        last_seen_lobby: "",
+                        blacklisted: false,
+                        status: "",
                     },
                 },
             },
         };
     }
-    console.log(api);
-    return new Promise<IPCResponse<{uuid: string; data: KeathizOverlayRun}>>((resolve) => resolve(api));
+    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({status: 200, data: api.data.data}));
 };
 
 const getPlayerDB = async (player: Player) => {

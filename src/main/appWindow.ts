@@ -74,7 +74,7 @@ const axiosClient = axios.create({
         "User-Agent": "Run-Bedwars-Overlay-React-" + overlayVersion,
         "Run-API-Version": overlayVersion,
     },
-    timeout: 1000,
+    timeout: 2000,
     timeoutErrorMessage: "Connection Timed Out!",
     validateStatus: () => true,
 });
@@ -276,7 +276,7 @@ const registerSeraphIPC = () => {
                     "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
                 },
             });
-            return {data: response.data, status: response.status};
+            return {data: response.data.data, status: response.status};
         } else {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
                 headers: {
