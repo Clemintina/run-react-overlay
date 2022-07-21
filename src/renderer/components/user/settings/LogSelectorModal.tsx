@@ -50,7 +50,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                     path += userHome + "/.lunarclient/offline/1.8/logs/";
                     break;
                 case "lunar_mlv":
-                    path += appData + "/.lunarclient/offline/1.8.9/multiver/logs/";
+                    path += userHome + "/.lunarclient/offline/multiver/logs/";
                     break;
             }
             path += "latest.log";
@@ -105,7 +105,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                 <MenuItem value={"vanilla"}>Vanilla / Forge</MenuItem>
                                 <MenuItem value={"badlion"}>Badlion</MenuItem>
                                 <MenuItem value={"lunar_old"}>Lunar</MenuItem>
-                                <MenuItem value={"lunar-mlv"}>Lunar Multi-version</MenuItem>
+                                <MenuItem value={"lunar_mlv"}>Lunar Multi-version</MenuItem>
                                 <MenuItem value={"custom"}>Custom</MenuItem>
                             </Select>
                             <FormHelperText className={"text-red-500 font-bold"} style={configStore.error.code != 200 ? {} : {display: "none"}}>

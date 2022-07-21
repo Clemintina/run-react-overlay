@@ -32,7 +32,7 @@ const MainSettings = () => {
 
     return (
         <div style={{color: colours.primaryColour, backgroundColor: colours.backgroundColour}} className='w-full h-full p-2 flex flex-col space-y-2'>
-            <div className='text-3xl font-bold underlineText'>Overlay Settings</div>
+            <div className='text-3xl font-bold underlineText text-center'>Overlay Settings</div>
             <SettingCard>
                 <span>Hypixel API Key</span>
                 <span/>
