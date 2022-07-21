@@ -10,7 +10,7 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.0.43-BETA",
+	"version": "1.0.44-BETA",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
@@ -33,7 +33,7 @@
 		"@fortawesome/react-fontawesome": "^0.2.0",
 		"@logdna/tail-file": "^3.0.0",
 		"@mui/icons-material": "^5.8.4",
-		"@mui/material": "^5.9.0",
+		"@mui/material": "^5.9.1",
 		"@mui/styled-engine-sc": "^5.8.0",
 		"@mui/x-data-grid": "^5.13.1",
 		"@reduxjs/toolkit": "^1.8.3",
@@ -80,12 +80,12 @@
 		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
 		"@types/cache-manager": "^4.0.1",
 		"@types/json-logic-js": "^2.0.1",
-		"@types/node": "^18.0.4",
+		"@types/node": "^18.0.6",
 		"@types/react": "^18.0.15",
 		"@types/react-dom": "^18.0.6",
 		"@types/uuid": "^8.3.4",
 		"@types/webpack-env": "^1.17.0",
-		"@typescript-eslint/eslint-plugin": "^5.30.6",
+		"@typescript-eslint/eslint-plugin": "^5.30.7",
 		"@typescript-eslint/parser": "^5.30.7",
 		"autoprefixer": "^10.4.7",
 		"classnames": "^2.3.1",
