@@ -30,6 +30,7 @@ reader.startJoinHandler();
 reader.startListHandler();
 reader.startSeraphHandler();
 reader.startCommandListener();
+reader.startPartyListener();
 
 const darkTheme = createTheme({
     palette: {

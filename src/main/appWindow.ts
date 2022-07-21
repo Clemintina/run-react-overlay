@@ -74,7 +74,7 @@ const axiosClient = axios.create({
         "User-Agent": "Run-Bedwars-Overlay-React-" + overlayVersion,
         "Run-API-Version": overlayVersion,
     },
-    timeout: 10000,
+    timeout: 1000,
     timeoutErrorMessage: "Connection Timed Out!",
     validateStatus: () => true,
 });
