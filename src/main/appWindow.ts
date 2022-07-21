@@ -280,6 +280,7 @@ const registerSeraphIPC = () => {
                     "RUN-API-UUID": overlayUuid,
                 },
             });
+            if (endpoint == RunEndpoints.SAFELIST) console.log(response);
             return {data: response.data, status: response.status};
         }
     });

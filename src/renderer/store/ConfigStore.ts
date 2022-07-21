@@ -6,7 +6,6 @@ import {Paths} from "@common/zikeji";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
-import {Store} from "@renderer/store/index";
 
 export interface ConfigStore {
     hypixel: {
@@ -97,7 +96,6 @@ interface InitScript {
     };
 }
 
-
 /**
  * The main slice, Used to store API-keys, logs and anything else used by the Overlay which isn't calling players.
  */
@@ -181,8 +179,17 @@ const ConfigStore = createSlice({
                 state.logs.clientName = payload.data.overlay.clientName;
                 window.ipcRenderer.send("logFileSet", state.logs.logPath);
             }
+            if (payload.data?.external?.keathiz){
+                state.keathiz.key = payload.data.external.keathiz.apiKey;
+                state.keathiz.valid = payload.data.external.keathiz.valid;
+            }
             if (payload.data.table != undefined) {
                 state.table.columnState = payload.data.table.columns;
+            }
+            if (payload.data?.settings){
+                state.settings.keathiz = payload.data.settings.keathiz;
+                state.settings.boomza = payload.data.settings.boomza;
+                state.settings.lunar = payload.data.settings.lunar;
             }
             state.browserWindow = payload.data.browserWindow;
         },
@@ -345,6 +352,7 @@ export const runApiKeyValidator = createAsyncThunk("ConfigStore/runApiKeyValidat
 });
 
 export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data: SettingsConfig) => {
+    await window.config.set('settings',data)
     return {data, status: 200};
 });
 

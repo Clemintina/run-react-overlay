@@ -10,7 +10,7 @@ import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
 import {SettingHeader} from "@components/user/settings/components/SettingHeader";
 import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
-import {Slider} from "@mui/material";
+import {Box, Slider} from "@mui/material";
 import {isArray} from "util";
 import {FeedbackForm} from "@components/user/settings/FeedbackForm";
 import {ContactStaff} from "@components/user/settings/dev/ContactStaff";
@@ -234,6 +234,35 @@ const MainSettings = () => {
                 <span/>
                 <span><InputBoxButton text={'Open'} onClick={() => window.ipcRenderer.send('openExternal', 'tag_file')}/></span>
             </SettingCard>
+            <Box>
+                <div className='p-8'>
+                    <div className='grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-3 lg:gap-3'>
+                        <div className='p-4 rounded-md flex items-center justify-center'>
+                            <div className='max-w-sm rounded overflow-hidden shadow-lg border-cyan-500 border-2'>
+                                <div className='px-6 py-4'>
+                                    <InputBoxButton text={'APIs'}/>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='p-4 rounded-md flex items-center justify-center'>
+                            <div className='max-w-sm rounded overflow-hidden shadow-lg border-cyan-500 border-2'>
+                                <div className='px-6 py-4'>
+                                    <InputBoxButton text={'Tags'}/>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='p-4 rounded-md flex items-center justify-center'>
+                            <div className='max-w-sm rounded overflow-hidden shadow-lg border-cyan-500 border-2 '>
+                                <div className='px-6 py-4'>
+                                    <div className='font-bold text-xl mb-2'>
+                                        <InputBoxButton text={'Overlay'}/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Box>
         </div>
     );
 };

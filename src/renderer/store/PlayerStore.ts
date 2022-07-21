@@ -226,7 +226,6 @@ export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () =>
 export const updateCachedState = () => {
     store.dispatch(playerInitScript);
     store.dispatch(initScript);
-    window.location.reload();
 }
 
 const getBoomza = async (player: Player) => {
