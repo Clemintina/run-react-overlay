@@ -18,7 +18,7 @@ export interface Player {
     sources: {
         runApi: IPCResponse<Blacklist> | null;
         boomza?: IPCResponse<BoomzaAntisniper> | null;
-        keathiz?: IPCResponse<KeathizOverlayRun> | null;
+        keathiz?: IPCResponse<{uuid: string; data: {data: KeathizOverlayRun}}> | null;
         lunar?: IPCResponse<LunarAPIResponse> | null;
         playerDb?: IPCResponse<PlayerDB> | null;
     };
@@ -218,8 +218,11 @@ export class FormatPlayer {
         if (!player.nicked) {
             let playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0;
             if (player.sources.keathiz != null && this.configStore.settings.keathiz) {
-                const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-                if (keathizTags.player.winstreak != null && keathizTags.player.winstreak.accurate == false) playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
+                const keathizTags: KeathizOverlayRun = player.sources.keathiz.data.data.data;
+                console.log(keathizTags);
+                if (keathizTags.player?.winstreak != null && keathizTags.player?.winstreak?.accurate == false) {
+                    playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
+                }
             }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getTagsFromConfig("run.blacklist", playerValue);
@@ -330,8 +333,8 @@ export class FormatPlayer {
         if (player.sources.keathiz === null || player.sources.keathiz === undefined) {
             keathizTagArray.push(this.getPlayerTagDivider("ERROR", `#${MinecraftColours.DARK_RED.hex}`));
         } else {
-            if (player.sources.keathiz.data.success && player.sources.keathiz.status === 200) {
-                const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
+            if (player.sources.keathiz.data.data.data.success && player.sources.keathiz.status === 200) {
+                const keathizTags: KeathizOverlayRun = player.sources.keathiz.data.data.data;
                 if (keathizTags.player.exits.last_10_min >= 1) {
                     keathizTagArray.push(this.getPlayerTagDivider("E10", `#${MinecraftColours.GOLD.hex}`));
                 }

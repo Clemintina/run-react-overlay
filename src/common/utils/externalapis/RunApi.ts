@@ -53,6 +53,7 @@ export enum RunEndpoints {
     VERSION = "overlay",
     KEY = "key",
     SAFELIST = "safelist",
+    KEATHIZ_PROXY = "keathiz/proxy",
 }
 
 export enum RequestType {

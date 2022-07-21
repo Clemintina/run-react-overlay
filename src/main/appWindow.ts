@@ -267,6 +267,16 @@ const registerSeraphIPC = () => {
                 },
             });
             return {data: response.data, status: response.status};
+        } else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
+            const apikey = electronStore.get("external.keathiz.apiKey");
+            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${apikey}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+                },
+            });
+            return {data: response.data, status: response.status};
         } else {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
                 headers: {
@@ -280,7 +290,6 @@ const registerSeraphIPC = () => {
                     "RUN-API-UUID": overlayUuid,
                 },
             });
-            if (endpoint == RunEndpoints.SAFELIST) console.log(response);
             return {data: response.data, status: response.status};
         }
     });
@@ -314,19 +323,19 @@ const registerSeraphIPC = () => {
  * Register Store Inter Process Communication
  */
 const registerElectronStore = () => {
-    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
+    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
         electronStore.set(data.key, data.data);
     });
 
-    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
+    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
         return electronStore.get(data.key);
     });
 
-    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
+    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
         electronStoreTags.set(data.key, data.data);
     });
 
-    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
+    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
         return electronStore.get(data.key);
     });
 
@@ -423,13 +432,13 @@ const registerMainWindowCommunications = () => {
         appWindow.setOpacity(args[0]);
     });
 
-    ipcMain.on('openExternal', async (event, type: 'config_file' | 'tag_file', ...args) => {
-        if (type == 'config_file') {
+    ipcMain.on("openExternal", async (event, type: "config_file" | "tag_file", ...args) => {
+        if (type == "config_file") {
             await shell.openExternal(electronStore.path);
-        } else if (type == 'tag_file') {
+        } else if (type == "tag_file") {
             await shell.openExternal(electronStoreTags.path);
         }
-    })
+    });
 };
 
 /**
