@@ -76,6 +76,7 @@ const axiosClient = axios.create({
     },
     timeout: 2000,
     timeoutErrorMessage: "Connection Timed Out!",
+    responseType: 'json',
     validateStatus: () => true,
 });
 

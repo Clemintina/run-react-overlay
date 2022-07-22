@@ -132,7 +132,7 @@ export class LogFileReader {
                         players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(' ', "")})));
                     }
                 } else if (line.match(/You'll be partying with: (\S.*)/)) { // Party Group Join (Out of Party)
-                    const players: string[] = line.replace("You'll be partying with: ", '').replace(/and \d* other players!/, "").replace(/\[(.*?)\]/g, '').split(", ");
+                    const players: string[] = line.replace("You'll be partying with: ", '').replace(/and \d* other players!/, "").replace(/\[(.*?)]/g, '').split(", ");
                     players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(' ', "")})));
                 }
             }

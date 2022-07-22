@@ -11,6 +11,8 @@ import {LogFileReader} from "@common/utils/LogFileReader";
 import {playerInitScript, updatePlayerStores} from "@renderer/store/PlayerStore";
 import "@assets/index.css";
 import {createTheme, ThemeProvider} from "@mui/material";
+import Essentials from "@components/ui/settings/views/Essentials";
+import CommonSettings from "@components/ui/settings/CommonSettings";
 
 /**
  * Loads the **Initial Script**
@@ -49,7 +51,8 @@ createRoot(document.getElementById("app")!).render(
                 <TitleBar />
                 <Routes>
                     <Route path='/' element={<App />} />
-                    <Route path='/settings' element={<MainSettings />} />
+                    <Route path='/settings' element={<CommonSettings />} />
+                    <Route path='/settings/apis' element={<Essentials/>}/>
                 </Routes>
             </HashRouter>
         </div>

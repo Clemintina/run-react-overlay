@@ -29,6 +29,7 @@ export interface ConfigStore {
     browserWindow: BrowserWindowSettings;
     error: DisplayErrorMessage;
     settings: SettingsConfig;
+    menuOptions: Array<MenuOption>;
 }
 
 export interface SettingsConfig {
@@ -64,6 +65,12 @@ export interface ValidateRun {
     state: ConfigStore;
 }
 
+export interface MenuOption {
+    menuName: string;
+    menuLink: string;
+    menuDescription?: string;
+}
+
 interface InitScript {
     status: number;
     data: {
@@ -93,6 +100,7 @@ interface InitScript {
             columns: [];
         };
         version: string;
+        menuOptions: Array<MenuOption>;
     };
 }
 
@@ -146,6 +154,7 @@ const ConfigStore = createSlice({
             keathiz: false,
             boomza: true,
         },
+        menuOptions: Array<MenuOption>(),
     },
     reducers: {
         setHypixelApiKey: (state, action: {payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>}) => {
@@ -179,19 +188,20 @@ const ConfigStore = createSlice({
                 state.logs.clientName = payload.data.overlay.clientName;
                 window.ipcRenderer.send("logFileSet", state.logs.logPath);
             }
-            if (payload.data?.external?.keathiz){
+            if (payload.data?.external?.keathiz) {
                 state.keathiz.key = payload.data.external.keathiz.apiKey;
                 state.keathiz.valid = payload.data.external.keathiz.valid;
             }
             if (payload.data.table != undefined) {
                 state.table.columnState = payload.data.table.columns;
             }
-            if (payload.data?.settings){
+            if (payload.data?.settings) {
                 state.settings.keathiz = payload.data.settings.keathiz;
                 state.settings.boomza = payload.data.settings.boomza;
                 state.settings.lunar = payload.data.settings.lunar;
             }
             state.browserWindow = payload.data.browserWindow;
+            payload.data.menuOptions.forEach((option) => ConfigStore.caseReducers.setMenuOptions(state, {payload: option}));
         },
         updateErrorMessage: (state, action: {payload: DisplayErrorMessage}) => {
             state.error.code = action.payload.code;
@@ -229,6 +239,12 @@ const ConfigStore = createSlice({
         },
         setBrowserWindow: (state, action: {payload: BrowserWindowSettings}) => {
             state.browserWindow = action.payload;
+        },
+        setMenuOptions: (state, action: {payload: MenuOption}) => {
+            if (action.payload != null) {
+                state.menuOptions.push(action.payload);
+                state.menuOptions.sort();
+            }
         },
     },
     extraReducers: (builder) => {
@@ -352,7 +368,7 @@ export const runApiKeyValidator = createAsyncThunk("ConfigStore/runApiKeyValidat
 });
 
 export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data: SettingsConfig) => {
-    await window.config.set('settings',data)
+    await window.config.set("settings", data);
     return {data, status: 200};
 });
 
@@ -412,8 +428,24 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     external.keathiz.valid = (await window.config.get("external.keathiz.valid")) ?? false;
 
     window.ipcRenderer.send("opacity", browserWindow.opacity);
-    const res: InitScript = {status: 200, data: {run, hypixel, overlay, external, settings, version, browserWindow, table}};
+    const res: InitScript = {status: 200, data: {run, hypixel, overlay, external, settings, version, browserWindow, table, menuOptions: getMenuItems()}};
     return res;
 });
+
+const getMenuItems = () => {
+    const items = Array<MenuOption>();
+
+    items.push({menuName: "API", menuLink: "/settings/apis"});
+    items.push({menuName: "Overlay", menuLink: "/settings/overlay"});
+    items.push({menuName: "Tags", menuLink: "/settings/tags"});
+    items.push({menuName: "Option x", menuLink: ""});
+    items.push({menuName: "Option x", menuLink: ""});
+    items.push({menuName: "Option x", menuLink: ""});
+    items.push({menuName: "Option x", menuLink: ""});
+    items.push({menuName: "Option x", menuLink: ""});
+    items.push({menuName: "Option x", menuLink: ""});
+
+    return items;
+};
 
 export default ConfigStore.reducer;
