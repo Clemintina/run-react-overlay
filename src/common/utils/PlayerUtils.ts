@@ -28,7 +28,7 @@ export class PlayerUtils {
     private readonly formatPlayerInstance: FormatPlayer;
     private readonly playerHypixelUtils: PlayerHypixelUtils;
 
-    constructor(stores?: { config: object; tags: object }) {
+    constructor(stores?: {config: object; tags: object}) {
         this.formatPlayerInstance = new FormatPlayer();
         this.playerHypixelUtils = new PlayerHypixelUtils();
         if (stores != undefined) {
@@ -51,7 +51,7 @@ export class FormatPlayer {
     private tagStore;
     private configStore;
 
-    public setConfig = (stores: { config: object; tags: object }, options?: { subMenu?: boolean }) => {
+    public setConfig = (stores: {config: object; tags: object}, options?: {subMenu?: boolean}) => {
         this.tagStore = stores.tags;
         this.configStore = stores.config;
         this.isOverlayStats = options?.subMenu ?? false;
@@ -176,9 +176,9 @@ export class FormatPlayer {
             if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
-                        renderer+=`<span>`
+                        renderer += `<span>`;
                         renderer += `<img width="18px" height="18px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />`;
-                        renderer += `</span>`
+                        renderer += `</span>`;
                     }
                 }
             }
@@ -186,7 +186,7 @@ export class FormatPlayer {
         }
         renderer += `</span>`;
         return renderer;
-    }
+    };
 
     public renderName = (player: Player) => {
         let nameRenderer = this.starterDivider;
@@ -266,37 +266,55 @@ export class FormatPlayer {
         return renderer;
     };
 
-    public renderCoreStatsColour = (player: Player, route: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost" | "kills" | "deaths" | "gamesPlayed") => {
+    public renderCoreStatsColour = (player: Player, route: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost" | "kills" | "deaths" | "gamesPlayed", mode?: "overall" | "solos" | "duos" | "threes" | "fours") => {
         let renderer = this.starterDivider;
         let playerValue;
         if (!player.nicked) {
+            let modeObj = "";
+            if (mode != undefined) {
+                switch (mode) {
+                    case "solos":
+                        modeObj = "eight_one_";
+                        break;
+                    case "duos":
+                        modeObj = "eight_two_";
+                        break;
+                    case "threes":
+                        modeObj = "four_three_";
+                        break;
+                    case "fours":
+                        modeObj = "four_four_";
+                        break;
+                }
+            }
+
             switch (route) {
                 case "wins":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "wins_bedwars"] ?? 0;
                     break;
                 case "losses":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "losses_bedwars"] ?? 0;
                     break;
                 case "finalKills":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "final_kills_bedwars"] ?? 0;
                     break;
                 case "finalDeaths":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "final_deaths_bedwars"] ?? 0;
                     break;
                 case "bedsBroken":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "beds_broken_bedwars"] ?? 0;
                     break;
                 case "bedsLost":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "beds_lost_bedwars"] ?? 0;
                     break;
                 case "kills":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "kills_bedwars"] ?? 0;
                     break;
                 case "deaths":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "deaths_bedwars"] ?? 0;
                     break;
                 default:
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.games_played_bedwars ?? 0;
+                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "games_played_bedwars"] ?? 0;
             }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, "red", player);
@@ -332,7 +350,7 @@ export class FormatPlayer {
         if (player.sources.keathiz === null || player.sources.keathiz === undefined) {
             keathizTagArray.push(this.getPlayerTagDivider("ERROR", `#${MinecraftColours.DARK_RED.hex}`));
         } else {
-            if (player.sources.keathiz.data.success && player.sources.keathiz.status === 200) {
+            if (player?.sources?.keathiz?.data?.success && player?.sources?.keathiz?.status === 200) {
                 const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
                 if (keathizTags.player.exits.last_10_min >= 1) {
                     keathizTagArray.push(this.getPlayerTagDivider("E10", `#${MinecraftColours.GOLD.hex}`));
@@ -473,7 +491,7 @@ export class FormatPlayer {
 }
 
 export class PlayerHypixelUtils {
-    public getDateFormatted = (epoch: number | undefined, options?: { day: boolean; month: boolean; year: boolean } | undefined) => {
+    public getDateFormatted = (epoch: number | undefined, options?: {day: boolean; month: boolean; year: boolean} | undefined) => {
         if (epoch === undefined) return "Disabled";
         const d = new Date(0);
         d.setUTCMilliseconds(epoch);
@@ -499,7 +517,7 @@ export class PlayerHypixelUtils {
 }
 
 export interface MinecraftColoursImpl {
-    [colour: string]: { colour: string; hex: string };
+    [colour: string]: {colour: string; hex: string};
 }
 
 export const MinecraftColours: MinecraftColoursImpl = {
