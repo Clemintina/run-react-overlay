@@ -4,7 +4,6 @@ import {Provider} from "react-redux";
 import {HashRouter, Route, Routes} from "react-router-dom";
 import TitleBar from "@components/ui/Titlebar";
 import App from "@renderer/views/App";
-import MainSettings from "@renderer/views/MainSettings";
 import store from "@renderer/store";
 import {initScript} from "@renderer/store/ConfigStore";
 import {LogFileReader} from "@common/utils/LogFileReader";
@@ -12,7 +11,7 @@ import {playerInitScript, updatePlayerStores} from "@renderer/store/PlayerStore"
 import "@assets/index.css";
 import {createTheme, ThemeProvider} from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
-import CommonSettings from "@components/ui/settings/CommonSettings";
+import TagEditor from "@components/ui/settings/views/TagEditor";
 
 /**
  * Loads the **Initial Script**
@@ -36,7 +35,7 @@ reader.startPartyListener();
 
 const darkTheme = createTheme({
     palette: {
-        mode: 'dark',
+        mode: "dark",
     },
 });
 
@@ -44,18 +43,21 @@ const darkTheme = createTheme({
  * Renders the document in the DOM and creates our React application.
  */
 createRoot(document.getElementById("app")!).render(
-    <Provider store={store}>
-        <ThemeProvider theme={darkTheme}>
-        <div className='mainBody' >
-            <HashRouter basename='/'>
-                <TitleBar />
-                <Routes>
-                    <Route path='/' element={<App />} />
-                    <Route path='/settings' element={<CommonSettings />} />
-                    <Route path='/settings/apis' element={<Essentials/>}/>
-                </Routes>
-            </HashRouter>
-        </div>
-        </ThemeProvider>
-    </Provider>,
+    <div>
+        <Provider store={store}>
+            <ThemeProvider theme={darkTheme}>
+                <div className='mainBody'>
+                    <HashRouter basename='/'>
+                        <TitleBar />
+                        <Routes>
+                            <Route path='/' element={<App />} />
+                            <Route path='/settings' element={<Essentials />} />
+                            <Route path='/settings/essentials' element={<Essentials />} />
+                            <Route path='/settings/tags' element={<TagEditor />} />
+                        </Routes>
+                    </HashRouter>
+                </div>
+            </ThemeProvider>
+        </Provider>
+    </div>,
 );

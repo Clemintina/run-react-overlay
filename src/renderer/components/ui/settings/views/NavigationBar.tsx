@@ -26,7 +26,7 @@ const NavigationBar = (props: {children}) => {
         <div style={{color: colours.primaryColour, backgroundColor: colours.backgroundColour}} className='w-full h-full p-2 flex flex-col space-y-2'>
             <div className='flex w-full'>
                 <div className='h-screen'>
-                    <div className='w-20'>
+                    <div className='w-30'>
                         {menuLinks}
                     </div>
                 </div>

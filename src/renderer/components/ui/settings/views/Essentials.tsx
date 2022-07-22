@@ -55,6 +55,21 @@ const Essentials = () => {
                             {<ValidationIcon valid={isHypixelKeySet} />}
                         </span>
                     </SettingCard>
+                    <SettingCard options={{shown: settings.keathiz}}>
+                        <span>Keathiz API Key</span>
+                        <span />
+                        <span>
+                            <InputTextBox
+                                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                                    if (event.key === "Enter") {
+                                        store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                                    }
+                                }}
+                                options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
+                            />
+                            {<ValidationIcon valid={localConfigStore.keathiz.valid} />}
+                        </span>
+                    </SettingCard>
                     <SettingCard>
                         <span>Overlay Logs</span>
                         <span />
@@ -103,21 +118,6 @@ const Essentials = () => {
                             }}
                             options={{enabled: settings.keathiz}}
                         />
-                    </SettingCard>
-                    <SettingCard options={{shown: settings.keathiz}}>
-                        <span>Keathiz API Key</span>
-                        <span />
-                        <span>
-                            <InputTextBox
-                                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (event.key === "Enter") {
-                                        store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
-                                    }
-                                }}
-                                options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
-                            />
-                            {<ValidationIcon valid={localConfigStore.keathiz.valid} />}
-                        </span>
                     </SettingCard>
                 </div>
             </NavigationBar>

@@ -243,7 +243,7 @@ const ConfigStore = createSlice({
         setMenuOptions: (state, action: {payload: MenuOption}) => {
             if (action.payload != null) {
                 state.menuOptions.push(action.payload);
-                state.menuOptions.sort();
+                state.menuOptions.sort((a, b) => a.menuName.localeCompare(b.menuName));
             }
         },
     },
@@ -435,15 +435,8 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
 const getMenuItems = () => {
     const items = Array<MenuOption>();
 
-    items.push({menuName: "API", menuLink: "/settings/apis"});
-    items.push({menuName: "Overlay", menuLink: "/settings/overlay"});
+    items.push({menuName: "Essentials", menuLink: "/settings/essentials"});
     items.push({menuName: "Tags", menuLink: "/settings/tags"});
-    items.push({menuName: "Option x", menuLink: ""});
-    items.push({menuName: "Option x", menuLink: ""});
-    items.push({menuName: "Option x", menuLink: ""});
-    items.push({menuName: "Option x", menuLink: ""});
-    items.push({menuName: "Option x", menuLink: ""});
-    items.push({menuName: "Option x", menuLink: ""});
 
     return items;
 };
