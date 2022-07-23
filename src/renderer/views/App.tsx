@@ -11,6 +11,7 @@ import {AgGridReact} from "ag-grid-react";
 import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
 import {saveTableColumnState, TableState} from "@renderer/store/ConfigStore";
 import {PlayerOptionsModal} from "@components/user/PlayerOptionsModal";
+import {readableColor, rgba} from "polished";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
@@ -37,7 +38,7 @@ const columns: ColDef[] = [
         flex: 1,
         minWidth: tinyColumnSize,
         sortable: false,
-        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderPlayerHead(data)}/>,
+        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderPlayerHead(data)} />,
     },
     {
         field: "star",
@@ -129,7 +130,7 @@ const columns: ColDef[] = [
         flex: 1,
         minWidth: tinyColumnSize,
         sortable: false,
-        cellRenderer: ({data}) => <PlayerOptionsModal data={data}/>,
+        cellRenderer: ({data}) => <PlayerOptionsModal data={data} />,
     },
 ];
 
@@ -210,11 +211,23 @@ const AppTable = () => {
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
     };
 
+    const backgroundStyle = {
+        // background: rgba(36, 36, 36, localStore.configStore.browserWindow.opacity / 100),
+        background: rgba(localStore.configStore.colours.backgroundColour,localStore.configStore.browserWindow.opacity / 100),
+        height: localStore.configStore.browserWindow.height - 38,
+        OverflowX: "hidden",
+        color: "",
+    };
+    if (localStore.configStore.browserWindow.opacity < 40) backgroundStyle.color = "white";
+    else backgroundStyle.color = localStore.configStore.colours.primaryColour;
+
     return (
         <div>
-            <div className='w-full h-full' style={{background: localStore.configStore.colours.backgroundColour, color: localStore.configStore.colours.primaryColour}}>
-                <div className=' ag-theme-alpine-dark' style={{height: localStore.configStore.browserWindow.height - 38, overflowX: "hidden"}}>
-                    <AgGridReact gridOptions={gridOptions} rowData={players} />
+            <div style={backgroundStyle}>
+                <div className='w-full h-full'>
+                    <div className=' ag-theme-alpine-dark' style={backgroundStyle}>
+                        <AgGridReact gridOptions={gridOptions} rowData={players} />
+                    </div>
                 </div>
             </div>
         </div>

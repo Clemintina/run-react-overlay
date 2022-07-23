@@ -14,8 +14,10 @@ const NavigationBar = (props: {children}) => {
         <div key={menuOption.menuName}>
             <div className=''>
                 <div className='flex'>
-                    <div className='flex hover:text-white-500 hover:border-cyan-500 hover:border-2'>
-                        <Link to={menuOption.menuLink}>{<InputBoxButton text={menuOption.menuName}></InputBoxButton>}</Link>
+                    <div className='flex w-full hover:text-white-500 hover:border-cyan-500 hover:border-2'>
+                        <Link to={menuOption.menuLink} className={"w-full"}>
+                            {<InputBoxButton sx={{width: "100%"}} text={menuOption.menuName}></InputBoxButton>}
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -23,14 +25,18 @@ const NavigationBar = (props: {children}) => {
     ));
 
     return (
-        <div style={{color: colours.primaryColour, backgroundColor: colours.backgroundColour}} className='w-full h-full p-2 flex flex-col space-y-2'>
-            <div className='flex w-full'>
-                <div className='h-screen'>
-                    <div className='w-30'>
-                        {menuLinks}
+        <div className='flex'>
+            <div className='flex'>
+                <div className='flex '>
+                    <div className='flex justify-between'>
+                        <div className='flex border-r-2 border-gray-500'>
+                            <div>{menuLinks}</div>
+                        </div>
+                    </div>
+                    <div className='flex'>
+                        <div className={"grid grid-col-3"}>{props.children}</div>
                     </div>
                 </div>
-                <div className='pl-3 w-full h-full p-2 flex flex-col space-y-2'>{props.children}</div>
             </div>
         </div>
     );

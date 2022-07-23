@@ -4,7 +4,6 @@
 @import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 div.main {
-  background: constants.$backgroundColour;
   min-height: 100vh;
   min-width: 100vh;
   display: flex;
@@ -12,8 +11,7 @@ div.main {
 }
 
 .mainTable {
-  background: #242424 !important;
-  color: white !important;
+
 }
 
 .mainBody {

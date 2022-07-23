@@ -12,6 +12,7 @@ import "@assets/index.css";
 import {createTheme, ThemeProvider} from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
 import TagEditor from "@components/ui/settings/views/TagEditor";
+import MainSettings from "@renderer/views/MainSettings";
 
 /**
  * Loads the **Initial Script**
@@ -19,7 +20,7 @@ import TagEditor from "@components/ui/settings/views/TagEditor";
  */
 setTimeout(() => store.dispatch(initScript()), 20);
 setTimeout(() => store.dispatch(playerInitScript()), 20);
-setInterval(() => store.dispatch(updatePlayerStores()), 60000);
+setInterval(() => store.dispatch(updatePlayerStores({})), 60000);
 
 /**
  * Starts the Log readers
@@ -54,6 +55,7 @@ createRoot(document.getElementById("app")!).render(
                             <Route path='/settings' element={<Essentials />} />
                             <Route path='/settings/essentials' element={<Essentials />} />
                             <Route path='/settings/tags' element={<TagEditor />} />
+                            <Route path='/settings/old' element={<MainSettings />} />
                         </Routes>
                     </HashRouter>
                 </div>

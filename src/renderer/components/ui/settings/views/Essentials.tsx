@@ -1,4 +1,4 @@
-import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, runApiKeyValidator, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
+import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, runApiKeyValidator, setBrowserWindow, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import store from "@renderer/store";
 import React from "react";
@@ -10,6 +10,7 @@ import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
 import {SettingHeader} from "@components/user/settings/components/SettingHeader";
 import {ToggleButton} from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
+import {Slider} from "@mui/material";
 
 const Essentials = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
@@ -17,6 +18,9 @@ const Essentials = () => {
     const isLogsSet: boolean = localConfigStore.logs.readable;
     const settings = localConfigStore.settings;
     const colours = localConfigStore.colours;
+
+    const [opacityValue, setOpacityValue] = React.useState(localConfigStore.browserWindow.opacity ?? 20);
+
 
     // TODO make it look nicer and cleaner
 
@@ -118,6 +122,31 @@ const Essentials = () => {
                             }}
                             options={{enabled: settings.keathiz}}
                         />
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Opacity</span>
+                        <span/>
+                        <span>
+                    <Slider
+                        aria-label='Opacity'
+                        value={opacityValue}
+                        onChange={(event, value) => {
+                            const opacityValue: number = typeof value == 'number' ? value : value[0];
+                            setOpacityValue(opacityValue);
+                           // window.ipcRenderer.send('opacity', opacityValue / 100);
+                        }}
+                        onBlur={() => {
+                            if (opacityValue < 20) setOpacityValue(20);
+                            store.dispatch(setBrowserWindow({height: localConfigStore.browserWindow.height, opacity: opacityValue, width: localConfigStore.browserWindow.width}));
+                        }}
+                        getAriaValueText={(value) => `${value}`}
+                        valueLabelDisplay="auto"
+                        min={20}
+                        valueLabelFormat={(value: number) => {
+                            return value;
+                        }}
+                    />
+                </span>
                     </SettingCard>
                 </div>
             </NavigationBar>

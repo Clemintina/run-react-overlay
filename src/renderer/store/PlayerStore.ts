@@ -2,11 +2,12 @@ import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Player} from "@common/utils/PlayerUtils";
 import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import store, {Store} from "./index";
-import {PlayerHandler, StoreObject} from "@common/utils/Schemas";
+import {PlayerHandler, StoreObject, UpdateStoreObject} from "@common/utils/Schemas";
 import {Components} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import {initScript, SettingsConfig} from "@renderer/store/ConfigStore";
+import {RUNElectronStoreTagsType} from "@renderer/store/ElectronStoreUtils";
 
 export interface PlayerStoreThunkObject {
     name: string;
@@ -26,6 +27,10 @@ export interface PlayerStore {
         config: object;
         tags: object;
     };
+}
+
+export interface PlayerStoreTyped {
+    tags: RUNElectronStoreTagsType;
 }
 
 /**
@@ -211,14 +216,20 @@ export const resetOverlayTable = createAsyncThunk("PlayerStore/resetOverlayTable
     return true;
 });
 
-export const updatePlayerStores = createAsyncThunk("PlayerStore/updateStore", async () => {
-    cacheState.apiKey = await window.config.get("hypixel.apiKey");
-    return await window.ipcRenderer.invoke<StoreObject>("getWholeStore");
+export const updatePlayerStores = createAsyncThunk("PlayerStore/updateStore", async (updateStoreObject: UpdateStoreObject) => {
+    if (updateStoreObject?.update != true) {
+        cacheState.apiKey = await window.config.get("hypixel.apiKey");
+        return await window.ipcRenderer.invoke<StoreObject>("getWholeStore");
+    } else {
+        const storeObject = await window.ipcRenderer.invoke<StoreObject>("getWholeStore");
+        const ipcResponse: IPCResponse<StoreObject> = {status: 200, data: {config: updateStoreObject.config ?? storeObject.data.config, tags: updateStoreObject.tags ?? storeObject.data.tags}};
+        return ipcResponse;
+    }
 });
 
 export const playerInitScript = createAsyncThunk("PlayerStore/Init", async () => {
     [cacheState.apiKey, cacheState.apiKeyOwner, cacheState.runKey, cacheState.settings] = await Promise.all([window.config.get("hypixel.apiKey"), window.config.get("hypixel.apiKeyOwner"), window.config.get("run.apiKey"), window.config.get("settings")]);
-    store.dispatch(updatePlayerStores());
+    store.dispatch(updatePlayerStores({}));
     cacheState.tagStore = store.getState().playerStore.tagStore;
     return true;
 });

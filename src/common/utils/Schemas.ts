@@ -62,3 +62,9 @@ export interface StoreObject {
     tags: RUNElectronStoreTagsTyped;
     config: RUNElectronStoreTyped;
 }
+
+export interface UpdateStoreObject {
+    update?: boolean
+    tags?: RUNElectronStoreTagsTyped;
+    config?: RUNElectronStoreTyped;
+}

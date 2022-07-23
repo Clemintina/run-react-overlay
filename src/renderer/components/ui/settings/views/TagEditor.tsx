@@ -1,44 +1,106 @@
-import {apiKeyValidator, ConfigStore} from "@renderer/store/ConfigStore";
+import {ConfigStore} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
-import store from "@renderer/store";
+import store, {Store} from "@renderer/store";
 import React from "react";
 import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {updateCachedState} from "@renderer/store/PlayerStore";
-import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
+import {PlayerStore, PlayerStoreTyped, updatePlayerStores} from "@renderer/store/PlayerStore";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
+import {ColourPicker} from "@components/user/settings/components/ColourPicker";
+import {RUNElectronStoreTagsType} from "@renderer/store/ElectronStoreUtils";
+import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 
 const Essentials = () => {
-    const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
-    const isHypixelKeySet: boolean = localConfigStore.hypixel.apiKeyValid;
-    const isLogsSet: boolean = localConfigStore.logs.readable;
-    const settings = localConfigStore.settings;
-    const colours = localConfigStore.colours;
+    const localStore:Store = useSelector(() => store.getState());
+    const localTagStore: PlayerStore = localStore.playerStore;
+    const tagStore:RUNElectronStoreTagsType = localTagStore.tagStore.tags as RUNElectronStoreTagsType;
 
+    const updateColourStore =async (colourPath:RUNElectronStoreTagsTyped,colour) => {
+        colour = colour.replace("#", "");
+        await window.ipcRenderer.send("tagsSet", {key: colourPath, data: colour});
+        store.dispatch(updatePlayerStores({}));
+    };
     // TODO make it look nicer and cleaner
 
     return (
         <div>
             <NavigationBar>
-                <p>All colours must be in <span className={'font-bold'}>HEX</span></p>
-                <div className='w-full h-full p-2 flex flex-col space-y-2'>
+                <div className='h-full p-2 flex flex-col'>
                     <SettingCard>
-                        <span>Tag</span>
-                        <span>Display</span>
-                        <span>Hex</span>
+                        <span className={'w-80'}>Tag</span>
+                        <span className={'w-80'}>Display</span>
+                        <span className={'w-80'}>Colour</span>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Annoy List</span>
+                        <span style={{color: `#${tagStore.run.annoylist.colour}`}}>{tagStore.run.annoylist.display}</span>
+                        <span>
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    await updateColourStore("run.annoylist.colour", colour);
+                                }}
+                                colourObject={tagStore.run.annoylist.colour}
+                            />
+                        </span>
                     </SettingCard>
                     <SettingCard>
                         <span>Blacklisted</span>
-                        <span />
+                        <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{tagStore.run.blacklist.display}</span>
                         <span>
-                            <InputTextBox
-                                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (event.key === "Enter") {
-                                        store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
-                                        setTimeout(() => updateCachedState(), 1000);
-                                    }
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    await updateColourStore("run.blacklist.colour", colour);
                                 }}
-                                options={{placeholder: "Blacklisted hex colour"}}
+                                colourObject={tagStore.run.blacklist.colour}
+                            />
+                        </span>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Encounters</span>
+                        <span style={{color: `#${tagStore.run.encounters.colour[0].colour}`}}>{tagStore.run.encounters.display}</span>
+                        <span>
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    await updateColourStore("run.name_change.colour", colour);
+                                }}
+                                colourObject={tagStore.run.name_change.colour}
+                                text={'Not Implemented'}
+                            />
+                        </span>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Name Change</span>
+                        <span style={{color: `#${tagStore.run.name_change.colour}`}}>{tagStore.run.name_change.display}</span>
+                        <span>
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    await updateColourStore("run.name_change.colour", colour);
+                                }}
+                                colourObject={tagStore.run.name_change.colour}
+                            />
+                        </span>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Personal Safelist</span>
+                        <span style={{color: `#${tagStore.run.personal_safelist.colour}`}}>{tagStore.run.personal_safelist.display}</span>
+                        <span>
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    await updateColourStore("run.personal_safelist.colour", colour);
+                                }}
+                                colourObject={tagStore.run.personal_safelist.colour}
+                            />
+                        </span>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Safelist</span>
+                        <span style={{color: `#${tagStore.run.safelist.colour[0].colour}`}}>{tagStore.run.safelist.display}</span>
+                        <span>
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    await updateColourStore("run.name_change.colour", colour);
+                                }}
+                                colourObject={tagStore.run.name_change.colour}
+                                text={'Not Implemented'}
                             />
                         </span>
                     </SettingCard>
