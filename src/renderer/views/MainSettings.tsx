@@ -96,11 +96,12 @@ const MainSettings = () => {
             </SettingHeader>
             <SettingCard>
                 <span>Boomza</span>
-                <span/>
+                <span />
                 <ToggleButton
                     text={""}
                     onChange={async (event) => {
-                        const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
+                        const payload: SettingsConfig = {...settings};
+                        payload.boomza = !payload.boomza;
                         store.dispatch(setSettingsValue(payload));
                     }}
                     options={{enabled: settings.boomza}}
@@ -108,10 +109,11 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Lunar</span>
-                <span/>
+                <span />
                 <ToggleButton
                     onChange={async (event) => {
-                        const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
+                        const payload: SettingsConfig = {...settings};
+                        payload.lunar = !payload.lunar;
                         store.dispatch(setSettingsValue(payload));
                     }}
                     options={{enabled: settings.lunar}}
@@ -119,10 +121,11 @@ const MainSettings = () => {
             </SettingCard>
             <SettingCard>
                 <span>Keathiz</span>
-                <span/>
+                <span />
                 <ToggleButton
                     onChange={async (event) => {
-                        const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
+                        const payload: SettingsConfig = {...settings};
+                        payload.keathiz = !payload.keathiz;
                         store.dispatch(setSettingsValue(payload));
                     }}
                     options={{enabled: settings.keathiz}}

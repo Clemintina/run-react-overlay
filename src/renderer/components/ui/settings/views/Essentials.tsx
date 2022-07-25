@@ -21,9 +21,7 @@ const Essentials = () => {
 
     const [opacityValue, setOpacityValue] = React.useState(localConfigStore.browserWindow.opacity ?? 20);
 
-
     // TODO make it look nicer and cleaner
-
     return (
         <div>
             <NavigationBar>
@@ -38,6 +36,10 @@ const Essentials = () => {
                                         store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                                         setTimeout(() => updateCachedState(), 1000);
                                     }
+                                }}
+                                onBlur={(event)=>{
+                                    store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                                    setTimeout(() => updateCachedState(), 1000);
                                 }}
                                 options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.hypixel.apiKey : "Hypixel API Key"}}
                             />
@@ -54,6 +56,9 @@ const Essentials = () => {
                                         store.dispatch(runApiKeyValidator({runApiKey: event.currentTarget.value.replaceAll(" ", ""), state: localConfigStore}));
                                     }
                                 }}
+                                onBlur={(event)=>{
+                                    store.dispatch(runApiKeyValidator({runApiKey: event.currentTarget.value.replaceAll(" ", ""), state: localConfigStore}));
+                                }}
                                 options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.runKey : "RUN API Key"}}
                             />
                             {<ValidationIcon valid={isHypixelKeySet} />}
@@ -68,6 +73,9 @@ const Essentials = () => {
                                     if (event.key === "Enter") {
                                         store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                                     }
+                                }}
+                                onBlur={(event)=>{
+                                    store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                                 }}
                                 options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
                             />
@@ -95,7 +103,8 @@ const Essentials = () => {
                         <ToggleButton
                             text={""}
                             onChange={async (event) => {
-                                const payload: SettingsConfig = {boomza: !settings.boomza, keathiz: settings.keathiz, lunar: settings.lunar};
+                                const payload: SettingsConfig = {...settings};
+                                payload.boomza = !payload.boomza;
                                 store.dispatch(setSettingsValue(payload));
                             }}
                             options={{enabled: settings.boomza}}
@@ -106,7 +115,8 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async (event) => {
-                                const payload: SettingsConfig = {boomza: settings.boomza, keathiz: settings.keathiz, lunar: !settings.lunar};
+                                const payload: SettingsConfig = {...settings};
+                                payload.lunar = !payload.lunar;
                                 store.dispatch(setSettingsValue(payload));
                             }}
                             options={{enabled: settings.lunar}}
@@ -117,10 +127,23 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async (event) => {
-                                const payload: SettingsConfig = {boomza: settings.boomza, keathiz: !settings.keathiz, lunar: settings.lunar};
+                                const payload: SettingsConfig = {...settings};
+                                payload.keathiz = !payload.keathiz;
                                 store.dispatch(setSettingsValue(payload));
                             }}
                             options={{enabled: settings.keathiz}}
+                        />
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Auto Hide</span>
+                        <span />
+                        <ToggleButton
+                            onChange={async (event) => {
+                                const payload: SettingsConfig = {...settings};
+                                payload.preferences.autoHide = !payload.preferences.autoHide;
+                                store.dispatch(setSettingsValue(payload));
+                            }}
+                            options={{enabled: settings.preferences.autoHide}}
                         />
                     </SettingCard>
                     <SettingCard>

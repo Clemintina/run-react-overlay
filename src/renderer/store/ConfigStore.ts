@@ -36,6 +36,9 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
+    preferences:{
+        autoHide: boolean
+    }
 }
 
 export interface ClientSetting {
@@ -149,10 +152,13 @@ const ConfigStore = createSlice({
         table: {
             columnState: [{colId: "id"}],
         },
-        settings: {
+        settings:  {
             lunar: true,
             keathiz: false,
             boomza: true,
+            preferences:{
+                autoHide: true
+            }
         },
         menuOptions: Array<MenuOption>(),
     },

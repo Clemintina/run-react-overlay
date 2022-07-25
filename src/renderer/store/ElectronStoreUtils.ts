@@ -98,6 +98,9 @@ export const RUNElectronStore = Type.Optional(
                     description: "Enable Keathiz API",
                     default: false,
                 }),
+                preferences: Type.Object({
+                    autoHide: Type.Boolean({description:"Hides the overlay automatically",default: true})
+                })
             }),
         ),
     }),
@@ -112,6 +115,9 @@ export const getDefaultElectronStore: RUNElectronStoreType = {
         lunar: true,
         boomza: true,
         keathiz: false,
+        preferences: {
+            autoHide: true
+        }
     },
 };
 

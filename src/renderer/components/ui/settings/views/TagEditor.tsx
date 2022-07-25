@@ -8,17 +8,26 @@ import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import {ColourPicker} from "@components/user/settings/components/ColourPicker";
 import {RUNElectronStoreTagsType} from "@renderer/store/ElectronStoreUtils";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
+import {ColourPickerArray} from "@components/user/settings/components/ColourPickerArrays";
 
 const Essentials = () => {
     const localStore:Store = useSelector(() => store.getState());
     const localTagStore: PlayerStore = localStore.playerStore;
     const tagStore:RUNElectronStoreTagsType = localTagStore.tagStore.tags as RUNElectronStoreTagsType;
+    const defaultArrayColour = "ffffff";
 
     const updateColourStore =async (colourPath:RUNElectronStoreTagsTyped,colour) => {
         colour = colour.replace("#", "");
         await window.ipcRenderer.send("tagsSet", {key: colourPath, data: colour});
         store.dispatch(updatePlayerStores({}));
     };
+
+    const updateColourStoreArray =async (colourPath,colour) => {
+        colour = colour.replace("#", "");
+        await window.ipcRenderer.send("tagsSet", {key: colourPath, data: colour});
+        store.dispatch(updatePlayerStores({}));
+    };
+
     // TODO make it look nicer and cleaner
 
     return (
@@ -56,13 +65,13 @@ const Essentials = () => {
                     </SettingCard>
                     <SettingCard>
                         <span>Encounters</span>
-                        <span style={{color: `#${tagStore.run.encounters.colour[0].colour}`}}>{tagStore.run.encounters.display}</span>
+                        <span style={{color: `#${defaultArrayColour}`}}>{tagStore.run.encounters.display}</span>
                         <span>
-                            <ColourPicker
+                            <ColourPickerArray
                                 setColour={async (colour: string) => {
-                                    await updateColourStore("run.name_change.colour", colour);
+                                    await updateColourStoreArray("run.encounters.colour", colour);
                                 }}
-                                colourObject={tagStore.run.name_change.colour}
+                                colourObject={tagStore.run.encounters.colour}
                                 text={'Not Implemented'}
                             />
                         </span>
@@ -93,13 +102,13 @@ const Essentials = () => {
                     </SettingCard>
                     <SettingCard>
                         <span>Safelist</span>
-                        <span style={{color: `#${tagStore.run.safelist.colour[0].colour}`}}>{tagStore.run.safelist.display}</span>
+                        <span style={{color: `#${defaultArrayColour}`}}>{tagStore.run.safelist.display}</span>
                         <span>
-                            <ColourPicker
+                            <ColourPickerArray
                                 setColour={async (colour: string) => {
-                                    await updateColourStore("run.name_change.colour", colour);
+                                    await updateColourStoreArray("run.safelist.colour", colour);
                                 }}
-                                colourObject={tagStore.run.name_change.colour}
+                                colourObject={tagStore.run.safelist.colour}
                                 text={'Not Implemented'}
                             />
                         </span>

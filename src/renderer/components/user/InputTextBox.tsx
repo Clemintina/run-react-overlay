@@ -6,6 +6,8 @@ import store from "@renderer/store";
 
 export interface InputTextBox {
     onKeyDown: (input: React.KeyboardEvent<HTMLInputElement>) => void;
+    onBlur?: (onExit) => void;
+    onFocus?: (onFocus) => void;
     options: {
         placeholder: string;
         className: string;
@@ -36,11 +38,13 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                     event.currentTarget.style.color = `white`;
                     event.currentTarget.style.border = `${colours.secondaryColour} 1px solid`;
                     setIsFocused(true);
+                    if (props.onFocus != undefined) props?.onFocus(event);
                 }}
                 onBlur={(event) => {
                     event.currentTarget.style.color = `${colours.primaryColour}`;
                     event.currentTarget.style.border = `${colours.secondaryColour} 0px solid`;
                     setIsFocused(false);
+                    if (props.onBlur != undefined) props?.onBlur(event);
                 }}
                 onMouseOver={handleMouseOver}
                 onMouseOut={handleMouseOut}

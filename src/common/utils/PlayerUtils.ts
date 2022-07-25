@@ -96,7 +96,7 @@ export class FormatPlayer {
                 if (player.hypixelPlayer?.channel == "PARTY") {
                     tagRenderer += this.getTagsFromConfig("hypixel.party");
                 }
-                if (player.sources.keathiz != null) {
+                if (player.sources.keathiz != null && this.configStore.settings.keathiz) {
                     tagRenderer += this.renderKeathizTags(player);
                 }
             }
