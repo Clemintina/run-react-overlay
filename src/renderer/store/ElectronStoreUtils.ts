@@ -168,6 +168,7 @@ export const RUNElectronStoreTags = Type.Object({
                     colour: Type.String({
                         description: "The colours for the Encounters tag",
                     }),
+                    operator: Type.String({description: "Conditional used for this object"}),
                 }),
                 {
                     description: "Sets the colours for the tags using dynamic values",
@@ -187,6 +188,7 @@ export const RUNElectronStoreTags = Type.Object({
                     colour: Type.String({
                         description: "The colours for the Safelist tag",
                     }),
+                    operator: Type.String({description: "Conditional used for this object"}),
                 }),
                 {
                     description: "Sets the colours for the tags using dynamic values",
@@ -290,18 +292,22 @@ export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
             colour: [
                 {
                     requirement: 1,
+                    operator: "<=",
                     colour: "AA0000",
                 },
                 {
                     requirement: 2,
+                    operator: "<=",
                     colour: "FFFF55",
                 },
                 {
                     requirement: 5,
+                    operator: "<=",
                     colour: "FF5555",
                 },
                 {
                     requirement: 10,
+                    operator: "<=",
                     colour: "AA0000",
                 },
             ],
@@ -310,15 +316,15 @@ export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
             display: "✓",
             colour: [
                 {
-                    requirement: 1,
+                    requirement: 1,operator: "<=",
                     colour: "FF5555",
                 },
                 {
-                    requirement: 10,
+                    requirement: 10,operator: "<=",
                     colour: "FFFF55",
                 },
                 {
-                    requirement: 20,
+                    requirement: 20,operator: "<=",
                     colour: "55FF55",
                 },
             ],

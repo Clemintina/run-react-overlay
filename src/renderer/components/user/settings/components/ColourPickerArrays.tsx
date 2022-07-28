@@ -2,15 +2,16 @@ import React, {useState} from "react";
 import {useSelector} from "react-redux";
 import store from "@renderer/store";
 import {ConfigStore} from "@renderer/store/ConfigStore";
-import {Box, Modal} from "@mui/material";
+import {Box, FormControl, FormControlLabel, FormLabel, Modal, Radio, RadioGroup} from "@mui/material";
 import {InputBoxButton} from "@components/user/InputBoxButton";
-import {Interweave} from "interweave";
+import {HexColorPicker} from "react-colorful";
+import {TagArray} from "@common/utils/Schemas";
 
 export interface ColourPickerArray {
     children: React.ReactElement | React.ReactElement[];
-    setColour: (colour: string) => void;
+    setColour: (colour: TagArray) => void;
     text?: string;
-    colourObject: Array<{colour: string; requirement: number; operator: string}>;
+    colourObject: {display: string; colour: Array<TagArray>};
 }
 
 export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) => {
@@ -18,28 +19,45 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const [colour, setColour] = useState("#" + props.colourObject ?? "242424");
+    const handleClose = () => {
+        setOpen(false);
+        if (arrayItem.colour.length == 6) {
+            props.setColour(arrayItem);
+        }
+    };
+
+    const [arrayItem, setArrayItem] = useState({colour: "", requirement: 0, operator: "<="});
+    const [customColour, setCustomColour] = useState("242424");
 
     const getArrayDetails = (props) => {
-        let data = "";
-        data += `<div class="flex grid grid-col-3">`;
-        console.log(props);
-        for (const obj of props.colourObject) {
-            data += `<div>
-                <span>${obj.requirement}</span>
-                <span>${obj.operator}</span>
-                <span>${obj.colour}</span>
-                <span><HexColorPicker color={obj.colour} /></span>
-            </div>`;
+        const resp: Array<JSX.Element> = [];
+        const arr = [...props.colourObject.colour];
+        arr.sort((a, b) => a.requirement - b.requirement);
+        for (const obj of arr) {
+            resp.push(
+                <div key={obj.requirement} className={"grid grid-cols-4 gap-2 text-lg align-middle"}>
+                    <FormControlLabel value={obj.requirement} control={<Radio />} label={""} />
+                    <span>{obj.requirement}</span>
+                    <span>{obj.operator}</span>
+                    <span style={{color: "#" + obj.colour}}>{obj.colour}</span>
+                    <span></span>
+                </div>,
+            );
         }
-        data += `</div>`;
-        return data;
+        return resp;
     };
 
     const handleChange = (event) => {
-        setColour(event);
-        props.setColour(event);
+        event = event.replace("#", "");
+        setCustomColour(event);
+        arrayItem.colour = event;
+    };
+
+    const handleRadioChange = (event: React.ChangeEvent) => {
+        if (arrayItem.colour.length == 6) {
+            props.setColour(arrayItem);
+        }
+        setArrayItem({requirement: Number.parseInt((event.target as HTMLInputElement).value), colour: "", operator: "<="});
     };
 
     const style = {
@@ -48,7 +66,7 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
         left: "50%",
         transform: "translate(-50%, -50%)",
         bgcolor: configStore.colours.backgroundColour,
-        border: `2px solid ${colour}`,
+        border: `2px solid #${customColour}`,
         boxShadow: 24,
         p: 4,
         color: configStore.colours.primaryColour,
@@ -61,7 +79,16 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
             <InputBoxButton onClick={handleOpen} text={props?.text ?? "Pick!"} />
             <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
                 <Box sx={style}>
-                    <Interweave content={colourArrayData} />
+                    <FormControl>
+                        <FormLabel id='colour-array'>Select which item you'd like to edit</FormLabel>
+                        <RadioGroup
+                            defaultValue={props.colourObject.colour[0].requirement}
+                            onChange={handleRadioChange}>
+                            {colourArrayData}</RadioGroup>
+                    </FormControl>
+                    <div className={'grid place-items-center'}>
+                        <HexColorPicker onChange={handleChange} color={`#${customColour}`} />
+                    </div>
                 </Box>
             </Modal>
         </div>

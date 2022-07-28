@@ -49,17 +49,17 @@ module.exports = {
             },
         },
         {
-            name: '@electron-forge/maker-deb',
+            name: "@electron-forge/maker-deb",
             config: {
                 options: {
-                    maintainer: 'Kay & Arman',
-                    homepage: 'https://antisniper.seraph.si/api/'
-                }
-            }
+                    maintainer: "Kay & Arman",
+                    homepage: "https://antisniper.seraph.si/api/",
+                },
+            },
         },
         {
-            name: '@electron-forge/maker-dmg'
-        }
+            name: "@electron-forge/maker-dmg",
+        },
     ],
     // Forge Plugins
     plugins: [

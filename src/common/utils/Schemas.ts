@@ -41,11 +41,17 @@ export enum ProxyType {
 export interface TagArray {
     requirement: number;
     colour: string;
+    operator?: string;
 }
 
 export interface TagObject {
     display: string;
     colour: Array<TagArray> | string;
+}
+
+export interface TagModifier {
+    display: string,
+    changedObjectId: number,
 }
 
 export interface MetricsObject {
@@ -64,7 +70,7 @@ export interface StoreObject {
 }
 
 export interface UpdateStoreObject {
-    update?: boolean
+    update?: boolean;
     tags?: RUNElectronStoreTagsTyped;
     config?: RUNElectronStoreTyped;
 }

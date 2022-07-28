@@ -2,10 +2,9 @@ import React, {useState} from "react";
 import {useSelector} from "react-redux";
 import store from "@renderer/store";
 import {ConfigStore} from "@renderer/store/ConfigStore";
-import {Box, Modal, Typography} from "@mui/material";
+import {Box, Modal} from "@mui/material";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import {HexColorPicker} from "react-colorful";
-import {Interweave} from "interweave";
 
 export interface ColourPicker {
     children: React.ReactElement | React.ReactElement[];

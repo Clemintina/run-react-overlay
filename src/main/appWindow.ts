@@ -19,6 +19,7 @@ import destr from "destr";
 import windowStateKeeper from "electron-window-state";
 import {LogFileMessage} from "@common/utils/LogFileReader";
 import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
+import log from "electron-log";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -76,7 +77,7 @@ const axiosClient = axios.create({
     },
     timeout: 2000,
     timeoutErrorMessage: "Connection Timed Out!",
-    responseType: 'json',
+    responseType: "json",
     validateStatus: () => true,
 });
 
@@ -122,10 +123,12 @@ export const createAppWindow = (): BrowserWindow => {
             autoUpdater.checkForUpdates();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
             autoUpdater.on("checking-for-update", async () => {
-                console.log("Checking for updates...");
+                log.info("Checking for updates...");
             });
-            autoUpdater.on("update-available", async () => console.log("Update available"));
-            autoUpdater.on("update-downloaded", async () => {
+            autoUpdater.on("error", async (error) => log.error(error));
+            autoUpdater.on("update-available", async () => log.info("Update available"));
+            autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
+                log.info("Updating Overlay to " + releaseName);
                 autoUpdater.quitAndInstall();
             });
         }
@@ -156,6 +159,7 @@ const registerMainIPC = () => {
     registerExternalApis();
     registerLogCommunications();
     registerMainWindowCommunications();
+    registerOverlayFeatures();
 };
 
 /**
@@ -505,7 +509,7 @@ const registerExternalApis = () => {
 const registerOverlayFeatures = () => {
     ipcMain.handle("notifications", async (event: IpcMainInvokeEvent, message: string, subtitle: string | undefined) => {
         const options: NotificationConstructorOptions = {
-            title: "Run Overlay",
+            title: "Seraph Overlay",
             subtitle: subtitle,
             body: message,
             silent: false,

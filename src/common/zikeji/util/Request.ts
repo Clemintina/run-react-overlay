@@ -2,7 +2,6 @@ import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji"
 import type {DefaultMeta, RequestOptions} from "../Client";
 import {Components} from "../types/api";
 import axios from "axios";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 /** @internal */
 const CACHE_CONTROL_REGEX = /s-maxage=(\d+)/;

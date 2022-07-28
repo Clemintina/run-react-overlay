@@ -1,7 +1,7 @@
 import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, runApiKeyValidator, setBrowserWindow, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import store from "@renderer/store";
-import React from "react";
+import React, {useState} from "react";
 import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {updateCachedState} from "@renderer/store/PlayerStore";
@@ -19,7 +19,7 @@ const Essentials = () => {
     const settings = localConfigStore.settings;
     const colours = localConfigStore.colours;
 
-    const [opacityValue, setOpacityValue] = React.useState(localConfigStore.browserWindow.opacity ?? 20);
+    const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
 
     // TODO make it look nicer and cleaner
     return (
@@ -102,7 +102,7 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             text={""}
-                            onChange={async (event) => {
+                            onChange={async () => {
                                 const payload: SettingsConfig = {...settings};
                                 payload.boomza = !payload.boomza;
                                 store.dispatch(setSettingsValue(payload));
@@ -114,7 +114,7 @@ const Essentials = () => {
                         <span>Lunar</span>
                         <span />
                         <ToggleButton
-                            onChange={async (event) => {
+                            onChange={async () => {
                                 const payload: SettingsConfig = {...settings};
                                 payload.lunar = !payload.lunar;
                                 store.dispatch(setSettingsValue(payload));
@@ -126,7 +126,7 @@ const Essentials = () => {
                         <span>Keathiz</span>
                         <span />
                         <ToggleButton
-                            onChange={async (event) => {
+                            onChange={async () => {
                                 const payload: SettingsConfig = {...settings};
                                 payload.keathiz = !payload.keathiz;
                                 store.dispatch(setSettingsValue(payload));
@@ -138,7 +138,7 @@ const Essentials = () => {
                         <span>Auto Hide</span>
                         <span />
                         <ToggleButton
-                            onChange={async (event) => {
+                            onChange={async () => {
                                 const payload: SettingsConfig = {...settings};
                                 payload.preferences.autoHide = !payload.preferences.autoHide;
                                 store.dispatch(setSettingsValue(payload));

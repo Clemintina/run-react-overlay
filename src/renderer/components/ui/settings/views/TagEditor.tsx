@@ -1,43 +1,42 @@
-import {ConfigStore} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
 import store, {Store} from "@renderer/store";
 import React from "react";
 import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {PlayerStore, PlayerStoreTyped, updatePlayerStores} from "@renderer/store/PlayerStore";
+import {PlayerStore, updatePlayerStores} from "@renderer/store/PlayerStore";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import {ColourPicker} from "@components/user/settings/components/ColourPicker";
 import {RUNElectronStoreTagsType} from "@renderer/store/ElectronStoreUtils";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 import {ColourPickerArray} from "@components/user/settings/components/ColourPickerArrays";
+import {TagArray, TagObject} from "@common/utils/Schemas";
 
 const Essentials = () => {
-    const localStore:Store = useSelector(() => store.getState());
+    const localStore: Store = useSelector(() => store.getState());
     const localTagStore: PlayerStore = localStore.playerStore;
-    const tagStore:RUNElectronStoreTagsType = localTagStore.tagStore.tags as RUNElectronStoreTagsType;
+    const tagStore: RUNElectronStoreTagsType = localTagStore.tagStore.tags as RUNElectronStoreTagsType;
     const defaultArrayColour = "ffffff";
 
-    const updateColourStore =async (colourPath:RUNElectronStoreTagsTyped,colour) => {
+    const updateColourStore = async (colourPath: RUNElectronStoreTagsTyped, colour) => {
         colour = colour.replace("#", "");
         await window.ipcRenderer.send("tagsSet", {key: colourPath, data: colour});
         store.dispatch(updatePlayerStores({}));
     };
 
-    const updateColourStoreArray =async (colourPath,colour) => {
-        colour = colour.replace("#", "");
+    const updateColourStoreArray = async (colourPath, colour: TagObject) => {
+        console.log(colour);
         await window.ipcRenderer.send("tagsSet", {key: colourPath, data: colour});
         store.dispatch(updatePlayerStores({}));
     };
 
     // TODO make it look nicer and cleaner
-
     return (
         <div>
             <NavigationBar>
                 <div className='h-full p-2 flex flex-col'>
                     <SettingCard>
-                        <span className={'w-80'}>Tag</span>
-                        <span className={'w-80'}>Display</span>
-                        <span className={'w-80'}>Colour</span>
+                        <span className={"w-80"}>Tag</span>
+                        <span className={"w-80"}>Display</span>
+                        <span className={"w-80"}>Colour</span>
                     </SettingCard>
                     <SettingCard>
                         <span>Annoy List</span>
@@ -68,11 +67,18 @@ const Essentials = () => {
                         <span style={{color: `#${defaultArrayColour}`}}>{tagStore.run.encounters.display}</span>
                         <span>
                             <ColourPickerArray
-                                setColour={async (colour: string) => {
-                                    await updateColourStoreArray("run.encounters.colour", colour);
+                                setColour={async (newTagArray: TagArray) => {
+                                    const newColourObject = {...tagStore.run.encounters};
+                                    const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator:'<='};
+                                    const newColourArray = [...newColourObject.colour];
+                                    newColourArray.filter((item: TagArray,index) => {
+                                        if(item.requirement == newItem.requirement) newColourArray.splice(index,1);
+                                    });
+                                    newColourArray.push(newItem);
+                                    newColourObject.colour = newColourArray;
+                                    await updateColourStoreArray("run.encounters", newColourObject);
                                 }}
-                                colourObject={tagStore.run.encounters.colour}
-                                text={'Not Implemented'}
+                                colourObject={tagStore.run.encounters}
                             />
                         </span>
                     </SettingCard>
@@ -105,11 +111,18 @@ const Essentials = () => {
                         <span style={{color: `#${defaultArrayColour}`}}>{tagStore.run.safelist.display}</span>
                         <span>
                             <ColourPickerArray
-                                setColour={async (colour: string) => {
-                                    await updateColourStoreArray("run.safelist.colour", colour);
+                                setColour={async (newTagArray: TagArray) => {
+                                    const newColourObject = {...tagStore.run.safelist};
+                                    const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator:'<='};
+                                    const newColourArray = [...newColourObject.colour];
+                                    newColourArray.filter((item: TagArray,index) => {
+                                        if(item.requirement == newItem.requirement) newColourArray.splice(index,1);
+                                    });
+                                    newColourArray.push(newItem);
+                                    newColourObject.colour = newColourArray;
+                                    await updateColourStoreArray("run.safelist", newColourObject);
                                 }}
-                                colourObject={tagStore.run.safelist.colour}
-                                text={'Not Implemented'}
+                                colourObject={tagStore.run.safelist}
                             />
                         </span>
                     </SettingCard>

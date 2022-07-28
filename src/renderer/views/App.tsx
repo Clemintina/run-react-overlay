@@ -11,7 +11,7 @@ import {AgGridReact} from "ag-grid-react";
 import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
 import {saveTableColumnState, TableState} from "@renderer/store/ConfigStore";
 import {PlayerOptionsModal} from "@components/user/PlayerOptionsModal";
-import {readableColor, rgba} from "polished";
+import {rgba} from "polished";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
@@ -142,22 +142,31 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
     } else if (p2.sources.runApi?.data.data.blacklist.tagged || p2.nicked) {
         return isDescending ? -1 : 1;
     }
-    if (sortingData == "star") {
-        return (p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0) - (p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0);
-    } else if (sortingData == "name") {
-        return p1.name.localeCompare(p2.name);
-    } else if (sortingData == "winstreak") {
-        return (p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0);
-    } else if (sortingData == "fkdr") {
-        return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0);
-    } else if (sortingData == "wlr") {
-        return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
-    } else if (sortingData == "bblr") {
-        return (p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0);
-    } else if (sortingData == "wins") {
-        return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0);
-    } else if (sortingData == "losses") {
-        return (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
+
+    let player1, player2;
+    switch (sortingData) {
+        case "star":
+            return (p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0) - (p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0);
+        case "name":
+            return p1.name.localeCompare(p2.name);
+        case "winstreak":
+            player1 = p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
+            player2 = p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
+            if (store.getState().configStore.settings.keathiz) {
+                if (player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+                if (player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+            }
+            return player1 - player2;
+        case "fkdr":
+            return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0);
+        case "wlr":
+            return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
+        case "bblr":
+            return (p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0);
+        case "wins":
+            return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0);
+        case "losses":
+            return (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
     }
     return 0;
 };
@@ -213,7 +222,7 @@ const AppTable = () => {
 
     const backgroundStyle = {
         // background: rgba(36, 36, 36, localStore.configStore.browserWindow.opacity / 100),
-        background: rgba(localStore.configStore.colours.backgroundColour,localStore.configStore.browserWindow.opacity / 100),
+        background: rgba(localStore.configStore.colours.backgroundColour, localStore.configStore.browserWindow.opacity / 100),
         height: localStore.configStore.browserWindow.height - 38,
         OverflowX: "hidden",
         color: "",

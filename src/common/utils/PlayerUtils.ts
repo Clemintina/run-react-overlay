@@ -172,7 +172,7 @@ export class FormatPlayer {
         let renderer = this.starterDivider;
         if (!player.nicked) {
             renderer += `<span class="inline flex">`;
-            renderer += `<img src="https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" class="text-center"/>`;
+            renderer += `<img src="https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" class="text-center" alt=""/>`;
             if (this.configStore.settings.lunar) {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
