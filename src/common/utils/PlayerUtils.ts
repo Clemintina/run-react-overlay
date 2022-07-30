@@ -75,9 +75,6 @@ export class FormatPlayer {
                         tagRenderer += this.getPlayerTagDivider("H", "red");
                     }
                 }
-                if (runApi.migrated.tagged) {
-                    tagRenderer += this.getTagsFromConfig("run.migration");
-                }
                 if (runApi.safelist.tagged) {
                     tagRenderer += this.getTagsFromConfig("run.safelist", runApi.safelist.timesKilled);
                 }
