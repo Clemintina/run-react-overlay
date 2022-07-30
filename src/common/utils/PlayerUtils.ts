@@ -241,16 +241,16 @@ export class FormatPlayer {
         if (!player.nicked) {
             switch (route) {
                 case "wlr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0);
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 1);
                     break;
                 case "bblr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0);
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 1);
                     break;
                 case "kdr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ?? 0);
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ?? 1);
                     break;
                 case "fkdr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0);
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 1);
                     break;
             }
 
