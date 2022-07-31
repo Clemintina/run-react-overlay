@@ -23,7 +23,6 @@ const Essentials = () => {
     };
 
     const updateColourStoreArray = async (colourPath, colour: TagObject) => {
-        console.log(colour);
         await window.ipcRenderer.send("tagsSet", {key: colourPath, data: colour});
         store.dispatch(updatePlayerStores({}));
     };

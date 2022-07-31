@@ -11,6 +11,8 @@ import {SettingHeader} from "@components/user/settings/components/SettingHeader"
 import {ToggleButton} from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import {Slider} from "@mui/material";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
 
 const Essentials = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
@@ -37,7 +39,7 @@ const Essentials = () => {
                                         setTimeout(() => updateCachedState(), 1000);
                                     }
                                 }}
-                                onBlur={(event)=>{
+                                onBlur={(event) => {
                                     store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                                     setTimeout(() => updateCachedState(), 1000);
                                 }}
@@ -56,7 +58,7 @@ const Essentials = () => {
                                         store.dispatch(runApiKeyValidator({runApiKey: event.currentTarget.value.replaceAll(" ", ""), state: localConfigStore}));
                                     }
                                 }}
-                                onBlur={(event)=>{
+                                onBlur={(event) => {
                                     store.dispatch(runApiKeyValidator({runApiKey: event.currentTarget.value.replaceAll(" ", ""), state: localConfigStore}));
                                 }}
                                 options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.runKey : "RUN API Key"}}
@@ -74,7 +76,7 @@ const Essentials = () => {
                                         store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                                     }
                                 }}
-                                onBlur={(event)=>{
+                                onBlur={(event) => {
                                     store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
                                 }}
                                 options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
@@ -107,8 +109,13 @@ const Essentials = () => {
                                 payload.boomza = !payload.boomza;
                                 store.dispatch(setSettingsValue(payload));
                             }}
+                            onHover={<span className={'text-red-500'}>This API is proxied to protect your IP.</span>}
                             options={{enabled: settings.boomza}}
-                        />
+                        >
+                            <span>
+                                <FontAwesomeIcon icon={faMapLocation} />
+                            </span>
+                        </ToggleButton>
                     </SettingCard>
                     <SettingCard>
                         <span>Lunar</span>
@@ -125,14 +132,21 @@ const Essentials = () => {
                     <SettingCard>
                         <span>Keathiz</span>
                         <span />
-                        <ToggleButton
-                            onChange={async () => {
-                                const payload: SettingsConfig = {...settings};
-                                payload.keathiz = !payload.keathiz;
-                                store.dispatch(setSettingsValue(payload));
-                            }}
-                            options={{enabled: settings.keathiz}}
-                        />
+                        <span>
+                            <ToggleButton
+                                onChange={async () => {
+                                    const payload: SettingsConfig = {...settings};
+                                    payload.keathiz = !payload.keathiz;
+                                    store.dispatch(setSettingsValue(payload));
+                                }}
+                                options={{enabled: settings.keathiz}}
+                                onHover={<span className={"text-red-500"}>This API is considered slow, It's also proxied to protect your IP.</span>}
+                            >
+                                <span>
+                                    <FontAwesomeIcon icon={faMapLocation} />
+                                </span>
+                            </ToggleButton>
+                        </span>
                     </SettingCard>
                     <SettingCard>
                         <span>Auto Hide</span>
@@ -148,28 +162,28 @@ const Essentials = () => {
                     </SettingCard>
                     <SettingCard>
                         <span>Opacity</span>
-                        <span/>
+                        <span />
                         <span>
-                    <Slider
-                        aria-label='Opacity'
-                        value={opacityValue}
-                        onChange={(event, value) => {
-                            const opacityValue: number = typeof value == 'number' ? value : value[0];
-                            setOpacityValue(opacityValue);
-                           // window.ipcRenderer.send('opacity', opacityValue / 100);
-                        }}
-                        onBlur={() => {
-                            if (opacityValue < 20) setOpacityValue(20);
-                            store.dispatch(setBrowserWindow({height: localConfigStore.browserWindow.height, opacity: opacityValue, width: localConfigStore.browserWindow.width}));
-                        }}
-                        getAriaValueText={(value) => `${value}`}
-                        valueLabelDisplay="auto"
-                        min={20}
-                        valueLabelFormat={(value: number) => {
-                            return value;
-                        }}
-                    />
-                </span>
+                            <Slider
+                                aria-label='Opacity'
+                                value={opacityValue}
+                                onChange={(event, value) => {
+                                    const opacityValue: number = typeof value == "number" ? value : value[0];
+                                    setOpacityValue(opacityValue);
+                                    // window.ipcRenderer.send('opacity', opacityValue / 100);
+                                }}
+                                onBlur={() => {
+                                    if (opacityValue < 20) setOpacityValue(20);
+                                    store.dispatch(setBrowserWindow({height: localConfigStore.browserWindow.height, opacity: opacityValue, width: localConfigStore.browserWindow.width}));
+                                }}
+                                getAriaValueText={(value) => `${value}`}
+                                valueLabelDisplay='auto'
+                                min={20}
+                                valueLabelFormat={(value: number) => {
+                                    return value;
+                                }}
+                            />
+                        </span>
                     </SettingCard>
                 </div>
             </NavigationBar>

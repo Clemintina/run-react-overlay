@@ -20,7 +20,7 @@ import MainSettings from "@renderer/views/MainSettings";
  */
 setTimeout(() => store.dispatch(initScript()), 20);
 setTimeout(() => store.dispatch(playerInitScript()), 20);
-setInterval(() => store.dispatch(updatePlayerStores({})), 60000);
+setInterval(() => store.dispatch(updatePlayerStores({})), 10000);
 
 /**
  * Starts the Log readers

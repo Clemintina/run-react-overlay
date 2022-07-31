@@ -6,15 +6,14 @@ import {styled} from "@mui/material";
 import store from "@renderer/store";
 
 export interface OverlayTooltip {
-    player: Player;
+    player?: Player;
     tooltip: React.ReactNode;
     children?: React.ReactNode;
 }
 
 export const OverlayTooltip: React.FC<PropsWithChildren<OverlayTooltip>> = (props: OverlayTooltip) => {
-    const player = props.player;
+    const player = props.player ?? undefined;
     const colours = store.getState().configStore.colours;
-    const isPlayerNicked = player.nicked;
 
     const CustomToolTip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)(({theme}) => ({
         [`& .${tooltipClasses.tooltip}`]: {
@@ -34,7 +33,7 @@ export const OverlayTooltip: React.FC<PropsWithChildren<OverlayTooltip>> = (prop
     }));
     let renderTooltip;
 
-    if (isPlayerNicked || player.sources.runApi?.data.data.bot.tagged) {
+    if (player != undefined && (player.nicked || player.sources.runApi?.data.data.bot.tagged)) {
         renderTooltip = props.children;
     } else {
         renderTooltip = (

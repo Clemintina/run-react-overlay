@@ -6,7 +6,7 @@ import destr from "destr";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
-    message: string
+    message: string;
 }
 
 export class LogFileReader {
@@ -48,7 +48,7 @@ export class LogFileReader {
                 playerNames.map(async (name) => {
                     if (name.includes(" ")) name = name.split(" ")[name.split(" ").length - 1].trim();
                     store.dispatch(getPlayerHypixelData({name: name}));
-                })
+                });
             }
         });
     };
@@ -99,41 +99,58 @@ export class LogFileReader {
             let line = readLogLine(data);
             if (line != null) {
                 line = line.toString().substring(line.indexOf("[CHAT]"), line.length).replace("[CHAT] ", "");
-                if (line.match(/\S*(?=( to the party! They have 60 seconds to accept.))/)) { // Invite (In Party)
+                if (line.match(/\S*(?=( to the party! They have 60 seconds to accept.))/)) {
+                    // Invite (In Party)
                     const player = line.match(/\S*(?=( to the party! They have 60 seconds to accept.))/);
-                    if (player != null) store.dispatch(getPlayerHypixelData({name: player[0]}))
-                } else if (line.match(/\S*(?=( party!))/)) { // You Joining Party (Out of Party)
+                    if (player != null) store.dispatch(getPlayerHypixelData({name: player[0]}));
+                } else if (line.match(/\S*(?=( party!))/)) {
+                    // You Joining Party (Out of Party)
                     const players = line.match(/\S*(?=('))/);
-                    if (players != null) store.dispatch(getPlayerHypixelData({name: players[0]}))
-                } else if (line.match(/\S*(?=( joined the party.))/)) { // Someone Joining Party (Out of Party)
+                    if (players != null) store.dispatch(getPlayerHypixelData({name: players[0]}));
+                } else if (line.match(/\S*(?=( joined the party.))/)) {
+                    // Someone Joining Party (Out of Party)
                     const players = line.match(/\S*(?=( joined the party.))/);
-                    if (players != null) store.dispatch(getPlayerHypixelData({name: players[0]}))
-                } else if (line.match(/Party Leader: (\S.*)/)) { // Party List (Leader)
-                    const playerRank = (line.match(/Party Leader: (\S.*)/))
+                    if (players != null) store.dispatch(getPlayerHypixelData({name: players[0]}));
+                } else if (line.match(/Party Leader: (\S.*)/)) {
+                    // Party List (Leader)
+                    const playerRank = line.match(/Party Leader: (\S.*)/);
                     if (playerRank?.length === 2) {
                         let players = line.match(/(?<=: )(.*?)(?= \?)/);
                         if (players != null) {
                             players = players[0].split(" ");
-                            store.dispatch(getPlayerHypixelData({name: players[players.length - 1]}))
+                            store.dispatch(getPlayerHypixelData({name: players[players.length - 1]}));
                         }
                     }
-                } else if (line.match(/Party Moderators: (\S.*)/)) { // Party List (Moderators)
-                    const playerRank = line.match(/Party Moderators: (\S.*)/)
+                } else if (line.match(/Party Moderators: (\S.*)/)) {
+                    // Party List (Moderators)
+                    const playerRank = line.match(/Party Moderators: (\S.*)/);
                     if (playerRank?.length === 2) {
-                        const players: string[] = line.replace("Party Moderators: ", "").replace(/\[(.*?)]/g, '').split(' ?');
-                        players.pop()
-                        players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(' ', "")})));
+                        const players: string[] = line
+                            .replace("Party Moderators: ", "")
+                            .replace(/\[(.*?)]/g, "")
+                            .split(" ?");
+                        players.pop();
+                        players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(" ", "")})));
                     }
-                } else if (line.match(/Party Members: (\S.*)/)) { // Party List (Members)
-                    const playerRank = line.match(/Party Members: (\S.*)/)
+                } else if (line.match(/Party Members: (\S.*)/)) {
+                    // Party List (Members)
+                    const playerRank = line.match(/Party Members: (\S.*)/);
                     if (playerRank?.length === 2) {
-                        const players = line.replace("Party Members: ", "").replace(/\[(.*?)]/g, '').split(" ?");
-                        players.pop()
-                        players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(' ', "")})));
+                        const players = line
+                            .replace("Party Members: ", "")
+                            .replace(/\[(.*?)]/g, "")
+                            .split(" ?");
+                        players.pop();
+                        players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(" ", "")})));
                     }
-                } else if (line.match(/You'll be partying with: (\S.*)/)) { // Party Group Join (Out of Party)
-                    const players: string[] = line.replace("You'll be partying with: ", '').replace(/and \d* other players!/, "").replace(/\[(.*?)]/g, '').split(", ");
-                    players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(' ', "")})));
+                } else if (line.match(/You'll be partying with: (\S.*)/)) {
+                    // Party Group Join (Out of Party)
+                    const players: string[] = line
+                        .replace("You'll be partying with: ", "")
+                        .replace(/and \d* other players!/, "")
+                        .replace(/\[(.*?)]/g, "")
+                        .split(", ");
+                    players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(" ", "")})));
                 }
             }
         });

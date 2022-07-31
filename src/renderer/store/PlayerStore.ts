@@ -50,11 +50,11 @@ const PlayerStore = createSlice({
             const payload: PlayerHandler = action.payload;
             if (payload !== undefined && payload.status === 200 && payload.data !== undefined && !payload.data.nicked) {
                 const playerPayload: Player = payload.data;
-                const doesPlayerExist = state.players.findIndex((player: Player) => player.name === playerPayload.name);
-                if (doesPlayerExist !== -1) {
-                    state.players[doesPlayerExist] = payload.data;
-                } else {
+                const doesPlayerExist = state.players.findIndex((player: Player) => player.name == playerPayload.name);
+                if (doesPlayerExist == -1) {
                     state.players.push(playerPayload);
+                } else {
+                    state.players[doesPlayerExist] = payload.data;
                 }
             } else {
                 if (payload !== undefined && payload.status === 400 && payload.data !== undefined) {
@@ -112,13 +112,12 @@ const cacheState: PlayerStoreThunkObject = {
         tags: {},
     },
 };
-
 /**
  * Adds players to the Overlay Table.
  */
 export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("PlayerStore/getPlayerHypixelData", async (thunkObject: PlayerStoreThunkObject) => {
     const playerData: Player = {
-        name: thunkObject.name,
+        name: thunkObject.name.toLowerCase(),
         id: null,
         nicked: false,
         bot: false,
@@ -136,15 +135,10 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
 
     try {
         const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name, cacheState.apiKey) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""), cacheState.apiKey);
-        // Checking if the player is invalid
         if (ipcHypixelPlayer?.data?.uuid == null && cacheState?.settings?.keathiz) {
-            // Since player is null, we check Kethiz and see if they have data on this nick
             const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>("keathiz", KeathizEndpoints.DENICK, playerData.name);
-            // Check if they have data on the player
             if (ipcKeathizDenicker.data?.player?.uuid) {
-                // Resend to Hypixel
                 const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, ipcKeathizDenicker.data.player.uuid);
-                // If the player is valid on Hypixel, Add to player method otherwise ignore
                 if (newIpcHypixelPlayer?.data?.uuid != null) {
                     playerData.hypixelPlayer = newIpcHypixelPlayer.data;
                     playerData.denicked = true;
@@ -205,7 +199,6 @@ export const getPlayerHypixelData = createAsyncThunk<any, any, {state: Store}>("
         data: playerData,
     };
 });
-
 /**
  * Removes a player from the Overlay Table
  */

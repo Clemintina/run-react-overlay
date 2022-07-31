@@ -217,9 +217,9 @@ export class FormatPlayer {
         let renderer: string = this.starterDivider;
         if (!player.nicked) {
             let playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0;
-            if (player.sources.keathiz != null && this.configStore.settings.keathiz) {
+            if (player.sources.keathiz != null) {
                 const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-                if (keathizTags.player?.winstreak != null && keathizTags.player?.winstreak?.accurate == false) {
+                if (keathizTags?.player?.winstreak != null && keathizTags.player?.winstreak?.accurate == false) {
                     playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
                 }
             }
@@ -499,16 +499,16 @@ export class PlayerHypixelUtils {
         if (options != undefined) {
             let format = "";
             if (options.day) {
-                format = d.getDay().toLocaleString().padStart(2, "0");
+                format = d.getUTCDate().toLocaleString().padStart(2, "0");
                 if (options.month ?? options.year) format += ".";
             }
             if (options.month) {
-                const month = d.getMonth() + 1;
+                const month = d.getUTCMonth() + 1;
                 const monthFormatted = month.toLocaleString().padStart(2, "0");
                 format += monthFormatted;
                 if (options.year) format += ".";
             }
-            if (options.year) format = format + d.getFullYear().toLocaleString().replace(",", "").replace(".", "");
+            if (options.year) format = format + d.getUTCFullYear().toLocaleString().replace(",", "").replace(".", "");
             return format.replaceAll(" ", "");
         } else {
             return d.toLocaleDateString();

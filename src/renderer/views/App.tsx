@@ -8,10 +8,11 @@ import {Interweave} from "interweave";
 import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
 import {AgGridReact} from "ag-grid-react";
 // eslint-disable-next-line import/named
-import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
+import {ApplyColumnStateParams, ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
 import {saveTableColumnState, TableState} from "@renderer/store/ConfigStore";
 import {PlayerOptionsModal} from "@components/user/PlayerOptionsModal";
 import {rgba} from "polished";
+import {assertDefaultError} from "@common/helpers";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 
@@ -152,10 +153,8 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
         case "winstreak":
             player1 = p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
             player2 = p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
-            if (store.getState().configStore.settings.keathiz) {
-                if (player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
-                if (player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
-            }
+            if (p1.sources.keathiz != undefined && player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+            if (p2.sources.keathiz != undefined && player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
             return player1 - player2;
         case "fkdr":
             return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0);
@@ -167,6 +166,8 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
             return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0);
         case "losses":
             return (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
+        default:
+            assertDefaultError(sortingData);
     }
     return 0;
 };
@@ -188,17 +189,14 @@ const AppTable = () => {
     const tagStore = localStore.playerStore.tagStore;
     playerFormatter.setConfig({tags: tagStore.tags, config: tagStore.config});
 
-    let gridApi: GridApi;
-
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
         const res: TableState = {columnState};
         store.dispatch(saveTableColumnState(res));
     };
 
-    const gridOptions: GridOptions = {
+    const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
-            gridApi = event.api;
             event.columnApi.applyColumnState({state: localStore.configStore.table.columnState, applyOrder: true});
             event.api.setRowData(players);
         },
@@ -217,6 +215,7 @@ const AppTable = () => {
         autoSizePadding: 0,
         rowData: players,
         rowHeight: 25,
+        overlayNoRowsTemplate: "No Players",
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
     };
 

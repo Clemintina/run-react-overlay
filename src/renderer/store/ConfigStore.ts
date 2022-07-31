@@ -6,6 +6,9 @@ import {Paths} from "@common/zikeji";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
+import store from "@renderer/store/index";
+import {Player} from "@common/utils/PlayerUtils";
+import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
 
 export interface ConfigStore {
     hypixel: {
@@ -36,9 +39,9 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
-    preferences:{
-        autoHide: boolean
-    }
+    preferences: {
+        autoHide: boolean;
+    };
 }
 
 export interface ClientSetting {
@@ -152,13 +155,13 @@ const ConfigStore = createSlice({
         table: {
             columnState: [{colId: "id"}],
         },
-        settings:  {
+        settings: {
             lunar: true,
             keathiz: false,
             boomza: true,
-            preferences:{
-                autoHide: true
-            }
+            preferences: {
+                autoHide: true,
+            },
         },
         menuOptions: Array<MenuOption>(),
     },
@@ -375,6 +378,11 @@ export const runApiKeyValidator = createAsyncThunk("ConfigStore/runApiKeyValidat
 
 export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue", async (data: SettingsConfig) => {
     await window.config.set("settings", data);
+    if (data.keathiz) {
+        store.getState().playerStore.players.map(async (player: Player) => {
+            if (!player.nicked) store.dispatch(getPlayerHypixelData({name: player.hypixelPlayer?.displayname}));
+        });
+    }
     return {data, status: 200};
 });
 
