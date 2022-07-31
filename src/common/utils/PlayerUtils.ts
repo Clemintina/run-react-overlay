@@ -75,9 +75,6 @@ export class FormatPlayer {
                         tagRenderer += this.getPlayerTagDivider("H", "red");
                     }
                 }
-                if (runApi.migrated.tagged) {
-                    tagRenderer += this.getTagsFromConfig("run.migration");
-                }
                 if (runApi.safelist.tagged) {
                     tagRenderer += this.getTagsFromConfig("run.safelist", runApi.safelist.timesKilled);
                 }
@@ -177,7 +174,7 @@ export class FormatPlayer {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
                         renderer += `<span>`;
-                        renderer += `<img width="18px" height="18px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />`;
+                        renderer += `<img width="20px" height="20px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />`;
                         renderer += `</span>`;
                     }
                 }
@@ -241,16 +238,16 @@ export class FormatPlayer {
         if (!player.nicked) {
             switch (route) {
                 case "wlr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 0);
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 1);
                     break;
                 case "bblr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 0);
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 1);
                     break;
                 case "kdr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ?? 0);
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ?? 1);
                     break;
                 case "fkdr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 0);
+                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 1);
                     break;
             }
 

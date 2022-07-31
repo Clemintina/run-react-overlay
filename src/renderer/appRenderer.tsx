@@ -11,8 +11,6 @@ import {playerInitScript, updatePlayerStores} from "@renderer/store/PlayerStore"
 import "@assets/index.css";
 import {createTheme, ThemeProvider} from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
-import TagEditor from "@components/ui/settings/views/TagEditor";
-import MainSettings from "@renderer/views/MainSettings";
 
 /**
  * Loads the **Initial Script**
@@ -34,6 +32,7 @@ reader.startSeraphHandler();
 reader.startCommandListener();
 reader.startPartyListener();
 
+
 const darkTheme = createTheme({
     palette: {
         mode: "dark",
@@ -54,8 +53,6 @@ createRoot(document.getElementById("app")!).render(
                             <Route path='/' element={<App />} />
                             <Route path='/settings' element={<Essentials />} />
                             <Route path='/settings/essentials' element={<Essentials />} />
-                            <Route path='/settings/tags' element={<TagEditor />} />
-                            <Route path='/settings/old' element={<MainSettings />} />
                         </Routes>
                     </HashRouter>
                 </div>

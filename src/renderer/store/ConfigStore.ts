@@ -177,6 +177,7 @@ const ConfigStore = createSlice({
         setRunApiKey: (state, action: {payload: IPCResponse<RunApiKey>}) => {
             const payload: RunApiKey = action.payload.data;
             state.runKey = payload.key.key;
+            window.config.set("run.apiKey", payload.key.key)
         },
         setDataFromConfig: (state, action: {payload: InitScript}) => {
             const payload: InitScript = action.payload;
@@ -449,8 +450,6 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
 const getMenuItems = () => {
     const items = Array<MenuOption>();
     items.push({menuName: "Essentials", menuLink: "/settings/essentials"});
-    items.push({menuName: "Tags", menuLink: "/settings/tags"});
-    items.push({menuName: "Old", menuLink: "/settings/old"});
     return items;
 };
 

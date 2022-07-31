@@ -10,7 +10,7 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.0.45-BETA",
+	"version": "1.0.50-BETA",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
@@ -36,9 +36,9 @@
 		"@mui/icons-material": "^5.8.4",
 		"@mui/material": "^5.9.2",
 		"@mui/styled-engine-sc": "^5.8.0",
-		"@mui/x-data-grid": "^5.14.0",
+		"@mui/x-data-grid": "^5.15.0",
 		"@reduxjs/toolkit": "^1.8.3",
-		"@sinclair/typebox": "^0.24.21",
+		"@sinclair/typebox": "^0.24.22",
 		"ag-grid-community": "^28.0.2",
 		"ag-grid-react": "^28.0.0",
 		"axios": "^0.27.2",
@@ -90,7 +90,7 @@
 		"@types/webpack-env": "^1.17.0",
 		"@typescript-eslint/eslint-plugin": "^5.31.0",
 		"@typescript-eslint/parser": "^5.31.0",
-		"autoprefixer": "^10.4.7",
+		"autoprefixer": "^10.4.8",
 		"classnames": "^2.3.1",
 		"cross-env": "^7.0.3",
 		"css-loader": "^6.7.1",
@@ -111,7 +111,7 @@
 		"sass": "^1.54.0",
 		"sass-loader": "^13.0.2",
 		"style-loader": "^3.3.1",
-		"tailwindcss": "^3.1.6",
+		"tailwindcss": "^3.1.7",
 		"ts-loader": "^9.3.1",
 		"typescript": "^4.7.4",
 		"webpack": "^5.73.0",
