@@ -174,7 +174,7 @@ export class FormatPlayer {
                 if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
                     if (player.sources.lunar.data.player.online) {
                         renderer += `<span>`;
-                        renderer += `<img width="18px" height="18px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />`;
+                        renderer += `<img width="20px" height="20px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />`;
                         renderer += `</span>`;
                     }
                 }

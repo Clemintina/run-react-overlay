@@ -94,11 +94,11 @@ const Essentials = () => {
                     </SettingCard>
                     <SettingHeader>
                         <span />
-                        <span>Apis</span>
+                        <span>External APIs</span>
                         <span />
                     </SettingHeader>
                     <SettingCard>
-                        <span>Boomza</span>
+                        <span>Boomza/BWStats</span>
                         <span />
                         <ToggleButton
                             text={""}
@@ -111,7 +111,7 @@ const Essentials = () => {
                         />
                     </SettingCard>
                     <SettingCard>
-                        <span>Lunar</span>
+                        <span>Lunar Tags</span>
                         <span />
                         <ToggleButton
                             onChange={async () => {
@@ -123,7 +123,7 @@ const Essentials = () => {
                         />
                     </SettingCard>
                     <SettingCard>
-                        <span>Keathiz</span>
+                        <span>Keathiz/Antisniper</span>
                         <span />
                         <ToggleButton
                             onChange={async () => {
