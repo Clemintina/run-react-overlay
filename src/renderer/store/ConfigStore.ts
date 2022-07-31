@@ -442,8 +442,6 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
 const getMenuItems = () => {
     const items = Array<MenuOption>();
     items.push({menuName: "Essentials", menuLink: "/settings/essentials"});
-    items.push({menuName: "Tags", menuLink: "/settings/tags"});
-    items.push({menuName: "Old", menuLink: "/settings/old"});
     return items;
 };
 

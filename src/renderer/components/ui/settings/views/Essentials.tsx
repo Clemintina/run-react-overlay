@@ -156,7 +156,7 @@ const Essentials = () => {
                         onChange={(event, value) => {
                             const opacityValue: number = typeof value == 'number' ? value : value[0];
                             setOpacityValue(opacityValue);
-                           // window.ipcRenderer.send('opacity', opacityValue / 100);
+                            window.ipcRenderer.send('opacity', opacityValue / 100);
                         }}
                         onBlur={() => {
                             if (opacityValue < 20) setOpacityValue(20);
