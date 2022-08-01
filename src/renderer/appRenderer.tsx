@@ -11,6 +11,7 @@ import {playerInitScript, updatePlayerStores} from "@renderer/store/PlayerStore"
 import "@assets/index.css";
 import {createTheme, ThemeProvider} from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
+import TagEditor from "@components/ui/settings/views/TagEditor";
 
 /**
  * Loads the **Initial Script**
@@ -53,6 +54,7 @@ createRoot(document.getElementById("app")!).render(
                             <Route path='/' element={<App />} />
                             <Route path='/settings' element={<Essentials />} />
                             <Route path='/settings/essentials' element={<Essentials />} />
+                            <Route path='/settings/tags' element={<TagEditor />} />
                         </Routes>
                     </HashRouter>
                 </div>

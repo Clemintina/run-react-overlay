@@ -225,6 +225,7 @@ const AppTable = () => {
         OverflowX: "hidden",
         color: "",
     };
+
     if (localStore.configStore.browserWindow.opacity < 40) backgroundStyle.color = "white";
     else backgroundStyle.color = localStore.configStore.colours.primaryColour;
 
