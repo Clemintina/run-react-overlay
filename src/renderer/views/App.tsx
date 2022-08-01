@@ -18,6 +18,7 @@ const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 let gridApi: GridApi;
 let columnApi: ColumnApi;
 let onGridReady = false;
+let columnState;
 
 const tinyColumnSize = 30;
 const smallColumnSize = 60;
@@ -176,9 +177,15 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
 };
 
 setTimeout(async () => {
-    columnApi.applyColumnState({state: await window.config.get("overlay.table.columnState"), applyOrder: true});
-    onGridReady = true;
+    await setColumnState();
 }, 200);
+
+const setColumnState = async () => {
+    columnState = await window.config.get("overlay.table.columnState");
+    columnApi.applyColumnState({state: columnState, applyOrder: true});
+    onGridReady = true;
+    store.dispatch(saveTableColumnState(columnState));
+};
 
 // a2db40d5-d629-4042-9d1a-6963b2a7e000
 const AppTable = () => {
@@ -190,22 +197,22 @@ const AppTable = () => {
     const localStore: Store = useSelector(() => store.getState());
     const players: Array<Player> = localStore.playerStore.players;
     const tagStore = localStore.playerStore.tagStore;
+    columnState = localStore.configStore.table.columnState;
     playerFormatter.setConfig({tags: tagStore.tags, config: tagStore.config});
 
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
         const res: TableState = {columnState};
-        if (onGridReady)store.dispatch(saveTableColumnState(res));
+        console.log(onGridReady, columnState);
+        if (onGridReady) store.dispatch(saveTableColumnState(res));
     };
 
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
             columnApi = event.columnApi;
             gridApi = event.api;
+            columnApi.applyColumnState({state: columnState, applyOrder: true});
             event.api.setRowData(players);
-        },
-        onFirstDataRendered(event: FirstDataRenderedEvent) {
-            event.columnApi.applyColumnState({state: localStore.configStore.table.columnState, applyOrder: true});
         },
         onGridColumnsChanged(event: GridColumnsChangedEvent) {
             onSaveGridColumnState(event.columnApi);
