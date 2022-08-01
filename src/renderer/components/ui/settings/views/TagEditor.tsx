@@ -94,18 +94,6 @@ const Essentials = () => {
                         </span>
                     </SettingCard>
                     <SettingCard>
-                        <span>Personal Safelist</span>
-                        <span style={{color: `#${tagStore.run.personal_safelist.colour}`}}>{tagStore.run.personal_safelist.display}</span>
-                        <span>
-                            <ColourPicker
-                                setColour={async (colour: string) => {
-                                    await updateColourStore("run.personal_safelist.colour", colour);
-                                }}
-                                colourObject={tagStore.run.personal_safelist.colour}
-                            />
-                        </span>
-                    </SettingCard>
-                    <SettingCard>
                         <span>Safelist</span>
                         <span style={{color: `#${defaultArrayColour}`}}>{tagStore.run.safelist.display}</span>
                         <span>

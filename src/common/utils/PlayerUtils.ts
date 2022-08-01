@@ -78,11 +78,8 @@ export class FormatPlayer {
                         tagRenderer += this.getPlayerTagDivider("H", "red");
                     }
                 }
-                if (runApi.safelist.tagged) {
+                if (runApi.safelist.tagged || runApi.safelist.personal) {
                     tagRenderer += this.getTagsFromConfig("run.safelist", runApi.safelist.timesKilled);
-                }
-                if (runApi.safelist.personal) {
-                    tagRenderer += this.getTagsFromConfig("run.personal_safelist");
                 }
                 if (runApi.statistics.encounters != 0) {
                     tagRenderer += this.getTagsFromConfig("run.encounters", runApi.statistics.encounters);
