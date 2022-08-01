@@ -81,9 +81,6 @@ export class FormatPlayer {
                 if (runApi.safelist.personal) {
                     tagRenderer += this.getTagsFromConfig("run.personal_safelist");
                 }
-                if (runApi.annoylist.tagged) {
-                    tagRenderer += this.getTagsFromConfig("run.annoylist");
-                }
                 if (runApi.statistics.encounters != 0) {
                     tagRenderer += this.getTagsFromConfig("run.encounters", runApi.statistics.encounters);
                 }
@@ -359,15 +356,15 @@ export class FormatPlayer {
                     const count = keathizTags.player.queues.last_3_min;
                     keathizTagArray.push(this.getPlayerTagDivider(`Q3-${count}`, `#${MinecraftColours.GOLD.hex}`));
                 }
-                if (keathizTags.player.queues.last_10_min >= 3) {
+                if (keathizTags.player.queues.last_10_min >= 2) {
                     const count = keathizTags.player.queues.last_10_min;
                     keathizTagArray.push(this.getPlayerTagDivider(`Q10-${count}`, `#${MinecraftColours.GOLD.hex}`));
                 }
-                if (keathizTags.player.queues.last_30_min >= 6) {
+                if (keathizTags.player.queues.last_30_min >= 5) {
                     const count = keathizTags.player.queues.last_30_min;
                     keathizTagArray.push(this.getPlayerTagDivider(`Q30-${count}`, `#${MinecraftColours.GOLD.hex}`));
                 }
-                if (keathizTags.player.queues.last_24_hours >= 75) {
+                if (keathizTags.player.queues.last_24_hours >= 50) {
                     keathizTagArray.push(this.getPlayerTagDivider("Q24", `#${MinecraftColours.GOLD.hex}`));
                 }
                 if (keathizTags.player.queues.consecutive_queue_checks.weighted["1_min_requeue"] >= 50) {
