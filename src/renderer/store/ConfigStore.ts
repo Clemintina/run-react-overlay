@@ -423,7 +423,7 @@ export const initScript = createAsyncThunk("ConfigStore/Init", async () => {
     const version = await window.config.get("run.overlay.version");
     const settings = await window.config.get("settings");
     const browserWindow = await window.config.get("run.overlay.browserWindow");
-    const table = await window.config.get("overlay.table");
+    const table = await window.config.get("overlay.table.columnState");
 
     const run = {apiKey: "", valid: false};
     run.apiKey = await window.config.get("run.apiKey");

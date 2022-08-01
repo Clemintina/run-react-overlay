@@ -16,6 +16,9 @@ export class LogFileReader {
             if (line.includes("Sending you to")) {
                 store.dispatch(resetOverlayTable());
             }
+            if (line.includes("The game starts in 1 second!") && store.getState().configStore.settings.preferences.autoHide) {
+                window.ipcRenderer.send("windowMinimise");
+            }
         });
     };
 
@@ -39,6 +42,7 @@ export class LogFileReader {
             if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 store.dispatch(resetOverlayTable());
+                if (store.getState().configStore.settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
                 players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player})));
             } else if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");

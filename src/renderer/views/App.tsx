@@ -8,13 +8,16 @@ import {Interweave} from "interweave";
 import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
 import {AgGridReact} from "ag-grid-react";
 // eslint-disable-next-line import/named
-import {ApplyColumnStateParams, ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
+import {ColDef, ColumnApi, ColumnMovedEvent, FirstDataRenderedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
 import {saveTableColumnState, TableState} from "@renderer/store/ConfigStore";
 import {PlayerOptionsModal} from "@components/user/PlayerOptionsModal";
 import {rgba} from "polished";
 import {assertDefaultError} from "@common/helpers";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
+let gridApi: GridApi;
+let columnApi: ColumnApi;
+let onGridReady = false;
 
 const tinyColumnSize = 30;
 const smallColumnSize = 60;
@@ -172,12 +175,12 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
     return 0;
 };
 
-const getNickedPlayerSortingResponse = (params) => {
-    return 0;
-};
+setTimeout(async () => {
+    columnApi.applyColumnState({state: await window.config.get("overlay.table.columnState"), applyOrder: true});
+    onGridReady = true;
+}, 200);
 
 // a2db40d5-d629-4042-9d1a-6963b2a7e000
-
 const AppTable = () => {
     /**
      * Creates the rendered Homepage
@@ -192,12 +195,13 @@ const AppTable = () => {
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
         const res: TableState = {columnState};
-        store.dispatch(saveTableColumnState(res));
+        if (onGridReady)store.dispatch(saveTableColumnState(res));
     };
 
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
-            event.columnApi.applyColumnState({state: localStore.configStore.table.columnState, applyOrder: true});
+            columnApi = event.columnApi;
+            gridApi = event.api;
             event.api.setRowData(players);
         },
         onFirstDataRendered(event: FirstDataRenderedEvent) {
