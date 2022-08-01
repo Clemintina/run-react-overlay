@@ -61,6 +61,9 @@ export class FormatPlayer {
         let tagRenderer: string = this.starterDivider;
         if (player.sources.runApi != null) {
             const runApi = player.sources.runApi.data.data;
+            if (player.denicked) {
+                tagRenderer += `<span style="color:crimson;">${player.name}</span>`;
+            }
             if (runApi.blacklist.tagged) {
                 tagRenderer += this.getPlayerTagDivider("BLACKLISTED", "red", player);
             } else if (runApi.bot.tagged) {
@@ -190,9 +193,6 @@ export class FormatPlayer {
                 if (player.hypixelPlayer !== null) {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
                     nameRenderer += `${rank.rankHtml}&nbsp <span style="color: #${rank.colourHex};">${player.hypixelPlayer.displayname}</span>`;
-                    if (player.denicked) {
-                        nameRenderer += `<span style="color:darkred;"> (DENICK) </span>`;
-                    }
                 } else {
                     nameRenderer += ``;
                 }

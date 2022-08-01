@@ -39,7 +39,10 @@ export class LogFileReader {
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
-            if (line.includes(" ONLINE: ")) {
+            if(line.includes("Sending you to")) {
+                store.dispatch(resetOverlayTable());
+            }
+            else if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 store.dispatch(resetOverlayTable());
                 if (store.getState().configStore.settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");

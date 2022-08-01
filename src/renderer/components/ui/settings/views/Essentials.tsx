@@ -100,7 +100,7 @@ const Essentials = () => {
                         <span />
                     </SettingHeader>
                     <SettingCard>
-                        <span>Boomza</span>
+                        <span>Boomza (BWStats)</span>
                         <span />
                         <ToggleButton
                             text={""}
@@ -140,7 +140,7 @@ const Essentials = () => {
                                     store.dispatch(setSettingsValue(payload));
                                 }}
                                 options={{enabled: settings.keathiz}}
-                                onHover={<span className={"text-red-500"}>This API is considered slow, It's also proxied to protect your IP.</span>}
+                                onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
                             >
                                 <span>
                                     <FontAwesomeIcon icon={faMapLocation} />
@@ -184,6 +184,15 @@ const Essentials = () => {
                                 }}
                             />
                         </span>
+                    </SettingCard>
+                    <SettingCard>
+
+                    <span>Sorting</span>
+                    <span/>
+                    <span>
+                    To sort players in order of stats, click the label of the column whose stats you'd like to sort by.
+                    </span>
+
                     </SettingCard>
                 </div>
             </NavigationBar>
