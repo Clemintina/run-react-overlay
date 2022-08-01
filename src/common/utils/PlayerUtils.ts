@@ -191,7 +191,7 @@ export class FormatPlayer {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
                     nameRenderer += `${rank.rankHtml}&nbsp <span style="color: #${rank.colourHex};">${player.hypixelPlayer.displayname}</span>`;
                     if (player.denicked) {
-                        nameRenderer += `<span style="color:darkred;"> (D) </span>`;
+                        nameRenderer += `<span style="color:darkred;"> (DENICK) </span>`;
                     }
                 } else {
                     nameRenderer += ``;

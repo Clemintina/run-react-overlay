@@ -96,7 +96,7 @@ const Essentials = () => {
                     </SettingCard>
                     <SettingHeader>
                         <span />
-                        <span>Apis</span>
+                        <span>APIs</span>
                         <span />
                     </SettingHeader>
                     <SettingCard>
