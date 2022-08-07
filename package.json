@@ -89,7 +89,7 @@
 		"@types/uuid": "^8.3.4",
 		"@types/webpack-env": "^1.17.0",
 		"@typescript-eslint/eslint-plugin": "^5.31.0",
-		"@typescript-eslint/parser": "^5.31.0",
+		"@typescript-eslint/parser": "^5.32.0",
 		"autoprefixer": "^10.4.8",
 		"classnames": "^2.3.1",
 		"cross-env": "^7.0.3",
