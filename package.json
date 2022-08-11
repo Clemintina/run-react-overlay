@@ -36,7 +36,7 @@
 		"@mui/icons-material": "^5.8.4",
 		"@mui/material": "^5.9.3",
 		"@mui/styled-engine-sc": "^5.10.0",
-		"@mui/x-data-grid": "^5.15.0",
+		"@mui/x-data-grid": "^5.15.2",
 		"@reduxjs/toolkit": "^1.8.3",
 		"@sinclair/typebox": "^0.24.22",
 		"ag-grid-community": "^28.0.2",
