@@ -1,6 +1,5 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
-import {Provider} from "react-redux";
 import {HashRouter, Route, Routes} from "react-router-dom";
 import TitleBar from "@components/ui/Titlebar";
 import App from "@renderer/views/App";
@@ -37,12 +36,12 @@ createRoot(document.getElementById("app")!).render(
             <ThemeProvider theme={darkTheme}>
                 <div className='mainBody text-gray-500' id={'main-body'}>
                     <HashRouter basename='/'>
-                        <TitleBar />
+                        <TitleBar/>
                         <Routes>
-                            <Route path='/' element={<App />} />
-                            <Route path='/settings' element={<Essentials />} />
-                            <Route path='/settings/essentials' element={<Essentials />} />
-                            <Route path='/settings/tags' element={<TagEditor />} />
+                            <Route path='/' element={<App/>}/>
+                            <Route path='/settings' element={<Essentials/>}/>
+                            <Route path='/settings/essentials' element={<Essentials/>}/>
+                            <Route path='/settings/tags' element={<TagEditor/>}/>
                         </Routes>
                     </HashRouter>
                 </div>

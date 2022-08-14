@@ -30,6 +30,13 @@ const mediumColumnSize = 60;
 const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
+const logs = useConfigStore.getState().logs;
+
+if (logs.readable) {
+    window.ipcRenderer.send('logFileSet', useConfigStore.getState().logs.logPath);
+}
+
+
 const defaultColDefs: ColDef = {
     resizable: true,
     sortingOrder: ["desc", "asc"],
