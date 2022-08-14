@@ -10,7 +10,7 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.0.51-BETA",
+	"version": "1.0.53-BETA",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
@@ -83,7 +83,7 @@
 		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
 		"@types/cache-manager": "^4.0.1",
 		"@types/json-logic-js": "^2.0.1",
-		"@types/node": "^18.6.4",
+		"@types/node": "^18.7.3",
 		"@types/react": "^18.0.15",
 		"@types/react-dom": "^18.0.6",
 		"@types/uuid": "^8.3.4",
