@@ -38,9 +38,7 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
-    preferences: {
-        autoHide: boolean;
-    };
+    autoHide: boolean;
 }
 
 export interface ClientSetting {
@@ -158,9 +156,7 @@ const ConfigStore = createSlice({
             lunar: true,
             keathiz: false,
             boomza: true,
-            preferences: {
-                autoHide: true,
-            },
+            autoHide: true,
         },
         menuOptions: Array<MenuOption>(),
     },
@@ -176,6 +172,7 @@ const ConfigStore = createSlice({
         setRunApiKey: (state, action: {payload: IPCResponse<RunApiKey>}) => {
             const payload: RunApiKey = action.payload.data;
             state.runKey = payload.key.key;
+            state.run.valid = payload.key.valid;
             window.config.set("run.apiKey", payload.key.key)
         },
         setDataFromConfig: (state, action: {payload: InitScript}) => {
