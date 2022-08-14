@@ -1,6 +1,5 @@
 import React from "react";
-import {useSelector} from "react-redux";
-import store from "@renderer/store";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface SettingCard {
     children: React.ReactElement | React.ReactElement[];
@@ -10,7 +9,7 @@ export interface SettingCard {
 }
 
 export const SettingCard: React.ElementType = (props: SettingCard) => {
-    const colours = useSelector(() => store.getState().configStore.colours);
+    const {colours} = useConfigStore((state) => ({colours: state.colours}))
     const showSetting = props?.options?.shown ?? true;
 
     return (

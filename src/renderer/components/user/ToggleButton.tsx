@@ -4,9 +4,9 @@ import React from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import {Checkbox, styled, Typography} from "@mui/material";
-import store from "@renderer/store";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {useSelector} from "react-redux";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface ToggleButton {
     onClick?: (input) => void;
@@ -41,7 +41,7 @@ export const ToggleButton: React.ElementType = (props: ToggleButton) => {
             fontSize: theme.typography.pxToRem(16),
         },
     }));
-    const colours = useSelector(() => store.getState().configStore.colours);
+    const {colours} = useConfigStore((state) => ({colours: state.colours}))
     const message = props?.text ?? "";
     let tooltip: JSX.Element;
 

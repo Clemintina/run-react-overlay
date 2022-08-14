@@ -1,21 +1,19 @@
-import React from "react";
-import {useSelector} from "react-redux";
-import store from "@renderer/store";
 // eslint-disable-next-line import/named
 import {Box, FormHelperText, FormLabel, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
-import {ConfigStore} from "@renderer/store/ConfigStore";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import {FeedbackForm} from "@components/user/settings/FeedbackForm";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import React from "react";
 
 export interface ContactStaff {
     children: React.ReactElement | React.ReactElement[];
 }
 
 export const ContactStaff: React.ElementType = (props: ContactStaff) => {
-    const configStore: ConfigStore = useSelector(() => store.getState().configStore);
+    const {colours, hypixel, settings, run, version} = useConfigStore((state) => ({colours: state.colours, hypixel: state.hypixel, settings: state.settings, run: state.run, version: state.version}))
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -37,17 +35,17 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
         left: "50%",
         transform: "translate(-50%, -50%)",
         width: 400,
-        bgcolor: configStore.colours.backgroundColour,
-        border: `2px solid ${configStore.colours.primaryColour}`,
+        bgcolor: colours.backgroundColour,
+        border: `2px solid ${colours.primaryColour}`,
         boxShadow: 24,
         p: 4,
-        color: configStore.colours.primaryColour,
+        color: colours.primaryColour,
     };
 
     return (
         <div>
-            <InputBoxButton onClick={handleOpen} text={"Tester Feedback"} />
-            <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
+            <InputBoxButton onClick={handleOpen} text={"Tester Feedback"}/>
+            <Modal open={open} onClose={handleClose} style={{color: colours.primaryColour}}>
                 <Box sx={style}>
                     <Typography sx={{mt: 0}}>
                         <FormLabel title={"Tester Feedback"}>Feedback Form</FormLabel>
@@ -61,17 +59,17 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                                 <MenuItem value={"Suggestion"}>Suggestion</MenuItem>
                             </Select>
                             <FormHelperText className={"text-red-500 font-bold"}>{"The type of report you'd like to submit!"}</FormHelperText>
-                            <FeedbackForm options={{text: feedbackType, formHelper: "Please write as descriptively as possible"}} onChange={(event) => setFeedbackTypeMessage(event.target.value)} />
+                            <FeedbackForm options={{text: feedbackType, formHelper: "Please write as descriptively as possible"}} onChange={(event) => setFeedbackTypeMessage(event.target.value)}/>
                         </FormControl>
                         <span>
                             <InputBoxButton
                                 onClick={async () => {
                                     const body = {
                                         overlay: {
-                                            version: configStore.version,
-                                            owner: configStore.hypixel.apiKeyOwner,
-                                            run: configStore.runKey,
-                                            settings: configStore.settings,
+                                            version: version,
+                                            owner: hypixel.apiKeyOwner,
+                                            run: run.apiKey,
+                                            settings: settings,
                                         },
                                         user: {
                                             type: feedbackType,

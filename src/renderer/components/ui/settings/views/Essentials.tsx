@@ -10,7 +10,7 @@ import {Slider} from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import {SettingsConfig} from "@renderer/store/ConfigStore";
+import {SettingsConfig} from "@common/utils/Schemas";
 
 const Essentials = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);

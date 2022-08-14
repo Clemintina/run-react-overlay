@@ -1,8 +1,7 @@
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
-import create, {Mutate} from "zustand";
-import ConfigStore, {BrowserWindowSettings, ClientSetting, ColourSettings, MenuOption, SettingsConfig, TableState} from "@renderer/store/ConfigStore";
-import {DisplayErrorMessage} from "@common/utils/Schemas";
+import create from "zustand";
+import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, MenuOption, SettingsConfig, TableState} from "@common/utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
@@ -211,5 +210,12 @@ const useConfigStore = create<ConfigStore>()(devtools(persist((set, get) => ({
     },
     setStore: (store) => set(store),
 }), {name: 'user_settings'})))
+
+export const getMenuItems = () => {
+    const items = Array<MenuOption>();
+    items.push({menuName: "Essentials", menuLink: "/settings/essentials"});
+    items.push({menuName: "Tags", menuLink: "/settings/tags"});
+    return items;
+};
 
 export default useConfigStore;

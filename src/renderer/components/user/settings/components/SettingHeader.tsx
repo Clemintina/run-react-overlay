@@ -1,6 +1,5 @@
 import React from "react";
-import {useSelector} from "react-redux";
-import store from "@renderer/store";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface SettingHeader {
     children: React.ReactElement | React.ReactElement[];
@@ -10,7 +9,7 @@ export interface SettingHeader {
 }
 
 export const SettingHeader: React.ElementType = (props: SettingHeader) => {
-    const colours = useSelector(() => store.getState().configStore.colours);
+    const {colours} = useConfigStore((state) => ({colours: state.colours}))
     const showSetting = props?.options?.shown ?? true;
 
     return (

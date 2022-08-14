@@ -3,7 +3,6 @@ import {Player} from "@common/utils/PlayerUtils";
 // eslint-disable-next-line import/named
 import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
 import {styled} from "@mui/material";
-import store from "@renderer/store";
 
 export interface OverlayTooltip {
     player?: Player;
@@ -13,13 +12,11 @@ export interface OverlayTooltip {
 
 export const OverlayTooltip: React.FC<PropsWithChildren<OverlayTooltip>> = (props: OverlayTooltip) => {
     const player = props.player ?? undefined;
-    const colours = store.getState().configStore.colours;
 
     const CustomToolTip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)(({theme}) => ({
         [`& .${tooltipClasses.tooltip}`]: {
             // backgroundColor: colours.backgroundColour,
             backgroundColor: "#120211",
-            color: colours.primaryColour,
             padding: "5px",
             paddingBottom: "3px",
             borderRadius: "5px",

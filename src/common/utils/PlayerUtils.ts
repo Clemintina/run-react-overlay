@@ -6,6 +6,8 @@ import destr from "destr";
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 import jsonLogic from "json-logic-js"
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useTagStore from "@renderer/store/zustand/TagStore";
 
 export type Player = {
     name: string;
@@ -34,6 +36,8 @@ export class PlayerUtils {
         this.playerHypixelUtils = new PlayerHypixelUtils();
         if (stores != undefined) {
             this.formatPlayerInstance.setConfig(stores);
+        }else {
+            this.formatPlayerInstance.setConfig({config: useConfigStore.getState(), tags: useTagStore.getState()});
         }
     }
 

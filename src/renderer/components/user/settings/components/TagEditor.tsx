@@ -1,6 +1,4 @@
-import React, {useState} from "react";
-import {useSelector} from "react-redux";
-import store from "@renderer/store";
+import React from "react";
 import {TextField} from "@mui/material";
 
 export interface TagEditor {
@@ -17,7 +15,7 @@ export interface TagEditor {
 export const TagEditor: React.ElementType = (props: TagEditor) => {
     return (
         <span className='bg-transparent'>
-            <TextField id="standard-basic" label="" variant="standard" sx={{input: {color: `#${props?.options?.colour??'FFFFFF'}`}}}
+            <TextField id="standard-basic" label="" variant="standard" sx={{input: {color: `#${props?.options?.colour ?? 'FFFFFF'}`}}}
                        onKeyDown={props.onKeyDown}
                        placeholder={props?.options?.placeholder ?? ""}
                        className={props?.options?.className ?? "underlineText"}

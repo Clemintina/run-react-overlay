@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
 import {Box, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
 import React from "react";
-import {ClientSetting} from "@renderer/store/ConfigStore";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import {ClientSetting} from "@common/utils/Schemas";
 
 export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];

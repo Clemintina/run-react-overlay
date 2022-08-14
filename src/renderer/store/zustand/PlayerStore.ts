@@ -3,7 +3,6 @@ import {Player} from "@common/utils/PlayerUtils";
 import {Components} from "@common/zikeji";
 import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import store from "@renderer/store";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 
@@ -165,10 +164,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
 const getBoomza = async (player: Player) => {
     let api: IPCResponse<BoomzaAntisniper>;
-    if (player.hypixelPlayer?.displayname && store.getState().configStore.settings.boomza) {
+    if (player.hypixelPlayer?.displayname && useConfigStore.getState().settings.boomza) {
         api = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
     } else {
-        api = {data: {sniper: false, report: 0, error: false, username: player.name}, status: store.getState().configStore.settings.boomza ? 417 : 400};
+        api = {data: {sniper: false, report: 0, error: false, username: player.name}, status: useConfigStore.getState().settings.boomza ? 417 : 400};
     }
     return new Promise<IPCResponse<BoomzaAntisniper>>((resolve) => resolve(api));
 };
@@ -214,11 +213,11 @@ const getRunApi = async (player: Player) => {
 
 const getLunarTags = async (player: Player) => {
     let api: IPCResponse<LunarAPIResponse>;
-    if (player.hypixelPlayer?.uuid !== undefined && store.getState().configStore.settings.lunar) {
+    if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.lunar) {
         api = await window.ipcRenderer.invoke<LunarAPIResponse>("lunar", player.hypixelPlayer.uuid);
     } else {
         api = {
-            status: store.getState().configStore.settings.lunar ? 417 : 400,
+            status: useConfigStore.getState().settings.lunar ? 417 : 400,
             data: {
                 code: 400,
                 msTime: Date.now(),
@@ -245,7 +244,7 @@ const getKeathizData = async (player: Player) => {
         api = await window.ipcRenderer.invoke<KeathizOverlayRun>("seraph", RunEndpoints.KEATHIZ_PROXY, player.hypixelPlayer.uuid, state.keathiz.key, state.hypixel.apiKeyOwner, state.hypixel.apiKey, state.hypixel.apiKeyOwner);
     } else {
         api = {
-            status: store.getState().configStore.settings.keathiz ? 417 : 400,
+            status: useConfigStore.getState().settings.keathiz ? 417 : 400,
             data: {
                 success: false,
                 player: {

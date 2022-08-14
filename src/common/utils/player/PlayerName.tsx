@@ -18,11 +18,11 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     const player = props.player;
     const tagStore = useTagStore((state) => state);
     const configStore = useConfigStore((state) => state);
-    let denickedTag = <span />;
+    const denickedTag = <span />;
 
     const handleDenickEvent = () => {
         const store = configStore;
-        configStore.setStore({...store, keathiz: {showNick: !store.keathiz.showNick}});
+        configStore.setStore({...store, keathiz: {...store.keathiz,showNick: !store.keathiz.showNick}});
     };
 
     let rankPlayer: JSX.Element;

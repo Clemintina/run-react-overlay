@@ -1,14 +1,15 @@
 import React from "react";
-import {ConfigStore} from "@renderer/store/ConfigStore";
 import {useSelector} from "react-redux";
-import store from "@renderer/store";
 import {Link} from "react-router-dom";
 import {InputBoxButton} from "@components/user/InputBoxButton";
+import useConfigStore, {getMenuItems} from "@renderer/store/zustand/ConfigStore";
 
-const NavigationBar = (props: {children}) => {
-    const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
-    const colours = localConfigStore.colours;
-    const menuOptions = localConfigStore.menuOptions;
+const NavigationBar = (props: { children }) => {
+    const {colours, menuOptions} = useConfigStore((state) => ({colours: state.colours, menuOptions: state.menuOptions}))
+
+    if (menuOptions.length == 0) {
+        useConfigStore.getState().setMenuOptions(getMenuItems());
+    }
 
     const menuLinks = menuOptions.map((menuOption) => (
         <div key={menuOption.menuName}>

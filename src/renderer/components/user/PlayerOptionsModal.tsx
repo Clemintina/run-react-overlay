@@ -1,15 +1,12 @@
 import React from "react";
-import {useSelector} from "react-redux";
-import store from "@renderer/store";
 // eslint-disable-next-line import/named
 import {Box, FormHelperText, Input, InputLabel, Modal} from "@mui/material";
-import {ConfigStore} from "@renderer/store/ConfigStore";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import {Player} from "@common/utils/PlayerUtils";
 import FormControl from "@mui/material/FormControl";
-import {FeedbackForm} from "@components/user/settings/FeedbackForm";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface PlayerOptionsModal {
     children: React.ReactElement | React.ReactElement[];
@@ -17,7 +14,7 @@ export interface PlayerOptionsModal {
 }
 
 export const PlayerOptionsModal: React.ElementType = (props: PlayerOptionsModal) => {
-    const configStore: ConfigStore = useSelector(() => store.getState().configStore);
+    const {colours} = useConfigStore((state) => ({colours: state.colours}))
 
     const [open, setOpen] = React.useState(false);
     const [reportType, setReportType] = React.useState('');
@@ -30,18 +27,18 @@ export const PlayerOptionsModal: React.ElementType = (props: PlayerOptionsModal)
         left: "50%",
         transform: "translate(-50%, -50%)",
         width: window.innerWidth /1.2,
-        bgcolor: configStore.colours.backgroundColour,
-        border: `2px solid ${configStore.colours.primaryColour}`,
+        bgcolor: colours.backgroundColour,
+        border: `2px solid ${colours.primaryColour}`,
         boxShadow: 24,
         p: 4,
-        color: configStore.colours.primaryColour,
+        color: colours.primaryColour,
     };
 
     // TODO Add player options
     return (
         <div>
             <InputBoxButton onClick={handleOpen} text={"..."} sx={{height: 20,width: 10, padding: 2}}/>
-            <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
+            <Modal open={open} onClose={handleClose} style={{color: colours.primaryColour}}>
                 <Box sx={style}>
                     <div className='p-8'>
                         <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 lg:gap-2'>

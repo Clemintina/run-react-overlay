@@ -6,11 +6,9 @@ import React from "react";
 import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
 import {Interweave} from "interweave";
 import {AgGridReact} from "ag-grid-react";
-import {TableState} from "@renderer/store/ConfigStore";
-import {PlayerOptionsModal} from "@components/user/PlayerOptionsModal";
 import {assertDefaultError} from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import useConfigStore, {ConfigStore, getMenuItems} from "@renderer/store/zustand/ConfigStore";
 import useTagStore from "@renderer/store/zustand/TagStore";
 import PlayerName from "@common/utils/player/PlayerName";
 import PlayerStar from "@common/utils/player/PlayerStar";
@@ -18,6 +16,7 @@ import PlayerTags from "@common/utils/player/PlayerTags";
 import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
+import {TableState} from "@common/utils/Schemas";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 let gridApi: GridApi;
@@ -191,11 +190,8 @@ const AppTable = () => {
      * All **css** is done in {@link assets/scss/app}
      * All processing is done in {@link store}
      */
-    const localStore: ConfigStore = useConfigStore((state) => state);
+    const {columnState, browserWindow} = useConfigStore((state) => ({columnState: state.table.columnState, browserWindow: state.browserWindow}));
     const players: Array<Player> = usePlayerStore((state) => state.players) ?? [];
-    const tagStore = {tags: useTagStore((state) => state), config: localStore};
-    playerFormatter.setConfig(tagStore);
-    columnState = localStore.table.columnState;
 
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
@@ -227,7 +223,7 @@ const AppTable = () => {
     };
 
     const backgroundStyle = {
-        height: localStore.browserWindow.height - 38,
+        height: browserWindow.height - 38,
         OverflowX: "hidden",
         color: "",
     };

@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import {useSelector} from "react-redux";
-import store from "@renderer/store";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface InputTextBox {
     onKeyDown: (input: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -16,7 +16,7 @@ export interface InputTextBox {
 }
 
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
-    const colours = useSelector(() => store.getState().configStore.colours);
+    const {colours} = useConfigStore((state) => ({colours: state.colours}));
 
     const [isFocused, setIsFocused] = useState(false);
     const handleMouseOver = (event) => {

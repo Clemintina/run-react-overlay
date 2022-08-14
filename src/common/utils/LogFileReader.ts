@@ -1,4 +1,3 @@
-import store from "@renderer/store";
 import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
@@ -17,7 +16,7 @@ export class LogFileReader {
             if (line.includes("Sending you to")) {
                 usePlayerStore.getState().clearPlayers();
             }
-            if (line.includes("The game starts in 1 second!") && store.getState().configStore.settings.preferences.autoHide) {
+            if (line.includes("The game starts in 1 second!") && useConfigStore.getState().settings.preferences.autoHide) {
                 window.ipcRenderer.send("windowMinimise");
             }
         });
@@ -44,7 +43,7 @@ export class LogFileReader {
             } else if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 clearOverlayTable();
-                if (store.getState().configStore.settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
+                if (useConfigStore.getState().settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
                 players.map(async (player) => addPlayer(player));
             } else if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
