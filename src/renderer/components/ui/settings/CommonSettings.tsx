@@ -10,8 +10,6 @@ import Essentials from "@components/ui/settings/views/Essentials";
 
 const CommonSettings = () => {
     const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
-    const colours = localConfigStore.colours;
-    // TODO make it look nicer and cleaner
 
    return (
         <NavigationBar>

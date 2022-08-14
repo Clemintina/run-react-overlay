@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/named
+import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
 import React from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
@@ -5,8 +7,6 @@ import {Checkbox, styled, Typography} from "@mui/material";
 import store from "@renderer/store";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {useSelector} from "react-redux";
-// eslint-disable-next-line import/named
-import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
 
 export interface ToggleButton {
     onClick?: (input) => void;

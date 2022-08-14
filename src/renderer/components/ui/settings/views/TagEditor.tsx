@@ -1,30 +1,24 @@
-import {useSelector} from "react-redux";
-import store, {Store} from "@renderer/store";
 import React from "react";
 import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {PlayerStore, updatePlayerStores} from "@renderer/store/PlayerStore";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import {ColourPicker} from "@components/user/settings/components/ColourPicker";
-import {RUNElectronStoreTagsType} from "@renderer/store/ElectronStoreUtils";
-import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 import {ColourPickerArray} from "@components/user/settings/components/ColourPickerArrays";
-import {TagArray, TagObject} from "@common/utils/Schemas";
+import {TagArray} from "@common/utils/Schemas";
+import {TagSchema} from "@common/utils/TagSchema";
+import useTagStore from "@renderer/store/zustand/TagStore";
+import {SettingHeader} from "@components/user/settings/components/SettingHeader";
+import {InputTextBox} from "@components/user/InputTextBox";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import {TagEditor} from "@components/user/settings/components/TagEditor";
+import produce from "immer";
+import tagStore from "@renderer/store/zustand/TagStore";
 
 const Essentials = () => {
-    const localStore: Store = useSelector(() => store.getState());
-    const localTagStore: PlayerStore = localStore.playerStore;
-    const tagStore: RUNElectronStoreTagsType = localTagStore.tagStore.tags as RUNElectronStoreTagsType;
     const defaultArrayColour = "ffffff";
+    const localTagStore: TagSchema = useTagStore((state) => state);
 
-    const updateColourStore = async (colourPath: RUNElectronStoreTagsTyped, colour) => {
-        colour = colour.replace("#", "");
-        await window.ipcRenderer.send("tagsSet", {key: colourPath, data: colour});
-        store.dispatch(updatePlayerStores({}));
-    };
-
-    const updateColourStoreArray = async (colourPath, colour: TagObject) => {
-        await window.ipcRenderer.send("tagsSet", {key: colourPath, data: colour});
-        store.dispatch(updatePlayerStores({}));
+    const updateColourStore = async () => {
+        useTagStore.getState().setTagStore(localTagStore);
     };
 
     // TODO make it look nicer and cleaner
@@ -39,77 +33,181 @@ const Essentials = () => {
                     </SettingCard>
                     <SettingCard>
                         <span>Annoy List</span>
-                        <span style={{color: `#${tagStore.run.annoylist.colour}`}}>{tagStore.run.annoylist.display}</span>
+                        <span><TagEditor
+                            options={{colour: localTagStore.run.annoylist.colour, placeholder: localTagStore.run.annoylist.display}}
+                            onBlur={(event) => {
+                                useTagStore.getState().setStore(() => {
+                                    localTagStore.run.annoylist.display = event.currentTarget.value
+                                })
+                            }}/></span>
                         <span>
                             <ColourPicker
                                 setColour={async (colour: string) => {
-                                    await updateColourStore("run.annoylist.colour", colour);
+                                    localTagStore.run.annoylist.colour = colour;
+                                    await updateColourStore();
                                 }}
-                                colourObject={tagStore.run.annoylist.colour}
+                                colourObject={localTagStore.run.annoylist.colour}
                             />
                         </span>
                     </SettingCard>
                     <SettingCard>
                         <span>Blacklisted</span>
-                        <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{tagStore.run.blacklist.display}</span>
+                        <span><TagEditor
+                            options={{colour: localTagStore.run.blacklist.colour, placeholder: localTagStore.run.blacklist.display}}
+                            onBlur={(event) => {
+                                useTagStore.getState().setStore(() => {
+                                    localTagStore.run.blacklist.display = event.currentTarget.value
+                                })
+                            }}/></span>
                         <span>
                             <ColourPicker
                                 setColour={async (colour: string) => {
-                                    await updateColourStore("run.blacklist.colour", colour);
+                                    localTagStore.run.blacklist.colour = colour;
+                                    await updateColourStore();
                                 }}
-                                colourObject={tagStore.run.blacklist.colour}
+                                colourObject={localTagStore.run.blacklist.colour}
                             />
                         </span>
                     </SettingCard>
                     <SettingCard>
                         <span>Encounters</span>
-                        <span style={{color: `#${defaultArrayColour}`}}>{tagStore.run.encounters.display}</span>
+                        <span><TagEditor
+                            options={{colour: localTagStore.run.encounters.colour[0], placeholder: localTagStore.run.encounters.display}}
+                            onBlur={(event) => {
+                                useTagStore.getState().setStore(() => {
+                                    localTagStore.run.encounters.display = event.currentTarget.value
+                                })
+                            }}/></span>
                         <span>
                             <ColourPickerArray
                                 setColour={async (newTagArray: TagArray) => {
-                                    const newColourObject = {...tagStore.run.encounters};
-                                    const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator:'<='};
-                                    const newColourArray = [...newColourObject.colour];
-                                    newColourArray.filter((item: TagArray,index) => {
-                                        if(item.requirement == newItem.requirement) newColourArray.splice(index,1);
-                                    });
-                                    newColourArray.push(newItem);
-                                    newColourObject.colour = newColourArray;
-                                    await updateColourStoreArray("run.encounters", newColourObject);
+                                    const newColourObject = {...localTagStore.run.encounters};
+                                    const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<="};
+                                    if (Array.isArray(newColourObject.colour)) {
+                                        const newColourArray = [...newColourObject.colour];
+                                        newColourArray.filter((item: TagArray, index) => {
+                                            if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
+                                        });
+                                        newColourArray.push(newItem);
+                                        localTagStore.run.encounters.colour = newColourArray;
+                                        await updateColourStore();
+                                    }
                                 }}
-                                colourObject={tagStore.run.encounters}
+                                colourObject={localTagStore.run.encounters}
                             />
                         </span>
                     </SettingCard>
                     <SettingCard>
                         <span>Name Change</span>
-                        <span style={{color: `#${tagStore.run.name_change.colour}`}}>{tagStore.run.name_change.display}</span>
+                        <span><TagEditor
+                            options={{colour: localTagStore.run.name_change.colour, placeholder: localTagStore.run.name_change.display}}
+                            onBlur={(event) => {
+                                useTagStore.getState().setStore(() => {
+                                    localTagStore.run.name_change.display = event.currentTarget.value
+                                })
+                            }}/></span>
                         <span>
                             <ColourPicker
                                 setColour={async (colour: string) => {
-                                    await updateColourStore("run.name_change.colour", colour);
+                                    localTagStore.run.name_change.colour = colour;
+                                    await updateColourStore();
                                 }}
-                                colourObject={tagStore.run.name_change.colour}
+                                colourObject={localTagStore.run.name_change.colour}
                             />
                         </span>
                     </SettingCard>
                     <SettingCard>
                         <span>Safelist</span>
-                        <span style={{color: `#${defaultArrayColour}`}}>{tagStore.run.safelist.display}</span>
+                        <span><TagEditor
+                            options={{colour: localTagStore.run.safelist.colour, placeholder: localTagStore.run.safelist.display}}
+                            onBlur={(event) => {
+                                useTagStore.getState().setStore(() => {
+                                    localTagStore.run.safelist.display = event.currentTarget.value
+                                })
+                            }}/></span>
                         <span>
                             <ColourPickerArray
                                 setColour={async (newTagArray: TagArray) => {
-                                    const newColourObject = {...tagStore.run.safelist};
-                                    const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator:'<='};
-                                    const newColourArray = [...newColourObject.colour];
-                                    newColourArray.filter((item: TagArray,index) => {
-                                        if(item.requirement == newItem.requirement) newColourArray.splice(index,1);
-                                    });
-                                    newColourArray.push(newItem);
-                                    newColourObject.colour = newColourArray;
-                                    await updateColourStoreArray("run.safelist", newColourObject);
+                                    const newColourObject = {...localTagStore.run.safelist};
+                                    const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<="};
+                                    if (Array.isArray(newColourObject.colour)) {
+                                        const newColourArray = [...newColourObject.colour];
+                                        newColourArray.filter((item: TagArray, index) => {
+                                            if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
+                                        });
+                                        newColourArray.push(newItem);
+                                        localTagStore.run.safelist.colour = newColourArray;
+                                        await updateColourStore();
+                                    }
                                 }}
-                                colourObject={tagStore.run.safelist}
+                                colourObject={localTagStore.run.safelist}
+                            />
+                        </span>
+                    </SettingCard>
+                    <SettingHeader>
+                        <span/>
+                        <span>Boomza Tags</span>
+                        <span/>
+                    </SettingHeader>
+                    <SettingCard>
+                        <span>Hacker</span>
+                        <span><TagEditor
+                            options={{colour: localTagStore.boomza.hacker.colour, placeholder: localTagStore.boomza.hacker.display}}
+                            onBlur={(event) => {
+                                useTagStore.getState().setStore(() => {
+                                    localTagStore.boomza.hacker.display = event.currentTarget.value
+                                })
+                            }}/></span>
+                        <span>
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    localTagStore.boomza.hacker.colour = colour;
+                                    await updateColourStore();
+                                }}
+                                colourObject={localTagStore.boomza.hacker.colour}
+                            />
+                        </span>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Sniper</span>
+                        <span><TagEditor
+                            options={{colour: localTagStore.boomza.sniper.colour, placeholder: localTagStore.boomza.sniper.display}}
+                            onBlur={(event) => {
+                                useTagStore.getState().setStore(() => {
+                                    localTagStore.boomza.sniper.display = event.currentTarget.value
+                                })
+                            }}/></span>
+                        <span>
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    localTagStore.boomza.sniper.colour = colour;
+                                    await updateColourStore();
+                                }}
+                                colourObject={localTagStore.boomza.sniper.colour}
+                            />
+                        </span>
+                    </SettingCard>
+                    <SettingHeader>
+                        <span/>
+                        <span>Hypixel</span>
+                        <span/>
+                    </SettingHeader>
+                    <SettingCard>
+                        <span>Party</span>
+                        <span><TagEditor
+                            options={{colour: localTagStore.hypixel.party.colour, placeholder: localTagStore.hypixel.party.display}}
+                            onBlur={(event) => {
+                                useTagStore.getState().setStore(() => {
+                                    localTagStore.hypixel.party.display = event.currentTarget.value
+                                })
+                            }}/></span>
+                        <span>
+                            <ColourPicker
+                                setColour={async (colour: string) => {
+                                    localTagStore.hypixel.party.colour = colour;
+                                    await updateColourStore();
+                                }}
+                                colourObject={localTagStore.hypixel.party.colour}
                             />
                         </span>
                     </SettingCard>

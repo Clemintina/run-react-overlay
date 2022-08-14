@@ -1,9 +1,10 @@
 import store from "@renderer/store";
-import {getPlayerHypixelData, PlayerStoreThunkObject, removePlayerFromOverlay, resetOverlayTable} from "@renderer/store/PlayerStore";
 import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
+import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import IpcRendererEvent = Electron.IpcRendererEvent;
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface LogFileMessage {
     message: string;
@@ -14,7 +15,7 @@ export class LogFileReader {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
             if (line.includes("Sending you to")) {
-                store.dispatch(resetOverlayTable());
+                usePlayerStore.getState().clearPlayers();
             }
             if (line.includes("The game starts in 1 second!") && store.getState().configStore.settings.preferences.autoHide) {
                 window.ipcRenderer.send("windowMinimise");
@@ -27,11 +28,10 @@ export class LogFileReader {
             const line = readLogLine(data);
             if (line.includes(" has joined (")) {
                 const username = line.split(" [CHAT] ")[1].split(" has joined")[0];
-                const obj: PlayerStoreThunkObject = {name: username};
-                store.dispatch(getPlayerHypixelData(obj));
+                addPlayer(username);
             } else if (line.includes(" has quit!")) {
                 const player = line.split(" [CHAT] ")[1].split(" has quit!")[0];
-                store.dispatch(removePlayerFromOverlay({name: player}));
+                removePlayer(player);
             }
         });
     };
@@ -39,22 +39,21 @@ export class LogFileReader {
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
-            if(line.includes("Sending you to")) {
-                store.dispatch(resetOverlayTable());
-            }
-            else if (line.includes(" ONLINE: ")) {
+            if (line.includes("Sending you to")) {
+                clearOverlayTable();
+            } else if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
-                store.dispatch(resetOverlayTable());
+                clearOverlayTable();
                 if (store.getState().configStore.settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
-                players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player})));
+                players.map(async (player) => addPlayer(player));
             } else if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
                 players.shift();
                 const playerNames = players[0].split(", ");
-                store.dispatch(resetOverlayTable());
+                clearOverlayTable();
                 playerNames.map(async (name) => {
                     if (name.includes(" ")) name = name.split(" ")[name.split(" ").length - 1].trim();
-                    store.dispatch(getPlayerHypixelData({name: name}));
+                    addPlayer(name);
                 });
             }
         });
@@ -66,10 +65,11 @@ export class LogFileReader {
             if (line.includes("FINAL KILL!")) {
                 const lineTemp = line.toString().substring(line.indexOf("[CHAT]"), line.length).replace("[CHAT] ", "");
                 const final_ign = lineTemp.split(" ")[0];
-                const configStore = store.getState().configStore;
-                const player: Player | undefined = store.getState().playerStore.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
+                const configStore = useConfigStore.getState();
+                const players = usePlayerStore.getState();
+                const player: Player | undefined = players.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
                 if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
-                    await window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.runKey, configStore.hypixel.apiKeyOwner);
+                    await window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner);
                 }
             }
         });
@@ -83,7 +83,7 @@ export class LogFileReader {
                 const commands = [".c", ".clear", ".h", ".hide", ".s", ".show", ".r"];
                 const command_clean = command.replace(".", "").replace("@", "").replace("-", "").replace(",", "").toLowerCase();
                 if (command === ".c" || command === ".clear") {
-                    store.dispatch(resetOverlayTable());
+                    clearOverlayTable();
                     return;
                 } else if (command === ".h" || command === ".hide") {
                     window.ipcRenderer.send("windowMinimise");
@@ -92,7 +92,7 @@ export class LogFileReader {
                     window.ipcRenderer.send("windowMaximise");
                     return;
                 } else if ((command_clean.length <= 16 || command_clean.length == 32 || command_clean.length == 36) && !commands.includes(command)) {
-                    store.dispatch(getPlayerHypixelData({name: command_clean}));
+                    addPlayer(command_clean);
                     return;
                 }
                 return;
@@ -109,15 +109,15 @@ export class LogFileReader {
                 if (line.match(/\S*(?=( to the party! They have 60 seconds to accept.))/)) {
                     // Invite (In Party)
                     const player = line.match(/\S*(?=( to the party! They have 60 seconds to accept.))/);
-                    if (player != null) store.dispatch(getPlayerHypixelData({name: player[0]}));
+                    if (player != null) addPlayer(player[0]);
                 } else if (line.match(/\S*(?=( party!))/)) {
                     // You Joining Party (Out of Party)
                     const players = line.match(/\S*(?=('))/);
-                    if (players != null) store.dispatch(getPlayerHypixelData({name: players[0]}));
+                    if (players != null) addPlayer(players[0]);
                 } else if (line.match(/\S*(?=( joined the party.))/)) {
                     // Someone Joining Party (Out of Party)
                     const players = line.match(/\S*(?=( joined the party.))/);
-                    if (players != null) store.dispatch(getPlayerHypixelData({name: players[0]}));
+                    if (players != null) addPlayer(players[0]);
                 } else if (line.match(/Party Leader: (\S.*)/)) {
                     // Party List (Leader)
                     const playerRank = line.match(/Party Leader: (\S.*)/);
@@ -125,7 +125,7 @@ export class LogFileReader {
                         let players = line.match(/(?<=: )(.*?)(?= \?)/);
                         if (players != null) {
                             players = players[0].split(" ");
-                            store.dispatch(getPlayerHypixelData({name: players[players.length - 1]}));
+                            addPlayer(players[players.length - 1]);
                         }
                     }
                 } else if (line.match(/Party Moderators: (\S.*)/)) {
@@ -137,7 +137,7 @@ export class LogFileReader {
                             .replace(/\[(.*?)]/g, "")
                             .split(" ?");
                         players.pop();
-                        players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(" ", "")})));
+                        players.map(async (player) => addPlayer(player.replace(" ", "")));
                     }
                 } else if (line.match(/Party Members: (\S.*)/)) {
                     // Party List (Members)
@@ -148,7 +148,7 @@ export class LogFileReader {
                             .replace(/\[(.*?)]/g, "")
                             .split(" ?");
                         players.pop();
-                        players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(" ", "")})));
+                        players.map(async (player) => addPlayer(player.replace(" ", "")));
                     }
                 } else if (line.match(/You'll be partying with: (\S.*)/)) {
                     // Party Group Join (Out of Party)
@@ -157,12 +157,24 @@ export class LogFileReader {
                         .replace(/and \d* other players!/, "")
                         .replace(/\[(.*?)]/g, "")
                         .split(", ");
-                    players.map(async (player) => store.dispatch(getPlayerHypixelData({name: player.replace(" ", "")})));
+                    players.map(async (player) => addPlayer(player.replace(" ", "")));
                 }
             }
         });
     };
 }
+
+const addPlayer = async (username: string) => {
+    usePlayerStore.getState().addPlayer(username);
+};
+
+const removePlayer = async (username: string) => {
+    usePlayerStore.getState().removePlayer(username);
+};
+
+const clearOverlayTable = async () => {
+    usePlayerStore.getState().clearPlayers();
+};
 
 const readLogLine = (data: string) => {
     const response: IPCResponse<LogFileMessage> = destr(data);

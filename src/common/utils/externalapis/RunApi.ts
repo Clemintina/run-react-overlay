@@ -99,5 +99,6 @@ export interface LunarAPIResponse {
 
 export interface IPCResponse<T> {
     status: number;
+    cause?: string;
     data: T;
 }

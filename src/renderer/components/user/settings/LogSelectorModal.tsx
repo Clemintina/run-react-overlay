@@ -1,20 +1,19 @@
-import React from "react";
-import {useSelector} from "react-redux";
-import store from "@renderer/store";
 // eslint-disable-next-line import/named
 import {Box, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
-import {ClientSetting, ConfigStore, setClient, setErrorMessage} from "@renderer/store/ConfigStore";
+import React from "react";
+import {ClientSetting} from "@renderer/store/ConfigStore";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 
 export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];
 }
 
 export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => {
-    const configStore: ConfigStore = useSelector(() => store.getState().configStore);
+    const configStore: ConfigStore = useConfigStore((state) => state);
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -31,9 +30,6 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
 
         const appData = (await window.ipcRenderer.invoke<string>("getFilePath", "appData")).data;
         const userHome = (await window.ipcRenderer.invoke<string>("getFilePath", "home")).data;
-
-        // /Users/kk/.lunarclient/offline/1.8/logs
-        // /Users/kk/Library/Application Support/minecraft/logs
 
         const isMacOs = appData.includes("Application Support");
 
@@ -59,17 +55,15 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
             if (readable.data) {
                 clientSettings.readable = readable.data;
                 window.ipcRenderer.send("logFileSet", clientSettings.logPath);
-                store.dispatch(setClient(clientSettings));
+                useConfigStore.getState().setLogs(clientSettings);
             } else {
-                store.dispatch(
-                    setErrorMessage({
-                        code: 400,
-                        title: "Bad Log file",
-                        cause: "The file set is invalid.",
-                        detail: "Please try and set the client again if you're on a Mac, Ensure the Overlay has sufficient privileges to read the file.",
-                        referenceId: "Unable to read log file.",
-                    }),
-                );
+                useConfigStore.getState().setErrorMessage({
+                    code: 400,
+                    title: "Bad Log file",
+                    cause: "The file set is invalid.",
+                    detail: "Please try and set the client again if you're on a Mac, Ensure the Overlay has sufficient privileges to read the file.",
+                    referenceId: "Unable to read log file.",
+                })
             }
         }
     };
@@ -94,9 +88,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
             </InputBoxButton>
             <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
                 <Box sx={style}>
-                    <Typography sx={{mt: 0}}>
-                        Please select the client you use
-                    </Typography>
+                    <Typography sx={{mt: 0}}>Please select the client you use</Typography>
 
                     <Typography sx={{mt: 2}}>
                         <FormControl fullWidth>
@@ -128,17 +120,15 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                             readable: true,
                                             logPath: logPath,
                                         };
-                                        store.dispatch(setClient(clientSettings));
+                                        useConfigStore.getState().setLogs(clientSettings);
                                     } else {
-                                        store.dispatch(
-                                            setErrorMessage({
-                                                code: 400,
-                                                title: "Bad Log file",
-                                                cause: "The file set is invalid.",
-                                                detail: "Please try and set the client again if you're on a Mac, Ensure the Overlay has sufficient privileges to read the file.",
-                                                referenceId: "Unable to read log file.",
-                                            }),
-                                        );
+                                        useConfigStore.getState().setErrorMessage({
+                                            code: 400,
+                                            title: "Bad Log file",
+                                            cause: "The file set is invalid.",
+                                            detail: "Please try and set the client again if you're on a Mac, Ensure the Overlay has sufficient privileges to read the file.",
+                                            referenceId: "Unable to read log file.",
+                                        })
                                     }
                                 }
                             }}

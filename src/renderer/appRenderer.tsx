@@ -33,7 +33,6 @@ reader.startSeraphHandler();
 reader.startCommandListener();
 reader.startPartyListener();
 
-
 const darkTheme = createTheme({
     palette: {
         mode: "dark",
@@ -47,7 +46,7 @@ createRoot(document.getElementById("app")!).render(
     <div>
         <Provider store={store}>
             <ThemeProvider theme={darkTheme}>
-                <div className='mainBody'>
+                <div className='mainBody text-gray-500' id={'main-body'}>
                     <HashRouter basename='/'>
                         <TitleBar />
                         <Routes>

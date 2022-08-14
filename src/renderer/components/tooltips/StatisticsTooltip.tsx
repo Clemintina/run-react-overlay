@@ -5,6 +5,8 @@ import {OverlayTooltip} from "@components/tooltips/OverlayTooltip";
 import {useSelector} from "react-redux";
 import store from "@renderer/store";
 import {Interweave} from "interweave";
+import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
+import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 
 export interface StatisticsTooltip {
     player: Player;
@@ -16,6 +18,16 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
     const tagStore = useSelector(() => store.getState().playerStore.tagStore);
     const playerFormatter = new PlayerUtils({tags: tagStore.tags, config: tagStore.config});
     const colours = useSelector(() => store.getState().configStore.colours);
+
+    let blacklistedReason = <span/>
+    if (player.sources.runApi?.data.data.blacklist.tagged){
+        blacklistedReason = (
+            <div>
+                <span>Reason:</span><br/>
+                <span className={'text-red-500'}>{player.sources.runApi.data.data.blacklist.reason}</span>
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -30,70 +42,70 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                                 </span>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Games Played: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "gamesPlayed")} />
+                                        Games Played: <RenderCoreStatsColour player={player} stats={'gamesPlayed'}/>{" "}
                                     </span>
                                 </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Wins: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "wins")} />{" "}
+                                        Wins: <RenderCoreStatsColour player={player} stat={'wins'}/>{" "}
                                     </span>
                                 </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Losses: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "losses")} />{" "}
+                                        Losses: <RenderCoreStatsColour player={player} stat={'losses'}/>{" "}{" "}
                                     </span>
                                 </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        WLR: <Interweave content={playerFormatter.getFormatPlayerInstance().renderRatioColour(player, "wlr")} />{" "}
-                                    </span>
-                                </div>
-                                <br />
-                                <div>
-                                    <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Final Kills: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "finalKills")} />{" "}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Final Deaths: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "finalDeaths")} />{" "}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        FKDR: <Interweave content={playerFormatter.getFormatPlayerInstance().renderRatioColour(player, "fkdr")} />{" "}
+                                        WLR: <RenderRatioColour player={player} ratio={'wlr'}/>{" "}
                                     </span>
                                 </div>
                                 <br />
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Beds Broken: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "bedsBroken")} />{" "}
+                                        Final Kills: <RenderCoreStatsColour player={player} stat={'finalKills'}/>{" "}{" "}
                                     </span>
                                 </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Beds Lost: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "bedsLost")} />{" "}
+                                        Final Deaths: <RenderCoreStatsColour player={player} stat={'finalDeaths'}/>{" "}{" "}
                                     </span>
                                 </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        BBLR: <Interweave content={playerFormatter.getFormatPlayerInstance().renderRatioColour(player, "bblr")} />{" "}
+                                        FKDR: <RenderRatioColour player={player} ratio={'fkdr'}/>{" "}
                                     </span>
                                 </div>
                                 <br />
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Kills: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "kills")}></Interweave>
+                                        Beds Broken: <RenderCoreStatsColour player={player} stat={'bedsBroken'}/>{" "}{" "}
                                     </span>
                                 </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        Deaths: <Interweave content={playerFormatter.getFormatPlayerInstance().renderCoreStatsColour(player, "deaths")} />
+                                        Beds Lost: <RenderCoreStatsColour player={player} stat={'bedsLost'}/>{" "}{" "}
                                     </span>
                                 </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
-                                        KDR: <Interweave content={playerFormatter.getFormatPlayerInstance().renderRatioColour(player, "kdr")} />{" "}
+                                        BBLR: <RenderRatioColour player={player} ratio={'bblr'}/>{" "}
+                                    </span>
+                                </div>
+                                <br />
+                                <div>
+                                    <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
+                                        Kills: <RenderCoreStatsColour player={player} stat={'kills'}/>{" "}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
+                                        Deaths: <RenderCoreStatsColour player={player} stat={'deaths'}/>{" "}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className={"statistics-tooltip-inline"} style={{color: colours.primaryColour}}>
+                                        KDR: <RenderRatioColour player={player} ratio={'kdr'}/>{" "}
                                     </span>
                                 </div>
                                 <br />
@@ -102,6 +114,7 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                                         First Login: <Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.firstLogin)} />{" "}
                                     </span>
                                 </div>
+                                {blacklistedReason}
                             </div>
                         )}
                     </div>

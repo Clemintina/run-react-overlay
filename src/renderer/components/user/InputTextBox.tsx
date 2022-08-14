@@ -8,9 +8,10 @@ export interface InputTextBox {
     onKeyDown: (input: React.KeyboardEvent<HTMLInputElement>) => void;
     onBlur?: (onExit) => void;
     onFocus?: (onFocus) => void;
-    options: {
-        placeholder: string;
-        className: string;
+    options?: {
+        placeholder?: string;
+        className?: string;
+        value?: string;
     };
 }
 
@@ -50,6 +51,7 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                 onMouseOut={handleMouseOut}
                 placeholder={props?.options?.placeholder ?? ""}
                 className={props?.options?.className ?? "underlineText"}
+                defaultValue={props?.options?.value ?? ''}
             />
         </span>
     );

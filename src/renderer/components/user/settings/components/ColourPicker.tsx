@@ -23,7 +23,7 @@ export const ColourPicker: React.ElementType = (props: ColourPicker) => {
 
     const handleChange = (event) => {
         setColour(event);
-        props.setColour(event);
+        props.setColour(event.replace("#", ""));
     };
 
     const style = {

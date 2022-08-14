@@ -1,14 +1,13 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+// eslint-disable-next-line import/named
+import {ColumnState} from "ag-grid-community";import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {IPCResponse, RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {DisplayErrorMessage} from "@common//utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-// eslint-disable-next-line import/named
-import {ColumnState} from "ag-grid-community";
 import store from "@renderer/store/index";
 import {Player} from "@common/utils/PlayerUtils";
-import {getPlayerHypixelData} from "@renderer/store/PlayerStore";
+import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export interface ConfigStore {
     hypixel: {
@@ -259,64 +258,6 @@ const ConfigStore = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(apiKeyValidator.fulfilled, (state, action) => {
-                const payload: IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>> = action.payload;
-                if (payload?.data?.key !== undefined) {
-                    ConfigStore.caseReducers.setHypixelApiKey(state, {
-                        payload,
-                    });
-                } else {
-                    ConfigStore.caseReducers.updateErrorMessage(state, {
-                        payload: {
-                            code: 403,
-                            title: "Invalid API Key",
-                            cause: "The API Key provided was invalid",
-                            detail: "The Hypixel API key inputted was invalid, try a new key.",
-                            referenceId: "extra reducer, rejected promise, invalid key?",
-                        },
-                    });
-                }
-            })
-            .addCase(apiKeyValidator.rejected, (state) => {
-                ConfigStore.caseReducers.updateErrorMessage(state, {
-                    payload: {
-                        code: 403,
-                        title: "Invalid API Key",
-                        cause: "The API Key provided was invalid.",
-                        detail: "The Hypixel API key inputted was invalid, try a new key.",
-                        referenceId: "extra reducer, rejected promise, invalid key?",
-                    },
-                });
-            })
-            .addCase(runApiKeyValidator.fulfilled, (state, action) => {
-                const payload: IPCResponse<RunApiKey> = action.payload;
-                if (payload?.data?.key !== undefined) {
-                    ConfigStore.caseReducers.setRunApiKey(state, {
-                        payload,
-                    });
-                } else {
-                    ConfigStore.caseReducers.updateErrorMessage(state, {
-                        payload: {
-                            code: 403,
-                            title: "Invalid RUN API Key",
-                            cause: "The API Key provided was invalid",
-                            detail: "The RUN API key inputted was invalid, try a new key.",
-                            referenceId: "extra reducer, rejected promise, invalid key?",
-                        },
-                    });
-                }
-            })
-            .addCase(runApiKeyValidator.rejected, (state) => {
-                ConfigStore.caseReducers.updateErrorMessage(state, {
-                    payload: {
-                        code: 403,
-                        title: "Invalid RUN API Key",
-                        cause: "The API Key provided was invalid",
-                        detail: "The RUN API key inputted was invalid, try a new key.",
-                        referenceId: "extra reducer, rejected promise, invalid key?",
-                    },
-                });
-            })
             .addCase(initScript.fulfilled, (state, action) => {
                 const payload: InitScript = action.payload;
                 ConfigStore.caseReducers.setDataFromConfig(state, {payload});
@@ -332,26 +273,8 @@ const ConfigStore = createSlice({
                     },
                 });
             })
-            .addCase(setSettingsValue.fulfilled, (state, action) => {
-                state.settings = action.payload.data;
-            })
-            .addCase(setErrorMessage.fulfilled, (state, action: {payload: DisplayErrorMessage}) => {
-                ConfigStore.caseReducers.updateErrorMessage(state, action);
-            })
-            .addCase(keathizApiKeyValidator.fulfilled, (state, action) => {
-                ConfigStore.caseReducers.setKeathizApi(state, action);
-            })
-            .addCase(setClient.fulfilled, (state, action) => {
-                ConfigStore.caseReducers.setClient(state, action);
-            })
             .addCase(saveTableColumnState.fulfilled, (state, action) => {
                 ConfigStore.caseReducers.saveTableColumnState(state, action);
-            })
-            .addCase(setColours.fulfilled, (state, action) => {
-                ConfigStore.caseReducers.setColours(state, action);
-            })
-            .addCase(setBrowserWindow.fulfilled, (state, action) => {
-                ConfigStore.caseReducers.setBrowserWindow(state, action);
             });
     },
 });
@@ -381,7 +304,7 @@ export const setSettingsValue = createAsyncThunk("ConfigStore/setSettingsValue",
     await window.config.set("settings", data);
     if (data.keathiz) {
         store.getState().playerStore.players.map(async (player: Player) => {
-            if (!player.nicked) store.dispatch(getPlayerHypixelData({name: player.hypixelPlayer?.displayname}));
+            if (!player.nicked) usePlayerStore.getState().addPlayer(player.hypixelPlayer?.displayname);
         });
     }
     return {data, status: 200};

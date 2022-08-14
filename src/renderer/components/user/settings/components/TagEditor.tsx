@@ -1,0 +1,29 @@
+import React, {useState} from "react";
+import {useSelector} from "react-redux";
+import store from "@renderer/store";
+import {TextField} from "@mui/material";
+
+export interface TagEditor {
+    onKeyDown?: (input: React.KeyboardEvent<HTMLInputElement>) => void;
+    onBlur?: (onExit) => void;
+    onFocus?: (onFocus) => void;
+    options?: {
+        placeholder?: string;
+        colour?: string;
+        className?: string;
+    };
+}
+
+export const TagEditor: React.ElementType = (props: TagEditor) => {
+    return (
+        <span className='bg-transparent'>
+            <TextField id="standard-basic" label="" variant="standard" sx={{input: {color: `#${props?.options?.colour??'FFFFFF'}`}}}
+                       onKeyDown={props.onKeyDown}
+                       placeholder={props?.options?.placeholder ?? ""}
+                       className={props?.options?.className ?? "underlineText"}
+                       defaultValue={props?.options?.placeholder ?? ''}
+                       onBlur={props.onBlur}
+            />
+        </span>
+    );
+};

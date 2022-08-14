@@ -7,8 +7,9 @@ import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 import jsonLogic from "json-logic-js";
 
-export interface Player {
+export type Player = {
     name: string;
+    nick?: string;
     id: string | null;
     nicked: boolean | null;
     bot: boolean | null;
@@ -278,7 +279,6 @@ export class FormatPlayer {
                         break;
                 }
             }
-
             switch (route) {
                 case "wins":
                     playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "wins_bedwars"] ?? 0;

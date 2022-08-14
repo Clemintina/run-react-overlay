@@ -22,6 +22,8 @@ import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji"
 import log from "electron-log";
 
 // Electron Forge automatically creates these entry points
+import electron_squirrel_startup from "electron-squirrel-startup";
+
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 /** Overlay Variables */
@@ -75,7 +77,7 @@ const axiosClient = axios.create({
         "User-Agent": "Run-Bedwars-Overlay-React-" + overlayVersion,
         "Run-API-Version": overlayVersion,
     },
-    timeout: 2000,
+    timeout: 20000,
     timeoutErrorMessage: "Connection Timed Out!",
     responseType: "json",
     validateStatus: () => true,
@@ -101,11 +103,12 @@ export const createAppWindow = (): BrowserWindow => {
         show: false,
         autoHideMenuBar: true,
         frame: false,
+        type: process.platform === "win32" ? "toolbar" : "frame",
         transparent: true,
         titleBarStyle: "hidden",
         icon: path.join("assets", "images", "icon.ico"),
         webPreferences: {
-            nodeIntegration: false,
+            nodeIntegration: true,
             contextIsolation: true,
             nodeIntegrationInWorker: false,
             nodeIntegrationInSubFrames: false,
@@ -118,7 +121,7 @@ export const createAppWindow = (): BrowserWindow => {
     mainWindowState.manage(appWindow);
 
     if (!isDevelopment) {
-        if (!require("electron-squirrel-startup") && process.platform === "win32") {
+        if (!electron_squirrel_startup && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             autoUpdater.checkForUpdates();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
@@ -273,8 +276,7 @@ const registerSeraphIPC = () => {
             });
             return {data: response.data, status: response.status};
         } else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
-            const apikey = electronStore.get("external.keathiz.apiKey");
-            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${apikey}`, {
+            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
@@ -341,6 +343,9 @@ const registerElectronStore = () => {
     });
 
     ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+        if (data.key == "*") {
+            return electronStore;
+        }
         return electronStore.get(data.key);
     });
 

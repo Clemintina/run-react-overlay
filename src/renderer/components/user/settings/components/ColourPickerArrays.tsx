@@ -1,11 +1,10 @@
 import React, {useState} from "react";
-import {useSelector} from "react-redux";
-import store from "@renderer/store";
-import {ConfigStore} from "@renderer/store/ConfigStore";
 import {Box, FormControl, FormControlLabel, FormLabel, Modal, Radio, RadioGroup} from "@mui/material";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import {HexColorPicker} from "react-colorful";
 import {TagArray} from "@common/utils/Schemas";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useTagStore from "@renderer/store/zustand/TagStore";
 
 export interface ColourPickerArray {
     children: React.ReactElement | React.ReactElement[];
@@ -15,21 +14,23 @@ export interface ColourPickerArray {
 }
 
 export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) => {
-    const configStore: ConfigStore = useSelector(() => store.getState().configStore);
+    const configStore = useConfigStore((state) => state);
+    const tagStore = useTagStore((state) => state);
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
-        if (arrayItem.colour.length == 6) {
+        if (arrayItem.colour.length == 6 && arrayItem.requirement != 0) {
             props.setColour(arrayItem);
         }
     };
 
     const [arrayItem, setArrayItem] = useState({colour: "", requirement: 0, operator: "<="});
     const [customColour, setCustomColour] = useState("242424");
+    const [defaultValue, setDefaultValue] = useState(props.colourObject.colour[0].requirement);
 
-    const getArrayDetails = (props) => {
+    const getArrayDetails = (props: ColourPickerArray) => {
         const resp: Array<JSX.Element> = [];
         const arr = [...props.colourObject.colour];
         arr.sort((a, b) => a.requirement - b.requirement);
@@ -47,16 +48,26 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
         return resp;
     };
 
-    const handleChange = (event) => {
+    const handleChange = (event: string) => {
         event = event.replace("#", "");
         setCustomColour(event);
         arrayItem.colour = event;
+        if (arrayItem.colour.length == 6 && arrayItem.requirement != 0) {
+            props.setColour(arrayItem);
+        }
     };
 
     const handleRadioChange = (event: React.ChangeEvent) => {
-        if (arrayItem.colour.length == 6) {
+        const radioNumber = Number.parseInt((event.target as HTMLInputElement).value);
+        if (arrayItem.colour.length == 6 && arrayItem.requirement != 0) {
             props.setColour(arrayItem);
         }
+        props.colourObject.colour.map((arrayItem) => {
+            if (arrayItem.requirement == radioNumber) {
+                setDefaultValue(arrayItem.requirement);
+                setCustomColour(`#${arrayItem.colour}`);
+            }
+        });
         setArrayItem({requirement: Number.parseInt((event.target as HTMLInputElement).value), colour: "", operator: "<="});
     };
 
@@ -81,12 +92,11 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
                 <Box sx={style}>
                     <FormControl>
                         <FormLabel id='colour-array'>Select which item you'd like to edit</FormLabel>
-                        <RadioGroup
-                            defaultValue={props.colourObject.colour[0].requirement}
-                            onChange={handleRadioChange}>
-                            {colourArrayData}</RadioGroup>
+                        <RadioGroup defaultValue={defaultValue} onChange={handleRadioChange}>
+                            {colourArrayData}
+                        </RadioGroup>
                     </FormControl>
-                    <div className={'grid place-items-center'}>
+                    <div className={"grid place-items-center"}>
                         <HexColorPicker onChange={handleChange} color={`#${customColour}`} />
                     </div>
                 </Box>

@@ -8,3 +8,5 @@ export function inDev(): boolean {
 export const assertDefaultError = (unreachable: never) => {
     throw new Error(`Unreachable Code! ${unreachable}`);
 };
+
+export const awaitTimeout = ms => new Promise(res => setTimeout(res, ms));

@@ -1,10 +1,6 @@
-import {apiKeyValidator, ConfigStore, keathizApiKeyValidator, runApiKeyValidator, setBrowserWindow, setSettingsValue, SettingsConfig} from "@renderer/store/ConfigStore";
-import {useSelector} from "react-redux";
-import store from "@renderer/store";
 import React, {useState} from "react";
 import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {InputTextBox} from "@components/user/InputTextBox";
-import {updateCachedState} from "@renderer/store/PlayerStore";
 import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
 import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
 import {SettingHeader} from "@components/user/settings/components/SettingHeader";
@@ -13,156 +9,152 @@ import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import {Slider} from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import {SettingsConfig} from "@renderer/store/ConfigStore";
 
 const Essentials = () => {
-    const localConfigStore: ConfigStore = useSelector(() => store.getState().configStore);
-    const isHypixelKeySet: boolean = localConfigStore.hypixel.apiKeyValid;
-    const isLogsSet: boolean = localConfigStore.logs.readable;
-    const settings = localConfigStore.settings;
-    const colours = localConfigStore.colours;
-
+    const localConfigStore = useConfigStore<ConfigStore>((state) => state);
+    const {hypixel, logs, settings, run, browserWindow} = useConfigStore((state) => ({hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow}));
     const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
 
     // TODO make it look nicer and cleaner
     return (
         <div>
             <NavigationBar>
-                <div style={{color: colours.primaryColour, backgroundColor: colours.backgroundColour}} className='w-full h-full p-2 flex flex-col space-y-2'>
+                <div className='w-full h-full p-2 flex flex-col space-y-2'>
                     <SettingCard>
                         <span>Hypixel API Key</span>
-                        <span />
+                        <span/>
                         <span>
                             <InputTextBox
                                 onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                                     if (event.key === "Enter") {
-                                        store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
-                                        setTimeout(() => updateCachedState(), 1000);
+                                        useConfigStore.getState().setHypixelApiKey(event.currentTarget.value.replaceAll(" ", ""));
                                     }
                                 }}
                                 onBlur={(event) => {
-                                    store.dispatch(apiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
-                                    setTimeout(() => updateCachedState(), 1000);
+                                    useConfigStore.getState().setHypixelApiKey(event.currentTarget.value.replaceAll(" ", ""));
                                 }}
-                                options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.hypixel.apiKey : "Hypixel API Key"}}
+                                options={{placeholder: "Hypixel API Key", value: hypixel.apiKey}}
                             />
-                            {<ValidationIcon valid={isHypixelKeySet} />}
+                            {<ValidationIcon valid={hypixel.apiKeyValid}/>}
                         </span>
                     </SettingCard>
                     <SettingCard>
                         <span>RUN API Key</span>
-                        <span />
+                        <span/>
                         <span>
                             <InputTextBox
                                 onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                                     if (event.key === "Enter") {
-                                        store.dispatch(runApiKeyValidator({runApiKey: event.currentTarget.value.replaceAll(" ", ""), state: localConfigStore}));
+                                        useConfigStore.getState().setRunApiKey(event.currentTarget.value.replaceAll(" ", ""));
                                     }
                                 }}
                                 onBlur={(event) => {
-                                    store.dispatch(runApiKeyValidator({runApiKey: event.currentTarget.value.replaceAll(" ", ""), state: localConfigStore}));
+                                    useConfigStore.getState().setRunApiKey(event.currentTarget.value.replaceAll(" ", ""));
                                 }}
-                                options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.runKey : "RUN API Key"}}
+                                options={{placeholder: "RUN API Key", value: run.apiKey}}
                             />
-                            {<ValidationIcon valid={isHypixelKeySet} />}
+                            {<ValidationIcon valid={run.valid}/>}
                         </span>
                     </SettingCard>
                     <SettingCard options={{shown: settings.keathiz}}>
                         <span>Keathiz API Key</span>
-                        <span />
+                        <span/>
                         <span>
                             <InputTextBox
                                 onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                                     if (event.key === "Enter") {
-                                        store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                                        useConfigStore.getState().setKeathizApiKey(event.currentTarget.value.replaceAll(" ", ""));
                                     }
                                 }}
                                 onBlur={(event) => {
-                                    store.dispatch(keathizApiKeyValidator(event.currentTarget.value.replaceAll(" ", "")));
+                                    useConfigStore.getState().setKeathizApiKey(event.currentTarget.value.replaceAll(" ", ""));
                                 }}
                                 options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
                             />
-                            {<ValidationIcon valid={localConfigStore.keathiz.valid} />}
+                            {<ValidationIcon valid={localConfigStore.keathiz.valid}/>}
                         </span>
                     </SettingCard>
                     <SettingCard>
                         <span>Overlay Logs</span>
-                        <span />
+                        <span/>
                         <span>
                             <span className={"inline-flex flex"}>
-                                <LogSelectorModal />
-                                {<ValidationIcon valid={isLogsSet} />}
+                                <LogSelectorModal/>
+                                {<ValidationIcon valid={logs.readable}/>}
                             </span>
                         </span>
                     </SettingCard>
                     <SettingHeader>
-                        <span />
+                        <span/>
                         <span>APIs</span>
-                        <span />
+                        <span/>
                     </SettingHeader>
                     <SettingCard>
                         <span>Boomza (BWStats)</span>
-                        <span />
+                        <span/>
                         <ToggleButton
                             text={""}
                             onChange={async () => {
                                 const payload: SettingsConfig = {...settings};
                                 payload.boomza = !payload.boomza;
-                                store.dispatch(setSettingsValue(payload));
+                                useConfigStore.getState().setSettings(payload);
                             }}
-                            onHover={<span className={'text-red-500'}>This API is proxied to protect your IP.</span>}
+                            onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
                             options={{enabled: settings.boomza}}
                         >
                             <span>
-                                <FontAwesomeIcon icon={faMapLocation} />
+                                <FontAwesomeIcon icon={faMapLocation}/>
                             </span>
                         </ToggleButton>
                     </SettingCard>
                     <SettingCard>
                         <span>Lunar</span>
-                        <span />
+                        <span/>
                         <ToggleButton
                             onChange={async () => {
                                 const payload: SettingsConfig = {...settings};
                                 payload.lunar = !payload.lunar;
-                                store.dispatch(setSettingsValue(payload));
+                                useConfigStore.getState().setSettings(payload);
                             }}
                             options={{enabled: settings.lunar}}
                         />
                     </SettingCard>
                     <SettingCard>
                         <span>Keathiz</span>
-                        <span />
+                        <span/>
                         <span>
                             <ToggleButton
                                 onChange={async () => {
                                     const payload: SettingsConfig = {...settings};
                                     payload.keathiz = !payload.keathiz;
-                                    store.dispatch(setSettingsValue(payload));
+                                    useConfigStore.getState().setSettings(payload);
                                 }}
                                 options={{enabled: settings.keathiz}}
                                 onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
                             >
                                 <span>
-                                    <FontAwesomeIcon icon={faMapLocation} />
+                                    <FontAwesomeIcon icon={faMapLocation}/>
                                 </span>
                             </ToggleButton>
                         </span>
                     </SettingCard>
                     <SettingCard>
                         <span>Auto Hide</span>
-                        <span />
+                        <span/>
                         <ToggleButton
                             onChange={async () => {
                                 const payload: SettingsConfig = {...settings};
                                 payload.preferences.autoHide = !payload.preferences.autoHide;
-                                store.dispatch(setSettingsValue(payload));
+                                useConfigStore.getState().setSettings(payload);
                             }}
                             options={{enabled: settings.preferences.autoHide}}
                         />
                     </SettingCard>
                     <SettingCard>
                         <span>Opacity</span>
-                        <span />
+                        <span/>
                         <span>
                             <Slider
                                 aria-label='Opacity'
@@ -170,11 +162,11 @@ const Essentials = () => {
                                 onChange={(event, value) => {
                                     const opacityValue: number = typeof value == "number" ? value : value[0];
                                     setOpacityValue(opacityValue);
-                                    window.ipcRenderer.send('opacity', opacityValue / 100);
+                                    window.ipcRenderer.send("opacity", opacityValue / 100);
                                 }}
                                 onBlur={() => {
                                     if (opacityValue < 20) setOpacityValue(20);
-                                    store.dispatch(setBrowserWindow({height: localConfigStore.browserWindow.height, opacity: opacityValue, width: localConfigStore.browserWindow.width}));
+                                    useConfigStore.getState().setBrowserWindow({height: browserWindow.height, opacity: opacityValue, width: browserWindow.width});
                                 }}
                                 getAriaValueText={(value) => `${value}`}
                                 valueLabelDisplay='auto'
@@ -186,13 +178,9 @@ const Essentials = () => {
                         </span>
                     </SettingCard>
                     <SettingCard>
-
-                    <span>Sorting</span>
-                    <span/>
-                    <span>
-                    To sort players in order of stats, click the label of the column whose stats you'd like to sort by.
-                    </span>
-
+                        <span>Sorting</span>
+                        <span/>
+                        <span>To sort players in order of stats, click the label of the column whose stats you'd like to sort by.</span>
                     </SettingCard>
                 </div>
             </NavigationBar>
