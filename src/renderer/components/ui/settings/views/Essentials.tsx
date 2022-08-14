@@ -61,9 +61,9 @@ const Essentials = () => {
                                 onBlur={(event) => {
                                     store.dispatch(runApiKeyValidator({runApiKey: event.currentTarget.value.replaceAll(" ", ""), state: localConfigStore}));
                                 }}
-                                options={{placeholder: localConfigStore.hypixel.apiKeyValid ? localConfigStore.runKey : "RUN API Key"}}
+                                options={{placeholder: localConfigStore.run.valid ? localConfigStore.runKey : "RUN API Key"}}
                             />
-                            {<ValidationIcon valid={isHypixelKeySet} />}
+                            {<ValidationIcon valid={localConfigStore.run.valid} />}
                         </span>
                     </SettingCard>
                     <SettingCard options={{shown: settings.keathiz}}>
