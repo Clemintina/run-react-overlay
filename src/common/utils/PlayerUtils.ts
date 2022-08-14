@@ -5,7 +5,7 @@ import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
-import jsonLogic from "json-logic-js";
+import jsonLogic from "json-logic-js"
 
 export interface Player {
     name: string;
@@ -61,6 +61,8 @@ export class FormatPlayer {
         let tagRenderer: string = this.starterDivider;
         if (player.sources.runApi != null) {
             const runApi = player.sources.runApi.data.data;
+
+
             if (player.denicked) {
                 tagRenderer += `<span style="color:crimson;">${player.name}</span>`;
             }
@@ -95,7 +97,7 @@ export class FormatPlayer {
                 }
             }
         } else {
-            tagRenderer = this.getPlayerTagDivider("NICKED", "red");
+            tagRenderer = this.getPlayerTagDivider("RUN API ERROR", "red");
         }
         tagRenderer += `</span>`;
         return tagRenderer;
@@ -185,11 +187,16 @@ export class FormatPlayer {
     public renderName = (player: Player) => {
         let nameRenderer = this.starterDivider;
         if (!player.nicked) {
-            nameRenderer += `<span class="justify-content-start">`;
+            nameRenderer += `<span class="inline flex">`;
             if (!player.sources.runApi?.data.data.blacklist.tagged) {
                 if (player.hypixelPlayer !== null) {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
                     nameRenderer += `${rank.rankHtml}&nbsp <span style="color: #${rank.colourHex};">${player.hypixelPlayer.displayname}</span>`;
+                    if (player.denicked) {
+                        nameRenderer += `<span>`
+                        nameRenderer += `<img width="18px" height="18px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Font_Awesome_5_solid_user-secret.svg/1200px-Font_Awesome_5_solid_user-secret.svg.png" alt="lunar tag" />`;
+                        nameRenderer += `</span>`
+                    }
                 } else {
                     nameRenderer += ``;
                 }

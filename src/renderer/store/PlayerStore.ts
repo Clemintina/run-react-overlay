@@ -103,9 +103,7 @@ const cacheState: PlayerStoreThunkObject = {
         keathiz: false,
         lunar: true,
         boomza: false,
-        preferences: {
-            autoHide: true,
-        },
+        autoHide: true,
     },
     tagStore: {
         config: {},

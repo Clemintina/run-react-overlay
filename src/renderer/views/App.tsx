@@ -203,7 +203,6 @@ const AppTable = () => {
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
         const res: TableState = {columnState};
-        console.log(onGridReady, columnState);
         if (onGridReady) store.dispatch(saveTableColumnState(res));
     };
 

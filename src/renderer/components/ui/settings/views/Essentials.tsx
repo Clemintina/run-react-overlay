@@ -154,10 +154,10 @@ const Essentials = () => {
                         <ToggleButton
                             onChange={async () => {
                                 const payload: SettingsConfig = {...settings};
-                                payload.preferences.autoHide = !payload.preferences.autoHide;
+                                payload.autoHide = !payload.autoHide;
                                 store.dispatch(setSettingsValue(payload));
                             }}
-                            options={{enabled: settings.preferences.autoHide}}
+                            options={{enabled: settings.autoHide}}
                         />
                     </SettingCard>
                     <SettingCard>
