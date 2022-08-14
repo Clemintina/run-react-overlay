@@ -23,6 +23,7 @@ import log from "electron-log";
 
 // Electron Forge automatically creates these entry points
 import electron_squirrel_startup from "electron-squirrel-startup";
+import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -94,7 +95,7 @@ export const createAppWindow = (): BrowserWindow => {
     });
     electronStore.set("run.overlay.browserWindow.width", mainWindowState.width);
     electronStore.set("run.overlay.browserWindow.height", mainWindowState.height);
-    appWindow = new BrowserWindow({
+    const options: BrowserWindowConstructorOptions = {
         x: mainWindowState.x,
         y: mainWindowState.y,
         width: mainWindowState.width,
@@ -103,7 +104,6 @@ export const createAppWindow = (): BrowserWindow => {
         show: false,
         autoHideMenuBar: true,
         frame: false,
-        type: process.platform === "win32" ? "toolbar" : "frame",
         transparent: true,
         titleBarStyle: "hidden",
         icon: path.join("assets", "images", "icon.ico"),
@@ -114,7 +114,12 @@ export const createAppWindow = (): BrowserWindow => {
             nodeIntegrationInSubFrames: false,
             preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
-    });
+    }
+    if (process.platform === 'darwin') {
+        options.type = 'panel'
+    }
+
+    appWindow = new BrowserWindow(options);
 
     appWindow.setAlwaysOnTop(true, "screen-saver");
     appWindow.setVisibleOnAllWorkspaces(true);
@@ -330,19 +335,19 @@ const registerSeraphIPC = () => {
  * Register Store Inter Process Communication
  */
 const registerElectronStore = () => {
-    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStore.set(data.key, data.data);
     });
 
-    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
         return electronStore.get(data.key);
     });
 
-    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStoreTags.set(data.key, data.data);
     });
 
-    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
         if (data.key == "*") {
             return electronStore;
         }
