@@ -7,15 +7,10 @@ import {TagArray} from "@common/utils/Schemas";
 import {TagSchema} from "@common/utils/TagSchema";
 import useTagStore from "@renderer/store/zustand/TagStore";
 import {SettingHeader} from "@components/user/settings/components/SettingHeader";
-import {InputTextBox} from "@components/user/InputTextBox";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import {TagEditor} from "@components/user/settings/components/TagEditor";
-import produce from "immer";
-import tagStore from "@renderer/store/zustand/TagStore";
 
-const Essentials = () => {
-    const defaultArrayColour = "ffffff";
-    const localTagStore: TagSchema = useTagStore((state) => state);
+const TagEditorView = () => {
+   const localTagStore: TagSchema = useTagStore((state) => state);
 
     const updateColourStore = async () => {
         useTagStore.getState().setTagStore(localTagStore);
@@ -145,9 +140,9 @@ const Essentials = () => {
                         </span>
                     </SettingCard>
                     <SettingHeader>
-                        <span/>
-                        <span>Boomza Tags</span>
-                        <span/>
+                        <span className={"w-30"}></span>
+                        <span className={"w-1"}>Boomza</span>
+                        <span className={"w-30"}></span>
                     </SettingHeader>
                     <SettingCard>
                         <span>Hacker</span>
@@ -188,9 +183,9 @@ const Essentials = () => {
                         </span>
                     </SettingCard>
                     <SettingHeader>
-                        <span/>
-                        <span>Hypixel</span>
-                        <span/>
+                        <span className={"w-30"}></span>
+                        <span className={"w-1"}>Hypixel</span>
+                        <span className={"w-30"}></span>
                     </SettingHeader>
                     <SettingCard>
                         <span>Party</span>
@@ -217,4 +212,4 @@ const Essentials = () => {
     );
 };
 
-export default Essentials;
+export default TagEditorView;

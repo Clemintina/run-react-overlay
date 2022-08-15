@@ -22,7 +22,6 @@ import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji"
 import log from "electron-log";
 
 // Electron Forge automatically creates these entry points
-import electron_squirrel_startup from "electron-squirrel-startup";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -126,7 +125,7 @@ export const createAppWindow = (): BrowserWindow => {
     mainWindowState.manage(appWindow);
 
     if (!isDevelopment) {
-        if (!electron_squirrel_startup && process.platform === "win32") {
+        if (require('electron-squirrel-startup') && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             autoUpdater.checkForUpdates();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);

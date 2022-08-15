@@ -8,6 +8,12 @@ import "@assets/index.css";
 import {createTheme, ThemeProvider} from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
 import TagEditor from "@components/ui/settings/views/TagEditor";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
+
+const logs = useConfigStore.getState().logs;
+if (logs.readable) {
+    window.ipcRenderer.send('logFileSet', useConfigStore.getState().logs.logPath);
+}
 
 /**
  * Starts the Log readers
