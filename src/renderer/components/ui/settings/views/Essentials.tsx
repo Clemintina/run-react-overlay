@@ -162,7 +162,7 @@ const Essentials = () => {
                                 onChange={(event, value) => {
                                     const opacityValue: number = typeof value == "number" ? value : value[0];
                                     setOpacityValue(opacityValue);
-                                    window.ipcRenderer.send("opacity", opacityValue / 100);
+                                    useConfigStore.getState().setBrowserWindow({...useConfigStore.getState().browserWindow, opacity: opacityValue})
                                 }}
                                 onBlur={() => {
                                     if (opacityValue < 20) setOpacityValue(20);
@@ -170,7 +170,7 @@ const Essentials = () => {
                                 }}
                                 getAriaValueText={(value) => `${value}`}
                                 valueLabelDisplay='auto'
-                                min={20}
+                                min={1}
                                 valueLabelFormat={(value: number) => {
                                     return value;
                                 }}

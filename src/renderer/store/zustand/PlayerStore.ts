@@ -40,7 +40,16 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         const apiKey = configStore.hypixel.apiKey;
 
         if (apiKey === undefined || apiKey.length !== 36) {
+            configStore.setErrorMessage({
+                title: "No Hypixel API Key",
+                cause: "No Hypixel API Key",
+                code: 400,
+            });
             return {status: 403, cause: "No API Key", data: null};
+        }
+
+        if (configStore.nicks.some(nickname => nickname.nick.toLowerCase() == username.toLowerCase())) {
+            username = configStore.nicks.filter(nickname => nickname.nick.toLowerCase() == username.toLowerCase())[0].uuid;
         }
 
         try {
@@ -55,6 +64,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     }
                 }
             }
+
             if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
                 const data: unknown = ipcHypixelPlayer.data;
                 let cause, code;
@@ -93,13 +103,26 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         if (!playerData.nicked && playerData.hypixelPlayer != null) {
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
-            playerData.bot = runApi.data.data.bot.tagged;
-            if (!playerData.bot) {
-                const [boomza, keathizApi, lunarApi, playerDatabase] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getPlayerDB(playerData)]);
-                playerData.sources.boomza = boomza;
-                playerData.sources.keathiz = keathizApi;
-                playerData.sources.lunar = lunarApi;
-                playerData.sources.playerDb = playerDatabase;
+            if (runApi.status == 200) {
+                playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
+                if (!playerData.bot) {
+                    const [boomza, keathizApi, lunarApi, playerDatabase] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getPlayerDB(playerData)]);
+                    playerData.sources.boomza = boomza;
+                    playerData.sources.keathiz = keathizApi;
+                    playerData.sources.lunar = lunarApi;
+                    playerData.sources.playerDb = playerDatabase;
+                }
+            } else {
+                useConfigStore.getState().setErrorMessage({
+                    code: 403,
+                    title: "Locked RUN Key",
+                    cause: "The RUN Key provided is currently locked, Please contact support.",
+                    detail: "This key has been locked for security reasons, please contact support.",
+                    referenceId: "RUN_KEY_LOCK",
+                });
+                const configStore = useConfigStore.getState();
+                configStore.run.valid = false;
+                useConfigStore.getState().setStore(configStore);
             }
         }
 

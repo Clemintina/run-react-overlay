@@ -20,15 +20,13 @@ import windowStateKeeper from "electron-window-state";
 import {LogFileMessage} from "@common/utils/LogFileReader";
 import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
 import log from "electron-log";
-
-// Electron Forge automatically creates these entry points
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
+// Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 /** Overlay Variables */
 const overlayVersion = app.getVersion();
-const userAgent = `Run-Bedwars-Overlay-React-${overlayVersion}`;
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
@@ -99,7 +97,6 @@ export const createAppWindow = (): BrowserWindow => {
         y: mainWindowState.y,
         width: mainWindowState.width,
         height: mainWindowState.height,
-        backgroundColor: "#242424",
         show: false,
         autoHideMenuBar: true,
         frame: false,
@@ -113,9 +110,9 @@ export const createAppWindow = (): BrowserWindow => {
             nodeIntegrationInSubFrames: false,
             preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
-    }
-    if (process.platform === 'darwin') {
-        options.type = 'panel'
+    };
+    if (process.platform === "darwin") {
+        options.type = "panel";
     }
 
     appWindow = new BrowserWindow(options);
@@ -125,7 +122,7 @@ export const createAppWindow = (): BrowserWindow => {
     mainWindowState.manage(appWindow);
 
     if (!isDevelopment) {
-        if (require('electron-squirrel-startup') && process.platform === "win32") {
+        if (require("electron-squirrel-startup") && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             autoUpdater.checkForUpdates();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
@@ -334,19 +331,19 @@ const registerSeraphIPC = () => {
  * Register Store Inter Process Communication
  */
 const registerElectronStore = () => {
-    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
+    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
         electronStore.set(data.key, data.data);
     });
 
-    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
+    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
         return electronStore.get(data.key);
     });
 
-    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
+    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
         electronStoreTags.set(data.key, data.data);
     });
 
-    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
+    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
         if (data.key == "*") {
             return electronStore;
         }
@@ -467,7 +464,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};

@@ -1,5 +1,4 @@
 import React from "react";
-import {useSelector} from "react-redux";
 import {Link} from "react-router-dom";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import useConfigStore, {getMenuItems} from "@renderer/store/zustand/ConfigStore";
@@ -7,7 +6,7 @@ import useConfigStore, {getMenuItems} from "@renderer/store/zustand/ConfigStore"
 const NavigationBar = (props: { children }) => {
     const {colours, menuOptions} = useConfigStore((state) => ({colours: state.colours, menuOptions: state.menuOptions}))
 
-    if (menuOptions.length == 0) {
+    if (menuOptions.length != getMenuItems().length) {
         useConfigStore.getState().setMenuOptions(getMenuItems());
     }
 
@@ -15,7 +14,7 @@ const NavigationBar = (props: { children }) => {
         <div key={menuOption.menuName}>
             <div className=''>
                 <div className='flex'>
-                    <div className='flex w-full hover:text-white-500 hover:border-cyan-500 hover:border-2'>
+                    <div className='flex w-full hover:text-white-500 '>
                         <Link to={menuOption.menuLink} className={"w-full"}>
                             {<InputBoxButton sx={{width: "100%"}} text={menuOption.menuName}></InputBoxButton>}
                         </Link>

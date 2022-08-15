@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, MenuOption, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, MenuOption, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
@@ -9,6 +9,7 @@ import {awaitTimeout} from "@common/helpers";
 import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {devtools, persist} from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import playerStore from "@renderer/store/zustand/PlayerStore";
 
 export type ConfigStore = {
     hypixel: {
@@ -45,6 +46,8 @@ export type ConfigStore = {
     menuOptions: Array<MenuOption>;
     setMenuOptions: (menuOptions: Array<MenuOption>) => void;
     setStore: (store: ConfigStore) => void;
+    nicks: Array<PlayerNickname>;
+    setNicks: (nicks: Array<PlayerNickname>) => void;
 };
 
 const useConfigStore = create<ConfigStore>()(devtools(persist((set, get) => ({
@@ -80,9 +83,9 @@ const useConfigStore = create<ConfigStore>()(devtools(persist((set, get) => ({
         }
     },
     colours: {
-        backgroundColour: "#242424",
-        primaryColour: "#808080",
-        secondaryColour: "#00FFFF",
+        backgroundColour: "242424",
+        primaryColour: "#00ffffff",
+        secondaryColour: "#00ffffff",
     },
     setColours: (colourObject) => {
         set(() => ({
@@ -209,12 +212,17 @@ const useConfigStore = create<ConfigStore>()(devtools(persist((set, get) => ({
         set({menuOptions});
     },
     setStore: (store) => set(store),
-}), {name: 'user_settings'})))
+    nicks: Array<PlayerNickname>(),
+    setNicks: (nicks) => {
+        set({nicks});
+    }
+}), {name: "user_settings"})));
 
 export const getMenuItems = () => {
     const items = Array<MenuOption>();
     items.push({menuName: "Essentials", menuLink: "/settings/essentials"});
     items.push({menuName: "Tags", menuLink: "/settings/tags"});
+    items.push({menuName: "Nicks", menuLink: "/settings/nicks"});
     return items;
 };
 

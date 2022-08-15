@@ -95,7 +95,7 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
-    preferences: { autoHide: boolean; }
+    preferences: {autoHide: boolean;};
 }
 
 export interface ClientSetting {
@@ -129,4 +129,11 @@ export interface MenuOption {
     menuName: string;
     menuLink: string;
     menuDescription?: string;
+}
+
+export interface PlayerNickname {
+    uuid: string,
+    name: string,
+    nick: string,
+    added: number
 }

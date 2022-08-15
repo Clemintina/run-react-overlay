@@ -3,6 +3,7 @@ import {SxProps, Theme} from "@mui/material";
 import React from "react";
 import Button from "@mui/material/Button";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import {hexToRgbA} from "@components/ui/settings/ColourRenderer";
 
 export interface InputBoxButton {
     onClick: (input) => void;
@@ -11,10 +12,11 @@ export interface InputBoxButton {
 }
 
 export const InputBoxButton: React.ElementType = (props: InputBoxButton) => {
-    const {colours} = useConfigStore((state) => ({colours: state.colours}))
+    const {colours,opacity} = useConfigStore((state) => ({colours: state.colours, opacity: state.browserWindow.opacity}))
+
     return (
-        <span className='hover:border-cyan-500 hover:border-2 w-full h-full'>
-            <Button variant='contained' sx={props?.sx} onClick={props.onClick} style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}}>
+        <span className=' w-full h-full'>
+            <Button variant='contained' sx={props?.sx} onClick={props.onClick} style={{backgroundColor: hexToRgbA(colours.backgroundColour,opacity/100), color: colours.primaryColour}}>
                 {props.text}
             </Button>
         </span>

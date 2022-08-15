@@ -3,6 +3,7 @@ import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import {useSelector} from "react-redux";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import {hexToRgbA} from "@components/ui/settings/ColourRenderer";
 
 export interface InputTextBox {
     onKeyDown: (input: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -16,7 +17,7 @@ export interface InputTextBox {
 }
 
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
-    const {colours} = useConfigStore((state) => ({colours: state.colours}));
+    const {colours,opacity} = useConfigStore((state) => ({colours: state.colours, opacity: state.browserWindow.opacity}))
 
     const [isFocused, setIsFocused] = useState(false);
     const handleMouseOver = (event) => {
@@ -34,7 +35,7 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
             <input
                 type='text'
                 onKeyDown={props.onKeyDown}
-                style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}}
+                style={{backgroundColor: hexToRgbA(colours.backgroundColour,opacity/100), color: colours.primaryColour}}
                 onFocus={(event) => {
                     event.currentTarget.style.color = `white`;
                     event.currentTarget.style.border = `${colours.secondaryColour} 1px solid`;

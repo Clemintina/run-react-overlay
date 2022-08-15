@@ -9,6 +9,9 @@ import {createTheme, ThemeProvider} from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
 import TagEditor from "@components/ui/settings/views/TagEditor";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import ColourRenderer from "@components/ui/settings/ColourRenderer";
+import Nicks from "@components/ui/settings/views/Nicks";
+import NickView from "@components/ui/settings/views/Nicks";
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
@@ -41,15 +44,18 @@ createRoot(document.getElementById("app")!).render(
         <>
             <ThemeProvider theme={darkTheme}>
                 <div className='mainBody text-gray-500' id={'main-body'}>
-                    <HashRouter basename='/'>
-                        <TitleBar/>
-                        <Routes>
-                            <Route path='/' element={<App/>}/>
-                            <Route path='/settings' element={<Essentials/>}/>
-                            <Route path='/settings/essentials' element={<Essentials/>}/>
-                            <Route path='/settings/tags' element={<TagEditor/>}/>
-                        </Routes>
-                    </HashRouter>
+                    <ColourRenderer>
+                        <HashRouter basename='/'>
+                            <TitleBar/>
+                            <Routes>
+                                <Route path='/' element={<App/>}/>
+                                <Route path='/settings' element={<Essentials/>}/>
+                                <Route path='/settings/essentials' element={<Essentials/>}/>
+                                <Route path='/settings/tags' element={<TagEditor/>}/>
+                                <Route path='/settings/nicks' element={<NickView/>}/>
+                            </Routes>
+                        </HashRouter>
+                    </ColourRenderer>
                 </div>
             </ThemeProvider>
         </>
