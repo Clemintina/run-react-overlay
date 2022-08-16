@@ -176,7 +176,7 @@ const useConfigStore = create<ConfigStore>()(devtools(persist((set, get) => ({
         } else
             get().setErrorMessage({
                 title: "Invalid RUN Key",
-                cause: "The RUN API key provided is not valid!",
+                cause: "The RUN API key provided is invalid or locked!",
                 code: 401,
             });
     },

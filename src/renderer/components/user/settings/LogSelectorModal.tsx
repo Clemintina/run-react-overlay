@@ -12,9 +12,12 @@ export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];
 }
 
+
+let label = "Select Log File";
+
 export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => {
     const configStore: ConfigStore = useConfigStore((state) => state);
-
+    if (configStore.logs.clientName !== null) label = configStore.logs.clientName;
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -64,8 +67,10 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                     detail: "Please try and set the client again if you're on a Mac, Ensure the Overlay has sufficient privileges to read the file.",
                     referenceId: "Unable to read log file.",
                 })
+                console.log(clientSettings.logPath);
             }
         }
+        label = clientSettings.clientName;
     };
 
     const style = {
@@ -81,9 +86,11 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
         color: configStore.colours.primaryColour,
     };
 
+
     return (
         <div>
-            <InputBoxButton onClick={handleOpen} text={"Select Log File"}>
+            
+            <InputBoxButton onClick={handleOpen}  text={label}>
                 Select Logs
             </InputBoxButton>
             <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
@@ -126,7 +133,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                             code: 400,
                                             title: "Bad Log file",
                                             cause: "The file set is invalid.",
-                                            detail: "Please try and set the client again if you're on a Mac, Ensure the Overlay has sufficient privileges to read the file.",
+                                            detail: "Please try and set the client again if you're on a Mac and ensure the Overlay has sufficient privileges to read the file.",
                                             referenceId: "Unable to read log file.",
                                         })
                                     }

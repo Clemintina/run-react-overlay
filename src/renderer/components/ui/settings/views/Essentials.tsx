@@ -110,7 +110,7 @@ const Essentials = () => {
                         </ToggleButton>
                     </SettingCard>
                     <SettingCard>
-                        <span>Lunar</span>
+                        <span>Lunar Tags</span>
                         <span/>
                         <ToggleButton
                             onChange={async () => {
@@ -122,7 +122,7 @@ const Essentials = () => {
                         />
                     </SettingCard>
                     <SettingCard>
-                        <span>Keathiz</span>
+                        <span>Keathiz/Antisniper</span>
                         <span/>
                         <span>
                             <ToggleButton
