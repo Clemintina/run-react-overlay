@@ -48,9 +48,7 @@ const electronStore = new Store<RUNElectronStoreType>({
     defaults: getDefaultElectronStore,
 });
 
-const electronStoreTagsSchema = destr(JSON.stringify(RUNElectronStoreTags.properties));
 const electronStoreTags = new Store<RUNElectronStoreTagsType>({
-    schema: electronStoreTagsSchema.properties,
     defaults: getDefaultElectronStoreObject,
     name: "tags",
 });

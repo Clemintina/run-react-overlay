@@ -6,7 +6,7 @@ import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} fr
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 
-export interface PlayerStore {
+export type PlayerStore = {
     players: Array<Player>;
     addPlayer: (username) => void;
     removePlayer: (username) => void;
@@ -49,7 +49,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }
 
         if (configStore.nicks.some(nickname => nickname.nick.toLowerCase() == username.toLowerCase())) {
-            username = configStore.nicks.filter(nickname => nickname.nick.toLowerCase() == username.toLowerCase())[0].uuid;
+            playerData.name = configStore.nicks.filter(nickname => nickname.nick.toLowerCase() == username.toLowerCase())[0].uuid;
         }
 
         try {

@@ -43,7 +43,7 @@ createRoot(document.getElementById("app")!).render(
     <div>
         <>
             <ThemeProvider theme={darkTheme}>
-                <div className='mainBody text-gray-500' id={'main-body'}>
+                <div className='mainBody text-gray-400' id={'main-body'}>
                     <ColourRenderer>
                         <HashRouter basename='/'>
                             <TitleBar/>

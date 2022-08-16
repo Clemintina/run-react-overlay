@@ -1,14 +1,10 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {InputBoxButton} from "@components/user/InputBoxButton";
-import useConfigStore, {getMenuItems} from "@renderer/store/zustand/ConfigStore";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
-const NavigationBar = (props: { children }) => {
-    const {colours, menuOptions} = useConfigStore((state) => ({colours: state.colours, menuOptions: state.menuOptions}))
-
-    if (menuOptions.length != getMenuItems().length) {
-        useConfigStore.getState().setMenuOptions(getMenuItems());
-    }
+const NavigationBar = (props: {children}) => {
+    const {colours, menuOptions} = useConfigStore((state) => ({colours: state.colours, menuOptions: state.menuOptions}));
 
     const menuLinks = menuOptions.map((menuOption) => (
         <div key={menuOption.menuName}>

@@ -8,8 +8,7 @@ import {Interweave} from "interweave";
 import {AgGridReact} from "ag-grid-react";
 import {assertDefaultError} from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import useConfigStore, {ConfigStore, getMenuItems} from "@renderer/store/zustand/ConfigStore";
-import useTagStore from "@renderer/store/zustand/TagStore";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerName from "@common/utils/player/PlayerName";
 import PlayerStar from "@common/utils/player/PlayerStar";
 import PlayerTags from "@common/utils/player/PlayerTags";
@@ -21,8 +20,6 @@ import {TableState} from "@common/utils/Schemas";
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 let gridApi: GridApi;
 let columnApi: ColumnApi;
-let onGridReady = false;
-let columnState;
 
 const tinyColumnSize = 30;
 const smallColumnSize = 60;
@@ -169,20 +166,6 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
     return 0;
 };
 
-setTimeout(async () => {
-    await setColumnState();
-}, 200);
-
-const setColumnState = async () => {
-    columnState = await window.config.get("overlay.table.columnState");
-    const localColumnState = columnState;
-    if (columnApi != undefined || null) {
-        columnApi.applyColumnState({state: localColumnState, applyOrder: true});
-        onGridReady = true;
-        useConfigStore.getState().setTableState(localColumnState);
-    }
-};
-
 // a2db40d5-d629-4042-9d1a-6963b2a7e000
 const AppTable = () => {
     /**
@@ -192,6 +175,7 @@ const AppTable = () => {
      */
     const {columnState, browserWindow} = useConfigStore((state) => ({columnState: state.table.columnState, browserWindow: state.browserWindow}));
     const players: Array<Player> = usePlayerStore((state) => state.players) ?? [];
+    let onGridReady = false;
 
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
@@ -205,6 +189,7 @@ const AppTable = () => {
             gridApi = event.api;
             columnApi.applyColumnState({state: columnState, applyOrder: true});
             event.api.setRowData(players);
+            onGridReady = true;
         },
         onGridColumnsChanged(event: GridColumnsChangedEvent) {
             onSaveGridColumnState(event.columnApi);
@@ -225,7 +210,6 @@ const AppTable = () => {
     const backgroundStyle = {
         height: browserWindow.height - 38,
         OverflowX: "hidden",
-        color: "",
     };
 
     return (

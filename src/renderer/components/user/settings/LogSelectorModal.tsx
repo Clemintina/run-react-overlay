@@ -12,7 +12,6 @@ export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];
 }
 
-
 let label = "Select Log File";
 
 export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => {
@@ -66,11 +65,12 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                     cause: "The file set is invalid.",
                     detail: "Please try and set the client again if you're on a Mac, Ensure the Overlay has sufficient privileges to read the file.",
                     referenceId: "Unable to read log file.",
-                })
-                console.log(clientSettings.logPath);
+                });
             }
         }
-        label = clientSettings.clientName;
+        if (clientSettings.clientName.length != 0) {
+            label = clientSettings.clientName;
+        }
     };
 
     const style = {
@@ -86,13 +86,9 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
         color: configStore.colours.primaryColour,
     };
 
-
     return (
         <div>
-            
-            <InputBoxButton onClick={handleOpen}  text={label}>
-                Select Logs
-            </InputBoxButton>
+            <InputBoxButton onClick={handleOpen} text={label} />
             <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
                 <Box sx={style}>
                     <Typography sx={{mt: 0}}>Please select the client you use</Typography>
@@ -135,7 +131,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                             cause: "The file set is invalid.",
                                             detail: "Please try and set the client again if you're on a Mac and ensure the Overlay has sufficient privileges to read the file.",
                                             referenceId: "Unable to read log file.",
-                                        })
+                                        });
                                     }
                                 }
                             }}
