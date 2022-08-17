@@ -17,7 +17,7 @@ export type PlayerStore = {
         config: object;
         tags: object;
     };
-}
+};
 
 const usePlayerStore = create<PlayerStore>((set, get) => ({
     players: Array<Player>(),
@@ -38,6 +38,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         const playerObject: IPCResponse<Player> = {status: 400, cause: "none", data: playerData};
         const configStore: ConfigStore = useConfigStore.getState();
         const apiKey = configStore.hypixel.apiKey;
+        const keathizApiKey = configStore.keathiz.key;
 
         if (apiKey === undefined || apiKey.length !== 36) {
             configStore.setErrorMessage({
@@ -55,7 +56,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         try {
             const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name, apiKey) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""), apiKey);
             if (ipcHypixelPlayer?.data?.uuid == null && configStore?.settings?.keathiz) {
-                const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>("keathiz", KeathizEndpoints.DENICK, playerData.name);
+                const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>("keathiz", KeathizEndpoints.DENICK, playerData.name, keathizApiKey);
                 if (ipcKeathizDenicker.data?.player?.uuid) {
                     const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, ipcKeathizDenicker.data.player.uuid);
                     if (newIpcHypixelPlayer?.data?.uuid != null) {
@@ -264,7 +265,7 @@ const getKeathizData = async (player: Player) => {
     let api;
     if (player?.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().keathiz.valid && useConfigStore.getState().settings.keathiz) {
         const state = useConfigStore.getState();
-        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("seraph", RunEndpoints.KEATHIZ_PROXY, player.hypixelPlayer.uuid, state.keathiz.key, state.hypixel.apiKeyOwner, state.hypixel.apiKey, state.hypixel.apiKeyOwner);
+        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", RunEndpoints.KEATHIZ_PROXY, player.hypixelPlayer.uuid, state.keathiz.key);
     } else {
         api = {
             status: useConfigStore.getState().settings.keathiz ? 417 : 400,

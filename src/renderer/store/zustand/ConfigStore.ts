@@ -135,7 +135,7 @@ const useConfigStore = create<ConfigStore>()(
                     showNick: true,
                 },
                 setKeathizApiKey: async (keathizApiKey) => {
-                    const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5");
+                    const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5", keathizApiKey);
                     if (apiKey.status == 200) {
                         set({
                             keathiz: {
@@ -146,7 +146,7 @@ const useConfigStore = create<ConfigStore>()(
                         });
                         for (const player of usePlayerStore.getState().players) {
                             if (player.hypixelPlayer?.uuid && !player.nicked) {
-                                const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid);
+                                const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey);
                                 if (keathiz.status == 200) {
                                     console.log(keathiz.status);
                                     player.sources.keathiz = keathiz;

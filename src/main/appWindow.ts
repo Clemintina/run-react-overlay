@@ -7,7 +7,7 @@ import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTags, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
+import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
 import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
@@ -472,8 +472,7 @@ const registerExternalApis = () => {
         return {data: json, status: response.status};
     });
 
-    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string) => {
-        const apikey = electronStore.get("external.keathiz.apiKey");
+    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string, apikey: string) => {
         let params;
         if (endpoint == KeathizEndpoints.OVERLAY_RUN) {
             params = `&uuid=${uuid}`;
