@@ -319,8 +319,9 @@ export class FormatPlayer {
                     playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "games_played_bedwars"] ?? 0;
             }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
-                renderer += this.getPlayerTagDivider(playerValue, "red", player);
-            } else if (playerValue <= 1000) {
+                renderer += this.getPlayerTagDivider(playerValue, this.tagStore.run.blacklist.colour, player);
+            } else 
+            { if (playerValue <= 1000) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray", player);
             } else if (playerValue <= 2000) {
                 renderer += this.getPlayerTagDivider(playerValue, "gray", player);
@@ -339,7 +340,8 @@ export class FormatPlayer {
             } else {
                 renderer += this.getPlayerTagDivider(playerValue, "purple", player);
             }
-        } else {
+        }
+     } else {
             renderer += this.getPlayerTagDividerNicked();
         }
         renderer += `</span>`;

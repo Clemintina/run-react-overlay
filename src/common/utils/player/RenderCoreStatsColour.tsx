@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import React from "react";
 import {Player} from "@common/utils/PlayerUtils";
-import {getCoreFromConfig, getPlayerTagDividerNicked} from "@common/utils/player/RenderComponent";
+import {getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig} from "@common/utils/player/RenderComponent";
 import useTagStore from "@renderer/store/zustand/TagStore";
 
 export interface RenderCoreStatsColour {
@@ -61,7 +61,10 @@ const RenderCoreStatsColour: React.ElementType = (props: RenderCoreStatsColour) 
             default:
                 playerValue = player.hypixelPlayer?.stats?.Bedwars?.[modeObj + "games_played_bedwars"] ?? 0;
         }
+        if (!player.sources.runApi?.data.data.blacklist.tagged)
         renderer = getCoreFromConfig("core.statistics", playerValue);
+        else
+        renderer = getTagsFromConfig("run.blacklist", playerValue);
     } else {
         renderer = getPlayerTagDividerNicked();
     }
