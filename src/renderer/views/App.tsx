@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/named
-import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode} from "ag-grid-community";
+import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, SortChangedEvent} from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
 import React from "react";
@@ -183,6 +183,11 @@ const AppTable = () => {
         if (onGridReady) useConfigStore.getState().setTableState(res);
     };
 
+    const onSortingOrderChange = (e: SortChangedEvent<Player>) => {
+        const columnState = e.columnApi.getColumnState();
+        useConfigStore.getState().setTableState({columnState});
+    };
+
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
             columnApi = event.columnApi;
@@ -193,6 +198,9 @@ const AppTable = () => {
         },
         onGridColumnsChanged(event: GridColumnsChangedEvent) {
             onSaveGridColumnState(event.columnApi);
+        },
+        onSortChanged(event: SortChangedEvent<Player>) {
+            onSortingOrderChange(event);
         },
         onColumnMoved(event: ColumnMovedEvent) {
             onSaveGridColumnState(event.columnApi);

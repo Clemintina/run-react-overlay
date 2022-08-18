@@ -1,59 +1,70 @@
 import React, {useState} from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
-import {useSelector} from "react-redux";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import {hexToRgbA} from "@components/ui/settings/ColourRenderer";
+import {Box, SxProps, TextField} from "@mui/material";
+import {jsx} from "@emotion/react";
+import JSX = jsx.JSX;
 
 export interface InputTextBox {
-    onKeyDown: (input: React.KeyboardEvent<HTMLInputElement>) => void;
-    onBlur?: (onExit) => void;
-    onFocus?: (onFocus) => void;
+    onKeyDown?: (input, textField) => void;
+    onBlur?: (onExit, textField) => void;
+    onFocus?: (onFocus, textField) => void;
+    onChange?: (onChange, textField) => void;
     options?: {
         placeholder?: string;
         className?: string;
         value?: string;
+        resetOnEnter?: boolean;
     };
+    icon?: JSX.Element;
+    size?: "small" | "medium";
+    sx?: SxProps;
 }
 
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
-    const {colours,opacity} = useConfigStore((state) => ({colours: state.colours, opacity: state.browserWindow.opacity}))
+    const {colours, opacity} = useConfigStore((state) => ({colours: state.colours, opacity: state.browserWindow.opacity}));
+    const [getTextField, setTextField] = useState("");
 
-    const [isFocused, setIsFocused] = useState(false);
-    const handleMouseOver = (event) => {
-        event.currentTarget.style.color = `white`;
-    };
-    const handleMouseOut = (event) => {
-        if (!isFocused) {
-            event.currentTarget.style.border = `${colours.secondaryColour} 0px solid`;
-            event.currentTarget.style.color = `${colours.primaryColour}`;
-        }
+    const standardProp = {
+        "& .MuiInput-underline:after": {
+            borderBottomColor: "cyan",
+        },
+        width: 1,
+        ...props?.sx,
     };
 
     return (
-        <span className='hover:border-cyan-500 hover:border-2'>
-            <input
-                type='text'
-                onKeyDown={props.onKeyDown}
-                style={{backgroundColor: hexToRgbA(colours.backgroundColour,opacity/100), color: colours.primaryColour}}
+        <Box className="w-full">
+            <span>{props?.icon}</span>
+            <TextField
+                type="text"
+                onKeyDown={(event) => {
+                    if (props.onKeyDown != undefined) props?.onKeyDown(event, getTextField);
+                    if (event.key === "Enter" && props?.options?.resetOnEnter) {
+                        setTextField("");
+
+                    }
+                }}
+                style={{backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100), color: colours.primaryColour}}
                 onFocus={(event) => {
-                    event.currentTarget.style.color = `white`;
-                    event.currentTarget.style.border = `${colours.secondaryColour} 1px solid`;
-                    setIsFocused(true);
-                    if (props.onFocus != undefined) props?.onFocus(event);
+                    if (props.onFocus != undefined) props?.onFocus(event, getTextField);
                 }}
                 onBlur={(event) => {
-                    event.currentTarget.style.color = `${colours.primaryColour}`;
-                    event.currentTarget.style.border = `${colours.secondaryColour} 0px solid`;
-                    setIsFocused(false);
-                    if (props.onBlur != undefined) props?.onBlur(event);
+                    if (props.onBlur != undefined) props?.onBlur(event, getTextField);
                 }}
-                onMouseOver={handleMouseOver}
-                onMouseOut={handleMouseOut}
                 placeholder={props?.options?.placeholder ?? ""}
-                className={props?.options?.className ?? "underlineText"}
-                defaultValue={props?.options?.value ?? ''}
+                className={props?.options?.className ?? ""}
+                variant={"standard"}
+                size={props?.size ?? "small"}
+                sx={standardProp}
+                value={getTextField}
+                onChange={(event) => {
+                    setTextField(event.target.value);
+                    if (props.onChange != undefined) props?.onChange(event, getTextField);
+                }}
             />
-        </span>
+        </Box>
     );
 };

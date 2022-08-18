@@ -96,3 +96,9 @@ dist/
 .idea
 .idea/
 /.idea/
+/.github/
+/.pnpm-store/
+/.webpack/
+/dist/
+/misc/
+/node_modules/

@@ -51,8 +51,8 @@ export interface TagObject {
 }
 
 export interface TagModifier {
-    display: string,
-    changedObjectId: number,
+    display: string;
+    changedObjectId: number;
 }
 
 export interface MetricsObject {
@@ -64,7 +64,6 @@ export interface MetricsArray {
     colour: string;
     operator: string;
 }
-
 
 export interface ConfigStore {
     hypixel: {
@@ -95,7 +94,7 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
-    preferences: {autoHide: boolean;};
+    preferences: {autoHide: boolean};
 }
 
 export interface ClientSetting {
@@ -132,8 +131,8 @@ export interface MenuOption {
 }
 
 export interface PlayerNickname {
-    uuid: string,
-    name: string,
-    nick: string,
-    added: number
+    uuid: string;
+    name: string;
+    nick: string;
+    added: number;
 }

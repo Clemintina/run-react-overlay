@@ -376,7 +376,7 @@ const useConfigStore = create<ConfigStore>()(
                             pivotIndex: null,
                             flex: 1,
                         },
-                    ),
+                    )
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);

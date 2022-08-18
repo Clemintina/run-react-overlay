@@ -22,6 +22,7 @@ export type PlayerStore = {
 const usePlayerStore = create<PlayerStore>((set, get) => ({
     players: Array<Player>(),
     addPlayer: async (username: string) => {
+        if (username == undefined || username == "") return;
         const playerData: Player = {
             name: username.toLowerCase(),
             nick: username,
@@ -49,7 +50,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             return {status: 403, cause: "No API Key", data: null};
         }
 
-        if (configStore.nicks.some(nickname => nickname.nick.toLowerCase() == username.toLowerCase())) {
+        if (configStore.nicks.filter(nickname => nickname.nick.toLowerCase() == username.toLowerCase()).length != 0) {
             playerData.name = configStore.nicks.filter(nickname => nickname.nick.toLowerCase() == username.toLowerCase())[0].uuid;
         }
 

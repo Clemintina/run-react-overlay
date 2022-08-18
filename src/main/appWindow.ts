@@ -120,7 +120,7 @@ export const createAppWindow = (): BrowserWindow => {
     mainWindowState.manage(appWindow);
 
     if (!isDevelopment) {
-        if (require("electron-squirrel-startup") && process.platform === "win32") {
+        if (!require("electron-squirrel-startup") && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             autoUpdater.checkForUpdates();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);

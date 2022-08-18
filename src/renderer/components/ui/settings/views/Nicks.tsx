@@ -20,12 +20,6 @@ const NickView = () => {
                 <div className='h-full w-full p-2 text-center'>
                     <div>
                         <SettingHeader>
-                            <span className={""}>Nick</span>
-                            <span className={""}>Username</span>
-                            <span className={""}>Action</span>
-                        </SettingHeader>
-                        {savedNicks}
-                        <SettingHeader>
                             <span className={""}>
                                 <InputBoxButton
                                     text={"Add Player"}
@@ -42,6 +36,7 @@ const NickView = () => {
                                 />
                             </span>
                         </SettingHeader>
+                        {savedNicks}
                     </div>
                 </div>
             </NavigationBar>

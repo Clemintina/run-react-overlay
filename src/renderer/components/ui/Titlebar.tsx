@@ -50,11 +50,10 @@ const TitleBar = () => {
                         <div className='md:flex items-center space-x-3 nodrag'>
                             <span className='flex'>
                                 <InputTextBox
-                                    options={{placeholder: "Username..."}}
-                                    onKeyDown={(event) => {
+                                    options={{placeholder: "Username...", resetOnEnter: true}}
+                                    onKeyDown={(event, textFieldState) => {
                                         if (event.key === "Enter") {
-                                            usePlayerStore.getState().addPlayer(event.currentTarget.value);
-                                            event.currentTarget.value = "";
+                                            usePlayerStore.getState().addPlayer(textFieldState);
                                         }
                                     }}
                                 />
