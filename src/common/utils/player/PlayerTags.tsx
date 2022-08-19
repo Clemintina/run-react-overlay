@@ -28,11 +28,11 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
                 const boomza = destr(player.sources.boomza.data);
                 if (boomza.sniper) {
                     tagArray.push(<span style={{color: `#${tagStore.boomza.sniper.colour.toString()}`}}>{tagStore.boomza.sniper.display}</span>);
-                    tagArray.push(<span className={'pl-1'}/>)
+                    tagArray.push(<span className={"pl-1"} />);
                 }
                 if (boomza.report) {
                     tagArray.push(<span style={{color: `#${tagStore.boomza.hacker.colour.toString()}`}}>{tagStore.boomza.hacker.display}</span>);
-                    tagArray.push(<span className={'pl-1'}/>)
+                    tagArray.push(<span className={"pl-1"} />);
                 }
             }
             if (runApi.safelist.tagged || runApi.safelist.personal) {
@@ -48,7 +48,7 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
                 tagArray.push(getTagsFromConfig("hypixel.party"));
             }
             if (player.sources.keathiz != null && configStore.settings.keathiz) {
-                tagArray.push(<RenderKeathizTags name={player.name} id={player.id} nicked={player.nicked} bot={player.bot} denicked={player.denicked} hypixelPlayer={player.hypixelPlayer} hypixelGuild={player.hypixelGuild} sources={player.sources}/>)
+                tagArray.push(<RenderKeathizTags player={player} />);
             }
         }
     } else {
@@ -57,7 +57,7 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
 
     return (
         <span>
-            {tagArray.map((value,index) => (
+            {tagArray.map((value, index) => (
                 <span key={index}>{value}</span>
             ))}
         </span>
@@ -92,18 +92,19 @@ const renderNameChangeTag = (player: Player) => {
     } else return unknownData;
 };
 
-const RenderKeathizTags = (player: Player) => {
+const RenderKeathizTags = (props: PlayerTags) => {
     const keathizTagArray: Array<JSX.Element> = [];
-    if (player.sources.keathiz === null || player.sources.keathiz === undefined) {
-        keathizTagArray.push(<span style={{color:`#${MinecraftColours.DARK_RED.hex}`}}>ERROR</span>);
+    const player = props.player;
+    if (player.sources.keathiz == null) {
+        keathizTagArray.push(<span style={{color: `#${MinecraftColours.DARK_RED.hex}`}}>ERROR</span>);
     } else {
-        if (player?.sources?.keathiz?.data?.success && player?.sources?.keathiz?.status === 200) {
+        if (player?.sources?.keathiz?.status == 200) {
             const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
             if (keathizTags.player.exits.last_10_min >= 1) {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`E10`}</span>);
             }
             if (keathizTags.player.queues.total == 0) {
-                keathizTagArray.push(<span style={{color:`#${MinecraftColours.GOLD.hex}`}}>ND</span>);
+                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>ND</span>);
             }
             if (keathizTags.player.queues.last_3_min >= 1) {
                 const count = keathizTags.player.queues.last_3_min;
@@ -127,18 +128,20 @@ const RenderKeathizTags = (player: Player) => {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`C`}</span>);
             }
         } else {
-            console.log(player.sources.keathiz);
-            if (useConfigStore.getState().settings.keathiz)  keathizTagArray.push(<span style={{color: `#${MinecraftColours.DARK_RED.hex}`}}>{`FAILED`}</span>);
+            console.log("failed with json: ", player.sources.keathiz);
+            if (useConfigStore.getState().settings.keathiz) keathizTagArray.push(<span style={{color: `#${MinecraftColours.DARK_RED.hex}`}}>{`FAILED`}</span>);
         }
     }
 
     return (
         <span>
-             {keathizTagArray.map((value,index) => (
-                 <span key={index} className={'pl-1'}>{value}</span>
-             ))}
+            {keathizTagArray.map((value, index) => (
+                <span key={index} className={"pl-1"}>
+                    {value}
+                </span>
+            ))}
         </span>
-    )
+    );
 };
 
 export default PlayerTags;

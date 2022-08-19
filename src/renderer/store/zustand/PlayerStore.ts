@@ -180,7 +180,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                         player.sources.boomza = responseIPCResponse;
                     }
                 }
-                if (config.settings.run.friends && player?.hypixelFriends) {
+                if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
                     console.log("Friends Enabled");
                 }
             }
@@ -269,98 +269,96 @@ const getLunarTags = async (player: Player) => {
 };
 
 const getKeathizData = async (player: Player) => {
-    let api;
-    if (player?.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().keathiz.valid && useConfigStore.getState().settings.keathiz) {
-        const state = useConfigStore.getState();
-        api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", RunEndpoints.KEATHIZ_PROXY, player.hypixelPlayer.uuid, state.keathiz.key);
-    } else {
-        api = {
-            status: useConfigStore.getState().settings.keathiz ? 417 : 400,
-            data: {
-                success: false,
-                player: {
-                    ign_lower: player.name,
-                    queues: {
-                        last_3_min: 0,
-                        last_10_min: 0,
-                        last_30_min: 0,
-                        last_24_hours: 0,
-                        last_48_hours: 0,
-                        total: 0,
-                        consecutive_queue_checks: {
-                            last_1000_queues: {
-                                "1_min_requeue": 0,
-                                "2_min_requeue": 0,
-                                "3_min_requeue": 0,
-                            },
-                            last_30_queues: {
-                                "1_min_requeue": 0,
-                                "2_min_requeue": 0,
-                                "3_min_requeue": 0,
-                            },
-                            last_10_queues: {
-                                "1_min_requeue": 0,
-                                "2_min_requeue": 0,
-                                "3_min_requeue": 0,
-                            },
-                            weighted: {
-                                "1_min_requeue": 0,
-                                "2_min_requeue": 0,
-                                "3_min_requeue": 0,
-                            },
+    let api = {
+        status: useConfigStore.getState().settings.keathiz ? 417 : 400,
+        data: {
+            success: false,
+            player: {
+                ign_lower: player.name,
+                queues: {
+                    last_3_min: 0,
+                    last_10_min: 0,
+                    last_30_min: 0,
+                    last_24_hours: 0,
+                    last_48_hours: 0,
+                    total: 0,
+                    consecutive_queue_checks: {
+                        last_1000_queues: {
+                            "1_min_requeue": 0,
+                            "2_min_requeue": 0,
+                            "3_min_requeue": 0,
                         },
-                    },
-                    exits: {
-                        last_3_min: 0,
-                        last_10_min: 0,
-                        last_30_min: 0,
-                        last_24_hours: 0,
-                        last_48_hours: 0,
-                        total: 0,
-                        short_exits: 0,
-                    },
-                    winstreak: {
-                        accurate: false,
-                        date: 0,
-                        estimates: {
-                            overall_winstreak: 0,
-                            eight_one_winstreak: 0,
-                            eight_two_winstreak: 0,
-                            four_three_winstreak: 0,
-                            four_four_winstreak: 0,
-                            two_four_winstreak: 0,
-                            castle_winstreak: 0,
-                            eight_one_rush_winstreak: 0,
-                            eight_two_rush_winstreak: 0,
-                            four_four_rush_winstreak: 0,
-                            eight_one_ultimate_winstreak: 0,
-                            eight_two_ultimate_winstreak: 0,
-                            four_four_ultimate_winstreak: 0,
-                            eight_two_armed_winstreak: 0,
-                            four_four_armed_winstreak: 0,
-                            eight_two_lucky_winstreak: 0,
-                            four_four_lucky_winstreak: 0,
-                            eight_two_voidless_winstreak: 0,
-                            four_four_voidless_winstreak: 0,
-                            tourney_bedwars_two_four_0_winstreak: 0,
-                            tourney_bedwars4s_0_winstreak: 0,
-                            tourney_bedwars4s_1_winstreak: 0,
-                            eight_two_underworld_winstreak: 0,
-                            four_four_underworld_winstreak: 0,
-                            eight_two_swap_winstreak: 0,
-                            four_four_swap_winstreak: 0,
+                        last_30_queues: {
+                            "1_min_requeue": 0,
+                            "2_min_requeue": 0,
+                            "3_min_requeue": 0,
                         },
-                    },
-                    extra: {
-                        last_seen_lobby: "",
-                        blacklisted: false,
-                        status: "",
+                        last_10_queues: {
+                            "1_min_requeue": 0,
+                            "2_min_requeue": 0,
+                            "3_min_requeue": 0,
+                        },
+                        weighted: {
+                            "1_min_requeue": 0,
+                            "2_min_requeue": 0,
+                            "3_min_requeue": 0,
+                        },
                     },
                 },
+                exits: {
+                    last_3_min: 0,
+                    last_10_min: 0,
+                    last_30_min: 0,
+                    last_24_hours: 0,
+                    last_48_hours: 0,
+                    total: 0,
+                    short_exits: 0,
+                },
+                winstreak: {
+                    accurate: false,
+                    date: 0,
+                    estimates: {
+                        overall_winstreak: 0,
+                        eight_one_winstreak: 0,
+                        eight_two_winstreak: 0,
+                        four_three_winstreak: 0,
+                        four_four_winstreak: 0,
+                        two_four_winstreak: 0,
+                        castle_winstreak: 0,
+                        eight_one_rush_winstreak: 0,
+                        eight_two_rush_winstreak: 0,
+                        four_four_rush_winstreak: 0,
+                        eight_one_ultimate_winstreak: 0,
+                        eight_two_ultimate_winstreak: 0,
+                        four_four_ultimate_winstreak: 0,
+                        eight_two_armed_winstreak: 0,
+                        four_four_armed_winstreak: 0,
+                        eight_two_lucky_winstreak: 0,
+                        four_four_lucky_winstreak: 0,
+                        eight_two_voidless_winstreak: 0,
+                        four_four_voidless_winstreak: 0,
+                        tourney_bedwars_two_four_0_winstreak: 0,
+                        tourney_bedwars4s_0_winstreak: 0,
+                        tourney_bedwars4s_1_winstreak: 0,
+                        eight_two_underworld_winstreak: 0,
+                        four_four_underworld_winstreak: 0,
+                        eight_two_swap_winstreak: 0,
+                        four_four_swap_winstreak: 0,
+                    },
+                },
+                extra: {
+                    last_seen_lobby: "",
+                    blacklisted: false,
+                    status: "",
+                },
             },
-        };
+        },
+    };
+    if (player?.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().keathiz.valid && useConfigStore.getState().settings.keathiz) {
+        const state = useConfigStore.getState();
+        if (state != undefined) api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, state.keathiz.key);
     }
-    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({status: 200, data: api.data.data}));
+    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({status: 200, data: api.data}));
 };
 
 const getPlayerDB = async (player: Player) => {
