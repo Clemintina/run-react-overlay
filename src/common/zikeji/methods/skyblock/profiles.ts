@@ -1,5 +1,5 @@
-import {Components, Paths} from "../../types/api";
-import {Method} from "../../util/Method";
+import {Components, Paths} from "@common/zikeji";
+import {Method} from "@common/zikeji/util/Method";
 import {getResultArray, ResultArray} from "../../util/ResultArray";
 
 export class SkyBlockProfiles extends Method {

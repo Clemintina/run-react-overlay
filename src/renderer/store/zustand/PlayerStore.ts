@@ -1,7 +1,7 @@
 import create from "zustand";
 import {Player} from "@common/utils/PlayerUtils";
 import {Components} from "@common/zikeji";
-import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
 import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
@@ -21,6 +21,7 @@ export type PlayerStore = {
 
 const usePlayerStore = create<PlayerStore>((set, get) => ({
     players: Array<Player>(),
+    friendLists: Array<RunFriendList>(),
     addPlayer: async (username: string) => {
         if (username == undefined || username == "") return;
         const playerData: Player = {
@@ -31,6 +32,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             bot: false,
             hypixelGuild: null,
             hypixelPlayer: null,
+            hypixelFriends: null,
             denicked: false,
             sources: {
                 runApi: null,
@@ -50,8 +52,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             return {status: 403, cause: "No API Key", data: null};
         }
 
-        if (configStore.nicks.filter(nickname => nickname.nick.toLowerCase() == username.toLowerCase()).length != 0) {
-            playerData.name = configStore.nicks.filter(nickname => nickname.nick.toLowerCase() == username.toLowerCase())[0].uuid;
+        if (configStore.nicks.filter((nickname) => nickname.nick.toLowerCase() == username.toLowerCase()).length != 0) {
+            playerData.name = configStore.nicks.filter((nickname) => nickname.nick.toLowerCase() == username.toLowerCase())[0].uuid;
         }
 
         try {
@@ -108,11 +110,12 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             if (runApi.status == 200) {
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
                 if (!playerData.bot) {
-                    const [boomza, keathizApi, lunarApi, playerDatabase] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getPlayerDB(playerData)]);
+                    const [boomza, keathizApi, lunarApi, playerDatabase, hypixelFriends] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getPlayerDB(playerData), getHypixelFriends(playerData)]);
                     playerData.sources.boomza = boomza;
                     playerData.sources.keathiz = keathizApi;
                     playerData.sources.lunar = lunarApi;
                     playerData.sources.playerDb = playerDatabase;
+                    playerData.hypixelFriends = hypixelFriends;
                 }
             } else {
                 useConfigStore.getState().setErrorMessage({
@@ -176,6 +179,9 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     if (responseIPCResponse.status == 200) {
                         player.sources.boomza = responseIPCResponse;
                     }
+                }
+                if (config.settings.run.friends && player?.hypixelFriends) {
+                    console.log("Friends Enabled");
                 }
             }
         }
@@ -382,6 +388,20 @@ const getPlayerDB = async (player: Player) => {
         };
     }
     return new Promise<IPCResponse<PlayerDB>>((resolve) => resolve(api));
+};
+
+const getHypixelFriends = async (player: Player) => {
+    let api;
+    if (player.hypixelPlayer?.uuid !== undefined) {
+        const state = useConfigStore.getState();
+        api = await window.ipcRenderer.invoke<Components.Schemas.PlayerFriendsData>("hypixel", state.hypixel.apiKey, RequestType.FRIENDS, player.hypixelPlayer.uuid);
+    } else {
+        api = {
+            data: [],
+            status: 400,
+        };
+    }
+    return new Promise<IPCResponse<Components.Schemas.PlayerFriendsData>>((resolve) => resolve(api));
 };
 
 export default usePlayerStore;

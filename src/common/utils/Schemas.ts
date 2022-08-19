@@ -94,6 +94,9 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
+    run: {
+        friends: boolean;
+    };
     preferences: {autoHide: boolean};
 }
 

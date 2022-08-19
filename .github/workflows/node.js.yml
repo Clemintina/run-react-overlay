@@ -13,8 +13,7 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version: 18
-      - run: npm install pnpm
-      - run: pnpm install
-      - run: pnpm make
+      - run: npm install
+      - run: npm run make
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

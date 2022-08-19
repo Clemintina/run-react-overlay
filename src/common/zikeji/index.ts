@@ -15,6 +15,7 @@ export * from "./helpers/SkyWarsPrestige";
 export * from "./helpers/TransformItemData";
 export * from "./helpers/TransformSkyBlockItemData";
 export * from "./methods/findGuild";
+export * from "./methods/friends";
 export * from "./methods/guild";
 export * from "./methods/player";
 export * from "./methods/resources/index";

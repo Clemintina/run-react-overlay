@@ -5,7 +5,7 @@ import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import destr from "destr";
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
-import jsonLogic from "json-logic-js"
+import jsonLogic from "json-logic-js";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import useTagStore from "@renderer/store/zustand/TagStore";
 
@@ -18,6 +18,7 @@ export type Player = {
     denicked: boolean | null;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: Components.Schemas.Guild | null;
+    hypixelFriends: IPCResponse<Components.Schemas.PlayerFriendsData> | null;
     sources: {
         runApi: IPCResponse<Blacklist> | null;
         boomza?: IPCResponse<BoomzaAntisniper> | null;
@@ -25,7 +26,7 @@ export type Player = {
         lunar?: IPCResponse<LunarAPIResponse> | null;
         playerDb?: IPCResponse<PlayerDB> | null;
     };
-}
+};
 
 export class PlayerUtils {
     private readonly formatPlayerInstance: FormatPlayer;
@@ -36,7 +37,7 @@ export class PlayerUtils {
         this.playerHypixelUtils = new PlayerHypixelUtils();
         if (stores != undefined) {
             this.formatPlayerInstance.setConfig(stores);
-        }else {
+        } else {
             this.formatPlayerInstance.setConfig({config: useConfigStore.getState(), tags: useTagStore.getState()});
         }
     }
@@ -66,7 +67,6 @@ export class FormatPlayer {
         let tagRenderer: string = this.starterDivider;
         if (player.sources.runApi != null) {
             const runApi = player.sources.runApi.data.data;
-
 
             if (player.denicked) {
                 tagRenderer += `<span style="color:crimson;">${player.name}</span>`;
@@ -198,9 +198,9 @@ export class FormatPlayer {
                     const rank = getPlayerRank(player.hypixelPlayer, false);
                     nameRenderer += `${rank.rankHtml}&nbsp <span style="color: #${rank.colourHex};">${player.hypixelPlayer.displayname}</span>`;
                     if (player.denicked) {
-                        nameRenderer += `<span>`
+                        nameRenderer += `<span>`;
                         nameRenderer += `<img width="18px" height="18px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Font_Awesome_5_solid_user-secret.svg/1200px-Font_Awesome_5_solid_user-secret.svg.png" alt="lunar tag" />`;
-                        nameRenderer += `</span>`
+                        nameRenderer += `</span>`;
                     }
                 } else {
                     nameRenderer += ``;
@@ -320,28 +320,28 @@ export class FormatPlayer {
             }
             if (player.sources.runApi?.data.data.blacklist.tagged) {
                 renderer += this.getPlayerTagDivider(playerValue, this.tagStore.run.blacklist.colour, player);
-            } else 
-            { if (playerValue <= 1000) {
-                renderer += this.getPlayerTagDivider(playerValue, "gray", player);
-            } else if (playerValue <= 2000) {
-                renderer += this.getPlayerTagDivider(playerValue, "gray", player);
-            } else if (playerValue <= 4000) {
-                renderer += this.getPlayerTagDivider(playerValue, "white", player);
-            } else if (playerValue <= 6000) {
-                renderer += this.getPlayerTagDivider(playerValue, "goldenrod", player);
-            } else if (playerValue <= 7000) {
-                renderer += this.getPlayerTagDivider(playerValue, "darkgreen", player);
-            } else if (playerValue <= 10000) {
-                renderer += this.getPlayerTagDivider(playerValue, "red", player);
-            } else if (playerValue <= 15000) {
-                renderer += this.getPlayerTagDivider(playerValue, "darkred", player);
-            } else if (playerValue <= 50000) {
-                renderer += this.getPlayerTagDivider(playerValue, "deeppink", player);
             } else {
-                renderer += this.getPlayerTagDivider(playerValue, "purple", player);
+                if (playerValue <= 1000) {
+                    renderer += this.getPlayerTagDivider(playerValue, "gray", player);
+                } else if (playerValue <= 2000) {
+                    renderer += this.getPlayerTagDivider(playerValue, "gray", player);
+                } else if (playerValue <= 4000) {
+                    renderer += this.getPlayerTagDivider(playerValue, "white", player);
+                } else if (playerValue <= 6000) {
+                    renderer += this.getPlayerTagDivider(playerValue, "goldenrod", player);
+                } else if (playerValue <= 7000) {
+                    renderer += this.getPlayerTagDivider(playerValue, "darkgreen", player);
+                } else if (playerValue <= 10000) {
+                    renderer += this.getPlayerTagDivider(playerValue, "red", player);
+                } else if (playerValue <= 15000) {
+                    renderer += this.getPlayerTagDivider(playerValue, "darkred", player);
+                } else if (playerValue <= 50000) {
+                    renderer += this.getPlayerTagDivider(playerValue, "deeppink", player);
+                } else {
+                    renderer += this.getPlayerTagDivider(playerValue, "purple", player);
+                }
             }
-        }
-     } else {
+        } else {
             renderer += this.getPlayerTagDividerNicked();
         }
         renderer += `</span>`;

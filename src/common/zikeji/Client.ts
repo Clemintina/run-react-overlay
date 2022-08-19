@@ -11,6 +11,7 @@ import {Queue} from "./util/Queue";
 import {request} from "./util/Request";
 import {getResultObject, ResultObject} from "./util/ResultObject";
 import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import {Friends} from "@common/zikeji/methods/friends";
 
 /** @internal */
 export interface ActionableCall<T extends Components.Schemas.ApiSuccess> {
@@ -236,7 +237,16 @@ export class Client {
      */
     public findGuild: FindGuild = new FindGuild(this);
 
-
+    /**
+     * Returns friendships for given player.
+     * @example
+     * ```typescript
+     * const friends = await client.friends.uuid("20934ef9488c465180a78f861586b4cf");
+     * console.log(friends);
+     * ```
+     * @category API
+     */
+    public friends: Friends = new Friends(this);
 
     /**
      * Returns the current player count along with the player count of each public game + mode on the server.
@@ -310,8 +320,6 @@ export class Client {
     public async playerCount(): Promise<ResultObject<Paths.PlayerCount.Get.Responses.$200, ["success"]>> {
         return getResultObject(await this.call<Paths.PlayerCount.Get.Responses.$200>("playerCount"), ["success"]);
     }
-
-
 
     /**
      * Relatively static Hypixel resources that don't change often at all.

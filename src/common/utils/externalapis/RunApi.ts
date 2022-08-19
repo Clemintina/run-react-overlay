@@ -48,6 +48,11 @@ export interface PlayerAPI {
     msTime: number;
 }
 
+export interface RunFriendList {
+    uuids: Array<string>;
+    mutuals: Array<string>;
+}
+
 export enum RunEndpoints {
     BLACKLIST = "blacklist",
     VERSION = "overlay",

@@ -1,5 +1,5 @@
-import {Paths} from "../../types/api";
-import {Method} from "../../util/Method";
+import {Paths} from "@common/zikeji";
+import {Method} from "@common/zikeji/util/Method";
 import {getResultObject, ResultObject} from "../../util/ResultObject";
 
 export class SkyBlockResources extends Method {
