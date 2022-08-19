@@ -40,7 +40,7 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setHypixelApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{placeholder: "Hypixel API Key", value: hypixel.apiKey}}
+                                options={{placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key"}}
                                 sx={styledProps}
                             />
                         </span>
@@ -59,7 +59,7 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setRunApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{placeholder: "RUN API Key", value: run.apiKey}}
+                                options={{placeholder: run.valid ? run.apiKey : "Run API Key"}}
                                 sx={styledProps}
                             />
                         </span>
