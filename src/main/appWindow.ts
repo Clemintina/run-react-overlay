@@ -1,7 +1,7 @@
 import {app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
 import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
 import path from "path";
-import axios from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import fs from "fs";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
@@ -67,7 +67,7 @@ let appWindow: BrowserWindow;
 /**
  * Axios HTTP Client
  */
-const axiosClient = axios.create({
+const axiosConfig: AxiosRequestConfig = {
     headers: {
         "Content-Type": "application/json",
         "User-Agent": "Run-Bedwars-Overlay-React-" + overlayVersion,
@@ -77,7 +77,8 @@ const axiosClient = axios.create({
     timeoutErrorMessage: "Connection Timed Out!",
     responseType: "json",
     validateStatus: () => true,
-});
+};
+const axiosClient = axios.create(axiosConfig);
 
 /**
  * Create Application Window

@@ -25,7 +25,7 @@ const Essentials = () => {
     return (
         <div>
             <NavigationBar>
-                <div className="w-full h-full p-2 flex flex-col space-y-2">
+                <div className='w-full h-full p-2 flex flex-col space-y-2'>
                     <SettingCard>
                         <span>Hypixel API Key</span>
                         <span />
@@ -164,7 +164,7 @@ const Essentials = () => {
                         <span />
                         <span>
                             <Slider
-                                aria-label="Opacity"
+                                aria-label='Opacity'
                                 value={opacityValue}
                                 onChange={(event, value) => {
                                     const opacityValue: number = typeof value == "number" ? value : value[0];
@@ -172,7 +172,6 @@ const Essentials = () => {
                                     useConfigStore.getState().setBrowserWindow({...useConfigStore.getState().browserWindow, opacity: opacityValue});
                                 }}
                                 onBlur={() => {
-                                    if (opacityValue < 20) setOpacityValue(20);
                                     useConfigStore.getState().setBrowserWindow({height: browserWindow.height, opacity: opacityValue, width: browserWindow.width});
                                 }}
                                 getAriaValueText={(value) => `${value}`}
