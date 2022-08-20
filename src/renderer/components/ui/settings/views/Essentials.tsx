@@ -25,7 +25,7 @@ const Essentials = () => {
     return (
         <div>
             <NavigationBar>
-                <div className='w-full h-full p-2 flex flex-col space-y-2'>
+                <div className="w-full h-full p-2 flex flex-col space-y-2">
                     <SettingCard>
                         <span>Hypixel API Key</span>
                         <span />
@@ -164,7 +164,7 @@ const Essentials = () => {
                         <span />
                         <span>
                             <Slider
-                                aria-label='Opacity'
+                                aria-label="Opacity"
                                 value={opacityValue}
                                 onChange={(event, value) => {
                                     const opacityValue: number = typeof value == "number" ? value : value[0];
@@ -175,7 +175,7 @@ const Essentials = () => {
                                     useConfigStore.getState().setBrowserWindow({height: browserWindow.height, opacity: opacityValue, width: browserWindow.width});
                                 }}
                                 getAriaValueText={(value) => `${value}`}
-                                valueLabelDisplay='auto'
+                                valueLabelDisplay="auto"
                                 min={1}
                                 valueLabelFormat={(value: number) => {
                                     return value;
@@ -187,6 +187,11 @@ const Essentials = () => {
                         <span>Sorting</span>
                         <span />
                         <span>To sort players in order of stats, click the label of the column whose stats you'd like to sort by.</span>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Version</span>
+                        <span />
+                        <span>{process.env.VERSION}</span>
                     </SettingCard>
                 </div>
             </NavigationBar>

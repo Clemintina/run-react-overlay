@@ -9,4 +9,7 @@ module.exports = [
     new NodePolyfillPlugin(),
     inDev() && new webpack.HotModuleReplacementPlugin(),
     inDev() && new ReactRefreshWebpackPlugin(),
+    new webpack.DefinePlugin({
+        'process.env.VERSION': JSON.stringify(process.env.npm_package_version),
+    }),
 ].filter(Boolean);

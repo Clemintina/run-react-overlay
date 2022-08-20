@@ -2,9 +2,7 @@ import {app, BrowserWindow} from "electron";
 import {createAppWindow} from "./appWindow";
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
-import electron_squirrel_startup from "electron-squirrel-startup";
-
-if (electron_squirrel_startup) {
+if (require('electron-squirrel-startup')) {
     app.quit();
 }
 

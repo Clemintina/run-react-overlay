@@ -26,7 +26,7 @@ import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOption
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 /** Overlay Variables */
-const overlayVersion = app.getVersion();
+const overlayVersion = process.env.version as string;
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
@@ -123,6 +123,7 @@ export const createAppWindow = (): BrowserWindow => {
     if (!isDevelopment) {
         if (!require("electron-squirrel-startup") && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
+            log.info("Running updater");
             autoUpdater.checkForUpdates();
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
             autoUpdater.on("checking-for-update", async () => {
