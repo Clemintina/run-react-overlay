@@ -1,10 +1,10 @@
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
-import tagStore from "@renderer/store/zustand/TagStore";
 import jsonLogic from "json-logic-js";
 import React from "react";
+import useTagStore from "@renderer/store/zustand/TagStore";
 
 export const getTagsFromConfig = (tagDisplayPath, value?: number) => {
-    const tag: TagObject = tagDisplayPath.split(".").reduce((o, i) => o[i], tagStore.getState());
+    const tag: TagObject = tagDisplayPath.split(".").reduce((o, i) => o[i], useTagStore.getState());
     const tagDisplayIcon: string | undefined = tag?.display ?? "?";
     const tagArray: string | Array<TagArray> | undefined = tag?.colour ?? "FF5555";
 
@@ -31,7 +31,7 @@ export const getTagsFromConfig = (tagDisplayPath, value?: number) => {
 
 export const getCoreFromConfig = (tagDisplayPath, value: number) => {
     try {
-        const coreMetric: MetricsObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], tagStore.getState()) ?? 0;
+        const coreMetric: MetricsObject | undefined = tagDisplayPath.split(".").reduce((o, i) => o[i], useTagStore.getState()) ?? 0;
         const coreArray = coreMetric?.colours ?? "FF5555";
         let displayValue: string | number = value.toString();
 

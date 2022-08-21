@@ -6,6 +6,7 @@ import destr from "destr";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import {getTagsFromConfig} from "@common/utils/player/RenderComponent";
 import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export interface PlayerTags {
     player: Player;
@@ -13,25 +14,26 @@ export interface PlayerTags {
 
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
-    const tagStore = useTagStore((state) => state);
-    const configStore = useConfigStore((state) => state);
+    const {run, boomzaTag} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
+    const configStore = useConfigStore((state) => ({settings: state.settings}));
+    const {players} = usePlayerStore((state) => ({players: state.players}));
     const tagArray: Array<JSX.Element> = [];
 
     if (player.sources.runApi != null) {
         const runApi = player.sources.runApi.data.data;
         if (runApi.blacklist.tagged) {
-            tagArray.push(<span style={{color: `#${tagStore.run.blacklist.colour.toString()}`}}>{tagStore.run.blacklist.display}</span>);
+            tagArray.push(<span style={{color: `#${run.blacklist.colour.toString()}`}}>{run.blacklist.display}</span>);
         } else if (runApi.bot.tagged) {
-            tagArray.push(<span style={{color: `#${tagStore.run.bot.colour.toString()}`}}>{tagStore.run.bot.display}</span>);
+            tagArray.push(<span style={{color: `#${run.bot.colour.toString()}`}}>{run.bot.display}</span>);
         } else {
             if (player.sources.boomza?.status === 200) {
                 const boomza = destr(player.sources.boomza.data);
                 if (boomza.sniper) {
-                    tagArray.push(<span style={{color: `#${tagStore.boomza.sniper.colour.toString()}`}}>{tagStore.boomza.sniper.display}</span>);
+                    tagArray.push(<span style={{color: `#${boomzaTag.sniper.colour.toString()}`}}>{boomzaTag.sniper.display}</span>);
                     tagArray.push(<span className={"pl-1"} />);
                 }
                 if (boomza.report) {
-                    tagArray.push(<span style={{color: `#${tagStore.boomza.hacker.colour.toString()}`}}>{tagStore.boomza.hacker.display}</span>);
+                    tagArray.push(<span style={{color: `#${boomzaTag.hacker.colour.toString()}`}}>{boomzaTag.hacker.display}</span>);
                     tagArray.push(<span className={"pl-1"} />);
                 }
             }
@@ -47,7 +49,7 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             if (player.hypixelPlayer?.channel == "PARTY") {
                 tagArray.push(getTagsFromConfig("hypixel.party"));
             }
-            if (player.sources.keathiz != null && configStore.settings.keathiz) {
+            if (configStore.settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
                 tagArray.push(<RenderKeathizTags player={player} />);
             }
         }
@@ -128,7 +130,6 @@ const RenderKeathizTags = (props: PlayerTags) => {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`C`}</span>);
             }
         } else {
-            console.log("failed with json: ", player.sources.keathiz);
             if (useConfigStore.getState().settings.keathiz) keathizTagArray.push(<span style={{color: `#${MinecraftColours.DARK_RED.hex}`}}>{`FAILED`}</span>);
         }
     }

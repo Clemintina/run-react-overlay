@@ -181,7 +181,9 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     }
                 }
                 if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
-                    console.log("Friends Enabled");
+                    for (const hypixelPlayer of usePlayerStore.getState().players) {
+                        console.log(hypixelPlayer.hypixelFriends?.data ?? "Invalid");
+                    }
                 }
             }
         }

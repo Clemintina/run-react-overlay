@@ -26,7 +26,7 @@ import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOption
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 /** Overlay Variables */
-const overlayVersion = process.env.version as string;
+const overlayVersion = app.getVersion();
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
