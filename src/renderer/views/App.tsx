@@ -66,9 +66,7 @@ const columns: ColDef[] = [
         field: "tags",
         flex: 1,
         minWidth: largeColumnSize,
-        cellRenderer: ({data}) => {
-            return <PlayerTags player={data} />;
-        },
+        cellRenderer: ({data}) => <PlayerTags player={data} />,
         sortable: false,
     },
     {

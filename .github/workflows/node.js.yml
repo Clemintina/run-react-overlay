@@ -20,7 +20,7 @@ jobs:
       - name: Save Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: dist-without-markdown
+          name: Output Files
           path: |
             dist
-            !dist/**/*.md
+            out
