@@ -101,7 +101,7 @@ const useConfigStore = create<ConfigStore>()(
                 logs: {
                     logPath: "",
                     readable: false,
-                    clientName: "",
+                    clientName: "Unknown",
                 },
                 setLogs: async (client) => {
                     await window.config.set("overlay.logPath", client.logPath);
