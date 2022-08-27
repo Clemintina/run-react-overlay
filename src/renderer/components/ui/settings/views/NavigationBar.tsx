@@ -21,7 +21,7 @@ const NavigationBar = (props: {children}) => {
     ));
 
     return (
-        <div className='flex'>
+        <div className='flex' style={{height: useConfigStore.getState().browserWindow.height}}>
             <div className='flex'>
                 <div className='flex '>
                     <div className='flex justify-between'>

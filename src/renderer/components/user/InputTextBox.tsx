@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
@@ -17,6 +17,8 @@ export interface InputTextBox {
         className?: string;
         value?: string;
         resetOnEnter?: boolean;
+        resetOnBlur?: boolean;
+        clear?: boolean;
     };
     icon?: JSX.Element;
     size?: "small" | "medium";
@@ -25,7 +27,11 @@ export interface InputTextBox {
 
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
     const {colours, opacity} = useConfigStore((state) => ({colours: state.colours, opacity: state.browserWindow.opacity}));
-    const [getTextField, setTextField] = useState("");
+    const [getTextField, setTextField] = useState(props.options?.value ?? "");
+
+    useEffect(() => {
+        setTextField(props?.options?.value ?? "");
+    }, [props?.options?.value]);
 
     const standardProp = {
         "& .MuiInput-underline:after": {
@@ -44,7 +50,6 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                     if (props.onKeyDown != undefined) props?.onKeyDown(event, getTextField);
                     if (event.key === "Enter" && props?.options?.resetOnEnter) {
                         setTextField("");
-
                     }
                 }}
                 style={{backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100), color: colours.primaryColour}}
@@ -53,6 +58,9 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                 }}
                 onBlur={(event) => {
                     if (props.onBlur != undefined) props?.onBlur(event, getTextField);
+                    if (props?.options?.resetOnBlur) {
+                        setTextField("");
+                    }
                 }}
                 placeholder={props?.options?.placeholder ?? ""}
                 className={props?.options?.className ?? ""}

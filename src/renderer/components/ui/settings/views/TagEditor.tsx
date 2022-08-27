@@ -4,18 +4,19 @@ import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import {ColourPicker} from "@components/user/settings/components/ColourPicker";
 import {ColourPickerArray} from "@components/user/settings/components/ColourPickerArrays";
 import {TagArray} from "@common/utils/Schemas";
-import {TagSchema} from "@common/utils/TagSchema";
 import useTagStore from "@renderer/store/zustand/TagStore";
 import {TagEditor} from "@components/user/settings/components/TagEditor";
 import {AccordionDetails} from "@mui/material";
 import {UserAccordion} from "@components/user/UserAccordion";
 
 const TagEditorView = () => {
-    const localTagStore: TagSchema = useTagStore((state) => state);
+    const localTagStore = useTagStore((state)=>state);
 
     const updateColourStore = async () => {
-        useTagStore.getState().setTagStore(localTagStore);
+        useTagStore.getState().setTagStore({...localTagStore});
     };
+
+    console.log(localTagStore);
 
     // TODO make it look nicer and cleaner
     return (

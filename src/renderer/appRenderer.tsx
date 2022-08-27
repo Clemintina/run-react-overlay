@@ -29,6 +29,7 @@ reader.startListHandler();
 reader.startSeraphHandler();
 reader.startCommandListener();
 reader.startPartyListener();
+reader.startLilithListener();
 
 const darkTheme = createTheme({
     palette: {

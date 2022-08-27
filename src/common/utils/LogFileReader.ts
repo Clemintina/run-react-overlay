@@ -161,6 +161,27 @@ export class LogFileReader {
             }
         });
     };
+
+    public startLilithListener = async () => {
+        await window.ipcRenderer.on("logFileLine", (event, data) => {
+            let line = readLogLine(data);
+            if (line != null) {
+                // [13:56:45] [Client thread/INFO]: [CHAT] ? CJFKQ Lvl: 3.4, W: 3 - non
+                // [13:56:18] [Client thread/INFO]: [CHAT] ? [MVP+] Rsty_ Lvl: 116.4, W: 38 - ranked
+                line = line.toString().substring(line.indexOf("[CHAT]"), line.length).replace("[CHAT] ", "");
+                if (line.includes("Lvl:") && line.includes("W:")) {
+                    window.ipcRenderer.send("windowMaximise");
+                    if (line.includes("]") && line.includes("[")) {
+                        line = line.split("]")[1];
+                        addPlayer(line.split(" ")[1]);
+                    } else {
+                        line = line.split(" ")[1];
+                        addPlayer(line);
+                    }
+                }
+            }
+        });
+    };
 }
 
 const addPlayer = async (username: string) => {

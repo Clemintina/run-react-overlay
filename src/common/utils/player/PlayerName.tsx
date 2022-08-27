@@ -22,7 +22,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
 
     const handleDenickEvent = () => {
         const store = configStore;
-        configStore.setStore({...store, keathiz: {...store.keathiz,showNick: !store.keathiz.showNick}});
+        configStore.setStore({...store, keathiz: {...store.keathiz, showNick: !store.keathiz.showNick}});
     };
 
     let rankPlayer: JSX.Element;
@@ -72,16 +72,25 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
         rankPlayer = <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{player.name}</span>;
     }
 
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (anchorEl == null) setAnchorEl(event.currentTarget);
+        else setAnchorEl(null);
+    };
+
     return (
-        <StatsisticsTooltip player={player}>
-            <div>
+        <>
+            <StatsisticsTooltip player={player}>
+            <span onClick={handleClick}>
                 <span className={"justify-content-start"}>
                     <span>
                         <span>{rankPlayer}</span>
                     </span>
                 </span>
-            </div>
-        </StatsisticsTooltip>
+            </span>
+            </StatsisticsTooltip>
+        </>
     );
 };
 

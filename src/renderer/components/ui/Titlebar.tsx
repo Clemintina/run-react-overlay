@@ -43,7 +43,7 @@ const TitleBar = () => {
                             </div>
                             <div className='md:flex items-center space-x-1'>
                                 <span className={"nodrag"}>
-                                    <ContactStaff />
+
                                 </span>
                             </div>
                         </div>

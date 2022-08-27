@@ -1,42 +1,110 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {SettingHeader} from "@components/user/settings/components/SettingHeader";
-import {InputBoxButton} from "@components/user/InputBoxButton";
 import PlayerNicknameView from "@common/utils/player/PlayerNickname";
+import {PlayerNickname} from "@common/utils/Schemas";
+import {InputTextBox} from "@components/user/InputTextBox";
+import {Components} from "@common/zikeji";
+import {RequestType} from "@common/utils/externalapis/RunApi";
+import {InputBoxButton} from "@components/user/InputBoxButton";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
 
 const NickView = () => {
-    const {nicks} = useConfigStore((state) => ({nicks: state.nicks}));
-    const savedNicks = nicks.map((playerNick) => (
-        <div key={playerNick.nick}>
-            <PlayerNicknameView key={playerNick.nick} playerNick={playerNick} />
-        </div>
-    ));
+    const {nicks, hypixelApiKey} = useConfigStore((state) => ({nicks: state.nicks, hypixelApiKey: state.hypixel.apiKey}));
+    const [playerNickname, setPlayerNickname] = useState({name: "", nick: "", added: 0, uuid: ""});
+    const [clearText, setClearText] = useState(false);
+
+    useEffect(() => {
+        if (clearText) {
+            setClearText(false);
+        }
+    }, [clearText]);
+
+    const addPlayer = (nickname: PlayerNickname) => {
+        const pNick = nickname;
+        pNick.added = Date.now();
+        const user = nicks.some((player) => player.name.toLowerCase() == pNick.name.toLowerCase());
+        if (!user) {
+            const users = nicks;
+            users.push(pNick);
+            useConfigStore.getState().setNicks(users);
+        }
+        /*else {
+            const knownNick = nicks.filter((player) => player.name.toLowerCase() != playerNickname.name.toLowerCase());
+            console.log("Known Nick: ", knownNick);
+            knownNick.push(playerNickname);
+            console.log(knownNick);
+            useConfigStore.getState().setNicks(knownNick);
+        }
+         */
+        console.log(pNick);
+        clearPlayer();
+    };
+
+    const removePlayer = (pNick: PlayerNickname) => {
+        const users = nicks.filter((player) => player.name.toLowerCase() != pNick.name.toLowerCase());
+        useConfigStore.getState().setNicks(users);
+    };
+
+    const clearPlayer = () => {
+        setPlayerNickname({...playerNickname, name: "", nick: "", added: 0, uuid: ""});
+    };
 
     // TODO make it look nicer and cleaner
     return (
         <div>
             <NavigationBar>
-                <div className='h-full w-full p-2 text-center'>
+                <div className="h-full w-full p-2 text-center">
                     <div>
-                        <SettingHeader>
-                            <span className={""}>
-                                <InputBoxButton
-                                    text={"Add Player"}
-                                    onClick={async (event) => {
-                                        const nicksLocal = useConfigStore.getState().nicks;
-                                        const newNick = {name: "", nick: "", uuid: "", added: Date.now()};
-                                        if (nicksLocal.filter((player) => player.name.toLowerCase() === newNick.name.toLowerCase()).length > 0) {
-                                            await window.ipcRenderer.invoke("notifications", "You have already got an empty slot!");
-                                        } else {
-                                            nicksLocal.push(newNick);
-                                            useConfigStore.getState().setNicks(nicksLocal);
+                        <SettingCard className={"border-2 border-cyan-500"}>
+                            <span className={" "}>
+                                <InputTextBox
+                                    onBlur={async (event) => {
+                                        const userInput = event.currentTarget.value;
+                                        if (userInput.length == 0) return;
+                                        const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, userInput, hypixelApiKey);
+                                        setPlayerNickname({...playerNickname, uuid: hypixelRequest?.data?.uuid ?? userInput, name: hypixelRequest?.data?.displayname ?? userInput});
+                                        const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
+                                        if (user) {
+                                            const users = nicks.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
+                                            useConfigStore.getState().setNicks([...users, playerNickname]);
                                         }
                                     }}
+                                    onFocus={(event)=>{
+                                      setPlayerNickname({...playerNickname, name: ""})
+                                    }}
+                                    options={{placeholder: "Username", value: playerNickname.name, clear: clearText}}
                                 />
                             </span>
-                        </SettingHeader>
-                        {savedNicks}
+                            <span className={" "}>
+                                <InputTextBox
+                                    onBlur={(event) => {
+                                        setPlayerNickname({...playerNickname, nick: event.currentTarget.value});
+                                        const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
+                                        if (user) {
+                                            const users = nicks.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
+                                            useConfigStore.getState().setNicks([...users, playerNickname]);
+                                        }
+                                    }}
+                                    options={{placeholder: "Nickname", value: playerNickname.nick, clear: clearText}}
+                                />
+                            </span>
+                            <span className={""}>
+                                 <InputBoxButton
+                                     text={"Add"}
+                                     onClick={(event) => {
+                                         addPlayer(playerNickname);
+                                     }}
+                                 />
+                            </span>
+                        </SettingCard>
+                    </div>
+                    <div>
+                        {nicks.map((playerNick) => (
+                            <div key={playerNick.nick}>
+                                <PlayerNicknameView key={playerNick.nick} playerNick={playerNick} handleAdd={addPlayer} handleRemove={removePlayer} />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </NavigationBar>
