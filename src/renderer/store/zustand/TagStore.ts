@@ -395,9 +395,9 @@ const useTagStore = create<TagStoreSchema>()(
                     hypixel: newTagStore.hypixel,
                 });
             },
-            setStore: (produce) => {
-                set(produce);
-            }
+            setStore: (callback) => {
+                set(callback);
+            },
         }),
         {name: "tags"},
     ),
