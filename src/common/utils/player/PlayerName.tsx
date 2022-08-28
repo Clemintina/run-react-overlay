@@ -18,7 +18,6 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     const player = props.player;
     const tagStore = useTagStore((state) => state);
     const configStore = useConfigStore((state) => state);
-    const denickedTag = <span />;
 
     const handleDenickEvent = () => {
         const store = configStore;
@@ -33,8 +32,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
             if (configStore.keathiz.showNick) {
                 rankPlayer = (
                     <span>
-                        <Interweave content={`${rank.rankHtml}`} /> <span style={{color: `#${rank.colourHex}`}}>{playerName}</span>
-                        {" "}
+                        <Interweave content={`${rank.rankHtml}`} /> <span style={{color: `#${rank.colourHex}`}}>{playerName}</span>{" "}
                         <span className={"font-bold"} onClick={handleDenickEvent}>
                             <FontAwesomeIcon icon={faEye} />
                         </span>
@@ -44,8 +42,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
                 playerName = player.name;
                 rankPlayer = (
                     <span>
-                        <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{playerName}</span>
-                        {" "}
+                        <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{playerName}</span>{" "}
                         <span className={"font-bold"} onClick={handleDenickEvent}>
                             <FontAwesomeIcon icon={faEyeSlash} />
                         </span>
@@ -72,23 +69,14 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
         rankPlayer = <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{player.name}</span>;
     }
 
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        if (anchorEl == null) setAnchorEl(event.currentTarget);
-        else setAnchorEl(null);
-    };
-
     return (
         <>
             <StatsisticsTooltip player={player}>
-            <span onClick={handleClick}>
                 <span className={"justify-content-start"}>
                     <span>
                         <span>{rankPlayer}</span>
                     </span>
                 </span>
-            </span>
             </StatsisticsTooltip>
         </>
     );

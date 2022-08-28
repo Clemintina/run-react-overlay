@@ -1,8 +1,7 @@
 import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
-import {Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank} from "@common/zikeji";
+import {Components} from "@common/zikeji";
 import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
-import destr from "destr";
 import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import {RUNElectronStoreTagsTyped} from "@main/appWindow";
 import jsonLogic from "json-logic-js";
@@ -11,14 +10,15 @@ import useTagStore from "@renderer/store/zustand/TagStore";
 
 export type Player = {
     name: string;
-    nick?: string;
     id: string | null;
+    nick?: string;
     nicked: boolean | null;
     bot: boolean | null;
     denicked: boolean | null;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: Components.Schemas.Guild | null;
     hypixelFriends: IPCResponse<Components.Schemas.PlayerFriendsData> | null;
+    hypixelFriendsMutuals?: Array<string> | null;
     sources: {
         runApi: IPCResponse<Blacklist> | null;
         boomza?: IPCResponse<BoomzaAntisniper> | null;
@@ -61,51 +61,6 @@ export class FormatPlayer {
         this.tagStore = stores.tags;
         this.configStore = stores.config;
         this.isOverlayStats = options?.subMenu ?? false;
-    };
-
-    public renderTags = (player: Player) => {
-        let tagRenderer: string = this.starterDivider;
-        if (player.sources.runApi != null) {
-            const runApi = player.sources.runApi.data.data;
-
-            if (player.denicked) {
-                tagRenderer += `<span style="color:crimson;">${player.name}</span>`;
-            }
-            if (runApi.blacklist.tagged) {
-                tagRenderer += this.getPlayerTagDivider("BLACKLISTED", "red", player);
-            } else if (runApi.bot.tagged) {
-                tagRenderer += this.getPlayerTagDivider("BOT", "green", player);
-            } else {
-                if (player.sources.boomza?.status === 200) {
-                    const boomza = destr(player.sources.boomza.data);
-                    if (boomza.sniper) {
-                        tagRenderer += this.getPlayerTagDivider("S", "red");
-                    }
-                    if (boomza.report) {
-                        tagRenderer += this.getPlayerTagDivider("H", "red");
-                    }
-                }
-                if (runApi.safelist.tagged || runApi.safelist.personal) {
-                    tagRenderer += this.getTagsFromConfig("run.safelist", runApi.safelist.timesKilled);
-                }
-                if (runApi.statistics.encounters != 0) {
-                    tagRenderer += this.getTagsFromConfig("run.encounters", runApi.statistics.encounters);
-                }
-                if (this.renderNameChangeTag(player) <= 10) {
-                    tagRenderer += this.getTagsFromConfig("run.name_change");
-                }
-                if (player.hypixelPlayer?.channel == "PARTY") {
-                    tagRenderer += this.getTagsFromConfig("hypixel.party");
-                }
-                if (player.sources.keathiz != null && this.configStore.settings.keathiz) {
-                    tagRenderer += this.renderKeathizTags(player);
-                }
-            }
-        } else {
-            tagRenderer = this.getPlayerTagDivider("RUN API ERROR", "red");
-        }
-        tagRenderer += `</span>`;
-        return tagRenderer;
     };
 
     public getTagsFromConfig = (tagDisplayPath: RUNElectronStoreTagsTyped | string, value?: number) => {
@@ -152,278 +107,6 @@ export class FormatPlayer {
         }
     };
 
-    public renderStar = (player: Player) => {
-        let starRenderer: string = this.starterDivider;
-        if (!player.nicked && player.hypixelPlayer !== null) {
-            const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
-            if (!player.sources.runApi?.data.data.blacklist.tagged) {
-                if (bwLevel.level < 1000) starRenderer += this.getPlayerTagDivider(`[${bwLevel.level}✫]`, "#" + bwLevel.prestigeColourHex);
-                else starRenderer += getHighLevelPrestigeColour(bwLevel);
-            } else {
-                starRenderer = this.getPlayerTagDivider(bwLevel.level ?? 0, "#" + this.tagStore.run.blacklist.colour);
-            }
-        } else {
-            starRenderer += this.getPlayerTagDividerNicked();
-        }
-        starRenderer += `</span>`;
-        return starRenderer;
-    };
-
-    public renderPlayerHead = (player: Player) => {
-        let renderer = this.starterDivider;
-        if (!player.nicked) {
-            renderer += `<span class="inline flex">`;
-            renderer += `<img src="https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true" class="text-center" alt=""/>`;
-            if (this.configStore.settings.lunar) {
-                if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
-                    if (player.sources.lunar.data.player.online) {
-                        renderer += `<span>`;
-                        renderer += `<img width="20px" height="20px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />`;
-                        renderer += `</span>`;
-                    }
-                }
-            }
-            renderer += `</span>`;
-        }
-        renderer += `</span>`;
-        return renderer;
-    };
-
-    public renderName = (player: Player) => {
-        let nameRenderer = this.starterDivider;
-        if (!player.nicked) {
-            nameRenderer += `<span class="inline flex">`;
-            if (!player.sources.runApi?.data.data.blacklist.tagged) {
-                if (player.hypixelPlayer !== null) {
-                    const rank = getPlayerRank(player.hypixelPlayer, false);
-                    nameRenderer += `${rank.rankHtml}&nbsp <span style="color: #${rank.colourHex};">${player.hypixelPlayer.displayname}</span>`;
-                    if (player.denicked) {
-                        nameRenderer += `<span>`;
-                        nameRenderer += `<img width="18px" height="18px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Font_Awesome_5_solid_user-secret.svg/1200px-Font_Awesome_5_solid_user-secret.svg.png" alt="lunar tag" />`;
-                        nameRenderer += `</span>`;
-                    }
-                } else {
-                    nameRenderer += ``;
-                }
-            } else {
-                nameRenderer = this.getPlayerTagDivider(player.hypixelPlayer?.displayname ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
-            }
-            nameRenderer += `</span>`;
-        } else {
-            nameRenderer = this.getPlayerTagDivider(player.name ?? "Unknown", "#" + this.tagStore.run.blacklist.colour);
-        }
-        nameRenderer += `</span>`;
-        return nameRenderer;
-    };
-
-    public renderWinstreak = (player: Player) => {
-        let renderer: string = this.starterDivider;
-        if (!player.nicked) {
-            let playerValue = player.hypixelPlayer?.stats.Bedwars?.winstreak ?? 0;
-            if (player.sources.keathiz != null) {
-                const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-                if (keathizTags?.player?.winstreak != null && keathizTags.player?.winstreak?.accurate == false) {
-                    playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
-                }
-            }
-            if (player.sources.runApi?.data.data.blacklist.tagged) {
-                renderer += this.getTagsFromConfig("run.blacklist", playerValue);
-            } else {
-                renderer += this.getCoreFromConfig(`core.winstreak`, playerValue);
-            }
-        } else {
-            renderer += this.getPlayerTagDividerNicked();
-        }
-        renderer += `</span>`;
-        return renderer;
-    };
-
-    public renderRatioColour = (player: Player, route: "wlr" | "bblr" | "kdr" | "fkdr") => {
-        let renderer = this.starterDivider;
-        let playerValue;
-        if (!player.nicked) {
-            switch (route) {
-                case "wlr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.wins_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.losses_bedwars ?? 1);
-                    break;
-                case "bblr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.beds_broken_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.beds_lost_bedwars ?? 1);
-                    break;
-                case "kdr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.deaths_bedwars ?? 1);
-                    break;
-                case "fkdr":
-                    playerValue = (player.hypixelPlayer?.stats.Bedwars?.final_kills_bedwars ?? 0) / (player.hypixelPlayer?.stats.Bedwars?.final_deaths_bedwars ?? 1);
-                    break;
-            }
-
-            if (player.sources.runApi?.data.data.blacklist.tagged) {
-                renderer += this.getTagsFromConfig("run.blacklist", playerValue);
-            } else {
-                renderer += this.getCoreFromConfig(`core.${route}`, playerValue);
-            }
-        } else {
-            renderer += this.getPlayerTagDividerNicked();
-        }
-        renderer += `</span>`;
-        return renderer;
-    };
-
-    public renderCoreStatsColour = (player: Player, route: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost" | "kills" | "deaths" | "gamesPlayed", mode?: "overall" | "solos" | "duos" | "threes" | "fours") => {
-        let renderer = this.starterDivider;
-        let playerValue;
-        if (!player.nicked) {
-            let modeObj = "";
-            if (mode != undefined) {
-                switch (mode) {
-                    case "solos":
-                        modeObj = "eight_one_";
-                        break;
-                    case "duos":
-                        modeObj = "eight_two_";
-                        break;
-                    case "threes":
-                        modeObj = "four_three_";
-                        break;
-                    case "fours":
-                        modeObj = "four_four_";
-                        break;
-                }
-            }
-            switch (route) {
-                case "wins":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "wins_bedwars"] ?? 0;
-                    break;
-                case "losses":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "losses_bedwars"] ?? 0;
-                    break;
-                case "finalKills":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "final_kills_bedwars"] ?? 0;
-                    break;
-                case "finalDeaths":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "final_deaths_bedwars"] ?? 0;
-                    break;
-                case "bedsBroken":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "beds_broken_bedwars"] ?? 0;
-                    break;
-                case "bedsLost":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "beds_lost_bedwars"] ?? 0;
-                    break;
-                case "kills":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "kills_bedwars"] ?? 0;
-                    break;
-                case "deaths":
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "deaths_bedwars"] ?? 0;
-                    break;
-                default:
-                    playerValue = player.hypixelPlayer?.stats.Bedwars?.[modeObj + "games_played_bedwars"] ?? 0;
-            }
-            if (player.sources.runApi?.data.data.blacklist.tagged) {
-                renderer += this.getPlayerTagDivider(playerValue, this.tagStore.run.blacklist.colour, player);
-            } else {
-                if (playerValue <= 1000) {
-                    renderer += this.getPlayerTagDivider(playerValue, "gray", player);
-                } else if (playerValue <= 2000) {
-                    renderer += this.getPlayerTagDivider(playerValue, "gray", player);
-                } else if (playerValue <= 4000) {
-                    renderer += this.getPlayerTagDivider(playerValue, "white", player);
-                } else if (playerValue <= 6000) {
-                    renderer += this.getPlayerTagDivider(playerValue, "goldenrod", player);
-                } else if (playerValue <= 7000) {
-                    renderer += this.getPlayerTagDivider(playerValue, "darkgreen", player);
-                } else if (playerValue <= 10000) {
-                    renderer += this.getPlayerTagDivider(playerValue, "red", player);
-                } else if (playerValue <= 15000) {
-                    renderer += this.getPlayerTagDivider(playerValue, "darkred", player);
-                } else if (playerValue <= 50000) {
-                    renderer += this.getPlayerTagDivider(playerValue, "deeppink", player);
-                } else {
-                    renderer += this.getPlayerTagDivider(playerValue, "purple", player);
-                }
-            }
-        } else {
-            renderer += this.getPlayerTagDividerNicked();
-        }
-        renderer += `</span>`;
-        return renderer;
-    };
-
-    public renderKeathizTags = (player: Player) => {
-        let renderer = `<span style="padding-left: 5px;">`;
-        const keathizTagArray: Array<string> = [];
-        if (player.sources.keathiz === null || player.sources.keathiz === undefined) {
-            keathizTagArray.push(this.getPlayerTagDivider("ERROR", `#${MinecraftColours.DARK_RED.hex}`));
-        } else {
-            if (player?.sources?.keathiz?.data?.success && player?.sources?.keathiz?.status === 200) {
-                const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-                if (keathizTags.player.exits.last_10_min >= 1) {
-                    keathizTagArray.push(this.getPlayerTagDivider("E10", `#${MinecraftColours.GOLD.hex}`));
-                }
-                if (keathizTags.player.queues.total == 0) {
-                    keathizTagArray.push(this.getPlayerTagDivider("ND", `#${MinecraftColours.GOLD.hex}`));
-                }
-                if (keathizTags.player.queues.last_3_min >= 1) {
-                    const count = keathizTags.player.queues.last_3_min;
-                    keathizTagArray.push(this.getPlayerTagDivider(`Q3-${count}`, `#${MinecraftColours.GOLD.hex}`));
-                }
-                if (keathizTags.player.queues.last_10_min >= 2) {
-                    const count = keathizTags.player.queues.last_10_min;
-                    keathizTagArray.push(this.getPlayerTagDivider(`Q10-${count}`, `#${MinecraftColours.GOLD.hex}`));
-                }
-                if (keathizTags.player.queues.last_30_min >= 5) {
-                    const count = keathizTags.player.queues.last_30_min;
-                    keathizTagArray.push(this.getPlayerTagDivider(`Q30-${count}`, `#${MinecraftColours.GOLD.hex}`));
-                }
-                if (keathizTags.player.queues.last_24_hours >= 50) {
-                    keathizTagArray.push(this.getPlayerTagDivider("Q24", `#${MinecraftColours.GOLD.hex}`));
-                }
-                if (keathizTags.player.queues.consecutive_queue_checks.weighted["1_min_requeue"] >= 50) {
-                    keathizTagArray.push(this.getPlayerTagDivider("Z", `#${MinecraftColours.RED.hex}`));
-                }
-                if (keathizTags.player.queues.consecutive_queue_checks.last_30_queues["1_min_requeue"] >= 15 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["1_min_requeue"] >= 5 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["2_min_requeue"] >= 6 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["3_min_requeue"] >= 8) {
-                    keathizTagArray.push(this.getPlayerTagDivider("C", `#${MinecraftColours.RED.hex}`));
-                }
-            } else {
-                if (this.configStore.settings.keathiz) keathizTagArray.push(this.getPlayerTagDivider("FAILED", `#${MinecraftColours.DARK_RED.hex}`));
-            }
-        }
-        for (const tag of keathizTagArray) {
-            renderer += tag;
-        }
-        renderer += `</span>`;
-        return renderer;
-    };
-
-    private renderNameChangeTag = (player: Player) => {
-        const unknownData = 11;
-        if (player.sources.playerDb !== undefined && player.sources.playerDb !== null) {
-            if (player.sources.playerDb.status === 200) {
-                if (player.sources.playerDb.data.data.player.meta ?? false) {
-                    const nameHistory = player.sources.playerDb.data.data.player.meta.name_history;
-                    const nameChangeDates: Array<number> = [];
-                    if (nameHistory.length != 1) {
-                        for (const item of nameHistory) {
-                            if (item.changedToAt !== undefined) {
-                                const changedTo = item?.changedToAt;
-                                if (changedTo !== undefined) nameChangeDates.push(changedTo);
-                            }
-                        }
-                        nameChangeDates.sort();
-                        const timeNow = Date.now();
-                        const nameBefore = new Date(nameChangeDates[nameChangeDates.length - 1]);
-                        const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-                        return diffInMs / (1000 * 60 * 60 * 24);
-                    }
-                    return unknownData;
-                }
-                console.log(player.name + " has no name history or failed the NOT NULL check");
-                return unknownData;
-            }
-            // TODO Add handling for 500 / too many requests
-            return unknownData;
-        } else return unknownData;
-    };
-
     private getPlayerTagDivider = (tag: string | number | unknown, colour: string, player?: Player) => {
         let htmlResponse = ``,
             styleString = `color: ${colour};`,
@@ -448,14 +131,6 @@ export class FormatPlayer {
             htmlResponse += `<span class="${classNameData}" style="${styleString}">${tag}</span>`;
             return htmlResponse;
         }
-        return htmlResponse;
-    };
-
-    private getPlayerTagDividerNicked = () => {
-        const styleString = `color: red; padding-left: 1px;`;
-        let htmlResponse = `<div>`;
-        htmlResponse += `<div style="${styleString}">?</div>`;
-        htmlResponse += `</span>`;
         return htmlResponse;
     };
 

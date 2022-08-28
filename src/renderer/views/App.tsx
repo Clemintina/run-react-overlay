@@ -16,6 +16,7 @@ import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import {TableState} from "@common/utils/Schemas";
+import PlayerHead from "@common/utils/player/PlayerHead";
 
 const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 let gridApi: GridApi;
@@ -44,7 +45,7 @@ const columns: ColDef[] = [
         flex: 1,
         minWidth: tinyColumnSize,
         sortable: false,
-        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderPlayerHead(data)} />,
+        cellRenderer: ({data}) => <PlayerHead player={data} />,
     },
     {
         field: "star",
@@ -221,8 +222,8 @@ const AppTable = () => {
     return (
         <div>
             <div style={backgroundStyle}>
-                <div className="w-full h-full">
-                    <div className="ag-theme-alpine-dark" style={backgroundStyle}>
+                <div className='w-full h-full'>
+                    <div className='ag-theme-alpine-dark' style={backgroundStyle}>
                         <AgGridReact gridOptions={gridOptions} rowData={players} />
                     </div>
                 </div>

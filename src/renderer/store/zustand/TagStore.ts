@@ -403,7 +403,21 @@ const useTagStore = create<TagStoreSchema>()(
                 set(callback);
             },
         }),
-        {name: "tags"},
+        {
+            name: "tags",
+            version: 2,
+            migrate: (persistedStateCore, version) => {
+                const persistedState = persistedStateCore as TagStoreSchema;
+                if (version === 1 || version === 0) {
+                    persistedState.run.friends = {
+                        display: "F",
+                        colour: "FF55FF",
+                    };
+                    return persistedState;
+                }
+                return persistedState;
+            },
+        },
     ),
 );
 

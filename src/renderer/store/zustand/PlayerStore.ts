@@ -33,6 +33,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             hypixelGuild: null,
             hypixelPlayer: null,
             hypixelFriends: null,
+            hypixelFriendsMutuals: null,
             denicked: false,
             sources: {
                 runApi: null,
@@ -161,29 +162,33 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     updatePlayers: async () => {
         for (const player of usePlayerStore.getState().players) {
             const config = useConfigStore.getState();
-            if (player.hypixelPlayer?.uuid && !player.nicked) {
-                if (config.settings.keathiz && player.sources.keathiz == null) {
+            if (player?.hypixelPlayer?.uuid && !player.nicked) {
+                if (config.settings.keathiz && player.sources?.keathiz == null) {
                     const responseIPCResponse = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid);
                     if (responseIPCResponse.status == 200) {
                         player.sources.keathiz = responseIPCResponse;
                     }
                 }
-                if (config.settings.lunar && player.sources.lunar == null) {
+                if (config.settings.lunar && player.sources?.lunar == null) {
                     const responseIPCResponse = await window.ipcRenderer.invoke<LunarAPIResponse>("lunar", player.hypixelPlayer.uuid);
                     if (responseIPCResponse.status == 200) {
                         player.sources.lunar = responseIPCResponse;
                     }
                 }
-                if (config.settings.boomza && player.sources.boomza == null) {
+                if (config.settings.boomza && player.sources?.boomza == null) {
                     const responseIPCResponse = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
                     if (responseIPCResponse.status == 200) {
                         player.sources.boomza = responseIPCResponse;
                     }
                 }
                 if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
-                    for (const hypixelPlayer of usePlayerStore.getState().players) {
-                        console.log(hypixelPlayer.hypixelFriends?.data ?? "Invalid");
-                        
+                    const p1Friends = player.hypixelFriends.data.friendRequestsUuid;
+                    if (p1Friends != undefined) {
+                        for (const hypixelPlayer of usePlayerStore.getState().players) {
+                            if (hypixelPlayer.hypixelPlayer != undefined) {
+                                const p2Uuid = hypixelPlayer.hypixelPlayer.uuid;
+                            }
+                        }
                     }
                 }
             }
