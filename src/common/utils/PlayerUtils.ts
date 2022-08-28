@@ -18,7 +18,7 @@ export type Player = {
     denicked: boolean | null;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: Components.Schemas.Guild | null;
-    hypixelFriends: IPCResponse<Components.Schemas.PlayerFriendsData> | null;
+    hypixelFriends: IPCResponse<{_id: string; uuidSender: string; uuidReceiver: string; started: number}[]> | null;
     hypixelFriendsMutuals?: Array<string> | null;
     sources: {
         runApi: IPCResponse<Blacklist> | null;
@@ -134,7 +134,6 @@ export class FormatPlayer {
         }
         return htmlResponse;
     };
-
 }
 
 export class PlayerHypixelUtils {

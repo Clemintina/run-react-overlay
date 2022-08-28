@@ -70,7 +70,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     }
                 }
             }
-
             if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
                 const data: unknown = ipcHypixelPlayer.data;
                 let cause, code;
@@ -149,7 +148,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 };
             });
         }
-        get().updatePlayers();
+        await get().updatePlayers();
     },
     removePlayer: async (username: string) => {
         set((state) => ({
@@ -162,7 +161,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }));
     },
     updatePlayers: async () => {
-        for (const player of get().players) {
+        const storedPlayers = get().players;
+        for (const player of storedPlayers) {
             const config = useConfigStore.getState();
             if (player?.hypixelPlayer?.uuid && !player.nicked) {
                 if (config.settings.keathiz && player.sources?.keathiz == null) {
@@ -184,15 +184,26 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     }
                 }
                 if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
-                    const p1Friends = player.hypixelFriends.data.friendRequestsUuid;
+                    const p1Friends = player.hypixelFriends.data;
                     if (p1Friends != undefined) {
-                        for (const hypixelPlayer of get().players) {
-                            if (hypixelPlayer.hypixelPlayer != undefined) {
-                                const p2Uuid = hypixelPlayer.hypixelPlayer.uuid;
-                                console.log(p2Uuid, p1Friends);
-                                if (p1Friends.includes(p2Uuid)) {
-                                    player.friended = true;
+                        for (const friendUuid of p1Friends) {
+                            for (const statePlayers of storedPlayers) {
+                                if (statePlayers.hypixelPlayer != null) {
+                                    if (friendUuid.uuidReceiver == player.hypixelPlayer.uuid) {
+                                        if (friendUuid.uuidSender.includes(statePlayers.hypixelPlayer.uuid)) {
+                                            player.friended = true;
+                                            statePlayers.friended = true;
+                                        }
+                                    } else {
+                                        if (friendUuid.uuidReceiver.includes(statePlayers.hypixelPlayer.uuid)) {
+                                            player.friended = true;
+                                            statePlayers.friended = true;
+                                        }
+                                    }
                                 }
+                                set({
+                                    players: storedPlayers,
+                                });
                             }
                         }
                     }
@@ -406,14 +417,23 @@ const getHypixelFriends = async (player: Player) => {
     let api;
     if (player.hypixelPlayer?.uuid !== undefined) {
         const state = useConfigStore.getState();
-        api = await window.ipcRenderer.invoke<Components.Schemas.PlayerFriendsData>("hypixel", state.hypixel.apiKey, RequestType.FRIENDS, player.hypixelPlayer.uuid);
+        api = await window.ipcRenderer.invoke("hypixel", RequestType.FRIENDS, player.hypixelPlayer.uuid, state.hypixel.apiKey);
     } else {
         api = {
             data: [],
             status: 400,
         };
     }
-    return new Promise<IPCResponse<Components.Schemas.PlayerFriendsData>>((resolve) => resolve(api));
+    return new Promise<
+        IPCResponse<
+            {
+                _id: string;
+                uuidSender: string;
+                uuidReceiver: string;
+                started: number;
+            }[]
+        >
+    >((resolve) => resolve(api));
 };
 
 export default usePlayerStore;
