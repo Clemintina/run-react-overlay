@@ -129,6 +129,18 @@ const Essentials = () => {
                         />
                     </SettingCard>
                     <SettingCard>
+                        <span>Friends</span>
+                        <span />
+                        <ToggleButton
+                            onChange={async () => {
+                                const payload: SettingsConfig = {...settings};
+                                payload.run.friends = !payload.run.friends;
+                                useConfigStore.getState().setSettings(payload);
+                            }}
+                            options={{enabled: settings.run.friends}}
+                        />
+                    </SettingCard>
+                    <SettingCard>
                         <span>Keathiz/Antisniper</span>
                         <span />
                         <span>
