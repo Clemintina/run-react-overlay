@@ -128,6 +128,35 @@ const TagEditorView = () => {
                                     }}
                                 />
                             </span>
+                            
+                            <span>
+                                <ColourPicker
+                                    setColour={async (colour: string) => {
+                                        useTagStore.getState().setStore(
+                                            produce((state: any) => {
+                                                state.run.name_change.colour = colour;
+                                            }),
+                                        );
+                                    }}
+                                    colourObject={localTagStore.run.name_change.colour}
+                                />
+                            </span>
+                        </SettingCard>
+                        <SettingCard>
+                            <span>Friends</span>
+                            <span>
+                                <TagEditor
+                                    options={{colour: localTagStore.run.friends.colour, placeholder: localTagStore.run.friends.display}}
+                                    onBlur={(event) => {
+                                        useTagStore.getState().setStore(
+                                            produce((state: any) => {
+                                                state.run.name_change.display = event.currentTarget.value;
+                                            }),
+                                        );
+                                    }}
+                                />
+                            </span>
+                            
                             <span>
                                 <ColourPicker
                                     setColour={async (colour: string) => {

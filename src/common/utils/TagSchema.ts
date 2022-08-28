@@ -36,6 +36,7 @@ export interface Core {
 
 export interface Run {
     annoylist: TagColour;
+    friends: TagColour;
     blacklist: TagColour;
     migration: TagColour;
     encounters: TagColour;

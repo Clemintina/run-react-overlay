@@ -14,6 +14,10 @@ const useTagStore = create<TagStoreSchema>()(
                     display: "BLACKLISTED",
                     colour: "FF5555",
                 },
+                friends: {
+                    display: "F",
+                    colour: "FF55FF",
+                },
                 migration: {
                     display: "M",
                     colour: "55FF55",
