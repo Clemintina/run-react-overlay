@@ -6,7 +6,6 @@ import destr from "destr";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import {getTagsFromConfig} from "@common/utils/player/RenderComponent";
 import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export interface PlayerTags {
     player: Player;
@@ -15,7 +14,7 @@ export interface PlayerTags {
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
     const {run, boomzaTag} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
-    const configStore = useConfigStore((state) => ({settings: state.settings}));
+    const {settings} = useConfigStore((state) => ({settings: state.settings}));
     const tagArray: Array<JSX.Element> = [];
 
     if (player.sources.runApi != null) {
@@ -48,10 +47,10 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             if (player.hypixelPlayer?.channel == "PARTY") {
                 tagArray.push(getTagsFromConfig("hypixel.party"));
             }
-            if (configStore.settings.run.friends && player.friended) {
+            if (settings.run.friends && player.friended) {
                 tagArray.push(getTagsFromConfig("run.friends"));
             }
-            if (configStore.settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
+            if (settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
                 tagArray.push(<RenderKeathizTags player={player} />);
             }
         }

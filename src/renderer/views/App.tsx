@@ -3,8 +3,7 @@ import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridApi, GridColumn
 import "@assets/scss/app.scss";
 import "@assets/index.css";
 import React from "react";
-import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
-import {Interweave} from "interweave";
+import {Player} from "@common/utils/PlayerUtils";
 import {AgGridReact} from "ag-grid-react";
 import {assertDefaultError} from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
@@ -17,8 +16,8 @@ import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import {TableState} from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
+import PlayerSession from "@common/utils/player/PlayerSession";
 
-const playerFormatter = new PlayerUtils().getFormatPlayerInstance();
 let gridApi: GridApi;
 let columnApi: ColumnApi;
 
@@ -124,7 +123,7 @@ const columns: ColDef[] = [
         minWidth: smallColumnSize,
         type: "number",
         sortable: false,
-        cellRenderer: ({data}) => <Interweave content={playerFormatter.renderSessionTime(data)} />,
+        cellRenderer: ({data}) => <PlayerSession player={data} />,
     },
 ];
 

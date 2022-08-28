@@ -148,8 +148,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     players: playerArr,
                 };
             });
-            usePlayerStore.getState().updatePlayers();
         }
+        get().updatePlayers();
     },
     removePlayer: async (username: string) => {
         set((state) => ({
@@ -162,7 +162,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }));
     },
     updatePlayers: async () => {
-        for (const player of usePlayerStore.getState().players) {
+        for (const player of get().players) {
             const config = useConfigStore.getState();
             if (player?.hypixelPlayer?.uuid && !player.nicked) {
                 if (config.settings.keathiz && player.sources?.keathiz == null) {
@@ -186,9 +186,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
                     const p1Friends = player.hypixelFriends.data.friendRequestsUuid;
                     if (p1Friends != undefined) {
-                        for (const hypixelPlayer of usePlayerStore.getState().players) {
+                        for (const hypixelPlayer of get().players) {
                             if (hypixelPlayer.hypixelPlayer != undefined) {
                                 const p2Uuid = hypixelPlayer.hypixelPlayer.uuid;
+                                console.log(p2Uuid, p1Friends);
                                 if (p1Friends.includes(p2Uuid)) {
                                     player.friended = true;
                                 }
