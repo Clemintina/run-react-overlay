@@ -16,7 +16,6 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
     const {run, boomzaTag} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
     const configStore = useConfigStore((state) => ({settings: state.settings}));
-    const {players} = usePlayerStore((state) => ({players: state.players}));
     const tagArray: Array<JSX.Element> = [];
 
     if (player.sources.runApi != null) {
@@ -48,6 +47,9 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             }
             if (player.hypixelPlayer?.channel == "PARTY") {
                 tagArray.push(getTagsFromConfig("hypixel.party"));
+            }
+            if (configStore.settings.run.friends && player.friended) {
+                tagArray.push(getTagsFromConfig("run.friends"));
             }
             if (configStore.settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
                 tagArray.push(<RenderKeathizTags player={player} />);

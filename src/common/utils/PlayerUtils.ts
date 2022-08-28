@@ -14,6 +14,7 @@ export type Player = {
     nick?: string;
     nicked: boolean | null;
     bot: boolean | null;
+    friended: boolean | null;
     denicked: boolean | null;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: Components.Schemas.Guild | null;

@@ -30,6 +30,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             id: null,
             nicked: false,
             bot: false,
+            friended: false,
             hypixelGuild: null,
             hypixelPlayer: null,
             hypixelFriends: null,
@@ -147,6 +148,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     players: playerArr,
                 };
             });
+            usePlayerStore.getState().updatePlayers();
         }
     },
     removePlayer: async (username: string) => {
@@ -187,6 +189,9 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                         for (const hypixelPlayer of usePlayerStore.getState().players) {
                             if (hypixelPlayer.hypixelPlayer != undefined) {
                                 const p2Uuid = hypixelPlayer.hypixelPlayer.uuid;
+                                if (p1Friends.includes(p2Uuid)) {
+                                    player.friended = true;
+                                }
                             }
                         }
                     }
