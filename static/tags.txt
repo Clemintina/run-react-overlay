@@ -1,0 +1,36 @@
+Tags:
+  ▫️ S            ->  Sniper Tag from Boomza Antisniper
+  ▫️ H-<value>    ->  Hacker Tag from Boomza Antisniper  #default value = 1 and is hidden
+  ▫️ R            ->  Risky Tag from Boomza Antisniper  #default disabled
+  ▫️ U            ->  Unsure Tag from Boomza Antisniper  #default disabled
+  ▫️ P            ->  Player is in Hypixel Party Chat
+  ▫️ Q3-<value>   ->  <value> queues in last 3 minutes  #default value = 1
+  ▫️ Q10-<value>  ->  <value> queues in last 10 minutes  #default value = 1
+  ▫️ Q30-<value>  ->  <value> queues in last 30 minutes  #default value = 4
+  ▫️ Q24-<value>  ->  <value> queues in last 24 hours  #default value = 40
+  ▫️ Q48-<value>  ->  <value> queues in last 48 hours  #default disabled
+  ▫️ QT-<value>   ->  <value> queues ever recorded  #default disabled
+  ▫️ E3-<value>   ->  <value> exits in last 3 minutes  #default value = 1
+  ▫️ E10-<value>  ->  <value> exits in last 10 minutes  #default value = 1
+  ▫️ E30-<value>  ->  <value> exits in last 30 minutes  #default value = 2
+  ▫️ E24-<value>  ->  <value> exits in last 24 hours  #default value = 3
+  ▫️ E48-<value>  ->  <value> exits in last 48 hours  #default value = 5
+  ▫️ ET-<value>   ->  <value> exits ever recorded  #default value = 8
+  ▫️ T            ->  Player session less than <value> seconds #default value = 120
+  ▫️ TT           ->  Player session less than <value> seconds #default value = 120
+  ▫️ XXX          ->  Long Tag so hidden #default microsoft accounts only and max length = 8
+  ▫️ LE           ->  Legacy Account
+  ▫️ ND           ->  No Queue Data
+  ▫️ API          ->  Player has turned status API off
+  ▫️ CA1-<value>  ->  <value> consecutive queues in all recorded queues with less than 1 minute between them  #default value = 50
+  ▫️ CA2-<value>  ->  <value> consecutive queues in all recorded queues with less than 2 minutes between them  #default disabled
+  ▫️ CA3-<value>  ->  <value> consecutive queues in all recorded queues with less than 3 minutes between them  #default disabled
+  ▫️ CM1-<value>  ->  <value> consecutive queues in last 30 queues with less than 1 minute between them  #default value = 5
+  ▫️ CM2-<value>  ->  <value> consecutive queues in last 30 queues with less than 2 minutes between them  #default value = 15
+  ▫️ CM3-<value>  ->  <value> consecutive queues in last 30 queues with less than 3 minutes between them  #default value = 20
+  ▫️ CS1-<value>  ->  <value> consecutive queues in last 10 queues with less than 1 minute between them  #default value = 2
+  ▫️ CS2-<value>  ->  <value> consecutive queues in last 10 queues with less than 2 minutes between them  #default value = 4
+  ▫️ CS3-<value>  ->  <value> consecutive queues in last 10 queues with less than 3 minutes between them  #default value = 9
+  ▫️ Z1-<value>   ->  <value> consecutive queues with less than 1 minute between them weighted towards newer  #default value = 4
+  ▫️ Z2-<value>   ->  <value> consecutive queues with less than 2 minute between them weighted towards newer  #default value = 3
+  ▫️ Z3-<value>   ->  <value> consecutive queues with less than 3 minute between them weighted towards newer  #default value = 2

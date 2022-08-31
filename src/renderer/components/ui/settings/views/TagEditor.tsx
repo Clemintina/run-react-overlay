@@ -9,9 +9,11 @@ import {TagEditor} from "@components/user/settings/components/TagEditor";
 import {AccordionDetails} from "@mui/material";
 import {UserAccordion} from "@components/user/UserAccordion";
 import produce from "immer";
+import {TagSchema} from "@common/utils/TagSchema";
 
 const TagEditorView = () => {
-    const {localTagStore} = useTagStore((state) => ({localTagStore: state}));
+    const {tagStore} = useTagStore((state) => ({tagStore: state}));
+    let localTagStore = tagStore as TagSchema;
 
     // TODO make it look nicer and cleaner
     return (
@@ -128,7 +130,7 @@ const TagEditorView = () => {
                                     }}
                                 />
                             </span>
-                            
+
                             <span>
                                 <ColourPicker
                                     setColour={async (colour: string) => {
@@ -156,7 +158,7 @@ const TagEditorView = () => {
                                     }}
                                 />
                             </span>
-                            
+
                             <span>
                                 <ColourPicker
                                     setColour={async (colour: string) => {
@@ -266,6 +268,37 @@ const TagEditorView = () => {
                         </AccordionDetails>
                     </UserAccordion>
                     <UserAccordion name={"Hypixel"}>
+                        <AccordionDetails>
+                            <SettingCard>
+                                <span>Party</span>
+                                <span>
+                                    <TagEditor
+                                        options={{colour: localTagStore.hypixel.party.colour, placeholder: localTagStore.hypixel.party.display}}
+                                        onBlur={(event) => {
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.hypixel.party.display = event.currentTarget.value;
+                                                }),
+                                            );
+                                        }}
+                                    />
+                                </span>
+                                <span>
+                                    <ColourPicker
+                                        setColour={async (colour: string) => {
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.hypixel.party.colour = colour;
+                                                }),
+                                            );
+                                        }}
+                                        colourObject={localTagStore.hypixel.party.colour}
+                                    />
+                                </span>
+                            </SettingCard>
+                        </AccordionDetails>
+                    </UserAccordion>
+                    <UserAccordion name={"Keathiz"}>
                         <AccordionDetails>
                             <SettingCard>
                                 <span>Party</span>
