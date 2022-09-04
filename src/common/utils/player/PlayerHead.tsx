@@ -11,6 +11,12 @@ const PlayerHead: React.ElementType = ({player}: PlayerHead) => {
     const {configStore} = useConfigStore((state) => ({configStore: state}));
     let lunarRenderer: JSX.Element = <span />;
 
+    let srcUrl = `https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`;
+
+    if (player?.nicked) {
+       srcUrl = `https://crafatar.com/avatars/27b15dca2d5d4a47b36d5e87bb46c2a3?size=16&overlay=true`;
+    }
+
     if (!player?.nicked) {
         if (configStore.settings.lunar) {
             if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
@@ -24,10 +30,12 @@ const PlayerHead: React.ElementType = ({player}: PlayerHead) => {
             }
         }
     }
+    
+    
 
     return (
         <span className='inline flex'>
-            <img src={`https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`} className='text-center' alt='player-head' />
+            <img src={srcUrl} className='text-center' alt='player-head' />
             {lunarRenderer}
         </span>
     );
