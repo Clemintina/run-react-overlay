@@ -166,6 +166,7 @@ const useConfigStore = create<ConfigStore>()(
                     valid: true,
                 },
                 setRunApiKey: async (runkey) => {
+                    if (runkey.length == 0) return;
                     const getHypixel = get().hypixel;
                     const apiKey = await window.ipcRenderer.invoke<RunApiKey>("seraph", RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner);
                     if (runkey.length == 0) return;

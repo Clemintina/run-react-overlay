@@ -1,4 +1,4 @@
-import {app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
+import {app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
 import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
 import path from "path";
 import axios, {AxiosRequestConfig} from "axios";
@@ -27,6 +27,7 @@ declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 /** Overlay Variables */
 const overlayVersion = app.getVersion();
+const registeredGlobalKeybinds = new Set<string>();
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
@@ -164,6 +165,7 @@ const registerMainIPC = () => {
     registerLogCommunications();
     registerMainWindowCommunications();
     registerOverlayFeatures();
+    registeredGlobalKeybindsForApp();
 };
 
 /**
@@ -471,7 +473,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};
@@ -558,3 +560,28 @@ const getErrorHandler = (e) => {
     else if (e instanceof GenericHTTPError) return e.getJson();
     else return {data: undefined, status: 400};
 };
+
+const registeredGlobalKeybindsForApp = () => {
+    ipcMain.handle("registerGlobalKeybinds", async (event, keybinds) => {
+        for (const shortcut of registeredGlobalKeybinds) {
+            globalShortcut.unregister(shortcut);
+            registeredGlobalKeybinds.delete(shortcut);
+        }
+
+        for (const shortcut of keybinds) {
+            try {
+                globalShortcut.register(shortcut, () => appWindow?.webContents.send("globalShortcutPressed", shortcut));
+                registeredGlobalKeybinds.add(shortcut);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    });
+};
+
+app.on("will-quit", () => {
+    for (const shortcut of registeredGlobalKeybinds) {
+        globalShortcut.unregister(shortcut);
+        registeredGlobalKeybinds.delete(shortcut);
+    }
+});
