@@ -35,8 +35,9 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
                     tagArray.push(<span className={"pl-1"} />);
                 }
             }
-            if (runApi.safelist.tagged || runApi.safelist.personal) {
+            if (runApi.safelist.tagged || runApi.safelist.personal) { 
                 tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled)); 
+                console.log("safelist:" + runApi.safelist.timesKilled)
             }
             if (runApi.statistics.encounters != 0) {
                 tagArray.push(getTagsFromConfig("run.encounters", runApi.statistics.encounters));
