@@ -53,7 +53,7 @@ module.exports = {
             config: {
                 options: {
                     maintainer: "Kay & Arman",
-                    homepage: "https://antisniper.seraph.si/api/",
+                    homepage: "https://seraph.si/",
                 },
             },
         },

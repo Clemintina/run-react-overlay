@@ -30,9 +30,11 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             id: null,
             nicked: false,
             bot: false,
+            friended: false,
             hypixelGuild: null,
             hypixelPlayer: null,
             hypixelFriends: null,
+            hypixelFriendsMutuals: null,
             denicked: false,
             sources: {
                 runApi: null,
@@ -68,7 +70,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     }
                 }
             }
-
             if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
                 const data: unknown = ipcHypixelPlayer.data;
                 let cause, code;
@@ -147,6 +148,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 };
             });
         }
+        await get().updatePlayers();
     },
     removePlayer: async (username: string) => {
         set((state) => ({
@@ -159,30 +161,52 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }));
     },
     updatePlayers: async () => {
-        for (const player of usePlayerStore.getState().players) {
+        const storedPlayers = get().players;
+        for (const player of storedPlayers) {
             const config = useConfigStore.getState();
-            if (player.hypixelPlayer?.uuid && !player.nicked) {
-                if (config.settings.keathiz && player.sources.keathiz == null) {
+            if (player?.hypixelPlayer?.uuid && !player.nicked) {
+                if (config.settings.keathiz && player.sources?.keathiz == null) {
                     const responseIPCResponse = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid);
                     if (responseIPCResponse.status == 200) {
                         player.sources.keathiz = responseIPCResponse;
                     }
                 }
-                if (config.settings.lunar && player.sources.lunar == null) {
+                if (config.settings.lunar && player.sources?.lunar == null) {
                     const responseIPCResponse = await window.ipcRenderer.invoke<LunarAPIResponse>("lunar", player.hypixelPlayer.uuid);
                     if (responseIPCResponse.status == 200) {
                         player.sources.lunar = responseIPCResponse;
                     }
                 }
-                if (config.settings.boomza && player.sources.boomza == null) {
+                if (config.settings.boomza && player.sources?.boomza == null) {
                     const responseIPCResponse = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
                     if (responseIPCResponse.status == 200) {
                         player.sources.boomza = responseIPCResponse;
                     }
                 }
                 if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
-                    for (const hypixelPlayer of usePlayerStore.getState().players) {
-                        console.log(hypixelPlayer.hypixelFriends?.data ?? "Invalid");
+                    const p1Friends = player.hypixelFriends.data;
+                    if (p1Friends != undefined) {
+                        for (const friendUuid of p1Friends) {
+                            for (const statePlayers of storedPlayers) {
+                                if (statePlayers.hypixelPlayer != null) {
+                                    if (friendUuid.uuidReceiver == player.hypixelPlayer.uuid) {
+                                        if (friendUuid.uuidSender.includes(statePlayers.hypixelPlayer.uuid)) {
+                                            player.friended = true;
+                                            statePlayers.friended = true;
+                                            
+                                        }
+                                    } else {
+                                        if (friendUuid.uuidReceiver.includes(statePlayers.hypixelPlayer.uuid)) {
+                                            player.friended = true;
+                                            statePlayers.friended = true;
+                                        }
+                                    }
+                                }
+                                set({
+                                    players: storedPlayers,
+                                });
+                            }
+                        }
                     }
                 }
             }
@@ -394,14 +418,23 @@ const getHypixelFriends = async (player: Player) => {
     let api;
     if (player.hypixelPlayer?.uuid !== undefined) {
         const state = useConfigStore.getState();
-        api = await window.ipcRenderer.invoke<Components.Schemas.PlayerFriendsData>("hypixel", state.hypixel.apiKey, RequestType.FRIENDS, player.hypixelPlayer.uuid);
+        api = await window.ipcRenderer.invoke("hypixel", RequestType.FRIENDS, player.hypixelPlayer.uuid, state.hypixel.apiKey);
     } else {
         api = {
             data: [],
             status: 400,
         };
     }
-    return new Promise<IPCResponse<Components.Schemas.PlayerFriendsData>>((resolve) => resolve(api));
+    return new Promise<
+        IPCResponse<
+            {
+                _id: string;
+                uuidSender: string;
+                uuidReceiver: string;
+                started: number;
+            }[]
+        >
+    >((resolve) => resolve(api));
 };
 
 export default usePlayerStore;

@@ -14,6 +14,10 @@ const useTagStore = create<TagStoreSchema>()(
                     display: "BLACKLISTED",
                     colour: "FF5555",
                 },
+                friends: {
+                    display: "F",
+                    colour: "FF55FF",
+                },
                 migration: {
                     display: "M",
                     colour: "55FF55",
@@ -388,6 +392,37 @@ const useTagStore = create<TagStoreSchema>()(
                     colour: "0000AA",
                 },
             },
+            keathiz: {
+                no_data: {
+                    display: "ND",
+                    colour: "FFD700",
+                },
+                queues: {
+                    queue_count: {
+                        display: "Q-",
+                        colours: [{requirement: 10, colour: "FFD700", operator: "<="}],
+                    },
+                    queue_total: {
+                        display: "QT-",
+                        colour: "FFD700",
+                    },
+                    consecutive_queue: {
+                        last_1000: {
+                            display: "Q-",
+                            colours: [{requirement: 2, colour: "FFD700", operator: "<="}],
+                        },
+                        last_30: {display: "Q-", colours: [{requirement: 3, colour: "FFD700", operator: "<="}]},
+                        last_10: {display: "Q-", colours: [{requirement: 2, colour: "FFD700", operator: "<="}]},
+                        weighted: {display: "Q-", colours: [{requirement: 50, colour: "FFD700", operator: "<="}]},
+                    },
+                },
+                exits: {
+                    exits_total: {
+                        display: "ET",
+                        colour: "FFD700",
+                    },
+                },
+            },
             setTagStore: (newTagStore: TagSchema) => {
                 set({
                     run: newTagStore.run,
@@ -399,7 +434,21 @@ const useTagStore = create<TagStoreSchema>()(
                 set(callback);
             },
         }),
-        {name: "tags"},
+        {
+            name: "tags",
+            version: 2,
+            migrate: (persistedStateCore, version) => {
+                const persistedState = persistedStateCore as TagStoreSchema;
+                if (version === 1 || version === 0) {
+                    persistedState.run.friends = {
+                        display: "F",
+                        colour: "FF55FF",
+                    };
+                    return persistedState;
+                }
+                return persistedState;
+            },
+        },
     ),
 );
 

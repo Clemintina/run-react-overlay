@@ -1,14 +1,15 @@
-export interface TagSchema {
+export type TagSchema = {
     run: Run;
     core: Core;
     hypixel: Hypixel;
     boomza: Boomza;
-}
+    keathiz: Keathiz;
+};
 
-export interface TagStoreSchema extends TagSchema {
+export type TagStoreSchema = {
     setTagStore: (newTagStore: TagSchema) => void;
-    setStore: (produce) => void
-}
+    setStore: (produce) => void;
+} & TagSchema;
 
 export interface Colour {
     requirement: number;
@@ -36,6 +37,7 @@ export interface Core {
 
 export interface Run {
     annoylist: TagColour;
+    friends: TagColour;
     blacklist: TagColour;
     migration: TagColour;
     encounters: TagColour;
@@ -52,4 +54,21 @@ export interface Boomza {
 
 export interface Hypixel {
     party: TagColour;
+}
+
+export interface Keathiz {
+    no_data: TagColour;
+    exits: {
+        exits_total: TagColour;
+    };
+    queues: {
+        queue_count: TagArray;
+        queue_total: TagColour;
+        consecutive_queue: {
+            last_1000: TagArray;
+            last_30: TagArray;
+            last_10: TagArray;
+            weighted: TagArray;
+        };
+    };
 }

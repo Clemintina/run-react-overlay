@@ -168,13 +168,21 @@ const useConfigStore = create<ConfigStore>()(
                 setRunApiKey: async (runkey) => {
                     const getHypixel = get().hypixel;
                     const apiKey = await window.ipcRenderer.invoke<RunApiKey>("seraph", RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner);
+                    if (runkey.length == 0) return;
                     if (apiKey.status == 200) {
                         set({
                             run: {
                                 apiKey: runkey,
                                 valid: true,
                             },
+                            error: {
+                                code: 200,
+                                cause: "",
+                                title: "",
+                            },
                         });
+
+                        
                     } else {
                         get().setErrorMessage({
                             title: "Invalid RUN Key",

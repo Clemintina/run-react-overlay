@@ -237,6 +237,13 @@ const registerSeraphIPC = () => {
             } catch (e) {
                 return getErrorHandler(e);
             }
+        } else if (resource === RequestType.FRIENDS) {
+            const [uuid] = args as [string];
+            try {
+                return await hypixelClient.getClient().friends.uuid(uuid);
+            } catch (e) {
+                return getErrorHandler(e);
+            }
         }
         return null;
     });

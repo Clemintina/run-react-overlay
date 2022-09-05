@@ -6,7 +6,6 @@ import destr from "destr";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import {getTagsFromConfig} from "@common/utils/player/RenderComponent";
 import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export interface PlayerTags {
     player: Player;
@@ -15,8 +14,7 @@ export interface PlayerTags {
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
     const {run, boomzaTag} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
-    const configStore = useConfigStore((state) => ({settings: state.settings}));
-    const {players} = usePlayerStore((state) => ({players: state.players}));
+    const {settings} = useConfigStore((state) => ({settings: state.settings}));
     const tagArray: Array<JSX.Element> = [];
 
     if (player.sources.runApi != null) {
@@ -37,8 +35,9 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
                     tagArray.push(<span className={"pl-1"} />);
                 }
             }
-            if (runApi.safelist.tagged || runApi.safelist.personal) {
-                tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled));
+            if (runApi.safelist.tagged || runApi.safelist.personal) { 
+                tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled)); 
+                console.log("safelist:" + runApi.safelist.timesKilled)
             }
             if (runApi.statistics.encounters != 0) {
                 tagArray.push(getTagsFromConfig("run.encounters", runApi.statistics.encounters));
@@ -49,7 +48,10 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             if (player.hypixelPlayer?.channel == "PARTY") {
                 tagArray.push(getTagsFromConfig("hypixel.party"));
             }
-            if (configStore.settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
+            if (settings.run.friends && player.friended) {
+                tagArray.push(getTagsFromConfig("run.friends"));
+            }
+            if (settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
                 tagArray.push(<RenderKeathizTags player={player} />);
             }
         }
@@ -108,7 +110,7 @@ const RenderKeathizTags = (props: PlayerTags) => {
             if (keathizTags.player.queues.total == 0) {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>ND</span>);
             }
-            if (keathizTags.player.queues.last_3_min >= 1) {
+            if (keathizTags.player.queues.last_3_min >= 2) {
                 const count = keathizTags.player.queues.last_3_min;
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q3-${count}`}</span>);
             }
