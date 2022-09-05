@@ -36,7 +36,7 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
                 }
             }
             if (runApi.safelist.tagged || runApi.safelist.personal) {
-                tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled));
+                tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled)); 
             }
             if (runApi.statistics.encounters != 0) {
                 tagArray.push(getTagsFromConfig("run.encounters", runApi.statistics.encounters));
@@ -109,7 +109,7 @@ const RenderKeathizTags = (props: PlayerTags) => {
             if (keathizTags.player.queues.total == 0) {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>ND</span>);
             }
-            if (keathizTags.player.queues.last_3_min >= 1) {
+            if (keathizTags.player.queues.last_3_min >= 2) {
                 const count = keathizTags.player.queues.last_3_min;
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q3-${count}`}</span>);
             }

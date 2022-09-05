@@ -193,6 +193,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                                         if (friendUuid.uuidSender.includes(statePlayers.hypixelPlayer.uuid)) {
                                             player.friended = true;
                                             statePlayers.friended = true;
+                                            
                                         }
                                     } else {
                                         if (friendUuid.uuidReceiver.includes(statePlayers.hypixelPlayer.uuid)) {
