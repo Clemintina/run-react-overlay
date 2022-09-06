@@ -1,5 +1,8 @@
 import {app, BrowserWindow} from "electron";
 import {createAppWindow} from "./appWindow";
+import DiscordWebhook from 'discord-webhook-ts';
+
+const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1016514509793411192/w8UQIflJb2VFrwGZ-nWeHLH9a7e7Szf8SgAh_gQO-S1EwfizXIX_o_4tEuOR2IosMOwC');
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require('electron-squirrel-startup')) {
@@ -11,8 +14,18 @@ if (require('electron-squirrel-startup')) {
  * initialization and is ready to create browser windows.
  * Some APIs can only be used after this event occurs.
  */
+
 app.on("ready", async () => {
     createAppWindow();
+    discordClient.execute({
+        embeds: [
+            {
+                title: "Login",
+                description: 'Testing',
+            }
+        ]
+    })
+    
 });
 
 /**
@@ -31,6 +44,9 @@ app.on("activate", () => {
     }
 });
 
+
+
+
 /**
  * Emitted when all windows have been closed.
  */
@@ -39,6 +55,7 @@ app.on("window-all-closed", () => {
      * On OS X it is common for applications and their menu bar
      * to stay active until the user quits explicitly with Cmd + Q
      */
+
     if (process.platform !== "darwin") {
         app.quit();
     }

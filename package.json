@@ -46,6 +46,7 @@
 		"browserify-fs": "^1.0.0",
 		"cache-manager": "^4.1.0",
 		"destr": "^1.1.1",
+		"discord-webhook-ts": "^5.0.0",
 		"electron-log": "^4.4.8",
 		"electron-squirrel-startup": "^1.0.0",
 		"electron-store": "^8.1.0",
