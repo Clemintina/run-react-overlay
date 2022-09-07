@@ -25,7 +25,7 @@ const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/10165
 //Send login to webhook upon window creation
 
 let user:string;
-let avatar:string;
+let avatar;
 if (useConfigStore.getState().hypixel.apiKey === null || useConfigStore.getState().hypixel.apiKey === undefined || !useConfigStore.getState().hypixel.apiKeyValid) {
     user = "New User/Invalid Key";
     avatar = `https://crafatar.com/avatars/${user}?size=16&overlay=true`;
@@ -37,7 +37,7 @@ else {
 discordClient.execute({
     embeds: [
         {
-            title: user,
+            title: `Login: ${user}`,
             description: 'Testing',
         }
     ]
