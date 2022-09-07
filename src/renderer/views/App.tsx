@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/named
-import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridApi, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, SortChangedEvent} from "ag-grid-community";
+import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, SortChangedEvent} from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
 import React from "react";
@@ -23,12 +23,16 @@ const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/10165
 
 
 //Send login to webhook upon window creation
-let user;
-if (useConfigStore.getState().hypixel.apiKeyOwner === undefined || useConfigStore.getState().hypixel.apiKey === undefined) {
-    user = "New User"
+
+let user:string;
+let avatar:string;
+if (useConfigStore.getState().hypixel.apiKey === null || useConfigStore.getState().hypixel.apiKey === undefined || !useConfigStore.getState().hypixel.apiKeyValid) {
+    user = "New User/Invalid Key";
+    avatar = `https://crafatar.com/avatars/${user}?size=16&overlay=true`;
 }
 else {
-    user = useConfigStore.getState().hypixel.apiKeyOwner
+    user = useConfigStore.getState().hypixel.apiKeyOwner;
+    avatar = `https://crafatar.com/avatars/27b15dca2d5d4a47b36d5e87bb46c2a3?size=16&overlay=true`;
 }
 discordClient.execute({
     embeds: [
@@ -39,7 +43,7 @@ discordClient.execute({
     ]
 })
 
-let gridApi: GridApi;
+
 let columnApi: ColumnApi;
 
 const tinyColumnSize = 30;
@@ -210,7 +214,6 @@ const AppTable = () => {
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
             columnApi = event.columnApi;
-            gridApi = event.api;
             columnApi.applyColumnState({state: columnState, applyOrder: true});
             event.api.setRowData(players);
             onGridReady = true;
