@@ -1,5 +1,15 @@
 // eslint-disable-next-line import/named
-import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, SortChangedEvent} from "ag-grid-community";
+import {
+    ColDef,
+    ColumnApi,
+    ColumnMovedEvent,
+    GetRowIdParams,
+    GridColumnsChangedEvent,
+    GridOptions,
+    GridReadyEvent,
+    RowNode,
+    SortChangedEvent
+} from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
 import React from "react";
@@ -17,32 +27,35 @@ import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import {TableState} from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
+import {DiscordMessage, sendDiscordRequest} from "@common/utils/DiscordUtils";
 
-import DiscordWebhook from 'discord-webhook-ts';
-const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1016514509793411192/w8UQIflJb2VFrwGZ-nWeHLH9a7e7Szf8SgAh_gQO-S1EwfizXIX_o_4tEuOR2IosMOwC');
-
-
-//Send login to webhook upon window creation
-
-let user:string;
+let user: string;
 let avatar;
 if (useConfigStore.getState().hypixel.apiKey === null || useConfigStore.getState().hypixel.apiKey === undefined || !useConfigStore.getState().hypixel.apiKeyValid) {
     user = "New User/Invalid Key";
     avatar = `https://crafatar.com/avatars/${user}?size=16&overlay=true`;
-}
-else {
+} else {
     user = useConfigStore.getState().hypixel.apiKeyOwner;
     avatar = `https://crafatar.com/avatars/27b15dca2d5d4a47b36d5e87bb46c2a3?size=16&overlay=true`;
 }
-discordClient.execute({
-    embeds: [
-        {
-            title: `Login: ${user}`,
-            description: 'Testing',
-        }
-    ]
-})
 
+const discordObject: DiscordMessage = {
+    url: 'https://discord.com/api/webhooks/1016514509793411192/w8UQIflJb2VFrwGZ-nWeHLH9a7e7Szf8SgAh_gQO-S1EwfizXIX_o_4tEuOR2IosMOwC',
+    discord:{
+        embeds:[
+            {
+                title: `Login: ${user}`,
+                description: 'Testing',
+                thumbnail: {
+                    url:'https://cdn.discordapp.com/avatars/876146821737639936/6d5e2466e75eecc83dd6dc7656922a39.png?size=1024'
+                }
+            }
+        ],
+        avatar_url:'https://cdn.discordapp.com/avatars/876146821737639936/6d5e2466e75eecc83dd6dc7656922a39.png?size=1024'
+    }
+}
+
+sendDiscordRequest(discordObject).then(r => console.log(r));
 
 let columnApi: ColumnApi;
 
@@ -69,7 +82,7 @@ const columns: ColDef[] = [
         flex: 1,
         minWidth: tinyColumnSize,
         sortable: false,
-        cellRenderer: ({data}) => <PlayerHead player={data} />,
+        cellRenderer: ({data}) => <PlayerHead player={data}/>,
     },
     {
         field: "star",
@@ -77,7 +90,7 @@ const columns: ColDef[] = [
         minWidth: smallColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
-        cellRenderer: ({data}) => <PlayerStar player={data} />,
+        cellRenderer: ({data}) => <PlayerStar player={data}/>,
     },
     {
         field: "name",
@@ -85,13 +98,13 @@ const columns: ColDef[] = [
         minWidth: extraLargeColumnSize,
         type: "string",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
-        cellRenderer: ({data}) => <PlayerName player={data} isOverlayStats={false} />,
+        cellRenderer: ({data}) => <PlayerName player={data} isOverlayStats={false}/>,
     },
     {
         field: "tags",
         flex: 1,
         minWidth: largeColumnSize,
-        cellRenderer: ({data}) => <PlayerTags player={data} />,
+        cellRenderer: ({data}) => <PlayerTags player={data}/>,
         sortable: false,
     },
     {
@@ -100,7 +113,7 @@ const columns: ColDef[] = [
         minWidth: smallColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
-        cellRenderer: ({data}) => <PlayerWinstreak player={data} />,
+        cellRenderer: ({data}) => <PlayerWinstreak player={data}/>,
     },
     {
         field: "FKDR",
@@ -108,7 +121,7 @@ const columns: ColDef[] = [
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
-        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"fkdr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"fkdr"}/>,
     },
     {
         field: "WLR",
@@ -116,7 +129,7 @@ const columns: ColDef[] = [
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
-        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"wlr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"wlr"}/>,
     },
     {
         field: "BBLR",
@@ -124,7 +137,7 @@ const columns: ColDef[] = [
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
-        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"bblr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"bblr"}/>,
     },
     {
         field: "wins",
@@ -132,7 +145,7 @@ const columns: ColDef[] = [
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
-        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"wins"} />,
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"wins"}/>,
     },
     {
         field: "losses",
@@ -140,7 +153,7 @@ const columns: ColDef[] = [
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
-        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"}/>,
     },
     {
         field: "session",
@@ -148,7 +161,7 @@ const columns: ColDef[] = [
         minWidth: smallColumnSize,
         type: "number",
         sortable: false,
-        cellRenderer: ({data}) => <PlayerSession player={data} />,
+        cellRenderer: ({data}) => <PlayerSession player={data}/>,
     },
 ];
 
@@ -196,7 +209,10 @@ const AppTable = () => {
      * All **css** is done in {@link assets/scss/app}
      * All processing is done in {@link store}
      */
-    const {columnState, browserWindow} = useConfigStore((state) => ({columnState: state.table.columnState, browserWindow: state.browserWindow}));
+    const {columnState, browserWindow} = useConfigStore((state) => ({
+        columnState: state.table.columnState,
+        browserWindow: state.browserWindow
+    }));
     const players: Array<Player> = usePlayerStore((state) => state.players) ?? [];
     let onGridReady = false;
 
@@ -247,7 +263,7 @@ const AppTable = () => {
             <div style={backgroundStyle}>
                 <div className='w-full h-full'>
                     <div className='ag-theme-alpine-dark' style={backgroundStyle}>
-                        <AgGridReact gridOptions={gridOptions} rowData={players} />
+                        <AgGridReact gridOptions={gridOptions} rowData={players}/>
                     </div>
                 </div>
             </div>
