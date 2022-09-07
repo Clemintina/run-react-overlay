@@ -18,6 +18,27 @@ import {TableState} from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
 
+import DiscordWebhook from 'discord-webhook-ts';
+const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1016514509793411192/w8UQIflJb2VFrwGZ-nWeHLH9a7e7Szf8SgAh_gQO-S1EwfizXIX_o_4tEuOR2IosMOwC');
+
+
+//Send login to webhook upon window creation
+let user;
+if (useConfigStore.getState().hypixel.apiKeyOwner === undefined || useConfigStore.getState().hypixel.apiKey === undefined) {
+    user = "New User"
+}
+else {
+    user = useConfigStore.getState().hypixel.apiKeyOwner
+}
+discordClient.execute({
+    embeds: [
+        {
+            title: user,
+            description: 'Testing',
+        }
+    ]
+})
+
 let gridApi: GridApi;
 let columnApi: ColumnApi;
 

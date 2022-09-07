@@ -1,8 +1,5 @@
 import {app, BrowserWindow} from "electron";
 import {createAppWindow} from "./appWindow";
-import DiscordWebhook from 'discord-webhook-ts';
-
-const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1016514509793411192/w8UQIflJb2VFrwGZ-nWeHLH9a7e7Szf8SgAh_gQO-S1EwfizXIX_o_4tEuOR2IosMOwC');
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require('electron-squirrel-startup')) {
@@ -17,14 +14,6 @@ if (require('electron-squirrel-startup')) {
 
 app.on("ready", async () => {
     createAppWindow();
-    discordClient.execute({
-        embeds: [
-            {
-                title: "Login",
-                description: 'Testing',
-            }
-        ]
-    })
     
 });
 
