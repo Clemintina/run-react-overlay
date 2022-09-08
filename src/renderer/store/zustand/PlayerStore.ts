@@ -80,6 +80,22 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     cause = "Player is not valid on Hypixel!";
                     code = 200;
                 }
+                if (ipcHypixelPlayer.status == 403) {
+                    useConfigStore.getState().setErrorMessage({
+                        code: 403,
+                        title: "Invalid Hypixel Key",
+                        cause: "The RUN Key provided is currently locked, PLease generate a new one.",
+                        detail: "This key has been suspended by Hypixel, Please enter a new one.",
+                        referenceId: "HYPIXEL_KEY_LOCK",
+                    });
+                    useConfigStore.getState().setStore({
+                        ...useConfigStore.getState(),
+                        hypixel: {
+                            ...useConfigStore.getState().hypixel,
+                            apiKeyValid: false,
+                        },
+                    });
+                }
                 playerObject.status = code;
                 playerData.nicked = true;
                 playerObject.cause = cause;
@@ -105,6 +121,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             playerObject.cause = "try catch";
         }
 
+        console.log(playerData, useConfigStore.getState().error);
+
         if (!playerData.nicked && playerData.hypixelPlayer != null) {
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
@@ -117,15 +135,18 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     playerData.sources.lunar = lunarApi;
                     playerData.sources.playerDb = playerDatabase;
                     playerData.hypixelFriends = hypixelFriends;
+                    console.log(boomza);
                 }
             } else {
-                useConfigStore.getState().setErrorMessage({
-                    code: 403,
-                    title: "Locked RUN Key",
-                    cause: "The RUN Key provided is currently locked, Please contact support.",
-                    detail: "This key has been locked for security reasons, please contact support.",
-                    referenceId: "RUN_KEY_LOCK",
-                });
+                if (runApi.status == 403) {
+                    useConfigStore.getState().setErrorMessage({
+                        code: 403,
+                        title: "Locked RUN Key",
+                        cause: "The RUN Key provided is currently locked, Please contact support.",
+                        detail: "This key has been locked for security reasons, please contact support.",
+                        referenceId: "RUN_KEY_LOCK",
+                    });
+                }
                 const configStore = useConfigStore.getState();
                 configStore.run.valid = false;
                 useConfigStore.getState().setStore(configStore);
@@ -193,7 +214,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                                         if (friendUuid.uuidSender.includes(statePlayers.hypixelPlayer.uuid)) {
                                             player.friended = true;
                                             statePlayers.friended = true;
-                                            
                                         }
                                     } else {
                                         if (friendUuid.uuidReceiver.includes(statePlayers.hypixelPlayer.uuid)) {
