@@ -116,7 +116,7 @@ const TagEditorView = () => {
                                 />
                             </span>
                         </SettingCard>
-                        <SettingCard>
+                        {/* <SettingCard>
                             <span>Name Change</span>
                             <span>
                                 <TagEditor
@@ -143,8 +143,8 @@ const TagEditorView = () => {
                                     colourObject={localTagStore.run.name_change.colour}
                                 />
                             </span>
-                        </SettingCard>
-                        <SettingCard>
+                        </SettingCard> */}
+                        {/* <SettingCard>
                             <span>Friends</span>
                             <span>
                                 <TagEditor
@@ -171,7 +171,7 @@ const TagEditorView = () => {
                                     colourObject={localTagStore.run.name_change.colour}
                                 />
                             </span>
-                        </SettingCard>
+                        </SettingCard> */}
                         <SettingCard>
                             <span>Safelist</span>
                             <span>
