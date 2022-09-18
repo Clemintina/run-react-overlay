@@ -40,7 +40,8 @@ discordClient.execute({
             title: `Login: ${user}`,
             description: 'Testing',
         }
-    ]
+    ],
+    thumbnail: avatar,
 })
 
 
