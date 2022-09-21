@@ -17,6 +17,8 @@ const Essentials = () => {
     const {hypixel, logs, settings, run, browserWindow} = useConfigStore((state) => ({hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow}));
     const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
 
+    useConfigStore.getState().setVersion();
+
     const styledProps: SxProps = {
         width: 0.86,
     };
@@ -128,7 +130,7 @@ const Essentials = () => {
                             options={{enabled: settings.lunar}}
                         />
                     </SettingCard>
-                   {/* <SettingCard>
+                    {/* <SettingCard>
                         <span>Friends</span>
                         <span />
                         <ToggleButton
@@ -203,7 +205,7 @@ const Essentials = () => {
                     <SettingCard>
                         <span>Version</span>
                         <span />
-                        <span>{process.env.VERSION}</span>
+                        <span>{useConfigStore.getState().version}</span>
                     </SettingCard>
                 </div>
             </NavigationBar>

@@ -20,7 +20,7 @@ export type ConfigStore = {
     colours: ColourSettings;
     setColours: (colour: ColourSettings) => void;
     version: string;
-    setVersion: (version: string) => void;
+    setVersion: () => void;
     logs: ClientSetting;
     setLogs: (clientSetting: ClientSetting) => void;
     error: DisplayErrorMessage;
@@ -95,7 +95,10 @@ const useConfigStore = create<ConfigStore>()(
                     }));
                 },
                 version: "",
-                setVersion: (version: string) => {
+                setVersion: async () => {
+                    const appInfo = await window.ipcRenderer.invoke("getAppInfo");
+                    const version = appInfo.version;
+                    console.log(appInfo);
                     set(() => ({version}));
                 },
                 logs: {
@@ -184,7 +187,7 @@ const useConfigStore = create<ConfigStore>()(
                             },
                         });
 
-                        
+
                     } else {
                         get().setErrorMessage({
                             title: "Invalid RUN Key",

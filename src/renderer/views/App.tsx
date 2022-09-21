@@ -18,7 +18,6 @@ import {TableState} from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
 
-
 let columnApi: ColumnApi;
 
 const tinyColumnSize = 30;

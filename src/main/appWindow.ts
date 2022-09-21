@@ -460,6 +460,10 @@ const registerMainWindowCommunications = () => {
             await shell.openExternal(electronStoreTags.path);
         }
     });
+
+    ipcMain.handle("getAppInfo", async () => {
+        return {version: overlayVersion};
+    });
 };
 
 /**
@@ -474,7 +478,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};
