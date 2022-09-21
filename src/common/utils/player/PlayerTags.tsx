@@ -41,9 +41,6 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             if (runApi.statistics.encounters != 0) {
                 tagArray.push(getTagsFromConfig("run.encounters", runApi.statistics.encounters));
             }
-            if (renderNameChangeTag(player) <= 10) {
-                tagArray.push(getTagsFromConfig("run.name_change"));
-            }
             if (player.hypixelPlayer?.channel == "PARTY") {
                 tagArray.push(getTagsFromConfig("hypixel.party"));
             }
@@ -67,33 +64,33 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
     );
 };
 
-const renderNameChangeTag = (player: Player) => {
-    const unknownData = 11;
-    if (player.sources.playerDb !== undefined && player.sources.playerDb !== null) {
-        if (player.sources.playerDb.status === 200) {
-            if (player.sources.playerDb.data.data.player.meta ?? false) {
-                const nameHistory = player.sources.playerDb.data.data.player.meta.name_history;
-                const nameChangeDates: Array<number> = [];
-                if (nameHistory.length != 1) {
-                    for (const item of nameHistory) {
-                        if (item.changedToAt !== undefined) {
-                            const changedTo = item?.changedToAt;
-                            if (changedTo !== undefined) nameChangeDates.push(changedTo);
-                        }
-                    }
-                    nameChangeDates.sort();
-                    const timeNow = Date.now();
-                    const nameBefore = new Date(nameChangeDates[nameChangeDates.length - 1]);
-                    const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-                    return diffInMs / (1000 * 60 * 60 * 24);
-                }
-                return unknownData;
-            }
-            return unknownData;
-        }
-        return unknownData;
-    } else return unknownData;
-};
+// const renderNameChangeTag = (player: Player) => {
+//     const unknownData = 11;
+//     if (player.sources.playerDb !== undefined && player.sources.playerDb !== null) {
+//         if (player.sources.playerDb.status === 200) {
+//             if (player.sources.playerDb.data.data.player.meta ?? false) {
+//                 const nameHistory = player.sources.playerDb.data.data.player.meta.name_history;
+//                 const nameChangeDates: Array<number> = [];
+//                 if (nameHistory.length != 1) {
+//                     for (const item of nameHistory) {
+//                         if (item.changedToAt !== undefined) {
+//                             const changedTo = item?.changedToAt;
+//                             if (changedTo !== undefined) nameChangeDates.push(changedTo);
+//                         }
+//                     }
+//                     nameChangeDates.sort();
+//                     const timeNow = Date.now();
+//                     const nameBefore = new Date(nameChangeDates[nameChangeDates.length - 1]);
+//                     const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+//                     return diffInMs / (1000 * 60 * 60 * 24);
+//                 }
+//                 return unknownData;
+//             }
+//             return unknownData;
+//         }
+//         return unknownData;
+//     } else return unknownData;
+// };
 
 const RenderKeathizTags = (props: PlayerTags) => {
     const keathizTagArray: Array<JSX.Element> = [];
