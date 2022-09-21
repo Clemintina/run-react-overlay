@@ -144,7 +144,7 @@ const TagEditorView = () => {
                                 />
                             </span>
                         </SettingCard> */}
-                        {/* <SettingCard>
+                        <SettingCard>
                             <span>Friends</span>
                             <span>
                                 <TagEditor
@@ -164,14 +164,14 @@ const TagEditorView = () => {
                                     setColour={async (colour: string) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
-                                                state.run.name_change.colour = colour;
+                                                state.run.friends.colour = colour;
                                             }),
                                         );
                                     }}
-                                    colourObject={localTagStore.run.name_change.colour}
+                                    colourObject={localTagStore.run.friends.colour}
                                 />
                             </span>
-                        </SettingCard> */}
+                        </SettingCard>
                         <SettingCard>
                             <span>Safelist</span>
                             <span>
