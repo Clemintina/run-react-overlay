@@ -10,7 +10,6 @@ import Essentials from "@components/ui/settings/views/Essentials";
 import TagEditor from "@components/ui/settings/views/TagEditor";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import ColourRenderer from "@components/ui/settings/ColourRenderer";
-import Nicks from "@components/ui/settings/views/Nicks";
 import NickView from "@components/ui/settings/views/Nicks";
 
 const logs = useConfigStore.getState().logs;

@@ -136,6 +136,7 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 setKeathizApiKey: async (keathizApiKey) => {
                     const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5", keathizApiKey);
+                    if (keathizApiKey.length == 0) return;
                     if (apiKey.status == 200) {
                         set({
                             keathiz: {
@@ -166,6 +167,7 @@ const useConfigStore = create<ConfigStore>()(
                     valid: true,
                 },
                 setRunApiKey: async (runkey) => {
+                    if (runkey.length == 0) return;
                     const getHypixel = get().hypixel;
                     const apiKey = await window.ipcRenderer.invoke<RunApiKey>("seraph", RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner);
                     if (runkey.length == 0) return;
