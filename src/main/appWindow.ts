@@ -20,11 +20,7 @@ import windowStateKeeper from "electron-window-state";
 import {LogFileMessage} from "@common/utils/LogFileReader";
 import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
 import log from "electron-log";
-import DiscordWebhook from 'discord-webhook-ts';
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
-
-
-const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1016514509793411192/w8UQIflJb2VFrwGZ-nWeHLH9a7e7Szf8SgAh_gQO-S1EwfizXIX_o_4tEuOR2IosMOwC');
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -52,7 +48,6 @@ const electronStore = new Store<RUNElectronStoreType>({
     schema: electronStoreSchema.properties,
     defaults: getDefaultElectronStore,
 });
-
 const electronStoreTags = new Store<RUNElectronStoreTagsType>({
     defaults: getDefaultElectronStoreObject,
     name: "tags",
@@ -63,12 +58,14 @@ const electronStoreTags = new Store<RUNElectronStoreTagsType>({
 export type RUNElectronStoreTyped = Join<PathsToStringProps<typeof electronStore.store>, ".">;
 export type RUNElectronStoreTagsTyped = Join<PathsToStringProps<typeof electronStoreTags.store>, ".">;
 electronStore.set("run.overlay.version", app.getVersion());
+
 /**
  * Configures the log reader. See {@link [TailFile](https://www.npmjs.com/package/@logdna/tail-file)} for more information.
  */
 let logFileTail: TailFile | null = null;
 let logFileReadline: readline.Interface | null = null;
 let appWindow: BrowserWindow;
+
 /**
  * Axios HTTP Client
  */

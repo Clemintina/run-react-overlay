@@ -18,32 +18,6 @@ import {TableState} from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
 
-import DiscordWebhook from 'discord-webhook-ts';
-const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1016514509793411192/w8UQIflJb2VFrwGZ-nWeHLH9a7e7Szf8SgAh_gQO-S1EwfizXIX_o_4tEuOR2IosMOwC');
-
-
-//Send login to webhook upon window creation
-
-let user:string;
-let avatar;
-if (useConfigStore.getState().hypixel.apiKey === null || useConfigStore.getState().hypixel.apiKey === undefined || !useConfigStore.getState().hypixel.apiKeyValid) {
-    user = "New User/Invalid Key";
-    avatar = `https://crafatar.com/avatars/${user}?size=16&overlay=true`;
-}
-else {
-    user = useConfigStore.getState().hypixel.apiKeyOwner;
-    avatar = `https://crafatar.com/avatars/27b15dca2d5d4a47b36d5e87bb46c2a3?size=16&overlay=true`;
-}
-discordClient.execute({
-    embeds: [
-        {
-            title: `Login: ${user}`,
-            description: 'Testing',
-        }
-    ],
-    thumbnail: avatar,
-})
-
 
 let columnApi: ColumnApi;
 

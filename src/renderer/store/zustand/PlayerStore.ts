@@ -3,7 +3,6 @@ import {Player} from "@common/utils/PlayerUtils";
 import {Components} from "@common/zikeji";
 import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
 import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 
 export type PlayerStore = {
@@ -121,21 +120,17 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             playerObject.cause = "try catch";
         }
 
-        console.log(playerData, useConfigStore.getState().error);
-
         if (!playerData.nicked && playerData.hypixelPlayer != null) {
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
             if (runApi.status == 200) {
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
                 if (!playerData.bot) {
-                    const [boomza, keathizApi, lunarApi, playerDatabase, hypixelFriends] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getPlayerDB(playerData), getHypixelFriends(playerData)]);
+                    const [boomza, keathizApi, lunarApi, hypixelFriends] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getHypixelFriends(playerData)]);
                     playerData.sources.boomza = boomza;
                     playerData.sources.keathiz = keathizApi;
                     playerData.sources.lunar = lunarApi;
-                    playerData.sources.playerDb = playerDatabase;
                     playerData.hypixelFriends = hypixelFriends;
-                    console.log(boomza);
                 }
             } else {
                 if (runApi.status == 403) {
@@ -405,33 +400,6 @@ const getKeathizData = async (player: Player) => {
         if (state != undefined) api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, state.keathiz.key);
     }
     return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({status: 200, data: api.data}));
-};
-
-const getPlayerDB = async (player: Player) => {
-    let api: IPCResponse<PlayerDB>;
-    if (player.hypixelPlayer?.uuid) api = await window.ipcRenderer.invoke<PlayerDB>("playerdb", player.hypixelPlayer?.uuid);
-    else {
-        api = {
-            data: {
-                code: "400",
-                message: "invalid",
-                data: {
-                    player: {
-                        meta: {
-                            name_history: [],
-                        },
-                        username: "",
-                        id: "",
-                        raw_id: "",
-                        avatar: "",
-                    },
-                },
-                success: false,
-            },
-            status: 0,
-        };
-    }
-    return new Promise<IPCResponse<PlayerDB>>((resolve) => resolve(api));
 };
 
 const getHypixelFriends = async (player: Player) => {
