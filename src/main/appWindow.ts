@@ -48,7 +48,6 @@ const electronStore = new Store<RUNElectronStoreType>({
     schema: electronStoreSchema.properties,
     defaults: getDefaultElectronStore,
 });
-
 const electronStoreTags = new Store<RUNElectronStoreTagsType>({
     defaults: getDefaultElectronStoreObject,
     name: "tags",
@@ -59,12 +58,14 @@ const electronStoreTags = new Store<RUNElectronStoreTagsType>({
 export type RUNElectronStoreTyped = Join<PathsToStringProps<typeof electronStore.store>, ".">;
 export type RUNElectronStoreTagsTyped = Join<PathsToStringProps<typeof electronStoreTags.store>, ".">;
 electronStore.set("run.overlay.version", app.getVersion());
+
 /**
  * Configures the log reader. See {@link [TailFile](https://www.npmjs.com/package/@logdna/tail-file)} for more information.
  */
 let logFileTail: TailFile | null = null;
 let logFileReadline: readline.Interface | null = null;
 let appWindow: BrowserWindow;
+
 /**
  * Axios HTTP Client
  */
