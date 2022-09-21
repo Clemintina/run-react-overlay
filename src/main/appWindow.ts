@@ -20,11 +20,7 @@ import windowStateKeeper from "electron-window-state";
 import {LogFileMessage} from "@common/utils/LogFileReader";
 import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
 import log from "electron-log";
-import DiscordWebhook from 'discord-webhook-ts';
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
-
-
-const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1016514509793411192/w8UQIflJb2VFrwGZ-nWeHLH9a7e7Szf8SgAh_gQO-S1EwfizXIX_o_4tEuOR2IosMOwC');
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;

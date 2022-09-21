@@ -128,7 +128,7 @@ const Essentials = () => {
                             options={{enabled: settings.lunar}}
                         />
                     </SettingCard>
-                    <SettingCard>
+                   {/* <SettingCard>
                         <span>Friends</span>
                         <span />
                         <ToggleButton
@@ -139,7 +139,7 @@ const Essentials = () => {
                             }}
                             options={{enabled: settings.run.friends}}
                         />
-                    </SettingCard>
+                    </SettingCard>*/}
                     <SettingCard>
                         <span>Keathiz/Antisniper</span>
                         <span />
