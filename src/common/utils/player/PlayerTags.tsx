@@ -44,9 +44,6 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             if (player.hypixelPlayer?.channel == "PARTY") {
                 tagArray.push(getTagsFromConfig("hypixel.party"));
             }
-            if (settings.run.friends && player.friended) {
-                tagArray.push(getTagsFromConfig("run.friends"));
-            }
             if (settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
                 tagArray.push(<RenderKeathizTags player={player} />);
             }

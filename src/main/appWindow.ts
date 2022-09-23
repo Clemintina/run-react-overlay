@@ -295,6 +295,15 @@ const registerSeraphIPC = () => {
                 },
             });
             return {data: response.data.data, status: response.status};
+        } else if (endpoint == RunEndpoints.DENICKER) {
+            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}/${uuid}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+                },
+            });
+            return {data: response.data, status: response.status};
         } else {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
                 headers: {
