@@ -38,6 +38,9 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             if (runApi.safelist.tagged || runApi.safelist.personal) {
                 tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled));
             }
+            if (settings.run.friends && player.friended) {
+                tagArray.push(getTagsFromConfig("run.friends"));
+            }
             if (runApi.statistics.encounters != 0) {
                 tagArray.push(getTagsFromConfig("run.encounters", runApi.statistics.encounters));
             }
