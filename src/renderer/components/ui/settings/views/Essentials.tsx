@@ -10,7 +10,6 @@ import {Slider, SxProps} from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import {SettingsConfig} from "@common/utils/Schemas";
 
 const Essentials = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
@@ -106,11 +105,9 @@ const Essentials = () => {
                         <ToggleButton
                             text={""}
                             onChange={async () => {
-                                const payload: SettingsConfig = {...settings};
-                                payload.boomza = !payload.boomza;
-                                useConfigStore.getState().setSettings(payload);
+                                useConfigStore.getState().setSettings({...settings, boomza: !settings.boomza});
                             }}
-                            onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
+                            // onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
                             options={{enabled: settings.boomza}}
                         >
                             <span>
@@ -123,37 +120,31 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                const payload: SettingsConfig = {...settings};
-                                payload.lunar = !payload.lunar;
-                                useConfigStore.getState().setSettings(payload);
+                                useConfigStore.getState().setSettings({...settings, lunar: !settings.lunar});
                             }}
                             options={{enabled: settings.lunar}}
                         />
                     </SettingCard>
-                    {/* <SettingCard>
+                    <SettingCard>
                         <span>Friends</span>
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                const payload: SettingsConfig = {...settings};
-                                payload.run.friends = !payload.run.friends;
-                                useConfigStore.getState().setSettings(payload);
+                                useConfigStore.getState().setSettings({...settings, run: {friends: !settings.run.friends}});
                             }}
                             options={{enabled: settings.run.friends}}
                         />
-                    </SettingCard>*/}
+                    </SettingCard>
                     <SettingCard>
                         <span>Keathiz/Antisniper</span>
                         <span />
                         <span>
                             <ToggleButton
                                 onChange={async () => {
-                                    const payload: SettingsConfig = {...settings};
-                                    payload.keathiz = !payload.keathiz;
-                                    useConfigStore.getState().setSettings(payload);
+                                    useConfigStore.getState().setSettings({...settings, keathiz: !settings.keathiz});
                                 }}
                                 options={{enabled: settings.keathiz}}
-                                onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
+                                // onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
                             >
                                 <span>
                                     <FontAwesomeIcon icon={faMapLocation} />
@@ -166,9 +157,7 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                const payload: SettingsConfig = {...settings};
-                                payload.preferences.autoHide = !payload.preferences.autoHide;
-                                useConfigStore.getState().setSettings(payload);
+                                useConfigStore.getState().setSettings({...settings, preferences: {autoHide: !settings.preferences.autoHide}});
                             }}
                             options={{enabled: settings.preferences.autoHide}}
                         />

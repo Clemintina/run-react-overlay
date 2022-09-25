@@ -98,7 +98,6 @@ const useConfigStore = create<ConfigStore>()(
                 setVersion: async () => {
                     const appInfo = await window.ipcRenderer.invoke("getAppInfo");
                     const version = appInfo.version;
-                    console.log(appInfo);
                     set(() => ({version}));
                 },
                 logs: {
