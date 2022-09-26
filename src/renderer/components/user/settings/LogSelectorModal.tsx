@@ -1,4 +1,5 @@
 // eslint-disable-next-line import/named
+
 import {Box, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
 import React from "react";
 import {InputBoxButton} from "@components/user/InputBoxButton";
@@ -7,6 +8,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 import {ClientSetting} from "@common/utils/Schemas";
+
 
 export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];
@@ -40,6 +42,38 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
             switch (clientSettings.clientName) {
                 case "vanilla":
                     path += isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
+                    break;
+                case "astolfo":
+                    const source = `<?xml version="1.0" encoding="UTF-8"?>
+                    <Configuration status="WARN" packages="net.minecraft,com.mojang">
+                        <Appenders>
+                            <Console name="SysOut" target="SYSTEM_OUT">
+                                <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+                            </Console>
+                            <Queue name="ServerGuiConsole">
+                                <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
+                            </Queue>
+                            <RollingRandomAccessFile name="File" fileName="${appData}/.minecraft/logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+                                <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+                                <Policies>
+                                    <TimeBasedTriggeringPolicy />
+                                    <OnStartupTriggeringPolicy />
+                                </Policies>
+                            </RollingRandomAccessFile>
+                        </Appenders>
+                        <Loggers>
+                            <Root level="info">
+                                <filters>
+                                    <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
+                                </filters>
+                                <AppenderRef ref="SysOut"/>
+                                <AppenderRef ref="File"/>
+                                <AppenderRef ref="ServerGuiConsole"/>
+                            </Root>
+                        </Loggers>
+                    </Configuration>`;
+                    path += isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
+                    //fs.writeFileSync(path + "log4j2.xml", source);
                     break;
                 case "badlion":
                     path += isMacOs ? appData + "/minecraft/logs/blclient/minecraft/" : appData + "/.minecraft/logs/blclient/minecraft/";
@@ -101,6 +135,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                 <MenuItem value={"badlion"}>Badlion</MenuItem>
                                 <MenuItem value={"lunar_old"}>Lunar</MenuItem>
                                 <MenuItem value={"lunar_mlv"}>Lunar Multi-version</MenuItem>
+                                <MenuItem value={"astolfo"}>Astolfo</MenuItem>
                                 <MenuItem value={"custom"}>Custom</MenuItem>
                             </Select>
                             <FormHelperText className={"text-red-500 font-bold"} style={configStore.error.code != 200 ? {} : {display: "none"}}>
