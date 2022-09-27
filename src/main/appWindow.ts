@@ -572,7 +572,7 @@ const registerOverlayFeatures = () => {
                     <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
                 </Queue>
                 <RollingRandomAccessFile name="File" fileName="${appData}/.minecraft/logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-                    <PatternLayout pattern="[%d{HH:mm:ss}] [Client thread/INFO]: %msg%n" />
+                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
                     <Policies>
                         <TimeBasedTriggeringPolicy />
                         <OnStartupTriggeringPolicy />
