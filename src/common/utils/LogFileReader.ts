@@ -2,8 +2,8 @@ import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import IpcRendererEvent = Electron.IpcRendererEvent;
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
     message: string;
@@ -38,6 +38,7 @@ export class LogFileReader {
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
+            console.log(line);
             if (line.includes("Sending you to")) {
                 clearOverlayTable();
             } else if (line.includes(" ONLINE: ")) {

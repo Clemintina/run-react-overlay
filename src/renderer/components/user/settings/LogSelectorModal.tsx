@@ -1,14 +1,12 @@
 // eslint-disable-next-line import/named
-
-import { Box, Button, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography } from "@mui/material";
+import {Box, Button, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
 import React from "react";
-import { InputBoxButton } from "@components/user/InputBoxButton";
+import {InputBoxButton} from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
-import { ClientSetting } from "@common/utils/Schemas";
-
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import {ClientSetting} from "@common/utils/Schemas";
 
 export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];
@@ -45,7 +43,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                     break;
                 case "astolfo":
                     path += isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
-                    window.ipcRenderer.invoke("astolfo");
+                    await window.ipcRenderer.invoke("astolfo");
                     break;
                 case "badlion":
                     path += isMacOs ? appData + "/minecraft/logs/blclient/minecraft/" : appData + "/.minecraft/logs/blclient/minecraft/";
@@ -95,11 +93,11 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
     return (
         <div>
             <InputBoxButton onClick={handleOpen} text={label} />
-            <Modal open={open} onClose={handleClose} style={{ color: configStore.colours.primaryColour }}>
+            <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
                 <Box sx={style}>
-                    <Typography sx={{ mt: 0 }}>Please select the client you use</Typography>
+                    <Typography sx={{mt: 0}}>Please select the client you use</Typography>
 
-                    <Typography sx={{ mt: 2 }}>
+                    <Typography sx={{mt: 2}}>
                         <FormControl fullWidth>
                             <InputLabel>Client</InputLabel>
                             <Select value={clientLocal} label='Client' onChange={handleChange}>
@@ -110,13 +108,13 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                 <MenuItem value={"astolfo"}>Astolfo</MenuItem>
                                 <MenuItem value={"custom"}>Custom</MenuItem>
                             </Select>
-                            <FormHelperText className={"text-red-500 font-bold"} style={configStore.error.code != 200 ? {} : { display: "none" }}>
+                            <FormHelperText className={"text-red-500 font-bold"} style={configStore.error.code != 200 ? {} : {display: "none"}}>
                                 Un-readable log file
                             </FormHelperText>
                         </FormControl>
                     </Typography>
 
-                    <Typography sx={{ mt: 2 }} style={clientLocal == "custom" ? {} : { display: "none" }}>
+                    <Typography sx={{mt: 2}} style={clientLocal == "custom" ? {} : {display: "none"}}>
                         <InputBoxButton
                             onClick={async () => {
                                 const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke("selectLogFile");
@@ -146,9 +144,8 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                         />
                     </Typography>
 
-
-                    <Typography sx={{ mt: 2 }} style={clientLocal == "astolfo" ? {} : { display: "none" }}>
-                        <Button variant="outlined" color="error">
+                    <Typography sx={{mt: 2}} style={clientLocal == "astolfo" ? {} : {display: "none"}}>
+                        <Button variant='outlined' color='error'>
                             Run the overlay as ADMIN before selecting this (only need to run as admin once).
                         </Button>
                     </Typography>
