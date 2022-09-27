@@ -417,10 +417,10 @@ const registerLogCommunications = () => {
             });
 
             logFileReadline.on("line", async (line) => {
-                if (line.includes("[Client thread/INFO]: [CHAT]") && line.includes("[main/INFO]: [CHAT] ")) {
+                if (line.includes("[Client thread/INFO]: [CHAT]") || line.includes("[main/INFO]: [CHAT] ")) {
                     appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
                 } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
-                    const newLine = line.replace(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
+                    const newLine = line.replace(/\u00A7[0-9A-FK-OR]/gi, "").replaceAll(/\uFFFD[0-9A-FK-OR]/gi, ""); // clean
                     appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: newLine}, status: 200}));
                 } else {
                     return;
