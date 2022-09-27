@@ -38,7 +38,6 @@ export class LogFileReader {
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
-            console.log(line);
             if (line.includes("Sending you to")) {
                 clearOverlayTable();
             } else if (line.includes(" ONLINE: ")) {
