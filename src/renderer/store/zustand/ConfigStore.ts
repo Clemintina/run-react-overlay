@@ -397,6 +397,7 @@ const useConfigStore = create<ConfigStore>()(
                 settings: {
                     lunar: true,
                     keathiz: false,
+                    astolfo: false,
                     boomza: true,
                     run: {
                         friends: false,
