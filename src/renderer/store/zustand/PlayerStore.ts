@@ -1,8 +1,8 @@
 import create from "zustand";
 import {Player} from "@common/utils/PlayerUtils";
 import {Components} from "@common/zikeji";
-import {Blacklist, DenickerAPI, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
-import {BoomzaAntisniper, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
+import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 
 export type PlayerStore = {
@@ -59,10 +59,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
         try {
             const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name, apiKey) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""), apiKey);
-            if (ipcHypixelPlayer?.data?.uuid == null) {
-                const ipcRunDenicker = await window.ipcRenderer.invoke<DenickerAPI>("seraph", RunEndpoints.DENICKER, playerData.name);
-                if (ipcRunDenicker.data?.data?.found) {
-                    const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, ipcRunDenicker?.data?.data.uuid, apiKey);
+            if (ipcHypixelPlayer?.data?.uuid == null && configStore?.settings?.keathiz) {
+                const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>("keathiz", KeathizEndpoints.DENICK, playerData.name, keathizApiKey);
+                if (ipcKeathizDenicker.data?.player?.uuid) {
+                    const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, ipcKeathizDenicker.data.player.uuid);
                     if (newIpcHypixelPlayer?.data?.uuid != null) {
                         playerData.hypixelPlayer = newIpcHypixelPlayer.data;
                         playerData.denicked = true;

@@ -487,7 +487,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};
@@ -552,6 +552,8 @@ const registerOverlayFeatures = () => {
             notif.close();
         }, 60000);
     });
+
+    ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {});
 };
 
 const getProxyChannel = () => {
