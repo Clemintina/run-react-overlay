@@ -10,10 +10,8 @@ import {Slider, SxProps} from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import os from 'os';
 
 const Essentials = () => {
-    const platform = os.platform();
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
     const {hypixel, logs, settings, run, browserWindow} = useConfigStore((state) => ({hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow}));
     const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
