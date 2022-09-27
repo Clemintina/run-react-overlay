@@ -417,7 +417,7 @@ const registerLogCommunications = () => {
             });
 
             logFileReadline.on("line", async (line) => {
-                if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
+                if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ") && !line.includes("[Astolfo HTTP Bridge]: [CHAT]")) return;
                 appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: line }, status: 200 }));
             });
         }
