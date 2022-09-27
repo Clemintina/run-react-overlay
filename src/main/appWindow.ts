@@ -418,7 +418,13 @@ const registerLogCommunications = () => {
 
             logFileReadline.on("line", async (line) => {
                 if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ") && !line.includes("[Astolfo HTTP Bridge]: [CHAT]")) return;
-                appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: line }, status: 200 }));
+                if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
+                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: line.replace(/\u00A7[0-9A-FK-OR]/ig,'') }, status: 200 }));
+                }
+                else {
+
+                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: line }, status: 200 }));
+                }
             });
         }
     });
