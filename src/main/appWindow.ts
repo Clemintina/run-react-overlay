@@ -23,6 +23,7 @@ import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji"
 import log from "electron-log";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
+
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -420,7 +421,7 @@ const registerLogCommunications = () => {
                 if (line.includes("[Client thread/INFO]: [CHAT]") || line.includes("[main/INFO]: [CHAT] ")) {
                     appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
                 } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
-                    const newLine = line.replace(/\u00A7[0-9A-FK-OR]/gi, "").replaceAll(/\uFFFD[0-9A-FK-OR]/gi, ""); // clean
+                    const newLine = line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
                     appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: newLine}, status: 200}));
                 } else {
                     return;

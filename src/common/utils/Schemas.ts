@@ -94,6 +94,7 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
+    astolfo: boolean;
     run: {
         friends: boolean;
     };

@@ -153,6 +153,21 @@ const Essentials = () => {
                         </span>
                     </SettingCard>
                     <SettingCard>
+                        <span>Astolfo Chat Bridge</span>
+                        <span />
+                        <span>
+                            <ToggleButton
+                                onChange={async () => {
+                                    useConfigStore.getState().setSettings({...settings, astolfo: !settings.astolfo});
+                                    await window.ipcRenderer.invoke("astolfo");
+                                }}
+                                options={{enabled: settings.astolfo}}
+                                // onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
+                            >
+                            </ToggleButton>
+                        </span>
+                    </SettingCard>
+                    <SettingCard>
                         <span>Auto Hide</span>
                         <span />
                         <ToggleButton

@@ -41,10 +41,6 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                 case "vanilla":
                     path += isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
                     break;
-                case "astolfo":
-                    path += isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
-                    await window.ipcRenderer.invoke("astolfo");
-                    break;
                 case "badlion":
                     path += isMacOs ? appData + "/minecraft/logs/blclient/minecraft/" : appData + "/.minecraft/logs/blclient/minecraft/";
                     break;
@@ -105,7 +101,6 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                 <MenuItem value={"badlion"}>Badlion</MenuItem>
                                 <MenuItem value={"lunar_old"}>Lunar</MenuItem>
                                 <MenuItem value={"lunar_mlv"}>Lunar Multi-version</MenuItem>
-                                <MenuItem value={"astolfo"}>Astolfo</MenuItem>
                                 <MenuItem value={"custom"}>Custom</MenuItem>
                             </Select>
                             <FormHelperText className={"text-red-500 font-bold"} style={configStore.error.code != 200 ? {} : {display: "none"}}>
@@ -144,11 +139,6 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                         />
                     </Typography>
 
-                    <Typography sx={{mt: 2}} style={clientLocal == "astolfo" ? {} : {display: "none"}}>
-                        <Button variant='outlined' color='error'>
-                            Run the overlay as ADMIN before selecting this (only need to run as admin once).
-                        </Button>
-                    </Typography>
                 </Box>
             </Modal>
         </div>
