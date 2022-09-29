@@ -59,7 +59,16 @@ const useConfigStore = create<ConfigStore>()(
                     apiKeyOwner: "",
                 },
                 setHypixelApiKey: async (hypixelApiKey) => {
-                    if (hypixelApiKey.length == 0) return;
+                    if (hypixelApiKey.length == 0) {
+                        const oldHypixel = get().hypixel;
+                        set(() => ({
+                            hypixel: {
+                                ...oldHypixel,
+                                apiKeyValid: false,
+                            },
+                        }));
+                        return;
+                    }
                     const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixelApiKey);
                     if (apiResponse.status === 200 && apiResponse?.data?.key != undefined) {
                         set(() => ({

@@ -14,10 +14,9 @@ export interface PlayerTags {
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
     const {run, boomzaTag} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
-    const {settings} = useConfigStore((state) => ({settings: state.settings}));
+    const {settings, hypixel, runConfig} = useConfigStore((state) => ({settings: state.settings, hypixel: state.hypixel, runConfig: state.run}));
     const tagArray: Array<JSX.Element> = [];
-
-    if (player.sources.runApi != null) {
+    if (runConfig.valid && player.sources.runApi != null) {
         const runApi = player.sources.runApi.data.data;
         if (runApi.blacklist.tagged) {
             tagArray.push(<span style={{color: `#${run.blacklist.colour.toString()}`}}>{run.blacklist.display}</span>);
@@ -52,7 +51,11 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             }
         }
     } else {
-        tagArray.push(<span style={{color: "red"}}>NICKED</span>);
+        if (hypixel.apiKeyValid) {
+            tagArray.push(<span style={{color: "red"}}>NICKED</span>);
+        } else {
+            tagArray.push(<span style={{color: "red"}}>Invalid Hypixel API Key</span>);
+        }
     }
 
     return (
