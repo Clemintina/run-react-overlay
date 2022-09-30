@@ -124,7 +124,7 @@ const TagEditorView = () => {
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
-                                                state.run.name_change.display = event.currentTarget.value;
+                                                state.run.friends.display = event.currentTarget.value;
                                             }),
                                         );
                                     }}

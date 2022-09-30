@@ -422,6 +422,7 @@ const registerLogCommunications = () => {
                     appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
                 } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
                     const newLine = line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
+                    console.log(newLine)
                     appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: newLine}, status: 200}));
                 } else {
                     return;
@@ -559,6 +560,11 @@ const registerOverlayFeatures = () => {
         setTimeout(() => {
             notif.close();
         }, 60000);
+    });
+
+    ipcMain.handle(('isAdmin'), async (event:IpcMainInvokeEvent, ...args)=>{
+        let isAdmin = false;
+        return {data: isAdmin, status: 200}
     });
 
     ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {

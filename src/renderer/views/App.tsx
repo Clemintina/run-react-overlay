@@ -191,6 +191,7 @@ const AppTable = () => {
             columnApi.applyColumnState({state: columnState, applyOrder: true});
             event.api.setRowData(players);
             onGridReady = true;
+            this.suppressDragLeaveHidesColumns = true;
         },
         onGridColumnsChanged(event: GridColumnsChangedEvent) {
             onSaveGridColumnState(event.columnApi);
@@ -199,6 +200,7 @@ const AppTable = () => {
             onSortingOrderChange(event);
         },
         onColumnMoved(event: ColumnMovedEvent) {
+            
             onSaveGridColumnState(event.columnApi);
         },
         columnDefs: columns,
