@@ -421,7 +421,7 @@ const registerLogCommunications = () => {
                 if (line.includes("[Client thread/INFO]: [CHAT]") || line.includes("[main/INFO]: [CHAT] ")) {
                     appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
                 } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
-                    const newLine = (line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, "")).replaceAll(/\uFFFD[0-9A-FK-OR]/gi, ""); // clean
+                    const newLine = line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
                     appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: newLine}, status: 200}));
                 } else {
                     return;
@@ -573,7 +573,7 @@ const registerOverlayFeatures = () => {
                     <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
                 </Queue>
                 <RollingRandomAccessFile name="File" fileName="${appData}/.minecraft/logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" charset="UTF-8" />
                     <Policies>
                         <TimeBasedTriggeringPolicy />
                         <OnStartupTriggeringPolicy />
