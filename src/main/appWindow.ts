@@ -132,12 +132,12 @@ export const createAppWindow = (): BrowserWindow => {
             setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
             autoUpdater.on("checking-for-update", async () => {
                 log.info("Checking for updates...");
+                appWindow.blur();
+                appWindow.setTitle("Checking for updates...");
             });
             autoUpdater.on("error", async (error) => log.error(error));
             autoUpdater.on("update-available", async () =>  {
                 log.info("Update available")
-                appWindow.blur();
-                appWindow.setTitle("Updating...");
         });
             autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
                 log.info("Updating Overlay to " + releaseName);
