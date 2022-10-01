@@ -134,11 +134,13 @@ export const createAppWindow = (): BrowserWindow => {
                 log.info("Checking for updates...");
             });
             autoUpdater.on("error", async (error) => log.error(error));
-            autoUpdater.on("update-available", async () => log.info("Update available"));
-            autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
-                log.info("Updating Overlay to " + releaseName);
+            autoUpdater.on("update-available", async () =>  {
+                log.info("Update available")
                 appWindow.blur();
                 appWindow.setTitle("Updating...");
+        });
+            autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
+                log.info("Updating Overlay to " + releaseName);
                 autoUpdater.quitAndInstall();
             });
         }
