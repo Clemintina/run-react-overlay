@@ -10,7 +10,7 @@ import TagEditor from "@components/ui/settings/views/TagEditor";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import ColourRenderer from "@components/ui/settings/ColourRenderer";
 import NickView from "@components/ui/settings/views/Nicks";
-import NewTItlebar from "@components/ui/NewTItlebar";
+import NewTitlebar from "@components/ui/NewTitlebar";
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
@@ -46,7 +46,7 @@ createRoot(document.getElementById("app")!).render(
                 <div className='mainBody text-gray-400' id={"main-body"}>
                     <ColourRenderer>
                         <HashRouter basename='/'>
-                            <NewTItlebar>
+                            <NewTitlebar>
                                 <Routes>
                                     <Route path='/' element={<App />} />
                                     <Route path='/settings' element={<Essentials />} />
@@ -54,7 +54,7 @@ createRoot(document.getElementById("app")!).render(
                                     <Route path='/settings/tags' element={<TagEditor />} />
                                     <Route path='/settings/nicks' element={<NickView />} />
                                 </Routes>
-                            </NewTItlebar>
+                            </NewTitlebar>
                         </HashRouter>
                     </ColourRenderer>
                 </div>
