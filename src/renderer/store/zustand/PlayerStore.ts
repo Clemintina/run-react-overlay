@@ -44,7 +44,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         const apiKey = configStore.hypixel.apiKey;
         const keathizApiKey = configStore.keathiz.key;
 
-        if (apiKey === undefined || apiKey.length !== 36) {
+        if (apiKey === undefined || apiKey.length !== 36 || !configStore.hypixel.apiKeyValid) {
             configStore.setErrorMessage({
                 title: "No Hypixel API Key",
                 cause: "No Hypixel API Key",

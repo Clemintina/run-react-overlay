@@ -16,13 +16,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 import {Link} from "react-router-dom";
 import {InputTextBox} from "@components/user/InputTextBox";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faUserNinja, faWindowClose, faWindowMinimize} from "@fortawesome/free-solid-svg-icons";
-import {useTheme} from "@mui/material";
+import {Alert, useTheme} from "@mui/material";
 import {Home, Sell} from "@mui/icons-material";
 import {MenuOption} from "@common/utils/Schemas";
 
@@ -49,10 +49,12 @@ const Main = styled("main", {shouldForwardProp: (prop) => prop !== "open"})<AppB
 }));
 
 const AppBar = styled(MuiAppBar, {shouldForwardProp: (prop) => prop !== "open"})<AppBarProps>(({theme, open}) => ({
+    // Make the sidebar open correctly
     transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
+    // Make it close correctly
     ...(open && {
         width: `calc(100% - ${drawerWidth}px)`,
         marginLeft: `${drawerWidth}px`,
@@ -93,11 +95,13 @@ const NewTitlebar = ({children}) => {
         setOpen(false);
     };
     const theme = useTheme();
+    const localStore: ConfigStore = useConfigStore((state) => state);
+    const errorMessageCode = localStore.error.code;
 
     return (
         <Box sx={{display: "flex"}} className={"drag"}>
             <CssBaseline />
-            <AppBar position='fixed' open={open} className={"drag"} sx={{opacity: 100}}>
+            <AppBar position='fixed' open={open} className={"drag"} sx={{opacity: 100}} style={{backgroundColor: "transparent"}}>
                 <Toolbar>
                     <IconButton color='inherit' aria-label='open nav bar' onClick={handleDrawerOpen} edge='start' sx={{mr: 2, ...(open && {display: "none"})}}>
                         <MenuIcon />
@@ -188,6 +192,18 @@ const NewTitlebar = ({children}) => {
             </Drawer>
             <Main open={open}>
                 <DrawerHeader />
+                {errorMessageCode !== 200 ? (
+                    <Alert color="error" sx={{opacity: 100}}>
+                        <Typography sx={{opacity: 100}}>
+                            <span className='fon"-medium'>
+ "                              Code: <span className='errorMe"sage'> {loca"Store.error.code}</span>
+                            </span>{" "}
+                            Cause: <span className='errorMessag"'> {localSto"e.error.cause}</span>
+                        </Typography>
+                    </Alert>
+                ) : (
+                    <span />
+                )}
                 <span className={"nodrag"}>{children}</span>
             </Main>
         </Box>
