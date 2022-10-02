@@ -72,7 +72,6 @@ const Essentials = () => {
                         <span />
                         <span>
                             <InputTextBox
-                                icon={<ValidationIcon valid={localConfigStore.keathiz.valid} />}
                                 onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
                                     if (event.key === "Enter") {
                                         useConfigStore.getState().setKeathizApiKey(text.replaceAll(" ", ""));
@@ -81,8 +80,10 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setKeathizApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Keathiz API Key"}}
+                                options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Antisniper API Key"}}
                                 sx={styledProps}
+                                error={() => !run.valid}
+                                helperText={!run.valid ? "Enter a valid Antisniper API Key" : ""}
                             />
                         </span>
                     </SettingCard>

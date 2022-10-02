@@ -10,7 +10,7 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.4.90-STABLE",
+	"version": "1.5.00-STABLE",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
