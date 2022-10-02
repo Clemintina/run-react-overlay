@@ -6,7 +6,7 @@ import {ColourPickerArray} from "@components/user/settings/components/ColourPick
 import {TagArray} from "@common/utils/Schemas";
 import useTagStore from "@renderer/store/zustand/TagStore";
 import {TagEditor} from "@components/user/settings/components/TagEditor";
-import {AccordionDetails} from "@mui/material";
+import {AccordionDetails, ThemeProvider} from "@mui/material";
 import {UserAccordion} from "@components/user/UserAccordion";
 import produce from "immer";
 import {TagSchema} from "@common/utils/TagSchema";
@@ -14,10 +14,11 @@ import {TagSchema} from "@common/utils/TagSchema";
 const TagEditorView = () => {
     const {tagStore} = useTagStore((state) => ({tagStore: state}));
     let localTagStore = tagStore as TagSchema;
+    const theme = {}
 
     // TODO make it look nicer and cleaner
     return (
-        <div>
+        <ThemeProvider theme={theme}>
             <NavigationBar>
                 <div className="h-full p-2 flex flex-col">
                     <SettingCard>
@@ -367,7 +368,7 @@ const TagEditorView = () => {
                     </UserAccordion>
                 </div>
             </NavigationBar>
-        </div>
+        </ThemeProvider>
     );
 };
 

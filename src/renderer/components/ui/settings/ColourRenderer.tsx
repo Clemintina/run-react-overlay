@@ -2,8 +2,11 @@ import React from "react";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import {alpha, createTheme, ThemeProvider} from "@mui/material";
 
-const ColourRenderer = (props: {children: JSX.Element}) => {
-    const {colours, opacity} = useConfigStore((state) => ({colours: state.colours, opacity: state.browserWindow.opacity}));
+const ColourRenderer = (props: { children: JSX.Element }) => {
+    const {colours, opacity} = useConfigStore((state) => ({
+        colours: state.colours,
+        opacity: state.browserWindow.opacity
+    }));
     const theme = createTheme({
         palette: {
             mode: "dark",
@@ -30,8 +33,7 @@ const ColourRenderer = (props: {children: JSX.Element}) => {
             MuiPaper: {
                 styleOverrides: {
                     root: {
-                        backgroundColor: `#${colours.backgroundColour}`,
-                        opacity: opacity / 100,
+                        backgroundColor: alpha(useConfigStore.getState().colours.backgroundColour, useConfigStore.getState().browserWindow.opacity / 100),
                     },
                 },
             },

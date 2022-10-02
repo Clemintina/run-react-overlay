@@ -28,14 +28,16 @@ export interface InputTextBox {
 }
 
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
-    const {colours, opacity} = useConfigStore((state) => ({colours: state.colours, opacity: state.browserWindow.opacity}));
+    const {colours, opacity} = useConfigStore((state) => ({
+        colours: state.colours,
+        opacity: state.browserWindow.opacity
+    }));
     const [getTextField, setTextField] = useState(props.options?.value ?? "");
     const [getError, setError] = useState(props?.error ?? false);
 
     useEffect(() => {
         setTextField(props?.options?.value ?? "");
-        setError(props?.error ?? false);
-    }, [props?.options?.value, props?.error]);
+    }, [props?.options?.value]);
 
     const standardProp = {
         "& .MuiInput-underline:after": {
@@ -51,12 +53,20 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
             <TextField
                 type='text'
                 onKeyDown={(event) => {
-                    if (props.onKeyDown != undefined) props?.onKeyDown(event, getTextField);
+                    if (props.onKeyDown != undefined) {
+                        props?.onKeyDown(event, getTextField);
+                        if (props?.error) {
+                            setError(props.error);
+                        }
+                    }
                     if (event.key === "Enter" && props?.options?.resetOnEnter) {
                         setTextField("");
                     }
                 }}
-                style={{backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100), color: colours.primaryColour}}
+                style={{
+                    backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100),
+                    color: colours.primaryColour
+                }}
                 onFocus={(event) => {
                     if (props.onFocus != undefined) props?.onFocus(event, getTextField);
                 }}
