@@ -194,8 +194,6 @@ const useConfigStore = create<ConfigStore>()(
                                 title: "",
                             },
                         });
-
-
                     } else {
                         get().setErrorMessage({
                             title: "Invalid RUN Key",

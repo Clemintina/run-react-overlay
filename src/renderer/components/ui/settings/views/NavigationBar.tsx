@@ -24,11 +24,6 @@ const NavigationBar = (props: {children}) => {
         <div className='flex' style={{height: useConfigStore.getState().browserWindow.height}}>
             <div className='flex'>
                 <div className='flex '>
-                    <div className='flex justify-between'>
-                        <div className='flex border-r-2 border-gray-500'>
-                            <div>{menuLinks}</div>
-                        </div>
-                    </div>
                     <div className='flex'>
                         <div className={"grid grid-col-3"}>{props.children}</div>
                     </div>

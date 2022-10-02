@@ -22,16 +22,20 @@ export interface InputTextBox {
     };
     icon?: JSX.Element;
     size?: "small" | "medium";
+    error?: () => boolean;
+    helperText?: string;
     sx?: SxProps;
 }
 
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
     const {colours, opacity} = useConfigStore((state) => ({colours: state.colours, opacity: state.browserWindow.opacity}));
     const [getTextField, setTextField] = useState(props.options?.value ?? "");
+    const [getError, setError] = useState(props?.error ?? false);
 
     useEffect(() => {
         setTextField(props?.options?.value ?? "");
-    }, [props?.options?.value]);
+        setError(props?.error ?? false);
+    }, [props?.options?.value, props?.error]);
 
     const standardProp = {
         "& .MuiInput-underline:after": {
@@ -42,10 +46,10 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
     };
 
     return (
-        <Box className="w-full">
+        <Box className='w-full'>
             <span>{props?.icon}</span>
             <TextField
-                type="text"
+                type='text'
                 onKeyDown={(event) => {
                     if (props.onKeyDown != undefined) props?.onKeyDown(event, getTextField);
                     if (event.key === "Enter" && props?.options?.resetOnEnter) {
@@ -64,10 +68,12 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                 }}
                 placeholder={props?.options?.placeholder ?? ""}
                 className={props?.options?.className ?? ""}
-                variant={"standard"}
+                variant={"outlined"}
                 size={props?.size ?? "small"}
                 sx={standardProp}
                 value={getTextField}
+                error={getError}
+                helperText={props?.helperText ?? ""}
                 onChange={(event) => {
                     setTextField(event.target.value);
                     if (props.onChange != undefined) props?.onChange(event, getTextField);

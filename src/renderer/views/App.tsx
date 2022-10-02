@@ -200,7 +200,6 @@ const AppTable = () => {
             onSortingOrderChange(event);
         },
         onColumnMoved(event: ColumnMovedEvent) {
-            
             onSaveGridColumnState(event.columnApi);
         },
         columnDefs: columns,
@@ -214,8 +213,9 @@ const AppTable = () => {
     };
 
     const backgroundStyle = {
-        height: browserWindow.height - 38,
+        height: browserWindow.height - 200,
         OverflowX: "hidden",
+        OverflowY: "shown",
     };
 
     return (

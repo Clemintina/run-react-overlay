@@ -6,7 +6,6 @@ import React from "react";
 import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
 import {InputTextBox} from "@components/user/InputTextBox";
 import {Alert} from "@mui/material";
-import {ContactStaff} from "@components/user/settings/dev/ContactStaff";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 
@@ -42,9 +41,7 @@ const TitleBar = () => {
                                 </Link>
                             </div>
                             <div className='md:flex items-center space-x-1'>
-                                <span className={"nodrag"}>
-
-                                </span>
+                                <span className={"nodrag"}></span>
                             </div>
                         </div>
                         <div className='md:flex items-center space-x-3 nodrag'>

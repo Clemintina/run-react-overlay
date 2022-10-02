@@ -26,13 +26,12 @@ const Essentials = () => {
     return (
         <div>
             <NavigationBar>
-                <div className="w-full h-full p-2 flex flex-col space-y-2">
+                <div className='w-full h-full p-2 flex flex-col space-y-2'>
                     <SettingCard>
                         <span>Hypixel API Key</span>
                         <span />
                         <span>
                             <InputTextBox
-                                icon={<ValidationIcon valid={hypixel.apiKeyValid} />}
                                 onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
                                     if (event.key === "Enter") {
                                         useConfigStore.getState().setHypixelApiKey(text.replaceAll(" ", ""));
@@ -43,6 +42,8 @@ const Essentials = () => {
                                 }}
                                 options={{placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key"}}
                                 sx={styledProps}
+                                error={() => !hypixel.apiKeyValid}
+                                helperText={!hypixel.apiKeyValid ? "Enter a valid Hypixel API Key" : ""}
                             />
                         </span>
                     </SettingCard>
@@ -51,7 +52,6 @@ const Essentials = () => {
                         <span />
                         <span>
                             <InputTextBox
-                                icon={<ValidationIcon valid={run.valid} />}
                                 onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
                                     if (event.key === "Enter") {
                                         useConfigStore.getState().setRunApiKey(text.replaceAll(" ", ""));
@@ -62,6 +62,8 @@ const Essentials = () => {
                                 }}
                                 options={{placeholder: run.valid ? run.apiKey : "Run API Key"}}
                                 sx={styledProps}
+                                error={() => !run.valid}
+                                helperText={!run.valid ? "Enter a valid RUN API Key" : ""}
                             />
                         </span>
                     </SettingCard>
@@ -163,8 +165,7 @@ const Essentials = () => {
                                 }}
                                 options={{enabled: settings.astolfo}}
                                 // onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
-                            >
-                            </ToggleButton>
+                            ></ToggleButton>
                         </span>
                     </SettingCard>
                     <SettingCard>
@@ -182,7 +183,7 @@ const Essentials = () => {
                         <span />
                         <span>
                             <Slider
-                                aria-label="Opacity"
+                                aria-label='Opacity'
                                 value={opacityValue}
                                 onChange={(event, value) => {
                                     const opacityValue: number = typeof value == "number" ? value : value[0];
@@ -193,7 +194,7 @@ const Essentials = () => {
                                     useConfigStore.getState().setBrowserWindow({height: browserWindow.height, opacity: opacityValue, width: browserWindow.width});
                                 }}
                                 getAriaValueText={(value) => `${value}`}
-                                valueLabelDisplay="auto"
+                                valueLabelDisplay='auto'
                                 min={1}
                                 valueLabelFormat={(value: number) => {
                                     return value;
