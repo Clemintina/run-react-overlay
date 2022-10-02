@@ -1,19 +1,20 @@
-import React, {useState} from "react";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
-import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
-import {SettingHeader} from "@components/user/settings/components/SettingHeader";
-import {ToggleButton} from "@components/user/ToggleButton";
+import React, { useState } from "react";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { InputTextBox } from "@components/user/InputTextBox";
+import { ValidationIcon } from "@components/user/settings/components/ValidationIcon";
+import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
+import { SettingHeader } from "@components/user/settings/components/SettingHeader";
+import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {Slider, SxProps} from "@mui/material";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import { Slider, SxProps } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import Tooltip from "@mui/material/Tooltip";
 
 const Essentials = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
-    const {hypixel, logs, settings, run, browserWindow} = useConfigStore((state) => ({hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow}));
+    const { hypixel, logs, settings, run, browserWindow } = useConfigStore((state) => ({ hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow }));
     const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
 
     useConfigStore.getState().setVersion();
@@ -40,7 +41,7 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setHypixelApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key"}}
+                                options={{ placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key" }}
                                 sx={styledProps}
                                 error={() => !hypixel.apiKeyValid}
                                 helperText={!hypixel.apiKeyValid ? "Enter a valid Hypixel API Key" : ""}
@@ -60,14 +61,14 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setRunApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{placeholder: run.valid ? run.apiKey : "Run API Key"}}
+                                options={{ placeholder: run.valid ? run.apiKey : "Run API Key" }}
                                 sx={styledProps}
                                 error={() => !run.valid}
                                 helperText={!run.valid ? "Enter a valid RUN API Key" : ""}
                             />
                         </span>
                     </SettingCard>
-                    <SettingCard options={{shown: settings.keathiz}}>
+                    <SettingCard options={{ shown: settings.keathiz }}>
                         <span>Antisniper API Key</span>
                         <span />
                         <span>
@@ -80,7 +81,7 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setKeathizApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Antisniper API Key"}}
+                                options={{ placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Antisniper API Key" }}
                                 sx={styledProps}
                                 error={() => !run.valid}
                                 helperText={!run.valid ? "Enter a valid Antisniper API Key" : ""}
@@ -102,30 +103,33 @@ const Essentials = () => {
                         <span>APIs</span>
                         <span />
                     </SettingHeader>
+
                     <SettingCard>
                         <span>Boomza (BWStats)</span>
                         <span />
                         <ToggleButton
                             text={""}
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, boomza: !settings.boomza});
+                                useConfigStore.getState().setSettings({ ...settings, boomza: !settings.boomza });
                             }}
-                            // onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
-                            options={{enabled: settings.boomza}}
+                            options={{ enabled: settings.boomza }}
                         >
                             <span>
-                                <FontAwesomeIcon icon={faMapLocation} />
+                                <Tooltip title="This API is proxied to protect your IP.">
+                                    <FontAwesomeIcon icon={faMapLocation} />
+                                </Tooltip>
                             </span>
                         </ToggleButton>
                     </SettingCard>
+
                     <SettingCard>
                         <span>Lunar Tags</span>
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, lunar: !settings.lunar});
+                                useConfigStore.getState().setSettings({ ...settings, lunar: !settings.lunar });
                             }}
-                            options={{enabled: settings.lunar}}
+                            options={{ enabled: settings.lunar }}
                         />
                     </SettingCard>
                     <SettingCard>
@@ -133,9 +137,9 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, run: {friends: !settings.run.friends}});
+                                useConfigStore.getState().setSettings({ ...settings, run: { friends: !settings.run.friends } });
                             }}
-                            options={{enabled: settings.run.friends}}
+                            options={{ enabled: settings.run.friends }}
                         />
                     </SettingCard>
                     <SettingCard>
@@ -144,13 +148,14 @@ const Essentials = () => {
                         <span>
                             <ToggleButton
                                 onChange={async () => {
-                                    useConfigStore.getState().setSettings({...settings, keathiz: !settings.keathiz});
+                                    useConfigStore.getState().setSettings({ ...settings, keathiz: !settings.keathiz });
                                 }}
-                                options={{enabled: settings.keathiz}}
-                                //onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
+                                options={{ enabled: settings.keathiz }}
                             >
                                 <span>
-                                    <FontAwesomeIcon icon={faMapLocation} />
+                                    <Tooltip title="This API is proxied to protect your IP.">
+                                        <FontAwesomeIcon icon={faMapLocation} />
+                                    </Tooltip>
                                 </span>
                             </ToggleButton>
                         </span>
@@ -161,10 +166,10 @@ const Essentials = () => {
                         <span>
                             <ToggleButton
                                 onChange={async () => {
-                                    useConfigStore.getState().setSettings({...settings, astolfo: !settings.astolfo});
+                                    useConfigStore.getState().setSettings({ ...settings, astolfo: !settings.astolfo });
                                     await window.ipcRenderer.invoke("astolfo");
                                 }}
-                                options={{enabled: settings.astolfo}}
+                                options={{ enabled: settings.astolfo }}
                             ></ToggleButton>
                         </span>
                     </SettingCard>
@@ -173,9 +178,9 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, preferences: {autoHide: !settings.preferences.autoHide}});
+                                useConfigStore.getState().setSettings({ ...settings, preferences: { autoHide: !settings.preferences.autoHide } });
                             }}
-                            options={{enabled: settings.preferences.autoHide}}
+                            options={{ enabled: settings.preferences.autoHide }}
                         />
                     </SettingCard>
                     <SettingCard>
@@ -188,10 +193,10 @@ const Essentials = () => {
                                 onChange={(event, value) => {
                                     const opacityValue: number = typeof value == "number" ? value : value[0];
                                     setOpacityValue(opacityValue);
-                                    useConfigStore.getState().setBrowserWindow({...useConfigStore.getState().browserWindow, opacity: opacityValue});
+                                    useConfigStore.getState().setBrowserWindow({ ...useConfigStore.getState().browserWindow, opacity: opacityValue });
                                 }}
                                 onBlur={() => {
-                                    useConfigStore.getState().setBrowserWindow({height: browserWindow.height, opacity: opacityValue, width: browserWindow.width});
+                                    useConfigStore.getState().setBrowserWindow({ height: browserWindow.height, opacity: opacityValue, width: browserWindow.width });
                                 }}
                                 getAriaValueText={(value) => `${value}`}
                                 valueLabelDisplay='auto'
