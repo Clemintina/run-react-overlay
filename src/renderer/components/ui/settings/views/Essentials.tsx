@@ -82,8 +82,8 @@ const Essentials = () => {
                                 }}
                                 options={{placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Antisniper API Key"}}
                                 sx={styledProps}
-                                error={() => !run.valid}
-                                helperText={!run.valid ? "Enter a valid Antisniper API Key" : ""}
+                                error={() => !localConfigStore.keathiz.valid}
+                                helperText={!localConfigStore.keathiz.valid ? "Enter a valid Antisniper API Key" : ""}
                             />
                         </span>
                     </SettingCard>

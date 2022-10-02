@@ -78,11 +78,11 @@ const getIconType = (menuObject: MenuOption) => {
     const ime = menuObject.menuName.toLowerCase();
     switch (ime) {
         case "essentials":
-            return <FontAwesomeIcon icon={faCheckCircle}/>;
+            return <FontAwesomeIcon icon={faCheckCircle} />;
         case "nicks":
-            return <FontAwesomeIcon icon={faUserNinja}/>;
+            return <FontAwesomeIcon icon={faUserNinja} />;
         case "tags":
-            return <Sell/>;
+            return <Sell />;
     }
 };
 
@@ -100,14 +100,11 @@ const NewTitlebar = ({children}) => {
 
     return (
         <Box sx={{display: "flex"}} className={"drag"}>
-            <CssBaseline/>
-            <AppBar position='fixed' open={open} className={"drag"} sx={{opacity: 100}}
-                    style={{backgroundColor: "transparent"}}>
+            <CssBaseline />
+            <AppBar position='fixed' open={open} className={"drag"} sx={{opacity: 100}} style={{backgroundColor: "transparent"}}>
                 <Toolbar>
-                    <IconButton color='inherit' aria-label='open nav bar' onClick={handleDrawerOpen} edge='start'
-                                className={'nodrag'}
-                                sx={{mr: 2, ...(open && {display: "none"})}}>
-                        <MenuIcon/>
+                    <IconButton color='inherit' aria-label='open nav bar' onClick={handleDrawerOpen} edge='start' className={"nodrag"} sx={{mr: 2, ...(open && {display: "none"})}}>
+                        <MenuIcon />
                     </IconButton>
                     <Typography variant='h6' noWrap component='div' className={"text-bold"}>
                         Seraph
@@ -131,7 +128,7 @@ const NewTitlebar = ({children}) => {
                                         window.ipcRenderer.send("windowMinimise");
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faWindowMinimize}/>
+                                    <FontAwesomeIcon icon={faWindowMinimize} />
                                 </button>
                             </div>
                             <div>
@@ -141,7 +138,7 @@ const NewTitlebar = ({children}) => {
                                         window.ipcRenderer.send("windowClose");
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faWindowClose}/>
+                                    <FontAwesomeIcon icon={faWindowClose} />
                                 </button>
                             </div>
                         </div>
@@ -166,28 +163,27 @@ const NewTitlebar = ({children}) => {
                 anchor='left'
                 open={open}
             >
-                <DrawerHeader className={'nodrag'}>
-                    <IconButton onClick={handleDrawerClose}>{theme.direction === "ltr" ? <ChevronLeftIcon/> :
-                        <ChevronRightIcon/>}</IconButton>
+                <DrawerHeader className={"nodrag"}>
+                    <IconButton onClick={handleDrawerClose}>{theme.direction === "ltr" ? <ChevronLeftIcon /> : <ChevronRightIcon />}</IconButton>
                 </DrawerHeader>
-                <Divider/>
+                <Divider />
                 <List>
                     <ListItem disablePadding>
-                        <Link to={"/"} onClick={() => setOpen(!open)} className={'nodrag'}>
+                        <Link to={"/"} onClick={() => setOpen(!open)} className={"nodrag"}>
                             <ListItemButton sx={{width: drawerWidth}}>
                                 <ListItemIcon>
-                                    <Home/>
+                                    <Home />
                                 </ListItemIcon>
-                                <ListItemText primary={"Home"}/>
+                                <ListItemText primary={"Home"} />
                             </ListItemButton>
                         </Link>
                     </ListItem>
                     {useConfigStore.getState().menuOptions.map((text, index) => (
                         <ListItem key={index} disablePadding>
-                            <Link to={text.menuLink} onClick={() => setOpen(!open)} className={'nodrag'}>
+                            <Link to={text.menuLink} onClick={() => setOpen(!open)} className={"nodrag"}>
                                 <ListItemButton sx={{width: drawerWidth}}>
                                     <ListItemIcon>{getIconType(text)}</ListItemIcon>
-                                    <ListItemText primary={text.menuName}/>
+                                    <ListItemText primary={text.menuName} />
                                 </ListItemButton>
                             </Link>
                         </ListItem>
@@ -195,18 +191,18 @@ const NewTitlebar = ({children}) => {
                 </List>
             </Drawer>
             <Main open={open}>
-                <DrawerHeader/>
+                <DrawerHeader />
                 {errorMessageCode !== 200 ? (
-                    <Alert color="error" sx={{opacity: 100}}>
+                    <Alert color='error' sx={{opacity: 100}}>
                         <Typography sx={{opacity: 100}}>
                             <span className='font-medium'>
-                               Code: <span className='errorMessage'> {localStore.error.code}</span>
+                                Code: <span className='errorMessage'> {localStore.error.code}</span>
                             </span>
                             Cause: <span className='errorMessage'> {localStore.error.cause}</span>
                         </Typography>
                     </Alert>
                 ) : (
-                    <span/>
+                    <span />
                 )}
                 <span className={"nodrag"}>{children}</span>
             </Main>
