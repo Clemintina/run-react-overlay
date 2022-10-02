@@ -48,7 +48,7 @@ const Essentials = () => {
                         </span>
                     </SettingCard>
                     <SettingCard>
-                        <span>RUN API Key</span>
+                        <span>Seraph API Key</span>
                         <span />
                         <span>
                             <InputTextBox
@@ -68,7 +68,7 @@ const Essentials = () => {
                         </span>
                     </SettingCard>
                     <SettingCard options={{shown: settings.keathiz}}>
-                        <span>Keathiz API Key</span>
+                        <span>Antisniper API Key</span>
                         <span />
                         <span>
                             <InputTextBox
@@ -147,7 +147,7 @@ const Essentials = () => {
                                     useConfigStore.getState().setSettings({...settings, keathiz: !settings.keathiz});
                                 }}
                                 options={{enabled: settings.keathiz}}
-                                // onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
+                                //onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
                             >
                                 <span>
                                     <FontAwesomeIcon icon={faMapLocation} />
@@ -165,7 +165,6 @@ const Essentials = () => {
                                     await window.ipcRenderer.invoke("astolfo");
                                 }}
                                 options={{enabled: settings.astolfo}}
-                                // onHover={<span className={"text-red-500"}>This API is proxied to protect your IP.</span>}
                             ></ToggleButton>
                         </span>
                     </SettingCard>

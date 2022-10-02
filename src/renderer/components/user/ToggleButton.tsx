@@ -5,7 +5,6 @@ import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import {Checkbox, styled, Typography} from "@mui/material";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {useSelector} from "react-redux";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface ToggleButton {
@@ -27,8 +26,7 @@ export interface ToggleButton {
 export const ToggleButton: React.ElementType = (props: ToggleButton) => {
     const CustomToolTip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)(({theme}) => ({
         [`& .${tooltipClasses.tooltip}`]: {
-            // backgroundColor: colours.backgroundColour,
-            backgroundColor: "#120211",
+            backgroundColor: colours.backgroundColour,
             color: colours.primaryColour,
             padding: "5px",
             paddingBottom: "3px",
@@ -56,7 +54,7 @@ export const ToggleButton: React.ElementType = (props: ToggleButton) => {
     if (props.onHover != undefined) {
         tooltip = (
             <CustomToolTip
-                className={""}
+                className={"text-red-500"}
                 title={
                     <React.Fragment>
                         <Typography>{props.onHoverTitle ?? <span />}</Typography>
