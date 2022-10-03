@@ -2,7 +2,6 @@
 import React from "react";
 import {Player} from "@common/utils/PlayerUtils";
 import {getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig} from "@common/utils/player/RenderComponent";
-import useTagStore from "@renderer/store/zustand/TagStore";
 
 export interface RenderCoreStatsColour {
     player: Player;
@@ -12,7 +11,6 @@ export interface RenderCoreStatsColour {
 
 const RenderCoreStatsColour: React.ElementType = (props: RenderCoreStatsColour) => {
     const player = props.player;
-
     let renderer: JSX.Element;
     let playerValue;
     if (!player.nicked) {

@@ -117,6 +117,16 @@ const columns: ColDef[] = [
         cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
     },
     {
+        field: "finalkills",
+        headerName: "Final Kills",
+        flex: 1,
+        hide: true,
+        minWidth: mediumColumnSize,
+        type: "number",
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "finalkills"),
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
+    },
+    {
         field: "session",
         flex: 1,
         minWidth: smallColumnSize,
@@ -126,7 +136,7 @@ const columns: ColDef[] = [
     },
 ];
 
-const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "bblr" | "wins" | "losses") => {
+const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "bblr" | "wins" | "losses" | "finalkills") => {
     const p1: Player = nodeA.data,
         p2: Player = nodeB.data;
     if (p1.sources.runApi?.data.data.blacklist.tagged || p1.nicked) {
@@ -157,6 +167,8 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
             return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0);
         case "losses":
             return (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
+        case "finalkills":
+            return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0);
         default:
             assertDefaultError(sortingData);
     }

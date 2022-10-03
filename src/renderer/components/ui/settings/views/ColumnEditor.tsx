@@ -4,7 +4,7 @@ import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {ToggleButton} from "@components/user/ToggleButton";
 import {AgGridReact} from "ag-grid-react";
-import {ColDef, GetRowIdParams, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowValueChangedEvent} from "ag-grid-community";
+import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowValueChangedEvent} from "ag-grid-community";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerStar from "@common/utils/player/PlayerStar";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -14,6 +14,7 @@ import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import PlayerSession from "@common/utils/player/PlayerSession";
 import {Player} from "@common/utils/PlayerUtils";
+import {TableState} from "@common/utils/Schemas";
 
 const tinyColumnSize = 30;
 const smallColumnSize = 60;
@@ -35,6 +36,12 @@ const ColumnEditorView = () => {
         });
         useConfigStore.getState().setTableState(table);
         setPlayerData([constantPlayerData()]);
+    };
+
+    const onSaveGridColumnState = (e: ColumnApi) => {
+        const columnState = e.getColumnState();
+        const res: TableState = {columnState};
+        useConfigStore.getState().setTableState(res);
     };
 
     const defaultColDefs: ColDef = {
@@ -120,6 +127,13 @@ const ColumnEditorView = () => {
             cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
         },
         {
+            field: "finalkills",
+            flex: 1,
+            minWidth: mediumColumnSize,
+            type: "number",
+            cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
+        },
+        {
             field: "session",
             flex: 1,
             minWidth: smallColumnSize,
@@ -139,6 +153,12 @@ const ColumnEditorView = () => {
         },
         onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
             event.columnApi.applyColumnState({state: columnState, applyOrder: true});
+        },
+        onGridColumnsChanged(event: GridColumnsChangedEvent) {
+            onSaveGridColumnState(event.columnApi);
+        },
+        onColumnMoved(event: ColumnMovedEvent) {
+            onSaveGridColumnState(event.columnApi);
         },
         columnDefs: [...columns],
         defaultColDef: defaultColDefs,
