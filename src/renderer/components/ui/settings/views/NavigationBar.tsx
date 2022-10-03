@@ -1,18 +1,8 @@
 import React from "react";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import {Box} from "@mui/material";
 
-const NavigationBar = (props: { children }) => {
-    return (
-        <div className='flex' style={{height: useConfigStore.getState().browserWindow.height}}>
-            <div className='flex'>
-                <div className='flex '>
-                    <div className='flex'>
-                        <div className={"grid grid-col-3"}>{props.children}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+const NavigationBar = (props: {children}) => {
+    return <Box className={"grid grid-col-3 w-full"}>{props.children}</Box>;
 };
 
 export default NavigationBar;

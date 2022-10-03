@@ -209,7 +209,11 @@ const NewTitlebar = ({children}) => {
                 ) : (
                     <span />
                 )}
-                <span className={"nodrag"}>{children}</span>
+                <div className={"nodrag"}>
+                    <Box height='100vh' display='flex' flexDirection='column'>
+                        {children}
+                    </Box>
+                </div>
             </Main>
         </Box>
     );

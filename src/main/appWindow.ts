@@ -23,7 +23,6 @@ import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji"
 import log from "electron-log";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
-
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -105,6 +104,7 @@ export const createAppWindow = (): BrowserWindow => {
         frame: false,
         transparent: true,
         titleBarStyle: "hidden",
+        useContentSize: true,
         icon: path.join("assets", "images", "icon.ico"),
         webPreferences: {
             nodeIntegration: true,

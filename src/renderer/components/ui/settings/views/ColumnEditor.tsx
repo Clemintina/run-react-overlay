@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
 import {ToggleButton} from "@components/user/ToggleButton";
 import {AgGridReact} from "ag-grid-react";
 import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowValueChangedEvent} from "ag-grid-community";
@@ -15,6 +14,7 @@ import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import PlayerSession from "@common/utils/player/PlayerSession";
 import {Player} from "@common/utils/PlayerUtils";
 import {TableState} from "@common/utils/Schemas";
+import {Box} from "@mui/material";
 
 const tinyColumnSize = 30;
 const smallColumnSize = 60;
@@ -23,7 +23,7 @@ const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
 const ColumnEditorView = () => {
-    const {columnState} = useConfigStore((state) => ({columnState: state.table.columnState}));
+    const {columnState, browserWindow} = useConfigStore((state) => ({columnState: state.table.columnState, browserWindow: state.browserWindow}));
     const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
     const toggleColumn = (columnId: string) => {
@@ -178,29 +178,21 @@ const ColumnEditorView = () => {
     return (
         <div>
             <NavigationBar>
-                <div className={"w-screen"}>
+                <Box>
                     <div className='ag-theme-alpine-dark' style={backgroundStyle}>
                         <AgGridReact rowData={playerData} gridOptions={gridOptions} />
                     </div>
-                    <div className='pl-2'>
-                        <div>
-                            <SettingCard className={"border-2 border-cyan-500"}>
-                                <span>Column Name</span>
-                                <span>Enabled</span>
-                            </SettingCard>
-                        </div>
-                        <div>
-                            {columnState.map((column) => (
-                                <SettingCard key={column.colId}>
-                                    <span className={"capitalize"}>{column.colId}</span>
-                                    <span className={""}>
-                                        <ToggleButton onClick={() => toggleColumn(column.colId)} options={{enabled: !column.hide}}></ToggleButton>
-                                    </span>
-                                </SettingCard>
-                            ))}
-                        </div>
+                    <div className={"grid grid-cols-6 justify-center"}>
+                        {columnState.map((column) => (
+                            <div key={column.colId}>
+                                <span className={"capitalize"}>{column.colId}</span>
+                                <span className={""}>
+                                    <ToggleButton onClick={() => toggleColumn(column.colId)} options={{enabled: !column.hide}}></ToggleButton>
+                                </span>
+                            </div>
+                        ))}
                     </div>
-                </div>
+                </Box>
             </NavigationBar>
         </div>
     );
