@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, MenuOption, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
@@ -42,8 +42,6 @@ export type ConfigStore = {
     setTableState: (tableState: TableState) => void;
     settings: SettingsConfig;
     setSettings: (settingsSettings: SettingsConfig) => void;
-    menuOptions: Array<MenuOption>;
-    setMenuOptions: (menuOptions: Array<MenuOption>) => void;
     setStore: (store: ConfigStore) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
@@ -416,10 +414,6 @@ const useConfigStore = create<ConfigStore>()(
                 setSettings: async (settings) => {
                     set({settings});
                     usePlayerStore.getState().updatePlayers();
-                },
-                menuOptions: Array<MenuOption>({menuName: "Essentials", menuLink: "/settings/essentials"}, {menuName: "Tags", menuLink: "/settings/tags"}, {menuName: "Nicks", menuLink: "/settings/nicks"}),
-                setMenuOptions: (menuOptions) => {
-                    set({menuOptions});
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {

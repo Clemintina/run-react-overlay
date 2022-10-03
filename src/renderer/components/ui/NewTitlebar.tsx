@@ -23,10 +23,11 @@ import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faUserNinja, faWindowClose, faWindowMinimize} from "@fortawesome/free-solid-svg-icons";
 import {Alert, useTheme} from "@mui/material";
-import {Home, Sell} from "@mui/icons-material";
+import {Home, Sell, ViewColumn} from "@mui/icons-material";
 import {MenuOption} from "@common/utils/Schemas";
 
 const drawerWidth = 200;
+const menuOptions = Array<MenuOption>({menuName: "Essentials", menuLink: "/settings/essentials"}, {menuName: "Tags", menuLink: "/settings/tags"}, {menuName: "Nicks", menuLink: "/settings/nicks"}, {menuName: "Table Editor", menuLink: "/settings/columneditor"});
 
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
@@ -83,6 +84,10 @@ const getIconType = (menuObject: MenuOption) => {
             return <FontAwesomeIcon icon={faUserNinja} />;
         case "tags":
             return <Sell />;
+        case "table editor":
+            return <ViewColumn />;
+        default:
+            return <span />;
     }
 };
 
@@ -178,7 +183,7 @@ const NewTitlebar = ({children}) => {
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    {useConfigStore.getState().menuOptions.map((text, index) => (
+                    {menuOptions.map((text, index) => (
                         <ListItem key={index} disablePadding>
                             <Link to={text.menuLink} onClick={() => setOpen(!open)} className={"nodrag"}>
                                 <ListItemButton sx={{width: drawerWidth}}>

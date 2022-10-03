@@ -11,10 +11,11 @@ import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import ColourRenderer from "@components/ui/settings/ColourRenderer";
 import NickView from "@components/ui/settings/views/Nicks";
 import NewTitlebar from "@components/ui/NewTitlebar";
+import ColumnEditorView from "@components/ui/settings/views/ColumnEditor";
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
-    window.ipcRenderer.send('logFileSet', useConfigStore.getState().logs.logPath);
+    window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
 }
 
 /**
@@ -53,6 +54,7 @@ createRoot(document.getElementById("app")!).render(
                                     <Route path='/settings/essentials' element={<Essentials />} />
                                     <Route path='/settings/tags' element={<TagEditor />} />
                                     <Route path='/settings/nicks' element={<NickView />} />
+                                    <Route path='/settings/columneditor' element={<ColumnEditorView />} />
                                 </Routes>
                             </NewTitlebar>
                         </HashRouter>
