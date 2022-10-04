@@ -22,7 +22,7 @@ const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
 const ColumnEditorView = () => {
-    const {columnState, browserWindow} = useConfigStore((state) => ({columnState: state.table.columnState, browserWindow: state.browserWindow}));
+    const {columnState} = useConfigStore((state) => ({columnState: state.table.columnState}));
     const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
     const toggleColumn = (columnId: string) => {
@@ -165,13 +165,13 @@ const ColumnEditorView = () => {
         <div>
             <NavigationBar>
                 <Box>
-                    <div className='ag-theme-alpine-dark' style={backgroundStyle}>
+                    <div className="ag-theme-alpine-dark" style={backgroundStyle}>
                         <AgGridReact rowData={playerData} gridOptions={gridOptions} />
                     </div>
                     <div className={"grid grid-cols-6 justify-center"}>
                         {columnState.map((column) => (
                             <div key={column.colId}>
-                                <span className={"capitalize"}>{column.colId}</span>
+                                <span className={"capitalize"}>{column.colId.replace("_", " ")}</span>
                                 <span className={""}>
                                     <ToggleButton onClick={() => toggleColumn(column.colId)} options={{enabled: !column.hide}}></ToggleButton>
                                 </span>

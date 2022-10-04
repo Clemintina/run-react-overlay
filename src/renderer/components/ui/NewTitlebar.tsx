@@ -27,7 +27,7 @@ import {Home, Sell, ViewColumn} from "@mui/icons-material";
 import {MenuOption} from "@common/utils/Schemas";
 
 const drawerWidth = 200;
-const menuOptions = Array<MenuOption>({menuName: "Essentials", menuLink: "/settings/essentials"}, {menuName: "Tags", menuLink: "/settings/tags"}, {menuName: "Nicks", menuLink: "/settings/nicks"});
+const menuOptions = Array<MenuOption>({menuName: "Essentials", menuLink: "/settings/essentials"}, {menuName: "Tags", menuLink: "/settings/tags"}, {menuName: "Nicks", menuLink: "/settings/nicks"}, {menuName: "Table Editor", menuLink: "/settings/columneditor"});
 
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
@@ -106,17 +106,17 @@ const NewTitlebar = ({children}) => {
     return (
         <Box sx={{display: "flex"}} className={"drag"}>
             <CssBaseline />
-            <AppBar position='fixed' open={open} className={"drag"} sx={{opacity: 100}} style={{backgroundColor: "transparent"}}>
+            <AppBar position="fixed" open={open} className={"drag"} sx={{opacity: 100}} style={{backgroundColor: "transparent"}}>
                 <Toolbar>
-                    <IconButton color='inherit' aria-label='open nav bar' onClick={handleDrawerOpen} edge='start' className={"nodrag"} sx={{mr: 2, ...(open && {display: "none"})}}>
+                    <IconButton color="inherit" aria-label="open nav bar" onClick={handleDrawerOpen} edge="start" className={"nodrag"} sx={{mr: 2, ...(open && {display: "none"})}}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant='h6' noWrap component='div' className={"text-bold"}>
+                    <Typography variant="h6" noWrap component="div" className={"text-bold"}>
                         Seraph
                     </Typography>
                     <Typography sx={{marginLeft: "auto"}}>
-                        <div className='md:flex items-center space-x-3 nodrag'>
-                            <span className='flex'>
+                        <div className="md:flex items-center space-x-3 nodrag">
+                            <span className="flex">
                                 <InputTextBox
                                     options={{placeholder: "Username...", resetOnEnter: true}}
                                     onKeyDown={(event, textFieldState) => {
@@ -128,7 +128,7 @@ const NewTitlebar = ({children}) => {
                             </span>
                             <div>
                                 <button
-                                    className='hover:text-cyan-500'
+                                    className="hover:text-cyan-500"
                                     onClick={() => {
                                         window.ipcRenderer.send("windowMinimise");
                                     }}
@@ -138,7 +138,7 @@ const NewTitlebar = ({children}) => {
                             </div>
                             <div>
                                 <button
-                                    className='hover:text-cyan-500'
+                                    className="hover:text-cyan-500"
                                     onClick={() => {
                                         window.ipcRenderer.send("windowClose");
                                     }}
@@ -164,8 +164,8 @@ const NewTitlebar = ({children}) => {
                         boxSizing: "border-box",
                     },
                 }}
-                variant='persistent'
-                anchor='left'
+                variant="persistent"
+                anchor="left"
                 open={open}
             >
                 <DrawerHeader className={"nodrag"}>
@@ -198,19 +198,19 @@ const NewTitlebar = ({children}) => {
             <Main open={open}>
                 <DrawerHeader />
                 {errorMessageCode !== 200 ? (
-                    <Alert color='error' sx={{opacity: 100}}>
+                    <Alert color="error" sx={{opacity: 100}}>
                         <Typography sx={{opacity: 100}}>
-                            <span className='font-medium'>
-                                Code: <span className='errorMessage'> {localStore.error.code}</span>
+                            <span className="font-medium">
+                                Code: <span className="errorMessage"> {localStore.error.code}</span>
                             </span>
-                            Cause: <span className='errorMessage'> {localStore.error.cause}</span>
+                            Cause: <span className="errorMessage"> {localStore.error.cause}</span>
                         </Typography>
                     </Alert>
                 ) : (
                     <span />
                 )}
                 <div className={"nodrag"}>
-                    <Box height='100vh' display='flex' flexDirection='column'>
+                    <Box height="100vh" display="flex" flexDirection="column">
                         {children}
                     </Box>
                 </div>
