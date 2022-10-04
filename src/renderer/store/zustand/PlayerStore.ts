@@ -44,7 +44,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         const apiKey = configStore.hypixel.apiKey;
         const keathizApiKey = configStore.keathiz.key;
 
-        if (apiKey === undefined || apiKey.length !== 36) {
+        if (apiKey === undefined || apiKey.length !== 36 || !configStore.hypixel.apiKeyValid) {
             configStore.setErrorMessage({
                 title: "No Hypixel API Key",
                 cause: "No Hypixel API Key",
@@ -201,17 +201,17 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 }
                 if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
                     const p1Friends = player.hypixelFriends.data;
-                    if (p1Friends != undefined) {
+                    if (p1Friends !== undefined) {
                         for (const friendUuid of p1Friends) {
                             for (const statePlayers of storedPlayers) {
-                                if (statePlayers.hypixelPlayer != null) {
-                                    if (friendUuid.uuidReceiver == player.hypixelPlayer.uuid) {
-                                        if (friendUuid.uuidSender.includes(statePlayers.hypixelPlayer.uuid)) {
+                                if (statePlayers.hypixelPlayer !== null && statePlayers.hypixelPlayer !== undefined) {
+                                    if (friendUuid.uuidReceiver === player.hypixelPlayer.uuid) {
+                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidSender.includes(statePlayers.hypixelPlayer.uuid)) {
                                             player.friended = true;
                                             statePlayers.friended = true;
                                         }
                                     } else {
-                                        if (friendUuid.uuidReceiver.includes(statePlayers.hypixelPlayer.uuid)) {
+                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidReceiver.includes(statePlayers.hypixelPlayer.uuid)) {
                                             player.friended = true;
                                             statePlayers.friended = true;
                                         }
@@ -413,16 +413,12 @@ const getHypixelFriends = async (player: Player) => {
             status: 400,
         };
     }
-    return new Promise<
-        IPCResponse<
-            {
-                _id: string;
-                uuidSender: string;
-                uuidReceiver: string;
-                started: number;
-            }[]
-        >
-    >((resolve) => resolve(api));
+    return new Promise<IPCResponse<{
+        _id: string;
+        uuidSender: string;
+        uuidReceiver: string;
+        started: number;
+    }[]>>((resolve) => resolve(api));
 };
 
 export default usePlayerStore;

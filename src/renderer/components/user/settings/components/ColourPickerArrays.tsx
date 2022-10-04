@@ -10,12 +10,14 @@ export interface ColourPickerArray {
     children: React.ReactElement | React.ReactElement[];
     setColour: (colour: TagArray) => void;
     text?: string;
-    colourObject: {display: string; colour: Array<TagArray>};
+    colourObject: {display: string; colour?: Array<TagArray>, colours?: Array<TagArray>};
 }
 
 export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) => {
     const configStore = useConfigStore((state) => state);
     const tagStore = useTagStore((state) => state);
+    // @ts-ignore
+    let originalColourArray = props.colourObject?.colour != undefined ? "colour" : "colours";
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -28,11 +30,11 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
 
     const [arrayItem, setArrayItem] = useState({colour: "", requirement: 0, operator: "<="});
     const [customColour, setCustomColour] = useState("242424");
-    const [defaultValue, setDefaultValue] = useState(props.colourObject.colour[0].requirement);
+    const [defaultValue, setDefaultValue] = useState(props.colourObject[originalColourArray][0].requirement);
 
     const getArrayDetails = (props: ColourPickerArray) => {
         const resp: Array<JSX.Element> = [];
-        const arr = [...props.colourObject.colour];
+        const arr = [...props.colourObject[originalColourArray]];
         arr.sort((a, b) => a.requirement - b.requirement);
         for (const obj of arr) {
             resp.push(
@@ -62,7 +64,7 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
         if (arrayItem.colour.length == 6 && arrayItem.requirement != 0) {
             props.setColour(arrayItem);
         }
-        props.colourObject.colour.map((arrayItem) => {
+        props.colourObject[originalColourArray].map((arrayItem) => {
             if (arrayItem.requirement == radioNumber) {
                 setDefaultValue(arrayItem.requirement);
                 setCustomColour(`#${arrayItem.colour}`);
@@ -91,7 +93,7 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
             <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
                 <Box sx={style}>
                     <FormControl>
-                        <FormLabel id='colour-array'>Select which item you'd like to edit</FormLabel>
+                        <FormLabel id="colour-array">Select which item you'd like to edit</FormLabel>
                         <RadioGroup defaultValue={defaultValue} onChange={handleRadioChange}>
                             {colourArrayData}
                         </RadioGroup>

@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, MenuOption, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
@@ -20,7 +20,7 @@ export type ConfigStore = {
     colours: ColourSettings;
     setColours: (colour: ColourSettings) => void;
     version: string;
-    setVersion: (version: string) => void;
+    setVersion: () => void;
     logs: ClientSetting;
     setLogs: (clientSetting: ClientSetting) => void;
     error: DisplayErrorMessage;
@@ -42,8 +42,6 @@ export type ConfigStore = {
     setTableState: (tableState: TableState) => void;
     settings: SettingsConfig;
     setSettings: (settingsSettings: SettingsConfig) => void;
-    menuOptions: Array<MenuOption>;
-    setMenuOptions: (menuOptions: Array<MenuOption>) => void;
     setStore: (store: ConfigStore) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
@@ -59,9 +57,19 @@ const useConfigStore = create<ConfigStore>()(
                     apiKeyOwner: "",
                 },
                 setHypixelApiKey: async (hypixelApiKey) => {
-                    if (hypixelApiKey.length == 0) return;
+                    if (hypixelApiKey.length === 0) {
+                        const oldHypixel = get().hypixel;
+                        if (oldHypixel.apiKeyValid) return;
+                        set(() => ({
+                            hypixel: {
+                                ...oldHypixel,
+                                apiKeyValid: false,
+                            },
+                        }));
+                        return;
+                    }
                     const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixelApiKey);
-                    if (apiResponse.status === 200 && apiResponse?.data?.key != undefined) {
+                    if (apiResponse.status === 200 && apiResponse?.data?.key !== undefined) {
                         set(() => ({
                             hypixel: {
                                 apiKey: hypixelApiKey,
@@ -95,7 +103,9 @@ const useConfigStore = create<ConfigStore>()(
                     }));
                 },
                 version: "",
-                setVersion: (version: string) => {
+                setVersion: async () => {
+                    const appInfo = await window.ipcRenderer.invoke("getAppInfo");
+                    const version = appInfo.version;
                     set(() => ({version}));
                 },
                 logs: {
@@ -183,8 +193,6 @@ const useConfigStore = create<ConfigStore>()(
                                 title: "",
                             },
                         });
-
-                        
                     } else {
                         get().setErrorMessage({
                             title: "Invalid RUN Key",
@@ -395,6 +403,7 @@ const useConfigStore = create<ConfigStore>()(
                 settings: {
                     lunar: true,
                     keathiz: false,
+                    astolfo: false,
                     boomza: true,
                     run: {
                         friends: false,
@@ -406,10 +415,6 @@ const useConfigStore = create<ConfigStore>()(
                 setSettings: async (settings) => {
                     set({settings});
                     usePlayerStore.getState().updatePlayers();
-                },
-                menuOptions: Array<MenuOption>({menuName: "Essentials", menuLink: "/settings/essentials"}, {menuName: "Tags", menuLink: "/settings/tags"}, {menuName: "Nicks", menuLink: "/settings/nicks"}),
-                setMenuOptions: (menuOptions) => {
-                    set({menuOptions});
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {

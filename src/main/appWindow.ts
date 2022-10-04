@@ -3,6 +3,7 @@ import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
 import path from "path";
 import axios, {AxiosRequestConfig} from "axios";
 import fs from "fs";
+import {exec} from "child_process";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
@@ -103,6 +104,7 @@ export const createAppWindow = (): BrowserWindow => {
         frame: false,
         transparent: true,
         titleBarStyle: "hidden",
+        useContentSize: true,
         icon: path.join("assets", "images", "icon.ico"),
         webPreferences: {
             nodeIntegration: true,
@@ -132,7 +134,9 @@ export const createAppWindow = (): BrowserWindow => {
                 log.info("Checking for updates...");
             });
             autoUpdater.on("error", async (error) => log.error(error));
-            autoUpdater.on("update-available", async () => log.info("Update available"));
+            autoUpdater.on("update-available", async () =>  {
+                log.info("Update available");
+        });
             autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
                 log.info("Updating Overlay to " + releaseName);
                 autoUpdater.quitAndInstall();
@@ -295,6 +299,15 @@ const registerSeraphIPC = () => {
                 },
             });
             return {data: response.data.data, status: response.status};
+        } else if (endpoint == RunEndpoints.DENICKER) {
+            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}/${uuid}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+                },
+            });
+            return {data: response.data, status: response.status};
         } else {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
                 headers: {
@@ -407,8 +420,15 @@ const registerLogCommunications = () => {
             });
 
             logFileReadline.on("line", async (line) => {
-                if (!line.includes("[Client thread/INFO]: [CHAT]") && !line.includes("[main/INFO]: [CHAT] ")) return;
-                appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
+                if (line.includes("[Client thread/INFO]: [CHAT]") || line.includes("[main/INFO]: [CHAT] ")) {
+                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
+                } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
+                    const newLine = line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
+                    console.log(newLine)
+                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: newLine}, status: 200}));
+                } else {
+                    return;
+                }
             });
         }
     });
@@ -459,6 +479,10 @@ const registerMainWindowCommunications = () => {
         } else if (type == "tag_file") {
             await shell.openExternal(electronStoreTags.path);
         }
+    });
+
+    ipcMain.handle("getAppInfo", async () => {
+        return {version: overlayVersion};
     });
 };
 
@@ -538,6 +562,45 @@ const registerOverlayFeatures = () => {
         setTimeout(() => {
             notif.close();
         }, 60000);
+    });
+
+    ipcMain.handle(('isAdmin'), async (event:IpcMainInvokeEvent, ...args)=>{
+        let isAdmin = false;
+        return {data: isAdmin, status: 200}
+    });
+
+    ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
+        let appData = app.getPath("appData").replace(/\\/g, "/");
+        let source = `<?xml version="1.0" encoding="UTF-8"?>
+        <Configuration status="WARN" packages="net.minecraft,com.mojang">
+            <Appenders>
+                <Console name="SysOut" target="SYSTEM_OUT">
+                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+                </Console>
+                <Queue name="ServerGuiConsole">
+                    <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
+                </Queue>
+                <RollingRandomAccessFile name="File" fileName="${appData}/.minecraft/logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" charset="UTF-8" />
+                    <Policies>
+                        <TimeBasedTriggeringPolicy />
+                        <OnStartupTriggeringPolicy />
+                    </Policies>
+                </RollingRandomAccessFile>
+            </Appenders>
+            <Loggers>
+                <Root level="info">
+                    <filters>
+                        <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
+                    </filters>
+                    <AppenderRef ref="SysOut"/>
+                    <AppenderRef ref="File"/>
+                    <AppenderRef ref="ServerGuiConsole"/>
+                </Root>
+            </Loggers>
+        </Configuration>`;
+        fs.writeFileSync(appData + "/.minecraft/log4j2.xml", source);
+        exec(`[System.Environment]::SetEnvironmentVariable('_JAVA_OPTIONS','-Dlog4j.configurationFile="${appData}/.minecraft/log4j2.xml"',[System.EnvironmentVariableTarget]::User)`, {shell: "powershell.exe"}, (error, stdout, stderr) => {});
     });
 };
 

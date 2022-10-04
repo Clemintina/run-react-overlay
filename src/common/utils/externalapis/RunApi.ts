@@ -53,12 +53,26 @@ export interface RunFriendList {
     mutuals: Array<string>;
 }
 
+export interface DenickerAPI {
+    success: boolean,
+    code: number,
+    data: {
+        found: boolean,
+        nick: string,
+        username: string,
+        uuid: string,
+        invalid?: boolean
+    },
+    msTime: number,
+}
+
 export enum RunEndpoints {
     BLACKLIST = "blacklist",
     VERSION = "overlay",
     KEY = "key",
     SAFELIST = "safelist",
     KEATHIZ_PROXY = "keathiz/proxy",
+    DENICKER = "dev/denick",
 }
 
 export enum RequestType {

@@ -16,7 +16,7 @@ export const SettingHeader: React.ElementType = (props: SettingHeader) => {
     return (
         <div style={showSetting ? {} : {display: "none"}}>
             <div style={{backgroundColor: hexToRgbA(colours.backgroundColour,opacity/100), color: colours.primaryColour}}>
-                <div className={"hover:border-cyan-500 hover:text-white border-transparent border-2"}>
+                <div className={"hover:text-white border-transparent border-2"}>
                     <div className='grid grid-cols-3 gap-3 text-lg text-center'>{props.children}</div>
                 </div>
             </div>

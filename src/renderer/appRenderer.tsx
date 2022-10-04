@@ -1,7 +1,6 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 import {HashRouter, Route, Routes} from "react-router-dom";
-import TitleBar from "@components/ui/Titlebar";
 import App from "@renderer/views/App";
 import {LogFileReader} from "@common/utils/LogFileReader";
 import "@assets/index.css";
@@ -11,10 +10,12 @@ import TagEditor from "@components/ui/settings/views/TagEditor";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import ColourRenderer from "@components/ui/settings/ColourRenderer";
 import NickView from "@components/ui/settings/views/Nicks";
+import NewTitlebar from "@components/ui/NewTitlebar";
+import ColumnEditorView from "@components/ui/settings/views/ColumnEditor";
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
-    window.ipcRenderer.send('logFileSet', useConfigStore.getState().logs.logPath);
+    window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
 }
 
 /**
@@ -43,17 +44,19 @@ createRoot(document.getElementById("app")!).render(
     <div>
         <>
             <ThemeProvider theme={darkTheme}>
-                <div className='mainBody text-gray-400' id={'main-body'}>
+                <div className='mainBody text-gray-400' id={"main-body"}>
                     <ColourRenderer>
                         <HashRouter basename='/'>
-                            <TitleBar/>
-                            <Routes>
-                                <Route path='/' element={<App/>}/>
-                                <Route path='/settings' element={<Essentials/>}/>
-                                <Route path='/settings/essentials' element={<Essentials/>}/>
-                                <Route path='/settings/tags' element={<TagEditor/>}/>
-                                <Route path='/settings/nicks' element={<NickView/>}/>
-                            </Routes>
+                            <NewTitlebar>
+                                <Routes>
+                                    <Route path='/' element={<App />} />
+                                    <Route path='/settings' element={<Essentials />} />
+                                    <Route path='/settings/essentials' element={<Essentials />} />
+                                    <Route path='/settings/tags' element={<TagEditor />} />
+                                    <Route path='/settings/nicks' element={<NickView />} />
+                                    <Route path='/settings/columneditor' element={<ColumnEditorView />} />
+                                </Routes>
+                            </NewTitlebar>
                         </HashRouter>
                     </ColourRenderer>
                 </div>

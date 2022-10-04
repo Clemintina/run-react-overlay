@@ -6,7 +6,7 @@ import {ColourPickerArray} from "@components/user/settings/components/ColourPick
 import {TagArray} from "@common/utils/Schemas";
 import useTagStore from "@renderer/store/zustand/TagStore";
 import {TagEditor} from "@components/user/settings/components/TagEditor";
-import {AccordionDetails} from "@mui/material";
+import {AccordionDetails, ThemeProvider} from "@mui/material";
 import {UserAccordion} from "@components/user/UserAccordion";
 import produce from "immer";
 import {TagSchema} from "@common/utils/TagSchema";
@@ -14,12 +14,13 @@ import {TagSchema} from "@common/utils/TagSchema";
 const TagEditorView = () => {
     const {tagStore} = useTagStore((state) => ({tagStore: state}));
     let localTagStore = tagStore as TagSchema;
+    const theme = {}
 
     // TODO make it look nicer and cleaner
     return (
-        <div>
+        <ThemeProvider theme={theme}>
             <NavigationBar>
-                <div className='h-full p-2 flex flex-col'>
+                <div className="h-full p-2 flex flex-col">
                     <SettingCard>
                         <span className={"w-80"}>Tag</span>
                         <span className={"w-80"}>Display</span>
@@ -116,34 +117,6 @@ const TagEditorView = () => {
                                 />
                             </span>
                         </SettingCard>
-                        {/* <SettingCard>
-                            <span>Name Change</span>
-                            <span>
-                                <TagEditor
-                                    options={{colour: localTagStore.run.name_change.colour, placeholder: localTagStore.run.name_change.display}}
-                                    onBlur={(event) => {
-                                        useTagStore.getState().setStore(
-                                            produce((state: any) => {
-                                                state.run.name_change.display = event.currentTarget.value;
-                                            }),
-                                        );
-                                    }}
-                                />
-                            </span>
-
-                            <span>
-                                <ColourPicker
-                                    setColour={async (colour: string) => {
-                                        useTagStore.getState().setStore(
-                                            produce((state: any) => {
-                                                state.run.name_change.colour = colour;
-                                            }),
-                                        );
-                                    }}
-                                    colourObject={localTagStore.run.name_change.colour}
-                                />
-                            </span>
-                        </SettingCard> */}
                         <SettingCard>
                             <span>Friends</span>
                             <span>
@@ -152,7 +125,7 @@ const TagEditorView = () => {
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
-                                                state.run.name_change.display = event.currentTarget.value;
+                                                state.run.friends.display = event.currentTarget.value;
                                             }),
                                         );
                                     }}
@@ -301,14 +274,14 @@ const TagEditorView = () => {
                     <UserAccordion name={"Keathiz"}>
                         <AccordionDetails>
                             <SettingCard>
-                                <span>Party</span>
+                                <span>No Data</span>
                                 <span>
                                     <TagEditor
-                                        options={{colour: localTagStore.hypixel.party.colour, placeholder: localTagStore.hypixel.party.display}}
+                                        options={{colour: localTagStore.keathiz.no_data.colour, placeholder: localTagStore.keathiz.no_data.display}}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
-                                                    state.hypixel.party.display = event.currentTarget.value;
+                                                    state.keathiz.no_data.display = event.currentTarget.value;
                                                 }),
                                             );
                                         }}
@@ -319,19 +292,83 @@ const TagEditorView = () => {
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
-                                                    state.hypixel.party.colour = colour;
+                                                    state.keathiz.no_data.colour = colour;
                                                 }),
                                             );
                                         }}
-                                        colourObject={localTagStore.hypixel.party.colour}
+                                        colourObject={localTagStore.keathiz.no_data.colour}
                                     />
                                 </span>
                             </SettingCard>
+                            <SettingCard>
+                                <span>Queue Total</span>
+                                <span>
+                                    <TagEditor
+                                        options={{colour: localTagStore.keathiz.queues.queue_total.colour, placeholder: localTagStore.keathiz.queues.queue_total.display}}
+                                        onBlur={(event) => {
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.keathiz.queues.queue_total.display = event.currentTarget.value;
+                                                }),
+                                            );
+                                        }}
+                                    />
+                                </span>
+                                <span>
+                                    <ColourPicker
+                                        setColour={async (colour: string) => {
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.keathiz.queues.queue_total.colour = colour;
+                                                }),
+                                            );
+                                        }}
+                                        colourObject={localTagStore.keathiz.queues.queue_total.colour}
+                                    />
+                                </span>
+                            </SettingCard>
+                            <SettingCard>
+                                <span>Queue Count</span>
+                                <span>
+                                <TagEditor
+                                    options={{colour: localTagStore.keathiz.queues.queue_count.colours[0], placeholder: localTagStore.keathiz.queues.queue_count.display}}
+                                    onBlur={(event) => {
+                                        useTagStore.getState().setStore(
+                                            produce((state: any) => {
+                                                state.keathiz.queues.queue_count.display = event.currentTarget.value;
+                                            }),
+                                        );
+                                    }}
+                                />
+                            </span>
+                                <span>
+                                <ColourPickerArray
+                                    setColour={async (newTagArray: TagArray) => {
+                                        const newColourObject = {...localTagStore.keathiz.queues.queue_count};
+                                        const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<="};
+                                        if (Array.isArray(newColourObject.colours)) {
+                                            const newColourArray = [...newColourObject.colours];
+                                            newColourArray.filter((item: TagArray, index) => {
+                                                if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
+                                            });
+                                            newColourArray.push(newItem);
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.keathiz.queues.queue_count.colours = newColourArray;
+                                                }),
+                                            );
+                                        }
+                                    }}
+                                    colourObject={localTagStore.keathiz.queues.queue_count}
+                                />
+                            </span>
+                            </SettingCard>
+
                         </AccordionDetails>
                     </UserAccordion>
                 </div>
             </NavigationBar>
-        </div>
+        </ThemeProvider>
     );
 };
 

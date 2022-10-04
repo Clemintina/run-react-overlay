@@ -14,10 +14,9 @@ export interface PlayerTags {
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
     const {run, boomzaTag} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
-    const {settings} = useConfigStore((state) => ({settings: state.settings}));
+    const {settings, hypixel, runConfig} = useConfigStore((state) => ({settings: state.settings, hypixel: state.hypixel, runConfig: state.run}));
     const tagArray: Array<JSX.Element> = [];
-
-    if (player.sources.runApi != null) {
+    if (runConfig.valid && player.sources.runApi != null) {
         const runApi = player.sources.runApi.data.data;
         if (runApi.blacklist.tagged) {
             tagArray.push(<span style={{color: `#${run.blacklist.colour.toString()}`}}>{run.blacklist.display}</span>);
@@ -38,21 +37,25 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             if (runApi.safelist.tagged || runApi.safelist.personal) {
                 tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled));
             }
+            if (settings.run.friends && player.friended) {
+                tagArray.push(getTagsFromConfig("run.friends"));
+            }
             if (runApi.statistics.encounters != 0) {
                 tagArray.push(getTagsFromConfig("run.encounters", runApi.statistics.encounters));
             }
             if (player.hypixelPlayer?.channel == "PARTY") {
                 tagArray.push(getTagsFromConfig("hypixel.party"));
             }
-            if (settings.run.friends && player.friended) {
-                tagArray.push(getTagsFromConfig("run.friends"));
-            }
             if (settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
                 tagArray.push(<RenderKeathizTags player={player} />);
             }
         }
     } else {
-        tagArray.push(<span style={{color: "red"}}>NICKED</span>);
+        if (hypixel.apiKeyValid) {
+            tagArray.push(<span style={{color: "red"}}>NICKED</span>);
+        } else {
+            tagArray.push(<span style={{color: "red"}}>Invalid Hypixel API Key</span>);
+        }
     }
 
     return (
@@ -72,31 +75,31 @@ const RenderKeathizTags = (props: PlayerTags) => {
     } else {
         if (player?.sources?.keathiz?.status == 200) {
             const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-            if (keathizTags.player.exits.last_10_min >= 1) {
+            if (keathizTags.player?.exits?.last_10_min >= 1) {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`E10`}</span>);
             }
-            if (keathizTags.player.queues.total == 0) {
+            if (keathizTags.player?.queues?.total == 0) {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>ND</span>);
             }
-            if (keathizTags.player.queues.last_3_min >= 2) {
+            if (keathizTags.player?.queues?.last_3_min >= 2) {
                 const count = keathizTags.player.queues.last_3_min;
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q3-${count}`}</span>);
             }
-            if (keathizTags.player.queues.last_10_min >= 2) {
+            if (keathizTags.player?.queues?.last_10_min >= 2) {
                 const count = keathizTags.player.queues.last_10_min;
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q10-${count}`}</span>);
             }
-            if (keathizTags.player.queues.last_30_min >= 5) {
-                const count = keathizTags.player.queues.last_30_min;
+            if (keathizTags.player?.queues?.last_30_min >= 5) {
+                const count = keathizTags.player?.queues?.last_30_min;
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q30-${count}`}</span>);
             }
-            if (keathizTags.player.queues.last_24_hours >= 50) {
+            if (keathizTags.player?.queues?.last_24_hours >= 50) {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q24`}</span>);
             }
-            if (keathizTags.player.queues.consecutive_queue_checks.weighted["1_min_requeue"] >= 50) {
+            if (keathizTags.player?.queues?.consecutive_queue_checks.weighted["1_min_requeue"] >= 50) {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Z`}</span>);
             }
-            if (keathizTags.player.queues.consecutive_queue_checks.last_30_queues["1_min_requeue"] >= 15 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["1_min_requeue"] >= 5 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["2_min_requeue"] >= 6 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["3_min_requeue"] >= 8) {
+            if (keathizTags.player.queues.consecutive_queue_checks?.last_30_queues["1_min_requeue"] >= 15 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["1_min_requeue"] >= 5 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["2_min_requeue"] >= 6 ?? keathizTags.player.queues.consecutive_queue_checks.last_10_queues["3_min_requeue"] >= 8) {
                 keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`C`}</span>);
             }
         } else {

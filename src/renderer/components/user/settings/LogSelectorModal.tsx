@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/named
-import {Box, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
+import {Box, Button, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
 import React from "react";
 import {InputBoxButton} from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
@@ -138,6 +138,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                             text={"Select Log File"}
                         />
                     </Typography>
+
                 </Box>
             </Modal>
         </div>
