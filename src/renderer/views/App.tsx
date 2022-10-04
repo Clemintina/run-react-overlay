@@ -117,7 +117,7 @@ const columns: ColDef[] = [
         cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
     },
     {
-        field: "finalkills",
+        field: "final_kills",
         headerName: "Final Kills",
         flex: 1,
         hide: true,
