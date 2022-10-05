@@ -38,11 +38,6 @@ export const defaultColDefs: ColDef = {
 
 export const columns: ColDef[] = [
     {
-        field: "id",
-        hide: true,
-        cellRenderer: ({ data }) => data.uuid,
-    },
-    {
         field: "head",
         minWidth: tinyColumnSize,
         sortable: false,

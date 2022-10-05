@@ -1,20 +1,20 @@
-import React, {useState} from "react";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
-import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
-import {SettingHeader} from "@components/user/settings/components/SettingHeader";
-import {ToggleButton} from "@components/user/ToggleButton";
+import React, { useState } from "react";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { InputTextBox } from "@components/user/InputTextBox";
+import { ValidationIcon } from "@components/user/settings/components/ValidationIcon";
+import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
+import { SettingHeader } from "@components/user/settings/components/SettingHeader";
+import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {Box, Slider, SxProps} from "@mui/material";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import { Box, Slider, SxProps } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
 import Tooltip from "@mui/material/Tooltip";
 
 const Essentials = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
-    const {hypixel, logs, settings, run, browserWindow} = useConfigStore((state) => ({hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow}));
+    const { hypixel, logs, settings, run, browserWindow } = useConfigStore((state) => ({ hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow }));
     const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
 
     useConfigStore.getState().setVersion();
@@ -137,9 +137,9 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, run: {friends: !settings.run.friends}});
+                                useConfigStore.getState().setSettings({ ...settings, run: { friends: !settings.run.friends } });
                             }}
-                            options={{enabled: settings.run.friends}}
+                            options={{ enabled: settings.run.friends }}
                         />
                     </SettingCard>
                     <SettingCard>
@@ -147,9 +147,9 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, hypixel: {guilds: !settings.hypixel.guilds}});
+                                useConfigStore.getState().setSettings({ ...settings, hypixel: { guilds: !settings.hypixel.guilds } });
                             }}
-                            options={{enabled: settings.hypixel.guilds}}
+                            options={{ enabled: settings.hypixel.guilds }}
                         />
                     </SettingCard>
                     <SettingCard>
@@ -158,9 +158,9 @@ const Essentials = () => {
                         <span>
                             <ToggleButton
                                 onChange={async () => {
-                                    useConfigStore.getState().setSettings({...settings, keathiz: !settings.keathiz});
+                                    useConfigStore.getState().setSettings({ ...settings, keathiz: !settings.keathiz });
                                 }}
-                                options={{enabled: settings.keathiz}}
+                                options={{ enabled: settings.keathiz }}
                             >
                                 <span>
                                     <Tooltip title='This API is proxied to protect your IP.'>
@@ -170,6 +170,11 @@ const Essentials = () => {
                             </ToggleButton>
                         </span>
                     </SettingCard>
+                    <SettingHeader>
+                        <span />
+                        <span>Other</span>
+                        <span />
+                    </SettingHeader>
                     <SettingCard>
                         <span>Astolfo Chat Bridge</span>
                         <span />
@@ -215,6 +220,13 @@ const Essentials = () => {
                                     return value;
                                 }}
                             />
+                        </span>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Version</span>
+                        <span />
+                        <span>
+                            {useConfigStore.getState().version}
                         </span>
                     </SettingCard>
                 </Box>
