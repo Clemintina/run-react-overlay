@@ -189,14 +189,14 @@ const useConfigStore = create<ConfigStore>()(
                             },
                             error: {
                                 code: 200,
-                                cause: "",
+                                cause: "Set Run ",
                                 title: "",
                             },
                         });
                     } else {
                         get().setErrorMessage({
-                            title: "Invalid RUN Key",
-                            cause: "The RUN API key provided is invalid or locked!",
+                            title: "Invalid Seraph Key",
+                            cause: "The Seraph API key provided is invalid or locked!",
                             code: 401,
                         });
                         await window.ipcRenderer.invoke("notifications", "Your RUN Key has been locked!");

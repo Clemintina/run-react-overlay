@@ -28,6 +28,7 @@ reader.startJoinHandler();
 reader.startListHandler();
 reader.startSeraphHandler();
 reader.startCommandListener();
+reader.startApiKeyHandler();
 reader.startPartyListener();
 reader.startLilithListener();
 

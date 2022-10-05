@@ -74,6 +74,16 @@ export class LogFileReader {
         });
     };
 
+    public startApiKeyHandler = async() => {
+        await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
+            const line = readLogLine(data);
+            if (line.includes("Your new API key is ")) {
+                const configStore = useConfigStore.getState();
+                configStore.setHypixelApiKey(line.split("Your new API key is ")[1]);
+            }
+        });
+    }
+
     public startCommandListener = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
