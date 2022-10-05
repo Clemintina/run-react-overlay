@@ -1,9 +1,9 @@
 import create from "zustand";
-import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/zikeji";
-import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
-import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import {Player} from "@common/utils/PlayerUtils";
+import {Components} from "@common/zikeji";
+import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
+import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 
 export type PlayerStore = {
     players: Array<Player>;

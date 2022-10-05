@@ -1,7 +1,7 @@
-import { Paths } from "@common/zikeji";
-import { Method } from "@common/zikeji/util/Method";
-import { getResultObject, ResultObject } from "../../util/ResultObject";
-import { getResultArray, ResultArray } from "../../util/ResultArray";
+import {Paths} from "@common/zikeji";
+import {Method} from "@common/zikeji/util/Method";
+import {getResultObject, ResultObject} from "../../util/ResultObject";
+import {getResultArray, ResultArray} from "../../util/ResultArray";
 
 export class GuildsResources extends Method {
     /**

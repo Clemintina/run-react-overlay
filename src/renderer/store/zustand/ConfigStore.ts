@@ -430,8 +430,7 @@ const useConfigStore = create<ConfigStore>()(
                 version: 4,
                 migrate: (persistedState: any) => {
                     const newState = persistedState;
-                    newState.settings.hypixel.gu;
-                    ilds = false;
+                    newState.settings.hypixel.guilds = false;
                     return newState;
                 },
             },

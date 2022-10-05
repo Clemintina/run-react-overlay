@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Box, FormControl, FormControlLabel, FormLabel, Modal, Radio, RadioGroup } from "@mui/material";
-import { InputBoxButton } from "@components/user/InputBoxButton";
-import { HexColorPicker } from "react-colorful";
-import { TagArray } from "@common/utils/Schemas";
+import React, {useState} from "react";
+import {Box, FormControl, FormControlLabel, FormLabel, Modal, Radio, RadioGroup} from "@mui/material";
+import {InputBoxButton} from "@components/user/InputBoxButton";
+import {HexColorPicker} from "react-colorful";
+import {TagArray} from "@common/utils/Schemas";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import useTagStore from "@renderer/store/zustand/TagStore";
 
@@ -10,7 +10,7 @@ export interface ColourPickerArray {
     children: React.ReactElement | React.ReactElement[];
     setColour: (colour: TagArray) => void;
     text?: string;
-    colourObject: { display: string; colour?: Array<TagArray>; colours?: Array<TagArray> };
+    colourObject: {display: string; colour?: Array<TagArray>; colours?: Array<TagArray>};
 }
 
 export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) => {
@@ -93,7 +93,7 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
             <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
                 <Box sx={style}>
                     <FormControl>
-                        <FormLabel i"='colour-arr"y'>Select which item you'd like to edit</FormLabel>
+                        <FormLabel id={"colour-array"}>Select which item you'd like to edit</FormLabel>
                         <RadioGroup defaultValue={defaultValue} onChange={handleRadioChange}>
                             {colourArrayData}
                         </RadioGroup>

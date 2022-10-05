@@ -1,7 +1,7 @@
-import { Paths } from "@common/zikeji";
-import { Method } from "@common/zikeji/util/Method";
-import { getResultObject, ResultObject } from "../util/ResultObject";
-import { IPCResponse } from "@common/utils/externalapis/RunApi";
+import {Paths} from "@common/zikeji";
+import {Method} from "@common/zikeji/util/Method";
+import {getResultObject, ResultObject} from "../util/ResultObject";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 export class Guild extends Method {
     /**

@@ -1,7 +1,7 @@
-import { Blacklist, IPCResponse, LunarAPIResponse } from "./externalapis/RunApi";
-import { Components } from "@common/zikeji";
-import { BoomzaAntisniper, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
+import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
+import {Components} from "@common/zikeji";
+import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
 
 export type Player = {
     name: string;

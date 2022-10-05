@@ -13,7 +13,7 @@ export interface ContactStaff {
 }
 
 export const ContactStaff: React.ElementType = (props: ContactStaff) => {
-    const { colours, hypixel, settings, run, version } = useConfigStore((state) => ({ colours: state.colours, hypixel: state.hypixel, settings: state.settings, run: state.run, version: state.version }));
+    const {colours, hypixel, settings, run, version} = useConfigStore((state) => ({colours: state.colours, hypixel: state.hypixel, settings: state.settings, run: state.run, version: state.version}));
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -54,7 +54,7 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                     <Typography sx={{mt: 2}}>
                         <FormControl fullWidth>
                             <InputLabel>Type</InputLabel>
-                            <Select value={feedbackType} la"el='Feed"ack' onChange={handleChange}>
+                            <Select value={feedbackType} onChange={handleChange}>
                                 <MenuItem value={"Bug"}>Bug</MenuItem>
                                 <MenuItem value={"Suggestion"}>Suggestion</MenuItem>
                             </Select>

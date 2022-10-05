@@ -1,5 +1,5 @@
 import React from "react";
-import { FormHelperText, Input, InputLabel } from "@mui/material";
+import {FormHelperText, Input, InputLabel} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
 export interface FeedbackForm {

@@ -1,5 +1,5 @@
-import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { Player } from "@common/utils/PlayerUtils";
+import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";

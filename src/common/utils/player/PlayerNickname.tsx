@@ -1,19 +1,19 @@
-import { PlayerNickname } from "@common/utils/Schemas";
+import {PlayerNickname} from "@common/utils/Schemas";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { InputTextBox } from "@components/user/InputTextBox";
-import { RequestType } from "@common/utils/externalapis/RunApi";
-import { InputBoxButton } from "@components/user/InputBoxButton";
-import React, { useState } from "react";
-import { Components } from "@common/zikeji";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
+import {InputTextBox} from "@components/user/InputTextBox";
+import {RequestType} from "@common/utils/externalapis/RunApi";
+import {InputBoxButton} from "@components/user/InputBoxButton";
+import React, {useState} from "react";
+import {Components} from "@common/zikeji";
 
-const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; handleAdd: (player) => void; handleRemove: (player) => void }) => {
-    const { nicksLocal, hypixelApiKey } = useConfigStore((state) => ({ nicksLocal: state.nicks, hypixelApiKey: state.hypixel.apiKey }));
+const PlayerNicknameView = (props: {key: string; playerNick: PlayerNickname; handleAdd: (player) => void; handleRemove: (player) => void}) => {
+    const {nicksLocal, hypixelApiKey} = useConfigStore((state) => ({nicksLocal: state.nicks, hypixelApiKey: state.hypixel.apiKey}));
     const users = nicksLocal.filter((player) => player.nick.toLowerCase() == props.playerNick.nick.toLowerCase());
     const [playerNickname, setPlayerNickname] = useState(users[0]);
 
     const clearPlayer = () => {
-        setPlayerNickname({ name: "", nick: "", added: 0, uuid: "" });
+        setPlayerNickname({name: "", nick: "", added: 0, uuid: ""});
     };
 
     return (

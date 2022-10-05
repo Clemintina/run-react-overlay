@@ -1,4 +1,4 @@
-import Client, { ClientOptions } from "@common/zikeji/Client";
+import Client, {ClientOptions} from "@common/zikeji/Client";
 
 export class HypixelApi {
     private readonly client: Client;

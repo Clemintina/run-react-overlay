@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { InputTextBox } from "@components/user/InputTextBox";
-import { ValidationIcon } from "@components/user/settings/components/ValidationIcon";
-import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
-import { SettingHeader } from "@components/user/settings/components/SettingHeader";
-import { ToggleButton } from "@components/user/ToggleButton";
+import React, {useState} from "react";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
+import {InputTextBox} from "@components/user/InputTextBox";
+import {ValidationIcon} from "@components/user/settings/components/ValidationIcon";
+import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
+import {SettingHeader} from "@components/user/settings/components/SettingHeader";
+import {ToggleButton} from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import { Box, Slider, SxProps } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import {Box, Slider, SxProps} from "@mui/material";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 import Tooltip from "@mui/material/Tooltip";
 
 const Essentials = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
-    const { hypixel, logs, settings, run, browserWindow } = useConfigStore((state) => ({ hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow }));
+    const {hypixel, logs, settings, run, browserWindow} = useConfigStore((state) => ({hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run, browserWindow: state.browserWindow}));
     const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
 
     useConfigStore.getState().setVersion();
@@ -27,7 +27,7 @@ const Essentials = () => {
     return (
         <div>
             <NavigationBar>
-                <Box classN"me='p-2 space"y-2'>
+                <Box className="p-2 space-y-2">
                     <SettingCard>
                         <span>Hypixel API Key</span>
                         <span />

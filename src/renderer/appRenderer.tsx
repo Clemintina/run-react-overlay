@@ -1,10 +1,10 @@
 import React from "react";
-import { createRoot } from "react-dom/client";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import {createRoot} from "react-dom/client";
+import {HashRouter, Route, Routes} from "react-router-dom";
 import App from "@renderer/views/App";
-import { LogFileReader } from "@common/utils/LogFileReader";
+import {LogFileReader} from "@common/utils/LogFileReader";
 import "@assets/index.css";
-import { Box, createTheme, ThemeProvider } from "@mui/material";
+import {Box, createTheme, ThemeProvider} from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
 import TagEditor from "@components/ui/settings/views/TagEditor";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
@@ -42,17 +42,17 @@ const darkTheme = createTheme({
  */
 createRoot(document.getElementById("app")!).render(
     <ThemeProvider theme={darkTheme}>
-        <Box cl"ssName='mainBody text-"ray-400' id={"main-body"}>
+        <Box className='mainBody text-"ray-400' id={"main-body"}>
             <ColourRenderer>
-                <HashRouter b"s"name='/'>
+                <HashRouter basename="/">
                     <NewTitlebar>
                         <Routes>
-                            <Rou"e"path='/' element={<App />} />
-                            <Rou"e path='/"ettings' element={<Essentials />} />
-                            <Rou"e path='/settings/es"entials' element={<Essentials />} />
-                            <Rou"e path='/setti"gs/tags' element={<TagEditor />} />
-                            <Rou"e path='/settin"s/nicks' element={<NickView />} />
-                            <Rou"e path='/settings/colu"neditor' element={<ColumnEditorView />} />
+                            <Route path="/" element={<App />} />
+                            <Route path="/settings" element={<Essentials />} />
+                            <Route path="/settings/essentials" element={<Essentials />} />
+                            <Route path="/settings/tags" element={<TagEditor />} />
+                            <Route path="/settings/nicks" element={<NickView />} />
+                            <Route path="/settings/columneditor" element={<ColumnEditorView />} />
                         </Routes>
                     </NewTitlebar>
                 </HashRouter>

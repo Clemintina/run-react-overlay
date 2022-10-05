@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { hexToRgbA } from "@components/ui/settings/ColourRenderer";
-import { Box, SxProps, TextField } from "@mui/material";
-import { jsx } from "@emotion/react";
+import {hexToRgbA} from "@components/ui/settings/ColourRenderer";
+import {Box, SxProps, TextField} from "@mui/material";
+import {jsx} from "@emotion/react";
 import JSX = jsx.JSX;
 
 export interface InputTextBox {

@@ -1,8 +1,8 @@
 import React from "react";
 // eslint-disable-next-line import/named
-import { Box, InputLabel, Modal } from "@mui/material";
-import { InputBoxButton } from "@components/user/InputBoxButton";
-import { Player } from "@common/utils/PlayerUtils";
+import {Box, InputLabel, Modal} from "@mui/material";
+import {InputBoxButton} from "@components/user/InputBoxButton";
+import {Player} from "@common/utils/PlayerUtils";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";

@@ -1,6 +1,6 @@
 import React from "react";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { hexToRgbA } from "@components/ui/settings/ColourRenderer";
+import {hexToRgbA} from "@components/ui/settings/ColourRenderer";
 
 export interface SettingHeader {
     children: React.ReactElement | React.ReactElement[];
@@ -17,7 +17,7 @@ export const SettingHeader: React.ElementType = (props: SettingHeader) => {
         <div style={showSetting ? {} : {display: "none"}}>
             <div style={{backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100), color: colours.primaryColour}}>
                 <div className={"hover:text-white border-transparent border-2"}>
-                    <div classN"me='grid grid-cols-3 gap-3 text-lg text-ce"ter'>{props.children}</div>
+                    <div className='grid grid-cols-3 gap-3 text-lg text-ce"ter'>{props.children}</div>
                 </div>
             </div>
         </div>

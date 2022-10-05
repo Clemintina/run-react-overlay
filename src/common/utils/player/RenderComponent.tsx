@@ -1,4 +1,4 @@
-import { MetricsObject, TagArray, TagObject } from "@common/utils/Schemas";
+import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import jsonLogic from "json-logic-js";
 import React from "react";
 import useTagStore from "@renderer/store/zustand/TagStore";

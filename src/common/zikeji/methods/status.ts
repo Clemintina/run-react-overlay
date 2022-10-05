@@ -1,6 +1,6 @@
-import { Components, Paths } from "@common/zikeji";
-import { Method } from "@common/zikeji/util/Method";
-import { getResultObject, ResultObject } from "../util/ResultObject";
+import {Components, Paths} from "@common/zikeji";
+import {Method} from "@common/zikeji/util/Method";
+import {getResultObject, ResultObject} from "../util/ResultObject";
 
 export class Status extends Method {
     /**

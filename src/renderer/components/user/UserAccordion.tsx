@@ -1,7 +1,7 @@
 import React from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export interface UserAccordion {

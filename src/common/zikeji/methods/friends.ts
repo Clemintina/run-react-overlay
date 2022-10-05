@@ -1,7 +1,7 @@
-import { Components, Paths } from "@common/zikeji";
-import { Method } from "@common/zikeji/util/Method";
-import { getResultArray, ResultArray } from "../util/ResultArray";
-import { IPCResponse } from "@common/utils/externalapis/RunApi";
+import {Components, Paths} from "@common/zikeji";
+import {Method} from "@common/zikeji/util/Method";
+import {getResultArray, ResultArray} from "../util/ResultArray";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 export class Friends extends Method {
     /**

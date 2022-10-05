@@ -1,8 +1,8 @@
-import { Paths } from "@common/zikeji";
-import { Method } from "@common/zikeji/util/Method";
-import { getResultObject, ResultObject } from "../../util/ResultObject";
-import { GuildsResources } from "./guilds";
-import { SkyBlockResources } from "./skyblock";
+import {Paths} from "@common/zikeji";
+import {Method} from "@common/zikeji/util/Method";
+import {getResultObject, ResultObject} from "../../util/ResultObject";
+import {GuildsResources} from "./guilds";
+import {SkyBlockResources} from "./skyblock";
 
 export class Resources extends Method {
     /**

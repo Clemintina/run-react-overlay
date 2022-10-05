@@ -16,7 +16,7 @@ export const SettingCard: React.ElementType = (props: SettingCard) => {
         <div style={showSetting ? {} : {display: "none"}}>
             <div>
                 <div className={"text-gray-400 hover:text-white"}>
-                    <div classN"me='grid grid-cols-3 gap-3 text-lg align-mi"dle'>{props.children}</div>
+                    <div className="grid grid-cols-3 gap-3 text-lg align-middle">{props.children}</div>
                 </div>
             </div>
         </div>

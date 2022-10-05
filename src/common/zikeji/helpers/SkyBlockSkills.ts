@@ -1,4 +1,4 @@
-import { Components } from "../types/api";
+import {Components} from "../types/api";
 
 export interface SkyBlockSkillsInfo {
     FARMING: SkyBlockSkillInfo;
