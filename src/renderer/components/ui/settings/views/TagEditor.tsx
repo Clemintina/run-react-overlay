@@ -1,26 +1,27 @@
 import React from "react";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {ColourPicker} from "@components/user/settings/components/ColourPicker";
-import {ColourPickerArray} from "@components/user/settings/components/ColourPickerArrays";
-import {TagArray} from "@common/utils/Schemas";
+import { ColourPicker } from "@components/user/settings/components/ColourPicker";
+import { ColourPickerArray } from "@components/user/settings/components/ColourPickerArrays";
+import { TagArray } from "@common/utils/Schemas";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {TagEditor} from "@components/user/settings/components/TagEditor";
-import {AccordionDetails, ThemeProvider} from "@mui/material";
-import {UserAccordion} from "@components/user/UserAccordion";
+import { TagEditor } from "@components/user/settings/components/TagEditor";
+import { AccordionDetails, ThemeProvider } from "@mui/material";
+import { UserAccordion } from "@components/user/UserAccordion";
 import produce from "immer";
-import {TagSchema} from "@common/utils/TagSchema";
+import { TagSchema } from "@common/utils/TagSchema";
 
 const TagEditorView = () => {
-    const {tagStore} = useTagStore((state) => ({tagStore: state}));
+    const { tagStore } = useTagStore((state) => ({ tagStore: state }));
     let localTagStore = tagStore as TagSchema;
-    const theme = {}
+    const theme = {};
 
     // TODO make it look nicer and cleaner
     return (
         <ThemeProvider theme={theme}>
             <NavigationBar>
-                <div className="h-full p-2 flex flex-col">
+                "{" "}
+                <div className='h-fu"l p-2 flex flex-col'>
                     <SettingCard>
                         <span className={"w-80"}>Tag</span>
                         <span className={"w-80"}>Display</span>
@@ -31,7 +32,7 @@ const TagEditorView = () => {
                             <span>Annoy List</span>
                             <span>
                                 <TagEditor
-                                    options={{colour: localTagStore.run.annoylist.colour, placeholder: localTagStore.run.annoylist.display}}
+                                    options={{ colour: localTagStore.run.annoylist.colour, placeholder: localTagStore.run.annoylist.display }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -58,7 +59,7 @@ const TagEditorView = () => {
                             <span>Blacklisted</span>
                             <span>
                                 <TagEditor
-                                    options={{colour: localTagStore.run.blacklist.colour, placeholder: localTagStore.run.blacklist.display}}
+                                    options={{ colour: localTagStore.run.blacklist.colour, placeholder: localTagStore.run.blacklist.display }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -85,7 +86,7 @@ const TagEditorView = () => {
                             <span>Encounters</span>
                             <span>
                                 <TagEditor
-                                    options={{colour: localTagStore.run.encounters.colour[0], placeholder: localTagStore.run.encounters.display}}
+                                    options={{ colour: localTagStore.run.encounters.colour[0], placeholder: localTagStore.run.encounters.display }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -98,8 +99,8 @@ const TagEditorView = () => {
                             <span>
                                 <ColourPickerArray
                                     setColour={async (newTagArray: TagArray) => {
-                                        const newColourObject = {...localTagStore.run.encounters};
-                                        const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<="};
+                                        const newColourObject = { ...localTagStore.run.encounters };
+                                        const newItem = { colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<=" };
                                         if (Array.isArray(newColourObject.colour)) {
                                             const newColourArray = [...newColourObject.colour];
                                             newColourArray.filter((item: TagArray, index) => {
@@ -121,7 +122,7 @@ const TagEditorView = () => {
                             <span>Friends</span>
                             <span>
                                 <TagEditor
-                                    options={{colour: localTagStore.run.friends.colour, placeholder: localTagStore.run.friends.display}}
+                                    options={{ colour: localTagStore.run.friends.colour, placeholder: localTagStore.run.friends.display }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -149,7 +150,7 @@ const TagEditorView = () => {
                             <span>Safelist</span>
                             <span>
                                 <TagEditor
-                                    options={{colour: localTagStore.run.safelist.colour, placeholder: localTagStore.run.safelist.display}}
+                                    options={{ colour: localTagStore.run.safelist.colour, placeholder: localTagStore.run.safelist.display }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -162,8 +163,8 @@ const TagEditorView = () => {
                             <span>
                                 <ColourPickerArray
                                     setColour={async (newTagArray: TagArray) => {
-                                        const newColourObject = {...localTagStore.run.safelist};
-                                        const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<="};
+                                        const newColourObject = { ...localTagStore.run.safelist };
+                                        const newItem = { colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<=" };
                                         if (Array.isArray(newColourObject.colour)) {
                                             const newColourArray = [...newColourObject.colour];
                                             newColourArray.filter((item: TagArray, index) => {
@@ -188,7 +189,7 @@ const TagEditorView = () => {
                                 <span>Hacker</span>
                                 <span>
                                     <TagEditor
-                                        options={{colour: localTagStore.boomza.hacker.colour, placeholder: localTagStore.boomza.hacker.display}}
+                                        options={{ colour: localTagStore.boomza.hacker.colour, placeholder: localTagStore.boomza.hacker.display }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -215,7 +216,7 @@ const TagEditorView = () => {
                                 <span>Sniper</span>
                                 <span>
                                     <TagEditor
-                                        options={{colour: localTagStore.boomza.sniper.colour, placeholder: localTagStore.boomza.sniper.display}}
+                                        options={{ colour: localTagStore.boomza.sniper.colour, placeholder: localTagStore.boomza.sniper.display }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -246,7 +247,7 @@ const TagEditorView = () => {
                                 <span>Party</span>
                                 <span>
                                     <TagEditor
-                                        options={{colour: localTagStore.hypixel.party.colour, placeholder: localTagStore.hypixel.party.display}}
+                                        options={{ colour: localTagStore.hypixel.party.colour, placeholder: localTagStore.hypixel.party.display }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -277,7 +278,7 @@ const TagEditorView = () => {
                                 <span>No Data</span>
                                 <span>
                                     <TagEditor
-                                        options={{colour: localTagStore.keathiz.no_data.colour, placeholder: localTagStore.keathiz.no_data.display}}
+                                        options={{ colour: localTagStore.keathiz.no_data.colour, placeholder: localTagStore.keathiz.no_data.display }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -304,7 +305,7 @@ const TagEditorView = () => {
                                 <span>Queue Total</span>
                                 <span>
                                     <TagEditor
-                                        options={{colour: localTagStore.keathiz.queues.queue_total.colour, placeholder: localTagStore.keathiz.queues.queue_total.display}}
+                                        options={{ colour: localTagStore.keathiz.queues.queue_total.colour, placeholder: localTagStore.keathiz.queues.queue_total.display }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -330,40 +331,39 @@ const TagEditorView = () => {
                             <SettingCard>
                                 <span>Queue Count</span>
                                 <span>
-                                <TagEditor
-                                    options={{colour: localTagStore.keathiz.queues.queue_count.colours[0], placeholder: localTagStore.keathiz.queues.queue_count.display}}
-                                    onBlur={(event) => {
-                                        useTagStore.getState().setStore(
-                                            produce((state: any) => {
-                                                state.keathiz.queues.queue_count.display = event.currentTarget.value;
-                                            }),
-                                        );
-                                    }}
-                                />
-                            </span>
-                                <span>
-                                <ColourPickerArray
-                                    setColour={async (newTagArray: TagArray) => {
-                                        const newColourObject = {...localTagStore.keathiz.queues.queue_count};
-                                        const newItem = {colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<="};
-                                        if (Array.isArray(newColourObject.colours)) {
-                                            const newColourArray = [...newColourObject.colours];
-                                            newColourArray.filter((item: TagArray, index) => {
-                                                if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
-                                            });
-                                            newColourArray.push(newItem);
+                                    <TagEditor
+                                        options={{ colour: localTagStore.keathiz.queues.queue_count.colours[0], placeholder: localTagStore.keathiz.queues.queue_count.display }}
+                                        onBlur={(event) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
-                                                    state.keathiz.queues.queue_count.colours = newColourArray;
+                                                    state.keathiz.queues.queue_count.display = event.currentTarget.value;
                                                 }),
                                             );
-                                        }
-                                    }}
-                                    colourObject={localTagStore.keathiz.queues.queue_count}
-                                />
-                            </span>
+                                        }}
+                                    />
+                                </span>
+                                <span>
+                                    <ColourPickerArray
+                                        setColour={async (newTagArray: TagArray) => {
+                                            const newColourObject = { ...localTagStore.keathiz.queues.queue_count };
+                                            const newItem = { colour: newTagArray.colour, requirement: newTagArray.requirement, operator: "<=" };
+                                            if (Array.isArray(newColourObject.colours)) {
+                                                const newColourArray = [...newColourObject.colours];
+                                                newColourArray.filter((item: TagArray, index) => {
+                                                    if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
+                                                });
+                                                newColourArray.push(newItem);
+                                                useTagStore.getState().setStore(
+                                                    produce((state: any) => {
+                                                        state.keathiz.queues.queue_count.colours = newColourArray;
+                                                    }),
+                                                );
+                                            }
+                                        }}
+                                        colourObject={localTagStore.keathiz.queues.queue_count}
+                                    />
+                                </span>
                             </SettingCard>
-
                         </AccordionDetails>
                     </UserAccordion>
                 </div>

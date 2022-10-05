@@ -6,7 +6,7 @@ import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
 import { SettingHeader } from "@components/user/settings/components/SettingHeader";
 import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import { Slider, SxProps } from "@mui/material";
+import { Box, Slider, SxProps } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
 import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
@@ -27,7 +27,7 @@ const Essentials = () => {
     return (
         <div>
             <NavigationBar>
-                <div className='w-full h-full p-2 flex flex-col space-y-2'>
+                <Box classN"me='p-2 space"y-2'>
                     <SettingCard>
                         <span>Hypixel API Key</span>
                         <span />
@@ -115,7 +115,7 @@ const Essentials = () => {
                             options={{ enabled: settings.boomza }}
                         >
                             <span>
-                                <Tooltip title="This API is proxied to protect your IP.">
+                                <Tooltip title='This API is proxied to protect your IP.'>
                                     <FontAwesomeIcon icon={faMapLocation} />
                                 </Tooltip>
                             </span>
@@ -137,9 +137,19 @@ const Essentials = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({ ...settings, run: { friends: !settings.run.friends } });
+                                useConfigStore.getState().setSettings({...settings, run: {friends: !settings.run.friends}});
                             }}
-                            options={{ enabled: settings.run.friends }}
+                            options={{enabled: settings.run.friends}}
+                        />
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Guilds</span>
+                        <span />
+                        <ToggleButton
+                            onChange={async () => {
+                                useConfigStore.getState().setSettings({...settings, hypixel: {guilds: !settings.hypixel.guilds}});
+                            }}
+                            options={{enabled: settings.hypixel.guilds}}
                         />
                     </SettingCard>
                     <SettingCard>
@@ -148,12 +158,12 @@ const Essentials = () => {
                         <span>
                             <ToggleButton
                                 onChange={async () => {
-                                    useConfigStore.getState().setSettings({ ...settings, keathiz: !settings.keathiz });
+                                    useConfigStore.getState().setSettings({...settings, keathiz: !settings.keathiz});
                                 }}
-                                options={{ enabled: settings.keathiz }}
+                                options={{enabled: settings.keathiz}}
                             >
                                 <span>
-                                    <Tooltip title="This API is proxied to protect your IP.">
+                                    <Tooltip title='This API is proxied to protect your IP.'>
                                         <FontAwesomeIcon icon={faMapLocation} />
                                     </Tooltip>
                                 </span>
@@ -207,17 +217,7 @@ const Essentials = () => {
                             />
                         </span>
                     </SettingCard>
-                    <SettingCard>
-                        <span>Sorting</span>
-                        <span />
-                        <span>To sort players in order of stats, click the label of the column whose stats you'd like to sort by.</span>
-                    </SettingCard>
-                    <SettingCard>
-                        <span>Version</span>
-                        <span />
-                        <span>{useConfigStore.getState().version}</span>
-                    </SettingCard>
-                </div>
+                </Box>
             </NavigationBar>
         </div>
     );

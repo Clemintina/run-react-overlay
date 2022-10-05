@@ -1,10 +1,10 @@
-import {Paths} from "@common/zikeji";
-import {Method} from "@common/zikeji/util/Method";
-import {getResultArray, ResultArray} from "../../util/ResultArray";
-import {getResultObject, ResultObject} from "../../util/ResultObject";
-import {SkyBlockAuction} from "./auction";
-import {SkyBlockAuctions} from "./auctions";
-import {SkyBlockProfiles} from "./profiles";
+import { Paths } from "@common/zikeji";
+import { Method } from "@common/zikeji/util/Method";
+import { getResultArray, ResultArray } from "../../util/ResultArray";
+import { getResultObject, ResultObject } from "../../util/ResultObject";
+import { SkyBlockAuction } from "./auction";
+import { SkyBlockAuctions } from "./auctions";
+import { SkyBlockProfiles } from "./profiles";
 
 export class SkyBlock extends Method {
     /**
@@ -74,7 +74,7 @@ export class SkyBlock extends Method {
      * @category API
      */
     public async profile(profile: Paths.SkyblockProfile.Get.Parameters.Profile): Promise<ResultObject<Paths.SkyblockProfile.Get.Responses.$200, ["profile"]>> {
-        return getResultObject(await this.client.call<Paths.SkyblockProfile.Get.Responses.$200>("skyblock/profile", {profile}), ["profile"]);
+        return getResultObject(await this.client.call<Paths.SkyblockProfile.Get.Responses.$200>("skyblock/profile", { profile }), ["profile"]);
     }
 
     /**

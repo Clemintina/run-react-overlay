@@ -13,7 +13,7 @@ export interface ContactStaff {
 }
 
 export const ContactStaff: React.ElementType = (props: ContactStaff) => {
-    const {colours, hypixel, settings, run, version} = useConfigStore((state) => ({colours: state.colours, hypixel: state.hypixel, settings: state.settings, run: state.run, version: state.version}))
+    const { colours, hypixel, settings, run, version } = useConfigStore((state) => ({ colours: state.colours, hypixel: state.hypixel, settings: state.settings, run: state.run, version: state.version }));
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -44,7 +44,7 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
 
     return (
         <div>
-            <InputBoxButton onClick={handleOpen} text={"Tester Feedback"}/>
+            <InputBoxButton onClick={handleOpen} text={"Tester Feedback"} />
             <Modal open={open} onClose={handleClose} style={{color: colours.primaryColour}}>
                 <Box sx={style}>
                     <Typography sx={{mt: 0}}>
@@ -54,12 +54,12 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                     <Typography sx={{mt: 2}}>
                         <FormControl fullWidth>
                             <InputLabel>Type</InputLabel>
-                            <Select value={feedbackType} label='Feedback' onChange={handleChange}>
+                            <Select value={feedbackType} la"el='Feed"ack' onChange={handleChange}>
                                 <MenuItem value={"Bug"}>Bug</MenuItem>
                                 <MenuItem value={"Suggestion"}>Suggestion</MenuItem>
                             </Select>
                             <FormHelperText className={"text-red-500 font-bold"}>{"The type of report you'd like to submit!"}</FormHelperText>
-                            <FeedbackForm options={{text: feedbackType, formHelper: "Please write as descriptively as possible"}} onChange={(event) => setFeedbackTypeMessage(event.target.value)}/>
+                            <FeedbackForm options={{text: feedbackType, formHelper: "Please write as descriptively as possible"}} onChange={(event) => setFeedbackTypeMessage(event.target.value)} />
                         </FormControl>
                         <span>
                             <InputBoxButton
@@ -82,7 +82,7 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                                 }}
                                 text={"Submit"}
                             />
-                            <span style={feedbackResponse ? {} : {display: "none"}} className='pl-2 text-green-500'>
+                            <span style={feedbackResponse ? {} : {display: "none"}} className="pl-2 text-green-500">
                                 ✓
                             </span>
                         </span>

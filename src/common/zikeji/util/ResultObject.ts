@@ -24,7 +24,7 @@ export const getResultObject = <T extends Components.Schemas.ApiSuccess, K exten
         throw new TypeError(`One or more key in "${keys.join('"," ')}" was not in the response.`);
     }
     const obj: ResultObject<T, K> = {} as ResultObject<T, K>;
-    const {ratelimit, cached, cloudflareCache} = clonedResponse;
+    const { ratelimit, cached, cloudflareCache } = clonedResponse;
     const meta: DefaultMeta & Record<string | number | symbol, unknown> = {};
     if (cached) {
         meta.cached = true;

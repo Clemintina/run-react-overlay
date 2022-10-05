@@ -1,6 +1,6 @@
-import {Paths} from "@common/zikeji";
-import {Method} from "@common/zikeji/util/Method";
-import {getResultArray, ResultArray} from "../../util/ResultArray";
+import { Paths } from "@common/zikeji";
+import { Method } from "@common/zikeji/util/Method";
+import { getResultArray, ResultArray } from "../../util/ResultArray";
 
 export class SkyBlockAuction extends Method {
     /**
@@ -12,7 +12,7 @@ export class SkyBlockAuction extends Method {
      * @category API
      */
     public async player(player: Paths.SkyblockAuction.Get.Parameters.Player): Promise<ResultArray<Paths.SkyblockAuction.Get.Responses.$200, "auctions">> {
-        return getResultArray(await this.client.call<Paths.SkyblockAuction.Get.Responses.$200>("skyblock/auction", {player}), "auctions");
+        return getResultArray(await this.client.call<Paths.SkyblockAuction.Get.Responses.$200>("skyblock/auction", { player }), "auctions");
     }
 
     /**
@@ -24,7 +24,7 @@ export class SkyBlockAuction extends Method {
      * @category API
      */
     public async profile(profile: Paths.SkyblockAuction.Get.Parameters.Profile): Promise<ResultArray<Paths.SkyblockAuction.Get.Responses.$200, "auctions">> {
-        return getResultArray(await this.client.call<Paths.SkyblockAuction.Get.Responses.$200>("skyblock/auction", {profile}), "auctions");
+        return getResultArray(await this.client.call<Paths.SkyblockAuction.Get.Responses.$200>("skyblock/auction", { profile }), "auctions");
     }
 
     /**
@@ -36,6 +36,6 @@ export class SkyBlockAuction extends Method {
      * @category API
      */
     public async uuid(uuid: Paths.SkyblockAuction.Get.Parameters.Uuid): Promise<ResultArray<Paths.SkyblockAuction.Get.Responses.$200, "auctions">> {
-        return getResultArray(await this.client.call<Paths.SkyblockAuction.Get.Responses.$200>("skyblock/auction", {uuid}), "auctions");
+        return getResultArray(await this.client.call<Paths.SkyblockAuction.Get.Responses.$200>("skyblock/auction", { uuid }), "auctions");
     }
 }

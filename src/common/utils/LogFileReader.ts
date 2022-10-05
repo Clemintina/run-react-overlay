@@ -9,7 +9,6 @@ export interface LogFileMessage {
     message: string;
 }
 
-
 export class LogFileReader {
     public startListening = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
@@ -39,8 +38,8 @@ export class LogFileReader {
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
-            if (line.includes("Sending you to") || line.includes('       ')) {
-                    await clearOverlayTable();
+            if (line.includes("Sending you to")) {
+                await clearOverlayTable();
             } else if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 clearOverlayTable();

@@ -24,7 +24,7 @@ export interface ToggleButton {
 }
 
 export const ToggleButton: React.ElementType = (props: ToggleButton) => {
-    const CustomToolTip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)(({theme}) => ({
+    const CustomToolTip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
         [`& .${tooltipClasses.tooltip}`]: {
             backgroundColor: colours.backgroundColour,
             color: colours.primaryColour,
@@ -39,14 +39,14 @@ export const ToggleButton: React.ElementType = (props: ToggleButton) => {
             fontSize: theme.typography.pxToRem(16),
         },
     }));
-    const {colours} = useConfigStore((state) => ({colours: state.colours}))
+    const { colours } = useConfigStore((state) => ({ colours: state.colours }));
     const message = props?.text ?? "";
     let tooltip: JSX.Element;
 
     const button = (
         <label className={props.className ?? "flex w-full"}>
             {message}
-            <Checkbox {...{"aria-label": message}} icon={<VisibilityOff />} checkedIcon={<Visibility />} onClick={props?.onClick ?? undefined} onChange={props?.onChange ?? undefined} checked={props.options.enabled} style={{backgroundColor: colours.backgroundColour, color: colours.primaryColour}} />
+            <Checkbox {...{ "aria-label": message }} icon={<VisibilityOff />} checkedIcon={<Visibility />} onClick={props?.onClick ?? undefined} onChange={props?.onChange ?? undefined} checked={props.options.enabled} style={{ backgroundColor: colours.backgroundColour, color: colours.primaryColour }} />
             {props.children}
         </label>
     );

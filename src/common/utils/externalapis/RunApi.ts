@@ -17,10 +17,10 @@ export interface Blacklist {
             security_level: number;
         };
         customTag: string | null;
-        bot: {tagged: boolean; unidentified: boolean; kay: boolean};
-        statistics: {encounters: number; threat_level: number};
-        migrated: {tagged: boolean};
-        annoylist: {tagged: boolean};
+        bot: { tagged: boolean; unidentified: boolean; kay: boolean };
+        statistics: { encounters: number; threat_level: number };
+        migrated: { tagged: boolean };
+        annoylist: { tagged: boolean };
     };
     msTime: number;
 }
@@ -54,16 +54,16 @@ export interface RunFriendList {
 }
 
 export interface DenickerAPI {
-    success: boolean,
-    code: number,
+    success: boolean;
+    code: number;
     data: {
-        found: boolean,
-        nick: string,
-        username: string,
-        uuid: string,
-        invalid?: boolean
-    },
-    msTime: number,
+        found: boolean;
+        nick: string;
+        username: string;
+        uuid: string;
+        invalid?: boolean;
+    };
+    msTime: number;
 }
 
 export enum RunEndpoints {
@@ -97,7 +97,7 @@ export interface LunarAPIResponse {
         uuid: string;
         online: boolean;
         status: string;
-        cosmetics: {count: number; activeCosmetics: LunarCosmetic[]; cachedCosmetics: LunarCosmetic[]};
+        cosmetics: { count: number; activeCosmetics: LunarCosmetic[]; cachedCosmetics: LunarCosmetic[] };
         lunarPlus: {
             premium: boolean;
             clothCloak: boolean;

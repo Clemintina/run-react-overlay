@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {ToggleButton} from "@components/user/ToggleButton";
-import {AgGridReact} from "ag-grid-react";
-import {ColDef, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent} from "ag-grid-community";
+import { ToggleButton } from "@components/user/ToggleButton";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerStar from "@common/utils/player/PlayerStar";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -12,8 +12,8 @@ import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import PlayerSession from "@common/utils/player/PlayerSession";
-import {Player} from "@common/utils/PlayerUtils";
-import {Box} from "@mui/material";
+import { Player } from "@common/utils/PlayerUtils";
+import { Box } from "@mui/material";
 
 const tinyColumnSize = 30;
 const smallColumnSize = 60;
@@ -22,7 +22,7 @@ const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
 const ColumnEditorView = () => {
-    const {columnState} = useConfigStore((state) => ({columnState: state.table.columnState}));
+    const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
     const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
     const toggleColumn = (columnId: string) => {
@@ -38,8 +38,8 @@ const ColumnEditorView = () => {
     };
 
     const onGridUpdate = (event) => {
-        event.columnApi.applyColumnState({state: columnState, applyOrder: true});
-        event.api.refreshCells({force: true});
+        event.columnApi.applyColumnState({ state: columnState, applyOrder: true });
+        event.api.refreshCells({ force: true });
     };
 
     const defaultColDefs: ColDef = {
@@ -53,67 +53,67 @@ const ColumnEditorView = () => {
         {
             field: "id",
             hide: true,
-            cellRenderer: ({data}) => data.uuid,
+            cellRenderer: ({ data }) => data.uuid,
         },
         {
             field: "head",
             minWidth: tinyColumnSize,
             sortable: false,
-            cellRenderer: ({data}) => <PlayerHead player={data} />,
+            cellRenderer: ({ data }) => <PlayerHead player={data} />,
         },
         {
             field: "star",
             minWidth: smallColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <PlayerStar player={data} />,
+            cellRenderer: ({ data }) => <PlayerStar player={data} />,
         },
         {
             field: "name",
             minWidth: extraLargeColumnSize,
             type: "string",
-            cellRenderer: ({data}) => <PlayerName player={data} isOverlayStats={false} />,
+            cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,
         },
         {
             field: "tags",
             minWidth: largeColumnSize,
-            cellRenderer: ({data}) => <PlayerTags player={data} />,
+            cellRenderer: ({ data }) => <PlayerTags player={data} />,
             sortable: false,
         },
         {
             field: "WS",
             minWidth: smallColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <PlayerWinstreak player={data} />,
+            cellRenderer: ({ data }) => <PlayerWinstreak player={data} />,
         },
         {
             field: "FKDR",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"fkdr"} />,
+            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />,
         },
         {
             field: "WLR",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"wlr"} />,
+            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />,
         },
         {
             field: "BBLR",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"bblr"} />,
+            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />,
         },
         {
             field: "wins",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"wins"} />,
+            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />,
         },
         {
             field: "losses",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
+            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />,
         },
         {
             field: "final_kills",
@@ -121,20 +121,20 @@ const ColumnEditorView = () => {
             hide: true,
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
+            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
         },
         {
             field: "session",
             minWidth: smallColumnSize,
             type: "number",
             sortable: false,
-            cellRenderer: ({data}) => <PlayerSession player={data} />,
+            cellRenderer: ({ data }) => <PlayerSession player={data} />,
         },
     ];
 
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
-            event.columnApi.applyColumnState({state: columnState, applyOrder: true});
+            event.columnApi.applyColumnState({ state: columnState, applyOrder: true });
             event.api.setRowData(playerData);
         },
         onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
@@ -150,14 +150,8 @@ const ColumnEditorView = () => {
         columnDefs,
         autoSizePadding: 0,
         rowHeight: 25,
-        overlayNoRowsTemplate: "No Players",
+        overlayNoRowsTemplate: "Welcome to the Table Editor! In order to continue, Please click a button and I will display a preview here! ",
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
-    };
-
-    const backgroundStyle = {
-        height: 100,
-        OverflowX: "hidden",
-        OverflowY: "shown",
     };
 
     // TODO make it look nicer and cleaner
@@ -165,7 +159,7 @@ const ColumnEditorView = () => {
         <div>
             <NavigationBar>
                 <Box>
-                    <div className="ag-theme-alpine-dark" style={backgroundStyle}>
+                    <div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
                         <AgGridReact rowData={playerData} gridOptions={gridOptions} />
                     </div>
                     <div className={"grid grid-cols-6 justify-center"}>
@@ -173,7 +167,7 @@ const ColumnEditorView = () => {
                             <div key={column.colId}>
                                 <span className={"capitalize"}>{column.colId.replace("_", " ")}</span>
                                 <span className={""}>
-                                    <ToggleButton onClick={() => toggleColumn(column.colId)} options={{enabled: !column.hide}}></ToggleButton>
+                                    <ToggleButton onClick={() => toggleColumn(column.colId)} options={{ enabled: !column.hide }}></ToggleButton>
                                 </span>
                             </div>
                         ))}

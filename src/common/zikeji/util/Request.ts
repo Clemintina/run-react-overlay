@@ -56,8 +56,8 @@ export const request = async <T extends Components.Schemas.ApiSuccess & {cause?:
         const maxAge = CACHE_CONTROL_REGEX.exec(axiosResponse.headers["cache-control"] as string);
         responseObject.cloudflareCache = {
             status: axiosResponse.headers["cf-cache-status"] as never,
-            ...(typeof age === "number" && !Number.isNaN(age) && {age}),
-            ...(axiosResponse.headers["cf-cache-status"] === "HIT" && (typeof age !== "number" || Number.isNaN(age)) && {age: 0}),
+            ...(typeof age === "number" && !Number.isNaN(age) && { age }),
+            ...(axiosResponse.headers["cf-cache-status"] === "HIT" && (typeof age !== "number" || Number.isNaN(age)) && { age: 0 }),
             ...(maxAge &&
                 typeof maxAge === "object" &&
                 maxAge.length === 2 &&

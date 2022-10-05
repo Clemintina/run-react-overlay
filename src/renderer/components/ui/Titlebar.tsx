@@ -1,13 +1,13 @@
 import "@assets/scss/titlebar.scss";
-import {Link, useLocation} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBars as headerIcon, faWindowClose, faWindowMinimize} from "@fortawesome/free-solid-svg-icons";
+import { Link, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars as headerIcon, faWindowClose, faWindowMinimize } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
-import {UnderlinedTitle} from "@components/user/UnderlinedTitle";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {Alert} from "@mui/material";
+import { UnderlinedTitle } from "@components/user/UnderlinedTitle";
+import { InputTextBox } from "@components/user/InputTextBox";
+import { Alert } from "@mui/material";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
 
 const TitleBar = () => {
     const currentRoute = useLocation();
@@ -15,7 +15,7 @@ const TitleBar = () => {
     const errorMessageCode = localStore.error.code;
 
     if (errorMessageCode != 200) {
-        setTimeout(() => localStore.setErrorMessage({code: 200, title: "", cause: ""}), 5000);
+        setTimeout(() => localStore.setErrorMessage({ code: 200, title: "", cause: "" }), 5000);
     }
 
     let renderCaret: JSX.Element;
@@ -37,7 +37,7 @@ const TitleBar = () => {
                             <div>
                                 <Link to={titlePath} className='nodrag'>
                                     <span className={"pr-2"}>{renderCaret}</span>
-                                    <UnderlinedTitle text={"Seraph"} options={{text: {size: 25}}} />
+                                    <UnderlinedTitle text={"Seraph"} options={{ text: { size: 25 } }} />
                                 </Link>
                             </div>
                             <div className='md:flex items-center space-x-1'>
@@ -47,7 +47,7 @@ const TitleBar = () => {
                         <div className='md:flex items-center space-x-3 nodrag'>
                             <span className='flex'>
                                 <InputTextBox
-                                    options={{placeholder: "Username...", resetOnEnter: true}}
+                                    options={{ placeholder: "Username...", resetOnEnter: true }}
                                     onKeyDown={(event, textFieldState) => {
                                         if (event.key === "Enter") {
                                             usePlayerStore.getState().addPlayer(textFieldState);

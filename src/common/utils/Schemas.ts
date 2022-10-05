@@ -95,10 +95,13 @@ export interface SettingsConfig {
     keathiz: boolean;
     boomza: boolean;
     astolfo: boolean;
+    hypixel: {
+        guilds: boolean;
+    };
     run: {
         friends: boolean;
     };
-    preferences: {autoHide: boolean};
+    preferences: { autoHide: boolean };
 }
 
 export interface ClientSetting {

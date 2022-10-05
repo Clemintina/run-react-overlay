@@ -1,6 +1,6 @@
-import {Paths} from "@common/zikeji";
-import {Method} from "@common/zikeji/util/Method";
-import {getResultObject, ResultObject} from "../../util/ResultObject";
+import { Paths } from "@common/zikeji";
+import { Method } from "@common/zikeji/util/Method";
+import { getResultObject, ResultObject } from "../../util/ResultObject";
 
 export class SkyBlockAuctions extends Method {
     /**
@@ -12,6 +12,6 @@ export class SkyBlockAuctions extends Method {
      * @category API
      */
     public async page(page: Paths.SkyblockAuctions.Get.Parameters.Page = 0): Promise<ResultObject<Paths.SkyblockAuctions.Get.Responses.$200, ["success"]>> {
-        return getResultObject(await this.client.call<Paths.SkyblockAuctions.Get.Responses.$200>("skyblock/auctions", {page: page.toString(10)}), ["success"]);
+        return getResultObject(await this.client.call<Paths.SkyblockAuctions.Get.Responses.$200>("skyblock/auctions", { page: page.toString(10) }), ["success"]);
     }
 }

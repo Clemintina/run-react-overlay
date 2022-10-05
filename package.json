@@ -10,7 +10,7 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.5.40-STABLE",
+	"version": "1.5.41-STABLE",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
@@ -133,7 +133,7 @@
 		"jsxSingleQuote": true,
 		"printWidth": 400,
 		"useTabs": false,
-		"bracketSpacing": false,
+		"bracketSpacing": true,
 		"proseWrap": "always",
 		"tabWidth": 4
 	}

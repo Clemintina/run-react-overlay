@@ -1,8 +1,7 @@
-import React, {useState} from "react";
-import {useSelector} from "react-redux";
-import {Box, Modal} from "@mui/material";
-import {InputBoxButton} from "@components/user/InputBoxButton";
-import {HexColorPicker} from "react-colorful";
+import React, { useState } from "react";
+import { Box, Modal } from "@mui/material";
+import { InputBoxButton } from "@components/user/InputBoxButton";
+import { HexColorPicker } from "react-colorful";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface ColourPicker {
@@ -13,7 +12,7 @@ export interface ColourPicker {
 }
 
 export const ColourPicker: React.ElementType = (props: ColourPicker) => {
-    const {colours} = useConfigStore((state) => ({colours: state.colours}))
+    const { colours } = useConfigStore((state) => ({ colours: state.colours }));
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -40,7 +39,7 @@ export const ColourPicker: React.ElementType = (props: ColourPicker) => {
     return (
         <div>
             <InputBoxButton onClick={handleOpen} text={props?.text ?? "Pick!"} />
-            <Modal open={open} onClose={handleClose} style={{color: colours.primaryColour}}>
+            <Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
                 <Box sx={style}>
                     <HexColorPicker color={colour} onChange={handleChange} />
                 </Box>

@@ -15,7 +15,7 @@ const PlayerContextMenu: React.ElementType = ({player}: PlayerContextMenu) => {
 
     return (
         <span style={{top: contextPosition.posY, left: contextPosition.posX}}>
-            <img src={`https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`} className='text-center' alt='player-head' />
+            <img src={`https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`} className="text-center" alt="player-head" />
         </span>
     );
 };

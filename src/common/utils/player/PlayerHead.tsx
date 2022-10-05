@@ -23,13 +23,12 @@ const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
                                 <img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
                             </span>
                         );
-                    }
-                    else {
-                    lunarRenderer = (
-                        <span>
-                            <img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
-                        </span>
-                    );
+                    } else {
+                        lunarRenderer = (
+                            <span>
+                                <img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
+                            </span>
+                        );
                     }
                 }
             }

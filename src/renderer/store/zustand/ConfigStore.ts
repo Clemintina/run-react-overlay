@@ -106,7 +106,7 @@ const useConfigStore = create<ConfigStore>()(
                 setVersion: async () => {
                     const appInfo = await window.ipcRenderer.invoke("getAppInfo");
                     const version = appInfo.version;
-                    set(() => ({version}));
+                    set(() => ({ version }));
                 },
                 logs: {
                     logPath: "",
@@ -128,7 +128,7 @@ const useConfigStore = create<ConfigStore>()(
                     detail: "",
                 },
                 setErrorMessage: async (structuredError) => {
-                    set({error: structuredError});
+                    set({ error: structuredError });
                     await awaitTimeout(5 * 1000);
                     set({
                         error: {
@@ -208,7 +208,7 @@ const useConfigStore = create<ConfigStore>()(
                     opacity: 100,
                 },
                 setBrowserWindow: (browserWindow) => {
-                    set({browserWindow});
+                    set({ browserWindow });
                 },
                 table: {
                     columnState: Array<ColumnState>(
@@ -398,13 +398,16 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);
-                    set({table});
+                    set({ table });
                 },
                 settings: {
                     lunar: true,
                     keathiz: false,
                     astolfo: false,
                     boomza: true,
+                    hypixel: {
+                        guilds: false,
+                    },
                     run: {
                         friends: false,
                     },
@@ -413,16 +416,25 @@ const useConfigStore = create<ConfigStore>()(
                     },
                 },
                 setSettings: async (settings) => {
-                    set({settings});
+                    set({ settings });
                     usePlayerStore.getState().updatePlayers();
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {
-                    set({nicks});
+                    set({ nicks });
                 },
                 setStore: (store) => set(store),
             }),
-            {name: "user_settings"},
+            {
+                name: "user_settings",
+                version: 4,
+                migrate: (persistedState: any) => {
+                    const newState = persistedState;
+                    newState.settings.hypixel.gu;
+                    ilds = false;
+                    return newState;
+                },
+            },
         ),
     ),
 );

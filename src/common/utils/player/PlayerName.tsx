@@ -21,7 +21,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
 
     const handleDenickEvent = () => {
         const store = configStore;
-        configStore.setStore({...store, keathiz: {...store.keathiz, showNick: !store.keathiz.showNick}});
+        configStore.setStore({ ...store, keathiz: { ...store.keathiz, showNick: !store.keathiz.showNick } });
     };
 
     let rankPlayer: JSX.Element;
@@ -32,7 +32,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
             if (configStore.keathiz.showNick) {
                 rankPlayer = (
                     <span>
-                        <Interweave content={`${rank.rankHtml}`} /> <span style={{color: `#${rank.colourHex}`}}>{playerName}</span>{" "}
+                        <Interweave content={`${rank.rankHtml}`} /> <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>{" "}
                         <span className={"font-bold"} onClick={handleDenickEvent}>
                             <FontAwesomeIcon icon={faEye} />
                         </span>
@@ -42,7 +42,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
                 playerName = player.name;
                 rankPlayer = (
                     <span>
-                        <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{playerName}</span>{" "}
+                        <span style={{ color: `#${tagStore.run.blacklist.colour}` }}>{playerName}</span>{" "}
                         <span className={"font-bold"} onClick={handleDenickEvent}>
                             <FontAwesomeIcon icon={faEyeSlash} />
                         </span>
@@ -52,21 +52,21 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
         } else {
             rankPlayer = (
                 <span>
-                    <Interweave content={`${rank.rankHtml}`} /> <span style={{color: `#${rank.colourHex}`}}>{playerName}</span>
+                    <Interweave content={`${rank.rankHtml}`} /> <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>
                 </span>
             );
         }
     } else if (player.sources.runApi?.data.data.blacklist.tagged) {
         rankPlayer = (
             <span>
-                <span style={{color: `#${tagStore.run.blacklist.colour}`}}>
+                <span style={{ color: `#${tagStore.run.blacklist.colour}` }}>
                     {" "}
                     {""} {player?.hypixelPlayer?.displayname}
                 </span>
             </span>
         );
     } else {
-        rankPlayer = <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{player.name}</span>;
+        rankPlayer = <span style={{ color: `#${tagStore.run.blacklist.colour}` }}>{player.name}</span>;
     }
 
     return (

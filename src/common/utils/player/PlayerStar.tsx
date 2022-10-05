@@ -18,20 +18,18 @@ const PlayerStar: React.ElementType = (props: PlayerStar) => {
         const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
         if (!player.sources.runApi?.data.data.blacklist.tagged) {
             if (bwLevel.level < 1000) {
-                starRenderer = <span style={{color: `#${bwLevel.prestigeColourHex}`}}>{`[${bwLevel.level}✫]`}</span>;
+                starRenderer = <span style={{ color: `#${bwLevel.prestigeColourHex}` }}>{`[${bwLevel.level}✫]`}</span>;
             } else {
                 starRenderer = <Interweave content={getHighLevelPrestigeColour(bwLevel)} />;
             }
         } else {
-            starRenderer = <span style={{color: `#${tagStore.run.blacklist.colour}`}}>{bwLevel.level ?? 0}</span>;
+            starRenderer = <span style={{ color: `#${tagStore.run.blacklist.colour}` }}>{bwLevel.level ?? 0}</span>;
         }
     } else {
-        starRenderer = <span style={{color: `#${tagStore.run.blacklist.colour}`}}>?</span>;
+        starRenderer = <span style={{ color: `#${tagStore.run.blacklist.colour}` }}>?</span>;
     }
 
-    return (
-        <span>{starRenderer}</span>
-    );
+    return <span>{starRenderer}</span>;
 };
 
 export default PlayerStar;

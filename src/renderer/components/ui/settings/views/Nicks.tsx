@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerNicknameView from "@common/utils/player/PlayerNickname";
-import {PlayerNickname} from "@common/utils/Schemas";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {Components} from "@common/zikeji";
-import {RequestType} from "@common/utils/externalapis/RunApi";
-import {InputBoxButton} from "@components/user/InputBoxButton";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
+import { PlayerNickname } from "@common/utils/Schemas";
+import { InputTextBox } from "@components/user/InputTextBox";
+import { Components } from "@common/zikeji";
+import { RequestType } from "@common/utils/externalapis/RunApi";
+import { InputBoxButton } from "@components/user/InputBoxButton";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
 
 const NickView = () => {
-    const {nicks, hypixelApiKey} = useConfigStore((state) => ({nicks: state.nicks, hypixelApiKey: state.hypixel.apiKey}));
-    const [playerNickname, setPlayerNickname] = useState({name: "", nick: "", added: 0, uuid: ""});
+    const { nicks, hypixelApiKey } = useConfigStore((state) => ({ nicks: state.nicks, hypixelApiKey: state.hypixel.apiKey }));
+    const [playerNickname, setPlayerNickname] = useState({ name: "", nick: "", added: 0, uuid: "" });
     const [clearText, setClearText] = useState(false);
 
     useEffect(() => {
@@ -47,14 +47,14 @@ const NickView = () => {
     };
 
     const clearPlayer = () => {
-        setPlayerNickname({...playerNickname, name: "", nick: "", added: 0, uuid: ""});
+        setPlayerNickname({ ...playerNickname, name: "", nick: "", added: 0, uuid: "" });
     };
 
     // TODO make it look nicer and cleaner
     return (
         <div>
             <NavigationBar>
-                <div className="h-full w-full p-2 text-center">
+                <div className='h-full w-full p-2 text-center'>
                     <div>
                         <SettingCard className={"border-2 border-cyan-500"}>
                             <span className={" "}>
@@ -63,39 +63,39 @@ const NickView = () => {
                                         const userInput = event.currentTarget.value;
                                         if (userInput.length == 0) return;
                                         const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, userInput, hypixelApiKey);
-                                        setPlayerNickname({...playerNickname, uuid: hypixelRequest?.data?.uuid ?? userInput, name: hypixelRequest?.data?.displayname ?? userInput});
+                                        setPlayerNickname({ ...playerNickname, uuid: hypixelRequest?.data?.uuid ?? userInput, name: hypixelRequest?.data?.displayname ?? userInput });
                                         const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
                                         if (user) {
                                             const users = nicks.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
                                             useConfigStore.getState().setNicks([...users, playerNickname]);
                                         }
                                     }}
-                                    onFocus={(event)=>{
-                                      setPlayerNickname({...playerNickname, name: ""})
+                                    onFocus={(event) => {
+                                        setPlayerNickname({ ...playerNickname, name: "" });
                                     }}
-                                    options={{placeholder: "Username", value: playerNickname.name, clear: clearText}}
+                                    options={{ placeholder: "Username", value: playerNickname.name, clear: clearText }}
                                 />
                             </span>
                             <span className={" "}>
                                 <InputTextBox
                                     onBlur={(event) => {
-                                        setPlayerNickname({...playerNickname, nick: event.currentTarget.value});
+                                        setPlayerNickname({ ...playerNickname, nick: event.currentTarget.value });
                                         const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
                                         if (user) {
                                             const users = nicks.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
                                             useConfigStore.getState().setNicks([...users, playerNickname]);
                                         }
                                     }}
-                                    options={{placeholder: "Nickname", value: playerNickname.nick, clear: clearText}}
+                                    options={{ placeholder: "Nickname", value: playerNickname.nick, clear: clearText }}
                                 />
                             </span>
                             <span className={""}>
-                                 <InputBoxButton
-                                     text={"Add"}
-                                     onClick={(event) => {
-                                         addPlayer(playerNickname);
-                                     }}
-                                 />
+                                <InputBoxButton
+                                    text={"Add"}
+                                    onClick={(event) => {
+                                        addPlayer(playerNickname);
+                                    }}
+                                />
                             </span>
                         </SettingCard>
                     </div>

@@ -1,6 +1,6 @@
 import create from "zustand";
-import {persist} from "../../../../node_modules/zustand/middleware";
-import {TagSchema, TagStoreSchema} from "@common/utils/TagSchema";
+import { persist } from "../../../../node_modules/zustand/middleware";
+import { TagSchema, TagStoreSchema } from "@common/utils/TagSchema";
 
 const useTagStore = create<TagStoreSchema>()(
     persist(
@@ -400,7 +400,7 @@ const useTagStore = create<TagStoreSchema>()(
                 queues: {
                     queue_count: {
                         display: "Q-",
-                        colours: [{requirement: 10, colour: "FFD700", operator: "<="}],
+                        colours: [{ requirement: 10, colour: "FFD700", operator: "<=" }],
                     },
                     queue_total: {
                         display: "QT-",
@@ -409,11 +409,11 @@ const useTagStore = create<TagStoreSchema>()(
                     consecutive_queue: {
                         last_1000: {
                             display: "Q-",
-                            colours: [{requirement: 2, colour: "FFD700", operator: "<="}],
+                            colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }],
                         },
-                        last_30: {display: "Q-", colours: [{requirement: 3, colour: "FFD700", operator: "<="}]},
-                        last_10: {display: "Q-", colours: [{requirement: 2, colour: "FFD700", operator: "<="}]},
-                        weighted: {display: "Q-", colours: [{requirement: 50, colour: "FFD700", operator: "<="}]},
+                        last_30: { display: "Q-", colours: [{ requirement: 3, colour: "FFD700", operator: "<=" }] },
+                        last_10: { display: "Q-", colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }] },
+                        weighted: { display: "Q-", colours: [{ requirement: 50, colour: "FFD700", operator: "<=" }] },
                     },
                 },
                 exits: {
@@ -454,7 +454,7 @@ const useTagStore = create<TagStoreSchema>()(
                         queues: {
                             queue_count: {
                                 display: "Q-",
-                                colours: [{requirement: 10, colour: "FFD700", operator: "<="}],
+                                colours: [{ requirement: 10, colour: "FFD700", operator: "<=" }],
                             },
                             queue_total: {
                                 display: "QT-",
@@ -463,11 +463,11 @@ const useTagStore = create<TagStoreSchema>()(
                             consecutive_queue: {
                                 last_1000: {
                                     display: "Q-",
-                                    colours: [{requirement: 2, colour: "FFD700", operator: "<="}],
+                                    colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }],
                                 },
-                                last_30: {display: "Q-", colours: [{requirement: 3, colour: "FFD700", operator: "<="}]},
-                                last_10: {display: "Q-", colours: [{requirement: 2, colour: "FFD700", operator: "<="}]},
-                                weighted: {display: "Q-", colours: [{requirement: 50, colour: "FFD700", operator: "<="}]},
+                                last_30: { display: "Q-", colours: [{ requirement: 3, colour: "FFD700", operator: "<=" }] },
+                                last_10: { display: "Q-", colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }] },
+                                weighted: { display: "Q-", colours: [{ requirement: 50, colour: "FFD700", operator: "<=" }] },
                             },
                         },
                         exits: {

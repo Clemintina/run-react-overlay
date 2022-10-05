@@ -13,9 +13,9 @@ export interface UnderlinedTitle {
 }
 
 export const UnderlinedTitle: React.ElementType = (props: UnderlinedTitle) => {
-    const {colours} = useConfigStore((state) => ({colours: state.colours}))
+    const { colours } = useConfigStore((state) => ({ colours: state.colours }));
     return (
-        <div className='underlineText' style={{fontSize: props.options?.text?.size ?? 16,  color: colours.primaryColour}}>
+        <div classN"me='underline"ext' style={{fontSize: props.options?.text?.size ?? 16, color: colours.primaryColour}}>
             {props.text}
         </div>
     );

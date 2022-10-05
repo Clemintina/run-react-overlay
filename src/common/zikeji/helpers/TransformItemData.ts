@@ -42,7 +42,8 @@ export interface NBTDisplay {
  * Extra attributes that appear on extraAttributes property of the {@link NBTTag} property. Commonly used to describe items in more detail and their underlying settings.
  */
 export interface NBTExtraAttributes {
-    [key: string]: string | number | number[] | {[name: string]: number} | NBTExtraAttributesPotionEffect[] | NBTInventory | undefined;
+    [key: string]: string | number | number[] | { [name: string]: number } | NBTExtraAttributesPotionEffect[] | NBTInventory | undefined;
+
     id: string;
     uuid?: string;
     timestamp?: string;
@@ -60,7 +61,7 @@ export interface NBTExtraAttributes {
     rarity_upgrades?: number;
     dungeon_item_level?: number;
     backpack_color?: string;
-    runes?: {[name: string]: number};
+    runes?: { [name: string]: number };
     potion_level?: number;
     potion?: string;
     effects?: NBTExtraAttributesPotionEffect[];
