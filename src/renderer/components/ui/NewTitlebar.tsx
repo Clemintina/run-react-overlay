@@ -106,7 +106,7 @@ const NewTitlebar = ({ children }) => {
     return (
         <Box sx={{ display: "flex" }} className={"drag"}>
             <CssBaseline />
-            <AppBar position={"fixed"} open={open} className={"drag"} sx={{ opacity: 100 }} style={{ backgroundColor: "transparent" }}>
+            <AppBar position={"fixed"} open={open} className={"drag"} sx={{ opacity: 100 }}>
                 <Toolbar>
                     <IconButton color={"inherit"} onClick={handleDrawerOpen} edge="start" className={"nodrag"} sx={{mr: 2, ...(open && {display: "none"})}}>
                         <MenuIcon />
@@ -115,7 +115,7 @@ const NewTitlebar = ({ children }) => {
                         Seraph
                     </Typography>
                     <Typography sx={{marginLeft: "auto"}}>
-                        <div className={"md:flex items-center sp\"ce-x-3 nodrag"}>
+                        <div className={"flex items-center space-x-3 p-1 nodrag"}>
                             <span className={"flex"}>
                                 <InputTextBox
                                     options={{placeholder: "Username...", resetOnEnter: true}}
