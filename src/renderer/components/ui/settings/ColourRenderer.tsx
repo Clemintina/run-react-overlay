@@ -1,6 +1,6 @@
 import React from "react";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { alpha, createTheme, ThemeProvider } from "@mui/material";
+import {alpha, createTheme, ThemeProvider} from "@mui/material";
 
 const ColourRenderer = (props: { children: JSX.Element }) => {
     const { colours, opacity } = useConfigStore((state) => ({
