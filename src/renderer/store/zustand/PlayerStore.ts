@@ -83,7 +83,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     useConfigStore.getState().setErrorMessage({
                         code: 403,
                         title: "Invalid Hypixel Key",
-                        cause: "The RUN Key provided is currently locked, PLease generate a new one.",
+                        cause: "Invalid Hypixel API key. Generate a new one with /api new.",
                         detail: "This key has been suspended by Hypixel, Please enter a new one.",
                         referenceId: "HYPIXEL_KEY_LOCK",
                     });
