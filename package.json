@@ -41,7 +41,7 @@
 		"@sinclair/typebox": "^0.24.44",
 		"ag-grid-community": "^28.1.1",
 		"ag-grid-react": "^28.1.1",
-		"axios": "^0.27.2",
+		"axios": "^1.1.0",
 		"browserify": "^17.0.0",
 		"browserify-fs": "^1.0.0",
 		"cache-manager": "^4.1.0",
