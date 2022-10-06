@@ -27,7 +27,7 @@ const Essentials = () => {
     return (
         <div>
             <NavigationBar>
-                <Box classN"me='p-2 space"y-2'>
+                <Box className={"p-2 space-y-2"}>
                     <SettingCard>
                         <span>Hypixel API Key</span>
                         <span />
@@ -61,10 +61,10 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setRunApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{ placeholder: run.valid ? run.apiKey : "Run API Key" }}
+                                options={{ placeholder: run.valid ? run.apiKey : "Seraph API Key" }}
                                 sx={styledProps}
                                 error={() => !run.valid}
-                                helperText={!run.valid ? "Enter a valid RUN API Key" : ""}
+                                helperText={!run.valid ? "Enter a valid Seraph API Key" : ""}
                             />
                         </span>
                     </SettingCard>

@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/named
-import {ColumnState} from "ag-grid-community";
+import { ColumnState } from "ag-grid-community";
 import create from "zustand";
-import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
-import {ResultObject} from "@common/zikeji/util/ResultObject";
-import {Paths} from "@common/zikeji";
-import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {awaitTimeout} from "@common/helpers";
-import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {devtools, persist} from "../../../../node_modules/zustand/middleware";
+import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
+import { ResultObject } from "@common/zikeji/util/ResultObject";
+import { Paths } from "@common/zikeji";
+import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { awaitTimeout } from "@common/helpers";
+import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { devtools, persist } from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export type ConfigStore = {
@@ -25,6 +25,8 @@ export type ConfigStore = {
     setLogs: (clientSetting: ClientSetting) => void;
     error: DisplayErrorMessage;
     setErrorMessage: (error: DisplayErrorMessage) => void;
+    successMessage: DisplayErrorMessage;
+    setSuccessMessage: (success: DisplayErrorMessage) => void;
     keathiz: {
         key: string;
         valid: boolean;

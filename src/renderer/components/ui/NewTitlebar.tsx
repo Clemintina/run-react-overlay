@@ -35,7 +35,7 @@ const menuOptions = Array<MenuOption>(
     { menuName: "Nicks", menuLink: "/settings/nicks" },
     {
         menuName: "Table Editor",
-        menuLink: "/settings/columnedito,r",
+        menuLink: "/settings/columneditor",
     },
 );
 
@@ -94,8 +94,8 @@ const getIconType = (menuObject: MenuOption) => {
             return <FontAwesomeIcon icon={faUserNinja} />;
         case "tags":
             return <Sell />;
-        case "appearance"r":
-            return <ViewColumn; />;
+        case "table editor":
+            return <ViewColumn />;
         case 'appearance':
             return <BrushIcon />
         default:
