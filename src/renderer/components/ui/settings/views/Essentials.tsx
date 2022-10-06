@@ -6,7 +6,7 @@ import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
 import { SettingHeader } from "@components/user/settings/components/SettingHeader";
 import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import { Box, Slider, SxProps } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
 import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
@@ -27,7 +27,7 @@ const Essentials = () => {
     return (
         <div>
             <NavigationBar>
-                <Box className="p-2 space-y-2">
+                <Box classN"me='p-2 space"y-2'>
                     <SettingCard>
                         <span>Hypixel API Key</span>
                         <span />
@@ -103,7 +103,6 @@ const Essentials = () => {
                         <span>APIs</span>
                         <span />
                     </SettingHeader>
-
                     <SettingCard>
                         <span>Boomza (BWStats)</span>
                         <span />
@@ -121,7 +120,6 @@ const Essentials = () => {
                             </span>
                         </ToggleButton>
                     </SettingCard>
-
                     <SettingCard>
                         <span>Lunar Tags</span>
                         <span />
@@ -186,47 +184,6 @@ const Essentials = () => {
                                 }}
                                 options={{ enabled: settings.astolfo }}
                             ></ToggleButton>
-                        </span>
-                    </SettingCard>
-                    <SettingCard>
-                        <span>Auto Hide</span>
-                        <span />
-                        <ToggleButton
-                            onChange={async () => {
-                                useConfigStore.getState().setSettings({ ...settings, preferences: { autoHide: !settings.preferences.autoHide } });
-                            }}
-                            options={{ enabled: settings.preferences.autoHide }}
-                        />
-                    </SettingCard>
-                    <SettingCard>
-                        <span>Opacity</span>
-                        <span />
-                        <span>
-                            <Slider
-                                aria-label='Opacity'
-                                value={opacityValue}
-                                onChange={(event, value) => {
-                                    const opacityValue: number = typeof value == "number" ? value : value[0];
-                                    setOpacityValue(opacityValue);
-                                    useConfigStore.getState().setBrowserWindow({ ...useConfigStore.getState().browserWindow, opacity: opacityValue });
-                                }}
-                                onBlur={() => {
-                                    useConfigStore.getState().setBrowserWindow({ height: browserWindow.height, opacity: opacityValue, width: browserWindow.width });
-                                }}
-                                getAriaValueText={(value) => `${value}`}
-                                valueLabelDisplay='auto'
-                                min={1}
-                                valueLabelFormat={(value: number) => {
-                                    return value;
-                                }}
-                            />
-                        </span>
-                    </SettingCard>
-                    <SettingCard>
-                        <span>Version</span>
-                        <span />
-                        <span>
-                            {useConfigStore.getState().version}
                         </span>
                     </SettingCard>
                 </Box>

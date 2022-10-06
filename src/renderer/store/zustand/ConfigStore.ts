@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
@@ -43,6 +43,10 @@ export type ConfigStore = {
     settings: SettingsConfig;
     setSettings: (settingsSettings: SettingsConfig) => void;
     setStore: (store: ConfigStore) => void;
+    font: {
+        family: string;
+    };
+    setFont: (font: FontConfig) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
 };
@@ -419,6 +423,12 @@ const useConfigStore = create<ConfigStore>()(
                     set({ settings });
                     usePlayerStore.getState().updatePlayers();
                 },
+                font: {
+                    family: "Times New Roman",
+                },
+                setFont: async (font) => {
+                    set({ font });
+                },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {
                     set({ nicks });
@@ -429,9 +439,7 @@ const useConfigStore = create<ConfigStore>()(
                 name: "user_settings",
                 version: 4,
                 migrate: (persistedState: any) => {
-                    const newState = persistedState;
-                    newState.settings.hypixel.guilds = false;
-                    return newState;
+                    return { ...persistedState, settings: { hypixel: { guilds: false } }, font: { family: "Times New Roman" } };
                 },
             },
         ),

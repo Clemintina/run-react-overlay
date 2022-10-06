@@ -1,47 +1,23 @@
 import React from "react";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {alpha, createTheme, ThemeProvider} from "@mui/material";
+import { createTheme, ThemeProvider, useTheme } from "@mui/material";
 
 const ColourRenderer = (props: { children: JSX.Element }) => {
-    const { colours, opacity } = useConfigStore((state) => ({
+    const { colours, opacity, font } = useConfigStore((state) => ({
         colours: state.colours,
         opacity: state.browserWindow.opacity,
+        font: state.font,
     }));
+    const useExistingTheme = useTheme();
     const theme = createTheme({
-        palette: {
-            mode: "dark",
-        },
-        components: {
-            MuiDrawer: {
-                styleOverrides: {
-                    paper: {
-                        backgroundColor: alpha(useConfigStore.getState().colours.backgroundColour, useConfigStore.getState().browserWindow.opacity / 100),
-                    },
-                },
-            },
-            MuiTextField: {
-                styleOverrides: {
-                    root: {
-                        "& .MuiOutlinedInput-root": {
-                            "&:hover fieldset": {
-                                borderColor: "cyan",
-                            },
-                        },
-                    },
-                },
-            },
-            MuiPaper: {
-                styleOverrides: {
-                    root: {
-                        backgroundColor: alpha(useConfigStore.getState().colours.backgroundColour, useConfigStore.getState().browserWindow.opacity / 100),
-                    },
-                },
-            },
+        ...useExistingTheme,
+        typography: {
+            fontFamily: font.family,
         },
     });
 
     return (
-        <div style={{ backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
+        <div style={{ fontFamily: font.family, backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
             <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
         </div>
     );

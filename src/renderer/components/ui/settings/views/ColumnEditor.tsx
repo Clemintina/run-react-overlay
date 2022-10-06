@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {ToggleButton} from "@components/user/ToggleButton";
-import {AgGridReact} from "ag-grid-react";
-import {ColDef, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent} from "ag-grid-community";
+import { ToggleButton } from "@components/user/ToggleButton";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerStar from "@common/utils/player/PlayerStar";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -12,8 +12,8 @@ import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import PlayerSession from "@common/utils/player/PlayerSession";
-import {Player} from "@common/utils/PlayerUtils";
-import {Box} from "@mui/material";
+import { Player } from "@common/utils/PlayerUtils";
+import { Box } from "@mui/material";
 
 const tinyColumnSize = 30;
 const smallColumnSize = 60;
@@ -22,7 +22,7 @@ const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
 const ColumnEditorView = () => {
-    const {columnState} = useConfigStore((state) => ({columnState: state.table.columnState}));
+    const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
     const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
     const toggleColumn = (columnId: string) => {
@@ -50,6 +50,11 @@ const ColumnEditorView = () => {
     };
 
     const columnDefs: ColDef[] = [
+        {
+            field: "id",
+            hide: true,
+            cellRenderer: ({ data }) => data.uuid,
+        },
         {
             field: "head",
             minWidth: tinyColumnSize,
@@ -925,7 +930,6 @@ const constantPlayerData = () => {
                 uuid: "8589389e8b6b46c288084eb71ec3479e",
                 displayname: "Player",
                 firstLogin: 1595749330000,
-                lastLogin: 1598749930000,
                 knownAliasesLower: [],
                 knownAliases: [],
                 playername: "catgirlkay",

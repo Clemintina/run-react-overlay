@@ -143,3 +143,7 @@ export interface PlayerNickname {
     nick: string;
     added: number;
 }
+
+export interface FontConfig {
+    family: string;
+}

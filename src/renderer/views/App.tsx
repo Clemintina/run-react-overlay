@@ -17,7 +17,7 @@ import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import {TableState} from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 import PlayerGuild from "@common/utils/player/PlayerGuild";
 
 let columnApi: ColumnApi;
@@ -27,7 +27,6 @@ const smallColumnSize = 60;
 const mediumColumnSize = 60;
 const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
-
 
 export const defaultColDefs: ColDef = {
     resizable: true,

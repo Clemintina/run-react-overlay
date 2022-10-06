@@ -199,13 +199,11 @@ const registerSeraphIPC = () => {
                     } else if (key.startsWith("key")) {
                         ttl = 30;
                     }
-                    return playerCache.set(`hypixel:${key}`, value, {
-                        ttl: ttl,
-                    });
+                    return playerCache.set(`hypixel:${key}`, value, { ttl });
                 },
             },
             userAgent: "Run-Bedwars-React-Overlay-" + overlayVersion,
-            retries: 2,
+            retries: 4,
             timeout: 7200,
         });
         const client = hypixelClient.getClient();
