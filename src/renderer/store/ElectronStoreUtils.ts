@@ -94,6 +94,10 @@ export const RUNElectronStore = Type.Optional(
                     description: "Enable Boomza API",
                     default: true,
                 }),
+                updater: Type.Boolean({
+                    description: "Enable Automatic Updates",
+                    default: true,
+                }),
                 keathiz: Type.Boolean({
                     description: "Enable Keathiz API",
                     default: false,
@@ -113,6 +117,7 @@ export const getDefaultElectronStore: RUNElectronStoreType = {
         lunar: true,
         boomza: true,
         keathiz: false,
+        updater: true,
         autoHide: true,
     },
 };

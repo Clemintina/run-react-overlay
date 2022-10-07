@@ -125,7 +125,7 @@ export const createAppWindow = (): BrowserWindow => {
     mainWindowState.manage(appWindow);
     let updates = electronStore.get("settings.updater");
 
-    if (!isDevelopment && updates) {
+    if (!(isDevelopment) && updates) {
         if (!require("electron-squirrel-startup") && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             log.info("Running updater");

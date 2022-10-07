@@ -415,6 +415,7 @@ const useConfigStore = create<ConfigStore>()(
                 settings: {
                     lunar: true,
                     keathiz: false,
+                    updater: true,
                     astolfo: false,
                     boomza: true,
                     hypixel: {
