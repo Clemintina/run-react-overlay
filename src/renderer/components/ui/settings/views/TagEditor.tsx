@@ -26,7 +26,7 @@ const TagEditorView = () => {
                         <span className={"w-80"}>Display</span>
                         <span className={"w-80"}>Colour</span>
                     </SettingCard>
-                    <UserAccordion name={"Run"}>
+                    <UserAccordion name={"Seraph"}>
                         <SettingCard>
                             <span>Annoy List</span>
                             <span>
@@ -271,7 +271,7 @@ const TagEditorView = () => {
                             </SettingCard>
                         </AccordionDetails>
                     </UserAccordion>
-                    <UserAccordion name={"Keathiz"}>
+                    <UserAccordion name={"Antisniper"}>
                         <AccordionDetails>
                             <SettingCard>
                                 <span>No Data</span>
