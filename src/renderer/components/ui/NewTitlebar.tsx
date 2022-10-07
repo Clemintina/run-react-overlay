@@ -123,7 +123,7 @@ const NewTitlebar = ({ children }) => {
                     <IconButton color={"inherit"} onClick={handleDrawerOpen} edge="start" className={"nodrag"} sx={{mr: 2, ...(open && {display: "none"})}}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div" className={"text-bold"}>
+                    <Typography variant={"h6"} noWrap component={"div"} className={"text-bold"}>
                         Seraph
                     </Typography>
                     <Typography sx={{marginLeft: "auto"}}>

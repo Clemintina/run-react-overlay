@@ -68,6 +68,7 @@ const Appearance = () => {
                             }}
                             options={{ placeholder: font.family }}
                             sx={styledProps}
+                            helperText={"Font you want to use."}
                         />
                     </SettingCard>
                 </Box>
