@@ -54,7 +54,7 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
         if (hypixel.apiKeyValid) {
             tagArray.push(<span style={{ color: "red" }}>NICKED</span>);
         } else {
-            tagArray.push(<span style={{ color: "red" }}>Invalid Hypixel API Key</span>);
+            tagArray.push(<span style={{ color: "red" }}>Invalid </span>);
         }
     }
 

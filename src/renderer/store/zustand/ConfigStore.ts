@@ -82,12 +82,18 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKeyValid: true,
                                 apiKeyOwner: apiResponse.data.owner,
                             },
-                        }));
+                        })
+                        );
+                        get().setErrorMessage({
+                            title: "Hypixel Key Set",
+                            cause: "Successfully set your Hypixel API key!",
+                            code: 200,
+                        });
                     } else {
                         get().setErrorMessage({
                             title: "Invalid Hypixel Key",
-                            cause: "The Hypixel API key provided is not valid!",
-                            code: 401,
+                            cause: "The Hypixel API key provided is not valid! Generate one with /api new.",
+                            code: 400,
                         });
                         set(() => ({
                             hypixel: {
@@ -138,7 +144,7 @@ const useConfigStore = create<ConfigStore>()(
                     await awaitTimeout(5 * 1000);
                     set({
                         error: {
-                            code: 200,
+                            code: 201,
                             title: "",
                             cause: "",
                             detail: "",
@@ -172,9 +178,9 @@ const useConfigStore = create<ConfigStore>()(
                         }
                     } else {
                         get().setErrorMessage({
-                            title: "Invalid Keathiz Key",
-                            cause: "The API key provided is not valid!",
-                            code: 401,
+                            title: "Invalid Antisniper Key",
+                            cause: "The Antisniper API key provided is not valid!",
+                            code: 400,
                         });
                     }
                 },
@@ -193,19 +199,19 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKey: runkey,
                                 valid: true,
                             },
-                            error: {
-                                code: 200,
-                                cause: "Set Run ",
-                                title: "",
-                            },
+                        });
+                        get().setErrorMessage({
+                            title: "Seraph Key Set",
+                            cause: "Successfully set your Seraph API key!",
+                            code: 200,
                         });
                     } else {
                         get().setErrorMessage({
                             title: "Invalid Seraph Key",
                             cause: "The Seraph API key provided is invalid or locked!",
-                            code: 401,
+                            code: 400,
                         });
-                        await window.ipcRenderer.invoke("notifications", "Your RUN Key has been locked!");
+                        await window.ipcRenderer.invoke("notifications", "Your Seraph Key has been locked!");
                     }
                 },
                 browserWindow: {

@@ -94,6 +94,7 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
+    updater: boolean;
     astolfo: boolean;
     hypixel: {
         guilds: boolean;

@@ -186,6 +186,20 @@ const Essentials = () => {
                             ></ToggleButton>
                         </span>
                     </SettingCard>
+                    <SettingCard>
+                        <span>Automatic Updates</span>
+                        <span />
+                        <span>
+                            <ToggleButton
+                                onChange={async () => {
+                                    await window.config.set("settings.updater", !(await window.config.get("settings.updater")));
+                                    useConfigStore.getState().setSettings({ ...settings, updater: !settings.updater });
+                                    
+                                }}
+                                options={{ enabled: settings.updater }}
+                            ></ToggleButton>
+                        </span>
+                    </SettingCard>
                 </Box>
             </NavigationBar>
         </div>

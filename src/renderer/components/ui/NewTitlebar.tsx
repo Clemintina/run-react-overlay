@@ -120,17 +120,17 @@ const NewTitlebar = ({ children }) => {
             <CssBaseline />
             <AppBar position={"fixed"} open={open} className={"drag"} sx={{ opacity: 100 }}>
                 <Toolbar>
-                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge="start" className={"nodrag"} sx={{mr: 2, ...(open && {display: "none"})}}>
+                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge="start" className={"nodrag"} sx={{ mr: 2, ...(open && { display: "none" }) }}>
                         <MenuIcon />
                     </IconButton>
                     <Typography variant={"h6"} noWrap component={"div"} className={"text-bold"}>
                         Seraph
                     </Typography>
-                    <Typography sx={{marginLeft: "auto"}}>
+                    <Typography sx={{ marginLeft: "auto" }}>
                         <div className={"flex items-center space-x-3 p-1 nodrag"}>
                             <span className={"flex"}>
                                 <InputTextBox
-                                    options={{placeholder: "Username...", resetOnEnter: true}}
+                                    options={{ placeholder: "Username...", resetOnEnter: true }}
                                     onKeyDown={(event, textFieldState) => {
                                         if (event.key === "Enter") {
                                             usePlayerStore.getState().addPlayer(textFieldState);
@@ -187,7 +187,7 @@ const NewTitlebar = ({ children }) => {
                 <List>
                     <ListItem disablePadding>
                         <Link to={"/"} onClick={() => setOpen(!open)} className={"nodrag"}>
-                            <ListItemButton sx={{width: drawerWidth}}>
+                            <ListItemButton sx={{ width: drawerWidth }}>
                                 <ListItemIcon>
                                     <Home />
                                 </ListItemIcon>
@@ -198,7 +198,7 @@ const NewTitlebar = ({ children }) => {
                     {menuOptions.map((text, index) => (
                         <ListItem key={index} disablePadding>
                             <Link to={text.menuLink} onClick={() => setOpen(!open)} className={"nodrag"}>
-                                <ListItemButton sx={{width: drawerWidth}}>
+                                <ListItemButton sx={{ width: drawerWidth }}>
                                     <ListItemIcon>{getIconType(text)}</ListItemIcon>
                                     <ListItemText primary={text.menuName} />
                                 </ListItemButton>
@@ -219,13 +219,27 @@ const NewTitlebar = ({ children }) => {
             </Drawer>
             <Main open={open}>
                 <DrawerHeader />
-                {errorMessageCode !== 200 ? (
-                    <Alert color={"error"} sx={{opacity: 100}}>
-                        <Typography sx={{opacity: 100}}>
+                {errorMessageCode === 400 ? (
+                    <Alert color={"error"} sx={{ opacity: 100 }}>
+                        <Typography sx={{ opacity: 100 }}>
                             <span className={"font-medium"}>
                                 Code: <span className={"errorMessage"}> {localStore.error.code}</span>
                             </span>
+                            <span className={"p-1"}>
                             Cause: <span className={"errorMessage"}> {localStore.error.cause}</span>
+                            </span>
+                        </Typography>
+                    </Alert>
+                ) : errorMessageCode === 200 ? (
+                    <Alert color={"success"} sx={{ opacity: 100 }}>
+                        <Typography sx={{ opacity: 100 }}>
+                            <span className={"font-medium"}>
+                                Code: <span className={"errorMessage"}> {localStore.error.code}</span>
+                            </span>
+                            <span className={"p-1"}>
+                            Cause: <span className={"errorMessage"}> {localStore.error.cause}</span>
+                            </span>
+
                         </Typography>
                     </Alert>
                 ) : (
