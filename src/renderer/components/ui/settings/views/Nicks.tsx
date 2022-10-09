@@ -1,17 +1,20 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerNicknameView from "@common/utils/player/PlayerNickname";
-import {PlayerNickname} from "@common/utils/Schemas";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {Components} from "@common/zikeji";
-import {RequestType} from "@common/utils/externalapis/RunApi";
-import {InputBoxButton} from "@components/user/InputBoxButton";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
+import { PlayerNickname } from "@common/utils/Schemas";
+import { InputTextBox } from "@components/user/InputTextBox";
+import { Components } from "@common/zikeji";
+import { RequestType } from "@common/utils/externalapis/RunApi";
+import { InputBoxButton } from "@components/user/InputBoxButton";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
 
 const NickView = () => {
-    const {nicks, hypixelApiKey} = useConfigStore((state) => ({nicks: state.nicks, hypixelApiKey: state.hypixel.apiKey}));
-    const [playerNickname, setPlayerNickname] = useState({name: "", nick: "", added: 0, uuid: ""});
+    const { nicks, hypixelApiKey } = useConfigStore((state) => ({
+        nicks: state.nicks,
+        hypixelApiKey: state.hypixel.apiKey,
+    }));
+    const [playerNickname, setPlayerNickname] = useState({ name: "", nick: "", added: 0, uuid: "" });
     const [clearText, setClearText] = useState(false);
 
     useEffect(() => {
@@ -63,7 +66,11 @@ const NickView = () => {
                                         const userInput = event.currentTarget.value;
                                         if (userInput.length == 0) return;
                                         const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, userInput, hypixelApiKey);
-                                        setPlayerNickname({ ...playerNickname, uuid: hypixelRequest?.data?.uuid ?? userInput, name: hypixelRequest?.data?.displayname ?? userInput });
+                                        setPlayerNickname({
+                                            ...playerNickname,
+                                            uuid: hypixelRequest?.data?.uuid ?? userInput,
+                                            name: hypixelRequest?.data?.displayname ?? userInput,
+                                        });
                                         const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
                                         if (user) {
                                             const users = nicks.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
@@ -102,7 +109,8 @@ const NickView = () => {
                     <div>
                         {nicks.map((playerNick) => (
                             <div key={playerNick.nick}>
-                                <PlayerNicknameView key={playerNick.nick} playerNick={playerNick} handleAdd={addPlayer} handleRemove={removePlayer} />
+                                <PlayerNicknameView key={playerNick.nick} playerNick={playerNick} handleAdd={addPlayer}
+                                                    handleRemove={removePlayer} />
                             </div>
                         ))}
                     </div>

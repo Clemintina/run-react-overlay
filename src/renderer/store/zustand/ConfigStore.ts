@@ -87,9 +87,8 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKeyValid: true,
                                 apiKeyOwner: apiResponse.data.owner,
                             },
-                            
-                        })
-                        );
+
+                        }));
                     } else {
                         get().setErrorMessage({
                             title: "Invalid Hypixel Key",

@@ -1,8 +1,8 @@
-import React, {PropsWithChildren} from "react";
-import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
-import {getPlayerRank} from "@common/zikeji";
-import {OverlayTooltip} from "@components/tooltips/OverlayTooltip";
-import {Interweave} from "interweave";
+import React, { PropsWithChildren } from "react";
+import { Player, PlayerUtils } from "@common/utils/PlayerUtils";
+import { getPlayerRank } from "@common/zikeji";
+import { OverlayTooltip } from "@components/tooltips/OverlayTooltip";
+import { Interweave } from "interweave";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 
@@ -34,12 +34,14 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                     <div>
                         {player.hypixelPlayer !== null && (
                             <div className={"statistics-tooltip text-center"}>
-                                <span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
+                                <span className={"statistics-tooltip-inline"}
+                                      style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
                                     {player.hypixelPlayer.displayname}
                                 </span>
                                 <div>
                                     <span className={"statistics-tooltip-inline"}>
-                                        Games Played: <RenderCoreStatsColour player={player} stats={"gamesPlayed"} />{" "}
+                                        Games Played: <RenderCoreStatsColour player={player}
+                                                                             stats={"gamesPlayed"} />{" "}
                                     </span>
                                 </div>
                                 <div>
@@ -108,12 +110,14 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                                 <br />
                                 <div>
                                     <span className={"statistics-tooltip-inline"}>
-                                        First Login: <Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.firstLogin)} />{" "}
+                                        First Login: <Interweave
+                                        content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.firstLogin)} />{" "}
                                     </span>
                                 </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"}>
-                                        Last Login: <Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.lastLogin)} />{" "}
+                                        Last Login: <Interweave
+                                        content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.lastLogin)} />{" "}
                                     </span>
                                 </div>
                                 {blacklistedReason}

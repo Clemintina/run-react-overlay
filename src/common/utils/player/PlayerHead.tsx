@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {Player} from "@common/utils/PlayerUtils";
+import { Player } from "@common/utils/PlayerUtils";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface PlayerHead {
@@ -20,13 +20,15 @@ const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
                     if (player.sources.lunar.data.player.lunarPlus.premium) {
                         lunarRenderer = (
                             <span>
-                                <img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
+                                <img width="20px" height="20px" src="https://dl.seraph.si/lunarplus.webp"
+                                     alt="lunar tag" />
                             </span>
                         );
                     } else {
                         lunarRenderer = (
                             <span>
-                                <img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
+                                <img width="20px" height="20px"
+                                     src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />
                             </span>
                         );
                     }
@@ -39,7 +41,7 @@ const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
 
     return (
         <span className='inline flex'>
-            <img src={srcUrl} className='text-center' alt='player-head' />
+            <img src={srcUrl} className="text-center" alt="player-head" />
             {lunarRenderer}
         </span>
     );

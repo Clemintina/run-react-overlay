@@ -83,6 +83,7 @@ export declare namespace Components {
              */
             total_legacy_points: number;
         }
+
         export interface AchievementsResourceResponse {
             /**
              * Whether or not the request succeeded.
@@ -129,6 +130,7 @@ export declare namespace Components {
                 warlords: /* The game mode's achievement data. */ AchievementGameModeData;
             };
         }
+
         export interface ApiError {
             /**
              * Whether or not the request succeeded.
@@ -139,12 +141,14 @@ export declare namespace Components {
              */
             cause: string;
         }
+
         export interface ApiSuccess {
             /**
              * Whether or not the request succeeded.
              */
             success: boolean;
         }
+
         export type ChallengeData = {
             id: string;
             name: string;
@@ -153,6 +157,7 @@ export declare namespace Components {
                 amount: number;
             }[];
         }[];
+
         export interface ChallengesResourceResponse {
             /**
              * Whether or not the request succeeded.
@@ -188,6 +193,7 @@ export declare namespace Components {
                 battleground: ChallengeData;
             };
         }
+
         export interface Guild {
             _id: string;
             achievements: GuildAchievements;
@@ -203,7 +209,7 @@ export declare namespace Components {
              * Most of the properties in the schema always show up, however in some instances they were absent. Additional unlisted properties can be assumed to be numbers.
              *
              */
-            GuildExpByGameType;
+                GuildExpByGameType;
             hideGmTag?: boolean;
             joinable?: boolean;
             legacyRanking?: number;
@@ -216,11 +222,13 @@ export declare namespace Components {
             tag?: string;
             tagColor?: string;
         }
+
         export interface GuildAchievements {
             WINNERS: number;
             EXPERIENCE_KINGS: number;
             ONLINE_PLAYERS: number;
         }
+
         export interface GuildBanner {
             Base: number | string;
             Patterns: {
@@ -228,6 +236,7 @@ export declare namespace Components {
                 Pattern: string;
             }[];
         }
+
         /**
          * Earned guild exp in each game mode, where the property key is the gamemode and the value is the exp.
          * Most of the properties in the schema always show up, however in some instances they were absent. Additional unlisted properties can be assumed to be numbers.
@@ -235,6 +244,7 @@ export declare namespace Components {
          */
         export interface GuildExpByGameType {
             [name: string]: undefined | number;
+
             ARCADE?: number;
             ARENA?: number;
             BATTLEGROUND?: number;
@@ -262,6 +272,7 @@ export declare namespace Components {
             WALLS?: number;
             WALLS3?: number;
         }
+
         export interface GuildMember {
             /**
              * Property keys are the date in the format YYYY-MM-DD, and the value is how much guild exp they earned on that date.
@@ -301,6 +312,7 @@ export declare namespace Components {
              */
             uuid: string;
         }
+
         export interface GuildRank {
             /**
              * Timestamp of the rank creation.
@@ -323,6 +335,7 @@ export declare namespace Components {
              */
             tag?: string | null;
         }
+
         export interface GuildResponse {
             /**
              * Whether or not the request succeeded.
@@ -330,6 +343,7 @@ export declare namespace Components {
             success: boolean;
             guild: Guild | null;
         }
+
         export interface GuildsAchievementsResourceResponse {
             /**
              * Whether or not the request succeeded.
@@ -351,6 +365,7 @@ export declare namespace Components {
                 ONLINE_PLAYERS: GuildsTieredAchievementsData;
             };
         }
+
         export interface GuildsPermissionsResourceResponse {
             /**
              * Whether or not the request succeeded.
@@ -370,6 +385,7 @@ export declare namespace Components {
                 };
             }[];
         }
+
         export interface GuildsTieredAchievementsData {
             name: string;
             description: string;
@@ -378,6 +394,7 @@ export declare namespace Components {
                 amount: number;
             }[];
         }
+
         export interface LeaderboardDataEntry {
             path: string;
             prefix: string;
@@ -386,6 +403,7 @@ export declare namespace Components {
             count: number;
             leaders: (string | null)[];
         }
+
         export interface LeaderboardsResponse {
             leaderboards: {
                 [name: string]: LeaderboardDataEntry[];
@@ -414,17 +432,21 @@ export declare namespace Components {
                 VAMPIREZ: LeaderboardDataEntry[];
             };
         }
+
         export type NewsEntries = NewsEntry[];
+
         export interface NewsEntry {
             item: NewsEntryItem;
             link: string;
             text: string;
             title: string;
         }
+
         export interface NewsEntryItem {
             material: string;
             data?: number;
         }
+
         export interface NewsResponse {
             /**
              * Whether or not the request succeeded.
@@ -432,6 +454,7 @@ export declare namespace Components {
             success: boolean;
             items: NewsEntries;
         }
+
         export type NullablePlayer = /**
          * The player object has many properties that define specific things. There are many of these properties, and due to their iterative nature no point in typing them.
          *
@@ -468,6 +491,7 @@ export declare namespace Components {
          * * Properties with keys starting with "dmcrates-" will fit the "PlayerMonthlyCrates" schema.
          *
          */ Player | null;
+
         /**
          * The player object has many properties that define specific things. There are many of these properties, and due to their iterative nature no point in typing them.
          *
@@ -556,6 +580,7 @@ export declare namespace Components {
                  */
                 | PlayerUpcomingLanguageRelease
                 | PlayerVanityMeta;
+
             _id: string;
             uuid: string;
             playername: string;
@@ -716,7 +741,7 @@ export declare namespace Components {
              * In addition to the all_time property, other properties may appear that have properties that start with "day_" but have the same schema as all_time.
              *
              */
-            PlayerChallenges;
+                PlayerChallenges;
             quests?: /* An object which has properties which match quests described by the /resources/quests endpoint. */ PlayerQuests;
             aprilFoolsStaffClicked_0?: string[];
             anniversaryNPCProgress2020?: number;
@@ -738,94 +763,94 @@ export declare namespace Components {
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             adventRewards2018?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             adventRewards_v2_2018?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             adventRewards2019?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             adventRewards_v2_2019?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             christmas2019Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             summer2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             easter2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             easter2020Cooldowns2?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             halloween2016Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             halloween2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             holiday2016Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             specialtyCooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             upcomingLanguageRelease_Korean?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-            PlayerUpcomingLanguageRelease;
+                PlayerUpcomingLanguageRelease;
             upcomingLanguageRelease_Portuguese?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-            PlayerUpcomingLanguageRelease;
+                PlayerUpcomingLanguageRelease;
             upcomingLanguageRelease_Russian?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-            PlayerUpcomingLanguageRelease;
+                PlayerUpcomingLanguageRelease;
             plotResets?: PlayerPlotResets;
             achievementPoints: number;
             achievementRewardsNew?: /* Object property keys are in the format "for_points_NUMBER". */ PlayerAchievementRewardsNew;
@@ -839,6 +864,7 @@ export declare namespace Components {
              */
             achievementsOneTime: string[];
         }
+
         export interface PlayerAchievementData {
             achievementPoints: number;
             achievementRewardsNew?: /* Object property keys are in the format "for_points_NUMBER". */ PlayerAchievementRewardsNew;
@@ -852,16 +878,20 @@ export declare namespace Components {
              */
             achievementsOneTime: string[];
         }
+
         /**
          * Object property keys are in the format "for_points_NUMBER".
          */
         export interface PlayerAchievementRewardsNew {
             [name: string]: number;
         }
+
         export interface PlayerAchievementSync {
             [name: string]: number;
+
             quake_tiered: number;
         }
+
         export interface PlayerAchievementTotem {
             allowed_max_height: number;
             canCustomize: boolean;
@@ -880,11 +910,13 @@ export declare namespace Components {
             unlockedColors: string[];
             unlockedParts: string[];
         }
+
         /**
          * Tiered / numbered achievements the player has earned. All known properties are listed but given it's Hypixel it's subject to change fairly often.
          */
         export interface PlayerAchievements {
             [name: string]: undefined | number;
+
             arcade_arcade_banker?: number;
             arcade_bounty_hunter?: number;
             arena_climb_the_ranks?: number;
@@ -969,6 +1001,7 @@ export declare namespace Components {
             walls3_jack_of_all_trades?: number;
             walls3_rusher?: number;
         }
+
         /**
          * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
          * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
@@ -977,6 +1010,7 @@ export declare namespace Components {
         export interface PlayerAdventRewards {
             [name: string]: number;
         }
+
         /**
          * In addition to the all_time property, other properties may appear that have properties that start with "day_" but have the same schema as all_time.
          *
@@ -987,14 +1021,16 @@ export declare namespace Components {
              * For example, a key might be "ARCADE__farm_hunt_challenge"
              *
              */
-            PlayerChallengesObject;
+                PlayerChallengesObject;
+
             all_time: /**
              * Each property key correlates with an ID from the /resources/challenges endpoint.
              * For example, a key might be "ARCADE__farm_hunt_challenge"
              *
              */
-            PlayerChallengesObject;
+                PlayerChallengesObject;
         }
+
         /**
          * Each property key correlates with an ID from the /resources/challenges endpoint.
          * For example, a key might be "ARCADE__farm_hunt_challenge"
@@ -1003,12 +1039,15 @@ export declare namespace Components {
         export interface PlayerChallengesObject {
             [name: string]: number;
         }
+
         export interface PlayerCompassStats {
             compass?: PlayerCompassStatsChild;
             npc?: PlayerCompassStatsChild;
         }
+
         export interface PlayerCompassStatsChild {
             [name: string]: undefined | number;
+
             arcade?: number;
             arena?: number;
             battleground?: number;
@@ -1034,6 +1073,7 @@ export declare namespace Components {
             walls?: number;
             walls3?: number;
         }
+
         export interface PlayerCooldowns {
             fun: {
                 event?: number;
@@ -1045,10 +1085,12 @@ export declare namespace Components {
                 whatsmyface?: number;
             };
         }
+
         export interface PlayerEugene {
             dailyTwoKExp: number;
             weekly_booster?: number;
         }
+
         /**
          * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
          * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
@@ -1057,6 +1099,7 @@ export declare namespace Components {
         export interface PlayerEventCooldown {
             [name: string]: boolean;
         }
+
         export type PlayerFireworksStorage = {
             colors: string;
             fade_colors: string;
@@ -1066,12 +1109,15 @@ export declare namespace Components {
             trail: boolean;
             twinkle: boolean;
         }[];
+
         export interface PlayerFriendsData {
             [name: string]: undefined | string[];
+
             friendBlocksUuid?: string[];
             friendRequests?: string[];
             friendRequestsUuid?: string[];
         }
+
         export interface PlayerGiftingMeta {
             bundlesReceived?: number;
             bundlesGiven?: number;
@@ -1081,16 +1127,19 @@ export declare namespace Components {
             realBundlesReceived?: number;
             realBundlesReceivedInc?: number;
         }
+
         export interface PlayerGuildData {
             guildInvites?: string[];
             guildKickReason?: string;
             guildNotifications?: boolean;
         }
+
         /**
          * Potentially has properties that follow format "given_cookies_NUMBER" which will be an array of strings.
          */
         export interface PlayerHousingMeta {
             [name: string]: undefined | string | number | boolean | string[] | PlayerHousingMetaPlayerSettings;
+
             allowedBlocks?: string[];
             firstHouseJoinMs?: number;
             packages?: string[];
@@ -1104,14 +1153,17 @@ export declare namespace Components {
             toggle_TIPS?: boolean;
             visibilityDisabled?: boolean;
         }
+
         export interface PlayerHousingMetaPlayerSettings {
             [name: string]: undefined | string | number;
+
             VISIBILITY?: string;
             BORDER?: string;
             TIPS?: string;
             customVisibility?: number;
             YT_REPULSOR?: string;
         }
+
         export interface PlayerIndividualPetStats {
             EXERCISE?: PlayerIndividualPetStatsCare;
             HUNGER?: PlayerIndividualPetStatsCare;
@@ -1119,10 +1171,12 @@ export declare namespace Components {
             experience?: number;
             name?: string;
         }
+
         export interface PlayerIndividualPetStatsCare {
             timestamp: number;
             value: number;
         }
+
         export interface PlayerInfoData {
             _id: string;
             uuid: string;
@@ -1190,6 +1244,7 @@ export declare namespace Components {
             testPass?: boolean;
             watchdogBlockTimestamp?: number;
         }
+
         export interface PlayerMiscData {
             aprilFoolsStaffClicked_0?: string[];
             anniversaryNPCProgress2020?: number;
@@ -1211,96 +1266,97 @@ export declare namespace Components {
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             adventRewards2018?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             adventRewards_v2_2018?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             adventRewards2019?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             adventRewards_v2_2019?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-            PlayerAdventRewards;
+                PlayerAdventRewards;
             christmas2019Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             summer2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             easter2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             easter2020Cooldowns2?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             halloween2016Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             halloween2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             holiday2016Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             specialtyCooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-            PlayerEventCooldown;
+                PlayerEventCooldown;
             upcomingLanguageRelease_Korean?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-            PlayerUpcomingLanguageRelease;
+                PlayerUpcomingLanguageRelease;
             upcomingLanguageRelease_Portuguese?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-            PlayerUpcomingLanguageRelease;
+                PlayerUpcomingLanguageRelease;
             upcomingLanguageRelease_Russian?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-            PlayerUpcomingLanguageRelease;
+                PlayerUpcomingLanguageRelease;
             plotResets?: PlayerPlotResets;
         }
+
         /**
          * Each property is a month and year like "8-2019" and the value contains booleans indicating which reward tier was claimed.
          */
@@ -1314,12 +1370,14 @@ export declare namespace Components {
                 MVP_PLUS?: boolean;
             };
         }
+
         export interface PlayerOutfit {
             BOOTS?: string;
             CHESTPLATE?: string;
             HELMET?: string;
             LEGGINGS?: string;
         }
+
         /**
          * Each property key describes the location of the parkour. e.g. "Prototype" or "Bedwars".
          */
@@ -1328,6 +1386,7 @@ export declare namespace Components {
                 [name: string]: number;
             };
         }
+
         /**
          * Each property key describes the location of the parkour. e.g. "Prototype" or "Bedwars".
          */
@@ -1343,18 +1402,21 @@ export declare namespace Components {
                 timeTook: number;
             }[];
         }
+
         /**
          * This object describes the pet pet consumables the player has. Each property's key is the consumable name. e.g. "APPLE" or "WOOD_SWORD"
          */
         export interface PlayerPetConsumables {
             [name: string]: number;
         }
+
         /**
          * Each property key is the name of the pet the stats apply to.
          */
         export interface PlayerPetStats {
             [name: string]: PlayerIndividualPetStats;
         }
+
         export interface PlayerPlotResets {
             /**
              * Timestamp of when the reset occurred.
@@ -1365,15 +1427,18 @@ export declare namespace Components {
              */
             uuid: string;
         }
+
         export interface PlayerQuestSettings {
             autoActivate?: boolean;
         }
+
         /**
          * An object which has properties which match quests described by the /resources/quests endpoint.
          */
         export interface PlayerQuests {
             [name: string]: /* Use this own object's key to find the quest from the /resources/quests endpoint in order to interpret this information. */ PlayerQuestsInfo;
         }
+
         /**
          * Use this own object's key to find the quest from the /resources/quests endpoint in order to interpret this information.
          */
@@ -1391,9 +1456,11 @@ export declare namespace Components {
                 time: number;
             }[];
         }
+
         export interface PlayerResponse {
             player: NullablePlayer;
         }
+
         export interface PlayerSettings {
             [name: string]:
                 | undefined
@@ -1401,8 +1468,9 @@ export declare namespace Components {
                 | string
                 | number
                 | {
-                      [name: string]: string;
-                  };
+                [name: string]: string;
+            };
+
             compass?: {
                 [name: string]: string;
             };
@@ -1425,6 +1493,7 @@ export declare namespace Components {
             profanityLevel_PM?: string;
             spec_speed?: number;
         }
+
         export interface PlayerSettingsData {
             language?: string;
             autoDetectLanguage?: boolean;
@@ -1472,18 +1541,22 @@ export declare namespace Components {
             vanityFavorites?: string;
             wardrobe?: string;
         }
+
         export interface PlayerSkin {
             signature: string;
             timeoutStart: number;
             value: string;
         }
+
         export type PlayerSocialMedia = PlayerSocialMediaLinks & {
             [name: string]: string | boolean | PlayerSocialMediaLinks;
             links: PlayerSocialMediaLinks;
             prompt: boolean;
         };
+
         export interface PlayerSocialMediaLinks {
             [name: string]: undefined | string;
+
             DISCORD?: string;
             HYPIXEL?: string;
             INSTAGRAM?: string;
@@ -1491,6 +1564,7 @@ export declare namespace Components {
             TWITTER?: string;
             YOUTUBE?: string;
         }
+
         /**
          * The player stats object contains statistics for individual game modes.
          */
@@ -1507,6 +1581,7 @@ export declare namespace Components {
                  *
                  */
                 | PlayerStatsHousing;
+
             Arcade?: PlayerStatsGameMode;
             Arena?: PlayerStatsGameMode;
             Battleground?: PlayerStatsGameMode;
@@ -1536,12 +1611,14 @@ export declare namespace Components {
              * Housing stats, generally limited to layout items - either the layout_items property will exist or there may be a property in the format of "layout_items_UUID".
              *
              */
-            PlayerStatsHousing;
+                PlayerStatsHousing;
         }
+
         /**
          * Stats for bedwars.
          */
         export type PlayerStatsBedwars = PlayerStatsGameMode & PlayerStatsBedwarsInfo & PlayerStatsBedwarsStats;
+
         /**
          * These properties generally have to do with either settings, info (like coins, exp, items), and some universal stats.
          *
@@ -1553,6 +1630,7 @@ export declare namespace Components {
          */
         export interface PlayerStatsBedwarsInfo {
             [name: string]: undefined | number | boolean | string | string[] | PlayerStatsBedwarsPrivateGamesSettings;
+
             chest_history?: string;
             chest_history_new?: string[];
             coins?: number;
@@ -1581,6 +1659,7 @@ export declare namespace Components {
             understands_streaks?: boolean;
             privategames?: PlayerStatsBedwarsPrivateGamesSettings;
         }
+
         export interface PlayerStatsBedwarsPrivateGamesSettings {
             bed_instabreak?: boolean;
             disable_block_protection?: boolean;
@@ -1594,6 +1673,7 @@ export declare namespace Components {
             respawn_time?: string;
             speed?: string;
         }
+
         /**
          * This interface lists keys that should be fairly common.
          * All of these calls have variant specific values that get prepended by a game mode.
@@ -1671,6 +1751,7 @@ export declare namespace Components {
             wins_bedwars?: number;
             winstreak?: number;
         }
+
         export interface PlayerStatsData {
             adsense_tokens?: number;
             networkExp?: number;
@@ -1713,27 +1794,35 @@ export declare namespace Components {
             voting?: PlayerVoting;
             vanityTokens?: number;
         }
+
         export interface PlayerStatsGameMode {
             [name: string]: undefined | number | boolean | string | string[];
+
             packages?: string[];
         }
+
         /**
          * Housing stats, generally limited to layout items - either the layout_items property will exist or there may be a property in the format of "layout_items_UUID".
          *
          */
         export interface PlayerStatsHousing {
             [name: string]: undefined | PlayerStatsHousingLayoutItems;
+
             layout_items?: PlayerStatsHousingLayoutItems;
         }
+
         export interface PlayerStatsHousingLayoutItems {
             [name: string]: string;
         }
+
         export interface PlayerStatsPit {
             [name: string]: undefined | number | boolean | string | string[] | PlayerStatsGameMode | PlayerStatsPitProfile;
+
             packages?: string[];
             pit_stats_ptl?: PlayerStatsGameMode;
             profile: PlayerStatsPitProfile;
         }
+
         export interface PlayerStatsPitProfile {
             [name: string]:
                 | undefined
@@ -1753,6 +1842,7 @@ export declare namespace Components {
                 | PlayerStatsPitProfilePrestige[]
                 | PlayerStatsPitProfileUnlock[]
                 | number[];
+
             packages?: string[];
             bounties?: PlayerStatsPitProfileBounty[];
             cash?: number;
@@ -1807,14 +1897,17 @@ export declare namespace Components {
             xp?: number;
             zero_point_three_gold_transfer?: boolean;
         }
+
         export interface PlayerStatsPitProfileBounty {
             amount: number;
             issuer: string;
             remainingTicks: number;
             timestamp: number;
         }
+
         export interface PlayerStatsPitProfileContract {
             [name: string]: undefined | number | string | /* Property key is the type of requirement. */ PlayerStatsPitProfileContractRequirements;
+
             chunk_of_viles_reward?: number;
             completion_date: number;
             difficulty: string;
@@ -1824,14 +1917,17 @@ export declare namespace Components {
             gold_reward: number;
             key: string;
         }
+
         /**
          * Property key is the type of requirement.
          */
         export interface PlayerStatsPitProfileContractRequirements {
             [name: string]: undefined | number;
         }
+
         export interface PlayerStatsPitProfileEndedContract {
             [name: string]: undefined | number | string | /* Property key is the type of requirement. */ PlayerStatsPitProfileContractRequirements;
+
             chunk_of_viles_reward?: number;
             completion_date: number;
             difficulty: string;
@@ -1839,36 +1935,44 @@ export declare namespace Components {
             remaining_ticks: number;
             requirements: /* Property key is the type of requirement. */ PlayerStatsPitProfileContractRequirements;
         }
+
         export interface PlayerStatsPitProfileInventory {
             data: number[];
             type: number;
         }
+
         export interface PlayerStatsPitProfileLastBoughtItems {
             [name: string]: number;
         }
+
         export interface PlayerStatsPitProfileLeaderboardStats {
             [name: string]: number;
         }
+
         /**
          * No properties known.
          */
         export interface PlayerStatsPitProfileOutgoingOffer {
             [name: string]: unknown;
         }
+
         export interface PlayerStatsPitProfilePrestige {
             index: number;
             timestamp: number;
             xp_on_prestige: number;
         }
+
         export interface PlayerStatsPitProfileTransaction {
             amount: number;
             timestamp: number;
         }
+
         export interface PlayerStatsPitProfileUnlock {
             acquireDate: number;
             key: string;
             tier: number;
         }
+
         /**
          * An object which properties describe each individual profile the player is a member of.
          */
@@ -1880,11 +1984,14 @@ export declare namespace Components {
                 };
             };
         }
+
         export interface PlayerStatsWalls3 {
             [name: string]: undefined | number | boolean | string | string[] | /* Each property key describes a class name. */ PlayerStatsWalls3Classes;
+
             packages?: string[];
             classes?: /* Each property key describes a class name. */ PlayerStatsWalls3Classes;
         }
+
         /**
          * Each property key describes a class name.
          */
@@ -1893,14 +2000,16 @@ export declare namespace Components {
                 [name: string]: boolean | number;
             };
         }
+
         export interface PlayerTaskData {
             challenges?: /**
              * In addition to the all_time property, other properties may appear that have properties that start with "day_" but have the same schema as all_time.
              *
              */
-            PlayerChallenges;
+                PlayerChallenges;
             quests?: /* An object which has properties which match quests described by the /resources/quests endpoint. */ PlayerQuests;
         }
+
         /**
          * Aside from the properties in the schema this object contains properties who's keys follow a format like "GAMEMODE_TYPE_NUMBER". e.g. "sw_insane_doubles_0". These fit the "PlayerTourneyGameData" schema.
          */
@@ -1911,9 +2020,10 @@ export declare namespace Components {
                 | string
                 | boolean
                 | {
-                      [name: string]: number;
-                  }
+                [name: string]: number;
+            }
                 | PlayerTourneyGameData;
+
             first_join_lobby?: number;
             hide_purchased?: boolean;
             playtime?: {
@@ -1922,6 +2032,7 @@ export declare namespace Components {
             shop_sort?: string;
             total_tributes?: number;
         }
+
         export interface PlayerTourneyGameData {
             claimed_ranking_reward?: number;
             first_win?: number;
@@ -1930,6 +2041,7 @@ export declare namespace Components {
             seenRPbook?: boolean;
             tributes_earned?: number;
         }
+
         /**
          * An object describing what I assume to be testers who've logged in with a specific language.
          *
@@ -1937,11 +2049,14 @@ export declare namespace Components {
         export interface PlayerUpcomingLanguageRelease {
             logins: number;
         }
+
         export interface PlayerVanityMeta {
             packages: string[];
         }
+
         export interface PlayerVoting {
             [name: string]: undefined | number;
+
             last_mcf?: number;
             last_mcipl?: number;
             last_mcmp?: number;
@@ -1973,6 +2088,7 @@ export declare namespace Components {
             total_topg?: number;
             votesToday?: number;
         }
+
         export type QuestDataArray = {
             id: string;
             name: string;
@@ -1991,6 +2107,7 @@ export declare namespace Components {
             }[];
             description: string;
         }[];
+
         export interface QuestsResourceResponse {
             /**
              * Whether or not the request succeeded.
@@ -2026,6 +2143,7 @@ export declare namespace Components {
                 duels: QuestDataArray;
             };
         }
+
         export interface ResourcesResponse {
             /**
              * Whether or not the request succeeded.
@@ -2036,6 +2154,7 @@ export declare namespace Components {
              */
             lastUpdated: number;
         }
+
         export interface Session {
             /**
              * example:
@@ -2058,6 +2177,7 @@ export declare namespace Components {
              */
             map?: string;
         }
+
         export interface SkyBlockAuction {
             uuid: string;
             auctioneer: string;
@@ -2098,6 +2218,7 @@ export declare namespace Components {
             }[];
             bin?: boolean;
         }
+
         export interface SkyBlockAuctionResponse {
             /**
              * Whether or not the request succeeded.
@@ -2152,6 +2273,7 @@ export declare namespace Components {
                 };
             }[];
         }
+
         export interface SkyBlockAuctionsEndedResponse {
             /**
              * Whether or not the request succeeded.
@@ -2193,6 +2315,7 @@ export declare namespace Components {
                 item_bytes: string;
             }[];
         }
+
         export interface SkyBlockAuctionsResponse {
             /**
              * Whether or not the request succeeded.
@@ -2247,6 +2370,7 @@ export declare namespace Components {
                 item_bytes: string;
             }[];
         }
+
         export interface SkyBlockBazaarProduct {
             product_id: string;
             sell_summary: {
@@ -2271,6 +2395,7 @@ export declare namespace Components {
                 buyOrders: number;
             };
         }
+
         export interface SkyBlockBazaarResponse {
             /**
              * Whether or not the request succeeded.
@@ -2514,6 +2639,7 @@ export declare namespace Components {
                 YOUNG_FRAGMENT: SkyBlockBazaarProduct;
             };
         }
+
         export interface SkyBlockCollectionsResourcesResponse {
             /**
              * Whether or not the request succeeded.
@@ -2529,6 +2655,7 @@ export declare namespace Components {
             version: string;
             collections: /* Objects for each individual parent collection (currently FARMING, MINING, COMBAT, FORAGING, FISHING). */ SkyBlockResourcesParentCollections;
         }
+
         export type SkyBlockProfile = {
             autodelete?: boolean;
             banking?: /* Profile banking information. Only shows up if their banking API is enabled. */ SkyBlockProfileBanking;
@@ -2545,6 +2672,7 @@ export declare namespace Components {
             };
             profile_id: string;
         } | null;
+
         /**
          * Profile banking information. Only shows up if their banking API is enabled.
          */
@@ -2552,17 +2680,20 @@ export declare namespace Components {
             balance: number;
             transactions: SkyBlockProfileBankingTransaction[];
         }
+
         export interface SkyBlockProfileBankingTransaction {
             action: string;
             amount: number;
             initiator_name: string;
             timestamp: number;
         }
+
         /**
          * Each property key is the collection's item, and the value is the XP.
          */
         export interface SkyBlockProfileCollection {
             [name: string]: undefined | number;
+
             BLAZE_ROD?: number;
             BONE?: number;
             CACTUS?: number;
@@ -2628,6 +2759,7 @@ export declare namespace Components {
             WHEAT?: number;
             WOOL?: number;
         }
+
         export interface SkyBlockProfileCollectionsAPI {
             collection?: /* Each property key is the collection's item, and the value is the XP. */ SkyBlockProfileCollection;
             /**
@@ -2635,10 +2767,12 @@ export declare namespace Components {
              */
             unlocked_coll_tiers?: string[];
         }
+
         export interface SkyBlockProfileCommunityUpgrades {
             currently_upgrading: SkyBlockProfileCommunityUpgradesCurrent;
             upgrade_states?: SkyBlockProfileCommunityUpgradesState[];
         }
+
         export interface SkyBlockProfileCommunityUpgradesCurrent {
             new_tier: number;
             /**
@@ -2651,6 +2785,7 @@ export declare namespace Components {
              */
             who_started: string;
         }
+
         export interface SkyBlockProfileCommunityUpgradesState {
             /**
              * Minecraft UUID of the player that claimed this.
@@ -2672,6 +2807,7 @@ export declare namespace Components {
             tier: number;
             upgrade: string;
         }
+
         /**
          * Coop invitation that the member accepted.
          */
@@ -2690,6 +2826,7 @@ export declare namespace Components {
              */
             timestamp: number;
         }
+
         export type SkyBlockProfileCuteName = {
             autodelete?: boolean;
             banking?: /* Profile banking information. Only shows up if their banking API is enabled. */ SkyBlockProfileBanking;
@@ -2716,9 +2853,11 @@ export declare namespace Components {
          * Array of values, each value describing a dungeon NPC the profile member has spoken to.
          */
         export type SkyBlockProfileDungeonBlahBlah = string[];
+
         export interface SkyBlockProfileDungeonClass {
             experience: number;
         }
+
         export interface SkyBlockProfileDungeonJournal {
             journal_entries?: {
                 [name: string]: undefined | SkyBlockProfileDungeonJournalEntries;
@@ -2729,7 +2868,9 @@ export declare namespace Components {
                 uncanny_remains?: SkyBlockProfileDungeonJournalEntries;
             };
         }
+
         export type SkyBlockProfileDungeonJournalEntries = number[];
+
         export interface SkyBlockProfileDungeonType {
             /**
              * The property key is the floor these run stats were achieved on.
@@ -2830,6 +2971,7 @@ export declare namespace Components {
                 [name: string]: number;
             };
         }
+
         export type SkyBlockProfileDungeonTypeFloorRun = {
             ally_healing?: number;
             damage_dealt: number;
@@ -2846,6 +2988,7 @@ export declare namespace Components {
             teammates: string[];
             timestamp: number;
         }[];
+
         export interface SkyBlockProfileInventoryAPI {
             candy_inventory_contents?: SkyBlockProfileInventoryData;
             ender_chest_contents?: SkyBlockProfileInventoryData;
@@ -2858,10 +3001,12 @@ export declare namespace Components {
             wardrobe_contents?: SkyBlockProfileInventoryData;
             wardrobe_equipped_slot?: number;
         }
+
         export interface SkyBlockProfileInventoryData {
             data: string;
             type: number;
         }
+
         export interface SkyBlockProfileMember {
             /**
              * An array of values, each value describing an island that has been spawned by the member. e.g. "Pond Island"
@@ -2934,6 +3079,7 @@ export declare namespace Components {
             experience_skill_runecrafting?: number;
             experience_skill_taming?: number;
         }
+
         export interface SkyBlockProfileMemberBase {
             /**
              * An array of values, each value describing an island that has been spawned by the member. e.g. "Pond Island"
@@ -2981,14 +3127,18 @@ export declare namespace Components {
             tutorial: string[];
             visited_zones: string[];
         }
+
         export interface SkyBlockProfileObjective {
             [name: string]: undefined | boolean | number | string;
+
             completed_at: number;
             progress: number;
             status: string;
         }
+
         export interface SkyBlockProfileObjectives {
             [name: string]: undefined | SkyBlockProfileObjective;
+
             chop_tree?: SkyBlockProfileObjective;
             collect_birch_logs?: SkyBlockProfileObjective;
             collect_clay?: SkyBlockProfileObjective;
@@ -3319,6 +3469,7 @@ export declare namespace Components {
             warp_spiders_den?: SkyBlockProfileObjective;
             warp_the_end?: SkyBlockProfileObjective;
         }
+
         export interface SkyBlockProfilePet {
             active: boolean;
             candyUsed?: number;
@@ -3329,7 +3480,9 @@ export declare namespace Components {
             type: string;
             uuid?: string;
         }
+
         export type SkyBlockProfilePets = SkyBlockProfilePet[];
+
         export interface SkyBlockProfileQuest {
             activated_at: number;
             activated_at_sb: number;
@@ -3337,8 +3490,10 @@ export declare namespace Components {
             completed_at_sb: number;
             status: string;
         }
+
         export interface SkyBlockProfileQuests {
             [name: string]: undefined | SkyBlockProfileQuest;
+
             collect_log?: SkyBlockProfileQuest;
             explore_hub?: SkyBlockProfileQuest;
             explore_village?: SkyBlockProfileQuest;
@@ -3366,11 +3521,13 @@ export declare namespace Components {
             talk_to_lumberjack?: SkyBlockProfileQuest;
             talk_to_rick?: SkyBlockProfileQuest;
         }
+
         /**
          * The contents of their sacks.
          */
         export interface SkyBlockProfileSacksCounts {
             [name: string]: undefined | number;
+
             BLAZE_ROD?: number;
             BONE?: number;
             CACTUS?: number;
@@ -3433,6 +3590,7 @@ export declare namespace Components {
             WHEAT?: number;
             WOLF_TOOTH?: number;
         }
+
         export interface SkyBlockProfileSkillsAPI {
             experience_skill_alchemy?: number;
             experience_skill_carpentry?: number;
@@ -3445,13 +3603,15 @@ export declare namespace Components {
             experience_skill_runecrafting?: number;
             experience_skill_taming?: number;
         }
+
         export interface SkyBlockProfileSlayerBoss {
             [name: string]:
                 | undefined
                 | number
                 | {
-                      [name: string]: undefined | boolean;
-                  };
+                [name: string]: undefined | boolean;
+            };
+
             boss_kills_tier_0?: number;
             boss_kills_tier_1?: number;
             boss_kills_tier_2?: number;
@@ -3467,12 +3627,15 @@ export declare namespace Components {
             };
             xp?: number;
         }
+
         export interface SkyBlockProfileSlayerBosses {
             [name: string]: SkyBlockProfileSlayerBoss;
+
             spider: SkyBlockProfileSlayerBoss;
             wolf: SkyBlockProfileSlayerBoss;
             zombie: SkyBlockProfileSlayerBoss;
         }
+
         /**
          * Details on the profile member's currently active slayer quest.
          */
@@ -3491,8 +3654,10 @@ export declare namespace Components {
             type: string;
             xp_on_last_follower_spawn?: number;
         }
+
         export interface SkyBlockProfileStats {
             [name: string]: undefined | number;
+
             auctions_bids?: number;
             auctions_bought_common?: number;
             auctions_bought_epic?: number;
@@ -3807,6 +3972,7 @@ export declare namespace Components {
             pet_milestone_ores_mined?: number;
             pet_milestone_sea_creatures_killed?: number;
         }
+
         export interface SkyBlockResourcesCollection {
             /**
              * Name of the collection.
@@ -3818,6 +3984,7 @@ export declare namespace Components {
             maxTiers: number;
             tiers: /* Individual tier within the collection. */ SkyBlockResourcesCollectionTier[];
         }
+
         /**
          * Individual tier within the collection.
          */
@@ -3835,6 +4002,7 @@ export declare namespace Components {
              */
             unlocks?: string[];
         }
+
         export interface SkyBlockResourcesParentCollection {
             /**
              * Name of the collection group.
@@ -3847,17 +4015,20 @@ export declare namespace Components {
                 [name: string]: SkyBlockResourcesCollection;
             };
         }
+
         /**
          * Objects for each individual parent collection (currently FARMING, MINING, COMBAT, FORAGING, FISHING).
          */
         export interface SkyBlockResourcesParentCollections {
             [name: string]: SkyBlockResourcesParentCollection;
+
             FARMING: SkyBlockResourcesParentCollection;
             MINING: SkyBlockResourcesParentCollection;
             COMBAT: SkyBlockResourcesParentCollection;
             FORAGING: SkyBlockResourcesParentCollection;
             FISHING: SkyBlockResourcesParentCollection;
         }
+
         export interface SkyBlockResourcesSkill {
             /**
              * Name of the skill.
@@ -3876,6 +4047,7 @@ export declare namespace Components {
              */
             levels: SkyBlockResourcesSkillLevel[];
         }
+
         export interface SkyBlockResourcesSkillLevel {
             /**
              * The skill level this applies to.
@@ -3890,11 +4062,13 @@ export declare namespace Components {
              */
             unlocks: string[];
         }
+
         /**
          * Objects for each skill.
          */
         export interface SkyBlockResourcesSkills {
             [name: string]: SkyBlockResourcesSkill;
+
             FARMING: SkyBlockResourcesSkill;
             MINING: SkyBlockResourcesSkill;
             COMBAT: SkyBlockResourcesSkill;
@@ -3907,6 +4081,7 @@ export declare namespace Components {
             RUNECRAFTING: SkyBlockResourcesSkill;
             TAMING: SkyBlockResourcesSkill;
         }
+
         export interface SkyBlockSkillsResourcesResponse {
             /**
              * Whether or not the request succeeded.
@@ -4001,6 +4176,7 @@ export declare namespace Paths {
                         decrementing: boolean;
                     };
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;
@@ -4021,6 +4197,7 @@ export declare namespace Paths {
                      */
                     guild: string | null;
                 }
+
                 export type $400 = Components.Schemas.ApiError;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $422 = Components.Responses.MalformedUUID;
@@ -4074,6 +4251,7 @@ export declare namespace Paths {
                         started: number;
                     }[];
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $422 = Components.Responses.MalformedUUID;
@@ -4599,6 +4777,7 @@ export declare namespace Paths {
                         };
                     };
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;
@@ -4624,23 +4803,25 @@ export declare namespace Paths {
                  */
                 export type Player = string;
             }
+
             export interface QueryParameters {
                 id?: /**
                  * example:
                  * 553490650cf26f12ae5bac8f
                  */
-                Parameters.Id;
+                    Parameters.Id;
                 player?: /**
                  * example:
                  * 20934ef9488c465180a78f861586b4cf
                  */
-                Parameters.Player;
+                    Parameters.Player;
                 name?: /**
                  * example:
                  * Mini Squid
                  */
-                Parameters.Name;
+                    Parameters.Name;
             }
+
             namespace Responses {
                 export type $200 = Components.Schemas.GuildResponse;
                 export type $400 = Components.Schemas.ApiError;
@@ -4678,6 +4859,7 @@ export declare namespace Paths {
                         totalQueries: number;
                     };
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;
@@ -4719,6 +4901,7 @@ export declare namespace Paths {
                         VAMPIREZ: Components.Schemas.LeaderboardDataEntry[];
                     };
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;
@@ -4735,6 +4918,7 @@ export declare namespace Paths {
                     success: boolean;
                     player: Components.Schemas.NullablePlayer;
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;
@@ -4756,6 +4940,7 @@ export declare namespace Paths {
                      */
                     playerCount: number;
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;
@@ -4801,6 +4986,7 @@ export declare namespace Paths {
                         ended?: number;
                     }[];
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $422 = Components.Responses.MalformedUUID;
@@ -6066,23 +6252,25 @@ export declare namespace Paths {
                  */
                 export type Uuid = string;
             }
+
             export interface QueryParameters {
                 player?: /**
                  * example:
                  * 347ef6c1daac45ed9d1fa02818cf0fb6
                  */
-                Parameters.Player;
+                    Parameters.Player;
                 profile?: /**
                  * example:
                  * 347ef6c1daac45ed9d1fa02818cf0fb6
                  */
-                Parameters.Profile;
+                    Parameters.Profile;
                 uuid?: /**
                  * example:
                  * 409a1e0f261a49849493278d6cd9305a
                  */
-                Parameters.Uuid;
+                    Parameters.Uuid;
             }
+
             namespace Responses {
                 export type $200 = Components.Schemas.SkyBlockAuctionResponse;
                 export type $400 = Components.Schemas.ApiError;
@@ -6100,13 +6288,15 @@ export declare namespace Paths {
                  */
                 export type Page = number;
             }
+
             export interface QueryParameters {
                 page?: /**
                  * example:
                  * 1
                  */
-                Parameters.Page;
+                    Parameters.Page;
             }
+
             namespace Responses {
                 export type $200 = Components.Schemas.SkyBlockAuctionsResponse;
             }
@@ -6145,13 +6335,15 @@ export declare namespace Paths {
                  */
                 export type Profile = string;
             }
+
             export interface QueryParameters {
                 profile: /**
                  * example:
                  * 20934ef9488c465180a78f861586b4cf
                  */
-                Parameters.Profile;
+                    Parameters.Profile;
             }
+
             namespace Responses {
                 export interface $200 {
                     /**
@@ -6160,6 +6352,7 @@ export declare namespace Paths {
                     success: boolean;
                     profile: Components.Schemas.SkyBlockProfile;
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;
@@ -6176,6 +6369,7 @@ export declare namespace Paths {
                     success: boolean;
                     profiles: Components.Schemas.SkyBlockProfileCuteName[] | null;
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;
@@ -6192,6 +6386,7 @@ export declare namespace Paths {
                     success: boolean;
                     session: Components.Schemas.Session;
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $422 = Components.Responses.MalformedUUID;
@@ -6238,6 +6433,7 @@ export declare namespace Paths {
                      */
                     staff_total: number;
                 }
+
                 export type $400 = Components.Responses.MissingFields;
                 export type $403 = Components.Responses.Unauthorized;
                 export type $429 = Components.Responses.RateLimitError;

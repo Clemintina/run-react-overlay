@@ -1,5 +1,5 @@
-import {DefaultMeta} from "../types/DefaultMeta";
-import {Components} from "../types/api";
+import { DefaultMeta } from "../types/DefaultMeta";
+import { Components } from "../types/api";
 import destr from "destr";
 
 /**
@@ -13,7 +13,9 @@ import destr from "destr";
  * // {success: true}
  * ```
  */
-export type ResultObject<T extends Components.Schemas.ApiSuccess, K extends (keyof T)[]> = (T[K[number]] extends string | number | boolean ? Omit<T, K[number]> : T[K[number]]) & {
+export type ResultObject<T extends Components.Schemas.ApiSuccess, K extends (keyof T)[]> =
+    (T[K[number]] extends string | number | boolean ? Omit<T, K[number]> : T[K[number]])
+    & {
     meta: (T[K[number]] extends string | number | boolean ? Pick<T, K[number]> : Omit<T, K[number]>) & DefaultMeta;
 };
 

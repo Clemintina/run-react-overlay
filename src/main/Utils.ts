@@ -1,5 +1,5 @@
 import fastJson from "fast-json-stringify";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import { IPCResponse } from "@common/utils/externalapis/RunApi";
 
 export const handleIPCSend = <T>(data: IPCResponse<T>) => {
     const stringify = fastJson({

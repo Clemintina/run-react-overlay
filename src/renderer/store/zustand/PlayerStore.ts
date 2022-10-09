@@ -1,9 +1,9 @@
 import create from "zustand";
-import {Player} from "@common/utils/PlayerUtils";
-import {Components} from "@common/zikeji";
-import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
-import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import { Player } from "@common/utils/PlayerUtils";
+import { Components } from "@common/zikeji";
+import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
+import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -240,7 +240,10 @@ const getBoomza = async (player: Player) => {
     if (player.hypixelPlayer?.displayname && useConfigStore.getState().settings.boomza) {
         api = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
     } else {
-        api = { data: { sniper: false, report: 0, error: false, username: player.name }, status: useConfigStore.getState().settings.boomza ? 417 : 400 };
+        api = {
+            data: { sniper: false, report: 0, error: false, username: player.name },
+            status: useConfigStore.getState().settings.boomza ? 417 : 400,
+        };
     }
     return new Promise<IPCResponse<BoomzaAntisniper>>((resolve) => resolve(api));
 };
@@ -414,16 +417,12 @@ const getHypixelFriends = async (player: Player) => {
             status: 400,
         };
     }
-    return new Promise<
-        IPCResponse<
-            {
-                _id: string;
-                uuidSender: string;
-                uuidReceiver: string;
-                started: number;
-            }[]
-        >
-    >((resolve) => resolve(api));
+    return new Promise<IPCResponse<{
+        _id: string;
+        uuidSender: string;
+        uuidReceiver: string;
+        started: number;
+    }[]>>((resolve) => resolve(api));
 };
 
 const getGuildData = async (player: Player) => {

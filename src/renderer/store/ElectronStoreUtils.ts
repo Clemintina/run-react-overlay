@@ -1,4 +1,4 @@
-import {Static, Type} from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 
 export const RUNElectronStore = Type.Optional(
     Type.Object({

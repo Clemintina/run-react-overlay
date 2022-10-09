@@ -1,7 +1,7 @@
-import {Paths} from "@common/zikeji";
-import {Method} from "@common/zikeji/util/Method";
-import {getResultObject, ResultObject} from "../util/ResultObject";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import { Paths } from "@common/zikeji";
+import { Method } from "@common/zikeji/util/Method";
+import { getResultObject, ResultObject } from "../util/ResultObject";
+import { IPCResponse } from "@common/utils/externalapis/RunApi";
 
 export class Guild extends Method {
     /**
@@ -30,7 +30,10 @@ export class Guild extends Method {
      * @category API
      */
     public async player(player: Paths.Guild.Get.Parameters.Player): Promise<IPCResponse<ResultObject<Paths.Guild.Get.Responses.$200, ["guild"]>>> {
-        return { data: getResultObject(await this.client.call<Paths.Guild.Get.Responses.$200>("guild", { player }), ["guild"]) as never, status: 200 };
+        return {
+            data: getResultObject(await this.client.call<Paths.Guild.Get.Responses.$200>("guild", { player }), ["guild"]) as never,
+            status: 200,
+        };
     }
 
     /**

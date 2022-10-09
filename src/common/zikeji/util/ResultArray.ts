@@ -1,5 +1,5 @@
-import {DefaultMeta} from "../types/DefaultMeta";
-import {Components} from "../types/api";
+import { DefaultMeta } from "../types/DefaultMeta";
+import { Components } from "../types/api";
 
 /**
  * Generic intersection type for result arrays to include metadata as a non-enumerable property.

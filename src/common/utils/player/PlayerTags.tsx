@@ -1,36 +1,55 @@
 // eslint-disable-next-line import/named
 import React from "react";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {MinecraftColours, Player} from "@common/utils/PlayerUtils";
+import { MinecraftColours, Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {getTagsFromConfig} from "@common/utils/player/RenderComponent";
-import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import { getTagsFromConfig } from "@common/utils/player/RenderComponent";
+import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { MinecraftColourAsHex } from "@common/zikeji";
 
 export interface PlayerTags {
     player: Player;
 }
 
+const parseColour = (text: string) => {
+    const splitText = text.split("§");
+    const finalText: [string, string][] = [];
+
+    for (const parts of splitText) {
+        finalText.push([parts.split("").slice(1).join(""), MinecraftColourAsHex[`§${parts.split("")[0]}`]]);
+    }
+    return finalText;
+};
+
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
-    const {run, boomzaTag} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
-    const {settings, hypixel, runConfig} = useConfigStore((state) => ({settings: state.settings, hypixel: state.hypixel, runConfig: state.run}));
+    const { run, boomzaTag } = useTagStore((state) => ({ run: state.run, boomzaTag: state.boomza }));
+    const { settings, hypixel, runConfig } = useConfigStore((state) => ({
+        settings: state.settings,
+        hypixel: state.hypixel,
+        runConfig: state.run,
+    }));
     const tagArray: Array<JSX.Element> = [];
     if (runConfig.valid && player.sources.runApi != null) {
         const runApi = player.sources.runApi.data.data;
         if (runApi.blacklist.tagged) {
-            tagArray.push(<span style={{color: `#${run.blacklist.colour.toString()}`}}>{run.blacklist.display}</span>);
+            tagArray.push(<span style={{ color: `#${run.blacklist.colour.toString()}` }}>{run.blacklist.display}</span>);
         } else if (runApi.bot.tagged) {
-            tagArray.push(<span style={{color: `#${run.bot.colour.toString()}`}}>{run.bot.display}</span>);
+            tagArray.push(<span style={{ color: `#${run.bot.colour.toString()}` }}>{run.bot.display}</span>);
+        } else if (runApi.customTag) {
+            parseColour(runApi.customTag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
         } else {
             if (player.sources.boomza?.status === 200) {
                 const boomza = destr(player.sources.boomza.data);
                 if (boomza.sniper) {
-                    tagArray.push(<span style={{ color: `#${boomzaTag.sniper.colour.toString()}` }}>{boomzaTag.sniper.display}</span>);
+                    tagArray.push(<span
+                        style={{ color: `#${boomzaTag.sniper.colour.toString()}` }}>{boomzaTag.sniper.display}</span>);
                     tagArray.push(<span className={"pl-1"} />);
                 }
                 if (boomza.report) {
-                    tagArray.push(<span style={{ color: `#${boomzaTag.hacker.colour.toString()}` }}>{boomzaTag.hacker.display}</span>);
+                    tagArray.push(<span
+                        style={{ color: `#${boomzaTag.hacker.colour.toString()}` }}>{boomzaTag.hacker.display}</span>);
                     tagArray.push(<span className={"pl-1"} />);
                 }
             }
@@ -103,7 +122,8 @@ const RenderKeathizTags = (props: PlayerTags) => {
                 keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`C`}</span>);
             }
         } else {
-            if (useConfigStore.getState().settings.keathiz) keathizTagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>{`FAILED`}</span>);
+            if (useConfigStore.getState().settings.keathiz) keathizTagArray.push(<span
+                style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>{`FAILED`}</span>);
         }
     }
 

@@ -1,6 +1,6 @@
 import create from "zustand";
-import {persist} from "../../../../node_modules/zustand/middleware";
-import {TagSchema, TagStoreSchema} from "@common/utils/TagSchema";
+import { persist } from "../../../../node_modules/zustand/middleware";
+import { TagSchema, TagStoreSchema } from "@common/utils/TagSchema";
 
 const useTagStore = create<TagStoreSchema>()(
     persist(
@@ -467,7 +467,10 @@ const useTagStore = create<TagStoreSchema>()(
                                 },
                                 last_30: { display: "Q-", colours: [{ requirement: 3, colour: "FFD700", operator: "<=" }] },
                                 last_10: { display: "Q-", colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }] },
-                                weighted: { display: "Q-", colours: [{ requirement: 50, colour: "FFD700", operator: "<=" }] },
+                                weighted: {
+                                    display: "Q-",
+                                    colours: [{ requirement: 50, colour: "FFD700", operator: "<=" }],
+                                },
                             },
                         },
                         exits: {

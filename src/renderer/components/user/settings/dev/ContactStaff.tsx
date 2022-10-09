@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/named
-import {Box, FormHelperText, FormLabel, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
-import {InputBoxButton} from "@components/user/InputBoxButton";
+import { Box, FormHelperText, FormLabel, InputLabel, Modal, SelectChangeEvent, Typography } from "@mui/material";
+import { InputBoxButton } from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import {FeedbackForm} from "@components/user/settings/FeedbackForm";
+import { FeedbackForm } from "@components/user/settings/FeedbackForm";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import React from "react";
 
@@ -13,7 +13,13 @@ export interface ContactStaff {
 }
 
 export const ContactStaff: React.ElementType = (props: ContactStaff) => {
-    const {colours, hypixel, settings, run, version} = useConfigStore((state) => ({colours: state.colours, hypixel: state.hypixel, settings: state.settings, run: state.run, version: state.version}));
+    const { colours, hypixel, settings, run, version } = useConfigStore((state) => ({
+        colours: state.colours,
+        hypixel: state.hypixel,
+        settings: state.settings,
+        run: state.run,
+        version: state.version,
+    }));
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -45,21 +51,24 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
     return (
         <div>
             <InputBoxButton onClick={handleOpen} text={"Tester Feedback"} />
-            <Modal open={open} onClose={handleClose} style={{color: colours.primaryColour}}>
+            <Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
                 <Box sx={style}>
-                    <Typography sx={{mt: 0}}>
+                    <Typography sx={{ mt: 0 }}>
                         <FormLabel title={"Tester Feedback"}>Feedback Form</FormLabel>
                     </Typography>
 
-                    <Typography sx={{mt: 2}}>
+                    <Typography sx={{ mt: 2 }}>
                         <FormControl fullWidth>
                             <InputLabel>Type</InputLabel>
                             <Select value={feedbackType} onChange={handleChange}>
                                 <MenuItem value={"Bug"}>Bug</MenuItem>
                                 <MenuItem value={"Suggestion"}>Suggestion</MenuItem>
                             </Select>
-                            <FormHelperText className={"text-red-500 font-bold"}>{"The type of report you'd like to submit!"}</FormHelperText>
-                            <FeedbackForm options={{text: feedbackType, formHelper: "Please write as descriptively as possible"}} onChange={(event) => setFeedbackTypeMessage(event.target.value)} />
+                            <FormHelperText
+                                className={"text-red-500 font-bold"}>{"The type of report you'd like to submit!"}</FormHelperText>
+                            <FeedbackForm
+                                options={{ text: feedbackType, formHelper: "Please write as descriptively as possible" }}
+                                onChange={(event) => setFeedbackTypeMessage(event.target.value)} />
                         </FormControl>
                         <span>
                             <InputBoxButton

@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {getBedwarsLevelInfo, getHighLevelPrestigeColour} from "@common/zikeji";
+import { getBedwarsLevelInfo, getHighLevelPrestigeColour } from "@common/zikeji";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {Player} from "@common/utils/PlayerUtils";
-import {Interweave} from "interweave";
+import { Player } from "@common/utils/PlayerUtils";
+import { Interweave } from "interweave";
 
 export interface PlayerStar {
     player: Player;

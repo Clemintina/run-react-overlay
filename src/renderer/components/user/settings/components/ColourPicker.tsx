@@ -1,7 +1,7 @@
-import React, {useState} from "react";
-import {Box, Modal} from "@mui/material";
-import {InputBoxButton} from "@components/user/InputBoxButton";
-import {HexColorPicker} from "react-colorful";
+import React, { useState } from "react";
+import { Box, Modal } from "@mui/material";
+import { InputBoxButton } from "@components/user/InputBoxButton";
+import { HexColorPicker } from "react-colorful";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface ColourPicker {
