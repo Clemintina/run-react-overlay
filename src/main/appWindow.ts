@@ -1,26 +1,27 @@
-import {app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
-import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell } from "electron";
+import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
 import path from "path";
-import axios, {AxiosRequestConfig} from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import fs from "fs";
-import {exec} from "child_process";
+import { exec } from "child_process";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {HypixelApi} from "./HypixelApi";
+import { getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
+import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { HypixelApi } from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
-import {ProxyStore, ProxyType} from "@common/utils/Schemas";
+import { BoomzaAntisniper, KeathizEndpoints } from "@common/utils/externalapis/BoomzaApi";
+import { ProxyStore, ProxyType } from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
-import {handleIPCSend} from "@main/Utils";
+import { handleIPCSend } from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
-import {LogFileMessage} from "@common/utils/LogFileReader";
-import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
+import { LogFileMessage } from "@common/utils/LogFileReader";
+import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import log from "electron-log";
+import psList from "ps-list";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 // Electron Forge automatically creates these entry points
@@ -32,8 +33,8 @@ const registeredGlobalKeybinds = new Set<string>();
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
-const playerCache = cacheManager.caching({ttl: 60 * 5, store: "memory"});
-const mojangCache = cacheManager.caching({ttl: 60000, store: "memory"});
+const playerCache = cacheManager.caching({ ttl: 60 * 5, store: "memory" });
+const mojangCache = cacheManager.caching({ ttl: 60000, store: "memory" });
 /**
  * Checks if the app is running in Production or Development
  */
@@ -575,6 +576,30 @@ const registerOverlayFeatures = () => {
         return { data: isAdmin, status: 200 };
     });
 
+    ipcMain.handle("autoLog", async (event: IpcMainInvokeEvent, ...args) => {
+        let processNames: string[] = [];
+        let appData = app.getPath("appData").replace(/\\/g, "/");
+        let home = app.getPath("home").replace(/\\/g, "/");
+        let isMacOs = appData.includes("Application Support");
+        let path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";;
+        psList().then(data => {
+            for (const process of data) {
+                processNames.push(process.name);
+            }
+            if (processNames.includes("Badlion Client.exe")) {
+                path = isMacOs ? appData + "/minecraft/logs/blclient/minecraft/" : appData + "/.minecraft/logs/blclient/minecraft/";
+            }
+            else if (processNames.includes("Lunar Client.exe")) {
+                path = home + "/.lunarclient/offline/multiver/logs/";
+            }
+            else if (processNames.includes("MinecraftLauncher.exe")) {
+                path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
+            }
+        });
+        path += "latest.log";
+        electronStore.set("overlay.logPath", path);
+    });
+
     ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
         let appData = app.getPath("appData").replace(/\\/g, "/");
         let source = `<?xml version="1.0" encoding="UTF-8"?>
@@ -606,7 +631,7 @@ const registerOverlayFeatures = () => {
             </Loggers>
         </Configuration>`;
         fs.writeFileSync(appData + "/.minecraft/log4j2.xml", source);
-        exec(`[System.Environment]::SetEnvironmentVariable('_JAVA_OPTIONS','-Dlog4j.configurationFile="${appData}/.minecraft/log4j2.xml"',[System.EnvironmentVariableTarget]::User)`, { shell: "powershell.exe" }, (error, stdout, stderr) => {});
+        exec(`[System.Environment]::SetEnvironmentVariable('_JAVA_OPTIONS','-Dlog4j.configurationFile="${appData}/.minecraft/log4j2.xml"',[System.EnvironmentVariableTarget]::User)`, { shell: "powershell.exe" }, (error, stdout, stderr) => { });
     });
 };
 

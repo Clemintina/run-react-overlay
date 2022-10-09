@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
-import {Box, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
+import { Box, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography } from "@mui/material";
 import React from "react";
-import {InputBoxButton} from "@components/user/InputBoxButton";
+import { InputBoxButton } from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import {ClientSetting} from "@common/utils/Schemas";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import { ClientSetting } from "@common/utils/Schemas";
 
 export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];
@@ -16,7 +16,7 @@ let label = "Select Log File";
 
 export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => {
     const configStore: ConfigStore = useConfigStore((state) => state);
-    if (configStore.logs.clientName !== null) label = configStore.logs.clientName;
+    if (configStore.logs.clientName !== null && configStore.logs.clientName !== undefined) label = configStore.logs.clientName;
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -99,7 +99,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                 <MenuItem value={"lunar_mlv"}>Lunar</MenuItem>
                                 <MenuItem value={"custom"}>Custom</MenuItem>
                             </Select>
-                            <FormHelperText className={"text-red-500 font-bold"} style={configStore.error.code != 201 ? {} : { display: "none" }}>
+                            <FormHelperText className={"text-red-500 font-bold"} style={configStore.error.code !== 201 ? {} : { display: "none" }}>
                                 Un-readable log file
                             </FormHelperText>
                         </FormControl>
@@ -133,6 +133,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                             }}
                             text={"Select Log File"}
                         />
+
                     </Typography>
                 </Box>
             </Modal>

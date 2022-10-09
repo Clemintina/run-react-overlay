@@ -219,8 +219,8 @@ const NewTitlebar = ({ children }) => {
             </Drawer>
             <Main open={open}>
                 <DrawerHeader />
-                {errorMessageCode === 400 ? (
-                    <Alert color={"error"} sx={{ opacity: 100 }}>
+                {errorMessageCode === 200 ? (
+                    <Alert color={"success"} sx={{ opacity: 100 }}>
                         <Typography sx={{ opacity: 100 }}>
                             <span className={"font-medium"}>
                                 Code: <span className={"errorMessage"}> {localStore.error.code}</span>
@@ -230,8 +230,8 @@ const NewTitlebar = ({ children }) => {
                             </span>
                         </Typography>
                     </Alert>
-                ) : errorMessageCode === 200 ? (
-                    <Alert color={"success"} sx={{ opacity: 100 }}>
+                ) : errorMessageCode === 400 ? (
+                    <Alert color={"error"} sx={{ opacity: 100 }}>
                         <Typography sx={{ opacity: 100 }}>
                             <span className={"font-medium"}>
                                 Code: <span className={"errorMessage"}> {localStore.error.code}</span>

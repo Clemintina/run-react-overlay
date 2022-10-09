@@ -76,19 +76,20 @@ const useConfigStore = create<ConfigStore>()(
                     }
                     const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixelApiKey);
                     if (apiResponse.status === 200 && apiResponse?.data?.key !== undefined) {
+                        get().setErrorMessage({
+                            title: "Hypixel Key Set",
+                            cause: "Successfully set your Hypixel API key!",
+                            code: 200,
+                        });
                         set(() => ({
                             hypixel: {
                                 apiKey: hypixelApiKey,
                                 apiKeyValid: true,
                                 apiKeyOwner: apiResponse.data.owner,
                             },
+                            
                         })
                         );
-                        get().setErrorMessage({
-                            title: "Hypixel Key Set",
-                            cause: "Successfully set your Hypixel API key!",
-                            code: 200,
-                        });
                     } else {
                         get().setErrorMessage({
                             title: "Invalid Hypixel Key",
@@ -134,7 +135,7 @@ const useConfigStore = create<ConfigStore>()(
                     });
                 },
                 error: {
-                    code: 200,
+                    code: 201,
                     title: "",
                     cause: "",
                     detail: "",
@@ -194,16 +195,16 @@ const useConfigStore = create<ConfigStore>()(
                     const apiKey = await window.ipcRenderer.invoke<RunApiKey>("seraph", RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner);
                     if (runkey.length == 0) return;
                     if (apiKey.status == 200) {
+                        get().setErrorMessage({
+                            title: "Seraph Key Set",
+                            cause: "Successfully set your Seraph API key!",
+                            code: 200,
+                        });
                         set({
                             run: {
                                 apiKey: runkey,
                                 valid: true,
                             },
-                        });
-                        get().setErrorMessage({
-                            title: "Seraph Key Set",
-                            cause: "Successfully set your Seraph API key!",
-                            code: 200,
                         });
                     } else {
                         get().setErrorMessage({
@@ -448,7 +449,7 @@ const useConfigStore = create<ConfigStore>()(
                 name: "user_settings",
                 version: 4,
                 migrate: (persistedState: any) => {
-                    return { ...persistedState, settings: { hypixel: { guilds: false } }, font: { family: "Times New Roman" } };
+                    return { ...persistedState, settings: { hypixel: { guilds: false } , updater: true}, font: { family: "Times New Roman" }, error: {code: 201} };
                 },
             },
         ),
