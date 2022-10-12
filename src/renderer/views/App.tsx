@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/named
-import {ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, SortChangedEvent} from "ag-grid-community";
+import { ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, SortChangedEvent } from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
-import React from "react";
-import {Player} from "@common/utils/PlayerUtils";
-import {AgGridReact} from "ag-grid-react";
-import {assertDefaultError} from "@common/helpers";
+import React, { useEffect } from "react";
+import { Player } from "@common/utils/PlayerUtils";
+import { AgGridReact } from "ag-grid-react";
+import { assertDefaultError } from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -14,9 +14,11 @@ import PlayerTags from "@common/utils/player/PlayerTags";
 import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
-import {TableState} from "@common/utils/Schemas";
+import { TableState } from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
+import { Box } from "@mui/material";
+import PlayerGuild from "@common/utils/player/PlayerGuild";
 
 let columnApi: ColumnApi;
 
@@ -26,28 +28,22 @@ const mediumColumnSize = 60;
 const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
-const defaultColDefs: ColDef = {
+export const defaultColDefs: ColDef = {
     resizable: true,
     sortingOrder: ["desc", "asc"],
     sortable: true,
+    flex: 1,
 };
 
-const columns: ColDef[] = [
-    {
-        field: "id",
-        hide: true,
-        cellRenderer: ({data}) => data.uuid,
-    },
+export const columns: ColDef[] = [
     {
         field: "head",
-        flex: 1,
         minWidth: tinyColumnSize,
         sortable: false,
         cellRenderer: ({data}) => <PlayerHead player={data} />,
     },
     {
         field: "star",
-        flex: 1,
         minWidth: smallColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
@@ -55,22 +51,20 @@ const columns: ColDef[] = [
     },
     {
         field: "name",
-        flex: 1,
         minWidth: extraLargeColumnSize,
         type: "string",
+        headerTooltip: "The players name",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
         cellRenderer: ({data}) => <PlayerName player={data} isOverlayStats={false} />,
     },
     {
         field: "tags",
-        flex: 1,
         minWidth: largeColumnSize,
         cellRenderer: ({data}) => <PlayerTags player={data} />,
         sortable: false,
     },
     {
         field: "WS",
-        flex: 1,
         minWidth: smallColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
@@ -78,7 +72,6 @@ const columns: ColDef[] = [
     },
     {
         field: "FKDR",
-        flex: 1,
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
@@ -86,7 +79,6 @@ const columns: ColDef[] = [
     },
     {
         field: "WLR",
-        flex: 1,
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
@@ -94,7 +86,6 @@ const columns: ColDef[] = [
     },
     {
         field: "BBLR",
-        flex: 1,
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
@@ -102,7 +93,6 @@ const columns: ColDef[] = [
     },
     {
         field: "wins",
-        flex: 1,
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
@@ -110,7 +100,6 @@ const columns: ColDef[] = [
     },
     {
         field: "losses",
-        flex: 1,
         minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
@@ -119,7 +108,6 @@ const columns: ColDef[] = [
     {
         field: "final_kills",
         headerName: "Final Kills",
-        flex: 1,
         hide: true,
         minWidth: mediumColumnSize,
         type: "number",
@@ -128,11 +116,17 @@ const columns: ColDef[] = [
     },
     {
         field: "session",
-        flex: 1,
         minWidth: smallColumnSize,
         type: "number",
         sortable: false,
         cellRenderer: ({data}) => <PlayerSession player={data} />,
+    },
+    {
+        field: "guild",
+        minWidth: smallColumnSize,
+        type: "string",
+        sortable: false,
+        cellRenderer: ({data}) => <PlayerGuild player={data} />,
     },
 ];
 
@@ -182,9 +176,13 @@ const AppTable = () => {
      * All **css** is done in {@link assets/scss/app}
      * All processing is done in {@link store}
      */
-    const {columnState, browserWindow} = useConfigStore((state) => ({columnState: state.table.columnState, browserWindow: state.browserWindow}));
+    const {columnState} = useConfigStore((state) => ({columnState: state.table.columnState}));
     const players: Array<Player> = usePlayerStore((state) => state.players) ?? [];
     let onGridReady = false;
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
@@ -224,22 +222,14 @@ const AppTable = () => {
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
     };
 
-    const backgroundStyle = {
-        height: browserWindow.height - 200,
-        OverflowX: "hidden",
-        OverflowY: "shown",
-    };
-
     return (
-        <div>
-            <div style={backgroundStyle}>
-                <div className='w-full h-full'>
-                    <div className='ag-theme-alpine-dark' style={backgroundStyle}>
-                        <AgGridReact gridOptions={gridOptions} rowData={players} />
-                    </div>
+        <Box height={"100vh"}>
+            <div className="w-full h-full">
+                <div className="ag-theme-alpine-dark" style={{height: "89vh"}}>
+                    <AgGridReact gridOptions={gridOptions} rowData={players} />
                 </div>
             </div>
-        </div>
+        </Box>
     );
 };
 

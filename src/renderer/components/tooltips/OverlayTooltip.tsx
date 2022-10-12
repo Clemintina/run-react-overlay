@@ -1,8 +1,8 @@
-import React, {PropsWithChildren} from "react";
-import {Player} from "@common/utils/PlayerUtils";
+import React, { PropsWithChildren } from "react";
+import { Player } from "@common/utils/PlayerUtils";
 // eslint-disable-next-line import/named
-import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
-import {styled} from "@mui/material";
+import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
+import { styled } from "@mui/material";
 
 export interface OverlayTooltip {
     player?: Player;
@@ -13,7 +13,8 @@ export interface OverlayTooltip {
 export const OverlayTooltip: React.FC<PropsWithChildren<OverlayTooltip>> = (props: OverlayTooltip) => {
     const player = props.player ?? undefined;
 
-    const CustomToolTip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)(({theme}) => ({
+    const CustomToolTip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props}
+                                                                                     classes={{ popper: className }} />)(({ theme }) => ({
         [`& .${tooltipClasses.tooltip}`]: {
             // backgroundColor: colours.backgroundColour,
             backgroundColor: "#120211",

@@ -1,9 +1,9 @@
 import * as React from "react";
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-import MuiAppBar, {AppBarProps as MuiAppBarProps} from "@mui/material/AppBar";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
@@ -16,24 +16,34 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import {Link} from "react-router-dom";
-import {InputTextBox} from "@components/user/InputTextBox";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import { Link } from "react-router-dom";
+import { InputTextBox } from "@components/user/InputTextBox";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faUserNinja, faWindowClose, faWindowMinimize} from "@fortawesome/free-solid-svg-icons";
-import {Alert, useTheme} from "@mui/material";
-import {Home, Sell, ViewColumn} from "@mui/icons-material";
-import {MenuOption} from "@common/utils/Schemas";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckCircle, faUserNinja, faWindowClose, faWindowMinimize } from "@fortawesome/free-solid-svg-icons";
+import { Alert, useTheme } from "@mui/material";
+import { Home, Sell, ViewColumn } from "@mui/icons-material";
+import { MenuOption } from "@common/utils/Schemas";
+import BrushIcon from "@mui/icons-material/Brush";
 
 const drawerWidth = 200;
-const menuOptions = Array<MenuOption>({menuName: "Essentials", menuLink: "/settings/essentials"}, {menuName: "Tags", menuLink: "/settings/tags"}, {menuName: "Nicks", menuLink: "/settings/nicks"});
+const menuOptions = Array<MenuOption>(
+    { menuName: "Appearance", menuLink: "/settings/appearance" },
+    { menuName: "Essentials", menuLink: "/settings/essentials" },
+    { menuName: "Tags", menuLink: "/settings/tags" },
+    { menuName: "Nicks", menuLink: "/settings/nicks" },
+    {
+        menuName: "Table Editor",
+        menuLink: "/settings/columneditor",
+    },
+);
 
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
 }
 
-const Main = styled("main", {shouldForwardProp: (prop) => prop !== "open"})<AppBarProps>(({theme, open}) => ({
+const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<AppBarProps>(({ theme, open }) => ({
     flexGrow: 1,
     transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
@@ -49,7 +59,7 @@ const Main = styled("main", {shouldForwardProp: (prop) => prop !== "open"})<AppB
     }),
 }));
 
-const AppBar = styled(MuiAppBar, {shouldForwardProp: (prop) => prop !== "open"})<AppBarProps>(({theme, open}) => ({
+const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== "open" })<AppBarProps>(({ theme, open }) => ({
     // Make the sidebar open correctly
     transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.sharp,
@@ -66,7 +76,7 @@ const AppBar = styled(MuiAppBar, {shouldForwardProp: (prop) => prop !== "open"})
     }),
 }));
 
-const DrawerHeader = styled("div")(({theme}) => ({
+const DrawerHeader = styled("div")(({ theme }) => ({
     // How text is displayed
     display: "flex",
     alignItems: "center",
@@ -86,12 +96,14 @@ const getIconType = (menuObject: MenuOption) => {
             return <Sell />;
         case "table editor":
             return <ViewColumn />;
+        case 'appearance':
+            return <BrushIcon />
         default:
             return <span />;
     }
 };
 
-const NewTitlebar = ({children}) => {
+const NewTitlebar = ({ children }) => {
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -104,21 +116,21 @@ const NewTitlebar = ({children}) => {
     const errorMessageCode = localStore.error.code;
 
     return (
-        <Box sx={{display: "flex"}} className={"drag"}>
+        <Box sx={{ display: "flex" }} className={"drag"}>
             <CssBaseline />
-            <AppBar position='fixed' open={open} className={"drag"} sx={{opacity: 100}} style={{backgroundColor: "transparent"}}>
+            <AppBar position={"fixed"} open={open} className={"drag"} sx={{ opacity: 100 }}>
                 <Toolbar>
-                    <IconButton color='inherit' aria-label='open nav bar' onClick={handleDrawerOpen} edge='start' className={"nodrag"} sx={{mr: 2, ...(open && {display: "none"})}}>
+                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge="start" className={"nodrag"} sx={{ mr: 2, ...(open && { display: "none" }) }}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant='h6' noWrap component='div' className={"text-bold"}>
+                    <Typography variant={"h6"} noWrap component={"div"} className={"text-bold"}>
                         Seraph
                     </Typography>
-                    <Typography sx={{marginLeft: "auto"}}>
-                        <div className='md:flex items-center space-x-3 nodrag'>
-                            <span className='flex'>
+                    <Typography sx={{ marginLeft: "auto" }}>
+                        <div className={"flex items-center space-x-3 p-1 nodrag"}>
+                            <span className={"flex"}>
                                 <InputTextBox
-                                    options={{placeholder: "Username...", resetOnEnter: true}}
+                                    options={{ placeholder: "Username...", resetOnEnter: true }}
                                     onKeyDown={(event, textFieldState) => {
                                         if (event.key === "Enter") {
                                             usePlayerStore.getState().addPlayer(textFieldState);
@@ -128,7 +140,7 @@ const NewTitlebar = ({children}) => {
                             </span>
                             <div>
                                 <button
-                                    className='hover:text-cyan-500'
+                                    className={"hover:text-cyan-500"}
                                     onClick={() => {
                                         window.ipcRenderer.send("windowMinimise");
                                     }}
@@ -138,7 +150,7 @@ const NewTitlebar = ({children}) => {
                             </div>
                             <div>
                                 <button
-                                    className='hover:text-cyan-500'
+                                    className={"hover:text-cyan-500"}
                                     onClick={() => {
                                         window.ipcRenderer.send("windowClose");
                                     }}
@@ -164,8 +176,8 @@ const NewTitlebar = ({children}) => {
                         boxSizing: "border-box",
                     },
                 }}
-                variant='persistent'
-                anchor='left'
+                variant={"persistent"}
+                anchor={"left"}
                 open={open}
             >
                 <DrawerHeader className={"nodrag"}>
@@ -175,7 +187,7 @@ const NewTitlebar = ({children}) => {
                 <List>
                     <ListItem disablePadding>
                         <Link to={"/"} onClick={() => setOpen(!open)} className={"nodrag"}>
-                            <ListItemButton sx={{width: drawerWidth}}>
+                            <ListItemButton sx={{ width: drawerWidth }}>
                                 <ListItemIcon>
                                     <Home />
                                 </ListItemIcon>
@@ -186,7 +198,7 @@ const NewTitlebar = ({children}) => {
                     {menuOptions.map((text, index) => (
                         <ListItem key={index} disablePadding>
                             <Link to={text.menuLink} onClick={() => setOpen(!open)} className={"nodrag"}>
-                                <ListItemButton sx={{width: drawerWidth}}>
+                                <ListItemButton sx={{ width: drawerWidth }}>
                                     <ListItemIcon>{getIconType(text)}</ListItemIcon>
                                     <ListItemText primary={text.menuName} />
                                 </ListItemButton>
@@ -194,23 +206,47 @@ const NewTitlebar = ({children}) => {
                         </ListItem>
                     ))}
                 </List>
+                <Divider />
+                <List>
+                    <ListItem>
+                        <List>
+                            <ListItemButton>
+                                <ListItemText primary={useConfigStore.getState().version} />
+                            </ListItemButton>
+                        </List>
+                    </ListItem>
+                </List>
             </Drawer>
             <Main open={open}>
                 <DrawerHeader />
-                {errorMessageCode !== 200 ? (
-                    <Alert color='error' sx={{opacity: 100}}>
-                        <Typography sx={{opacity: 100}}>
-                            <span className='font-medium'>
-                                Code: <span className='errorMessage'> {localStore.error.code}</span>
+                {errorMessageCode === 200 ? (
+                    <Alert color={"success"} sx={{ opacity: 100 }}>
+                        <Typography sx={{ opacity: 100 }}>
+                            <span className={"font-medium"}>
+                                Code: <span className={"errorMessage"}> {localStore.error.code}</span>
                             </span>
-                            Cause: <span className='errorMessage'> {localStore.error.cause}</span>
+                            <span className={"p-1"}>
+                            Cause: <span className={"errorMessage"}> {localStore.error.cause}</span>
+                            </span>
+                        </Typography>
+                    </Alert>
+                ) : errorMessageCode === 400 ? (
+                    <Alert color={"error"} sx={{ opacity: 100 }}>
+                        <Typography sx={{ opacity: 100 }}>
+                            <span className={"font-medium"}>
+                                Code: <span className={"errorMessage"}> {localStore.error.code}</span>
+                            </span>
+                            <span className={"p-1"}>
+                            Cause: <span className={"errorMessage"}> {localStore.error.cause}</span>
+                            </span>
+
                         </Typography>
                     </Alert>
                 ) : (
                     <span />
                 )}
                 <div className={"nodrag"}>
-                    <Box height='100vh' display='flex' flexDirection='column'>
+                    <Box height={"100vh"} display={"flex"} flexDirection={"column"}>
                         {children}
                     </Box>
                 </div>

@@ -1,13 +1,13 @@
-import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
-import type {DefaultMeta, RequestOptions} from "../Client";
-import {Components} from "../types/api";
+import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
+import type { DefaultMeta, RequestOptions } from "../Client";
+import { Components } from "../types/api";
 import axios from "axios";
 
 /** @internal */
 const CACHE_CONTROL_REGEX = /s-maxage=(\d+)/;
 
 /** @internal */
-export const request = async <T extends Components.Schemas.ApiSuccess & {cause?: string} & {cloudflareCache?: DefaultMeta["cloudflareCache"]}>(options: RequestOptions): Promise<T> => {
+export const request = async <T extends Components.Schemas.ApiSuccess & { cause?: string } & { cloudflareCache?: DefaultMeta["cloudflareCache"] }>(options: RequestOptions): Promise<T> => {
     let axiosError: Error;
     const axiosClient = axios.create({
         headers: {
@@ -22,6 +22,7 @@ export const request = async <T extends Components.Schemas.ApiSuccess & {cause?:
     const axiosResponse = await axiosClient.get(options.url);
 
     if (!options.noRateLimit) {
+        // @ts-ignore
         options.getRateLimitHeaders(axiosResponse.headers);
     }
 
@@ -56,8 +57,8 @@ export const request = async <T extends Components.Schemas.ApiSuccess & {cause?:
         const maxAge = CACHE_CONTROL_REGEX.exec(axiosResponse.headers["cache-control"] as string);
         responseObject.cloudflareCache = {
             status: axiosResponse.headers["cf-cache-status"] as never,
-            ...(typeof age === "number" && !Number.isNaN(age) && {age}),
-            ...(axiosResponse.headers["cf-cache-status"] === "HIT" && (typeof age !== "number" || Number.isNaN(age)) && {age: 0}),
+            ...(typeof age === "number" && !Number.isNaN(age) && { age }),
+            ...(axiosResponse.headers["cf-cache-status"] === "HIT" && (typeof age !== "number" || Number.isNaN(age)) && { age: 0 }),
             ...(maxAge &&
                 typeof maxAge === "object" &&
                 maxAge.length === 2 &&

@@ -1,7 +1,7 @@
 import "@misc/window/windowPreload";
-import {contextBridge, ipcRenderer} from "electron";
-import {IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
-import { RUNElectronStoreTyped} from "@main/appWindow";
+import { contextBridge, ipcRenderer } from "electron";
+import { IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels } from "@common/utils/IPCHandler";
+import { RUNElectronStoreTyped } from "@main/appWindow";
 
 /**
  * Allows access to the **ipcRenderer**
@@ -48,7 +48,7 @@ contextBridge.exposeInMainWorld("config", {
      * @param data
      */
     set: (key: RUNElectronStoreTyped | string, data: object | string | number) => {
-        return ipcRenderer.send("configSet", {key, data});
+        return ipcRenderer.send("configSet", { key, data });
     },
     /**
      * Get data from the **config.json** file.
@@ -57,7 +57,7 @@ contextBridge.exposeInMainWorld("config", {
      * @param key
      */
     get: (key: RUNElectronStoreTyped | string) => {
-        return ipcRenderer.invoke("configGet", {key});
+        return ipcRenderer.invoke("configGet", { key });
     },
 });
 

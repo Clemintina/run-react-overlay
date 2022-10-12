@@ -1,5 +1,5 @@
-import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { Player } from "@common/utils/PlayerUtils";
+import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
@@ -8,7 +8,6 @@ import IpcRendererEvent = Electron.IpcRendererEvent;
 export interface LogFileMessage {
     message: string;
 }
-
 
 export class LogFileReader {
     public startListening = async () => {
@@ -39,8 +38,8 @@ export class LogFileReader {
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
-            if (line.includes("Sending you to") || line.includes('       ')) {
-                    await clearOverlayTable();
+            if (line.includes("Sending you to")) {
+                await clearOverlayTable();
             } else if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 clearOverlayTable();
@@ -74,6 +73,16 @@ export class LogFileReader {
             }
         });
     };
+
+    public startApiKeyHandler = async() => {
+        await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
+            const line = readLogLine(data);
+            if (line.includes("Your new API key is ")) {
+                const configStore = useConfigStore.getState();
+                configStore.setHypixelApiKey(line.split("Your new API key is ")[1]);
+            }
+        });
+    }
 
     public startCommandListener = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {

@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {Player} from "@common/utils/PlayerUtils";
+import { Player } from "@common/utils/PlayerUtils";
 
 export interface PlayerSession {
     player: Player;
 }
 
-const PlayerSession: React.ElementType = ({player}: PlayerSession) => {
+const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
     const values: [string, string][] = [];
     if (player.hypixelPlayer != null) {
         if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {

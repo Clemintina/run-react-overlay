@@ -6,9 +6,10 @@ import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
 import { SettingHeader } from "@components/user/settings/components/SettingHeader";
 import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import { Slider, SxProps } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
+import {InputBoxButton} from "@components/user/InputBoxButton";
 import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
 import Tooltip from "@mui/material/Tooltip";
 
@@ -27,7 +28,7 @@ const Essentials = () => {
     return (
         <div>
             <NavigationBar>
-                <div className='w-full h-full p-2 flex flex-col space-y-2'>
+                <Box className={"p-2 space-y-2"}>
                     <SettingCard>
                         <span>Hypixel API Key</span>
                         <span />
@@ -61,10 +62,10 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setRunApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{ placeholder: run.valid ? run.apiKey : "Run API Key" }}
+                                options={{ placeholder: run.valid ? run.apiKey : "Seraph API Key" }}
                                 sx={styledProps}
                                 error={() => !run.valid}
-                                helperText={!run.valid ? "Enter a valid RUN API Key" : ""}
+                                helperText={!run.valid ? "Enter a valid Seraph API Key" : ""}
                             />
                         </span>
                     </SettingCard>
@@ -103,7 +104,6 @@ const Essentials = () => {
                         <span>APIs</span>
                         <span />
                     </SettingHeader>
-
                     <SettingCard>
                         <span>Boomza (BWStats)</span>
                         <span />
@@ -115,13 +115,12 @@ const Essentials = () => {
                             options={{ enabled: settings.boomza }}
                         >
                             <span>
-                                <Tooltip title="This API is proxied to protect your IP.">
+                                <Tooltip title='This API is proxied to protect your IP.'>
                                     <FontAwesomeIcon icon={faMapLocation} />
                                 </Tooltip>
                             </span>
                         </ToggleButton>
                     </SettingCard>
-
                     <SettingCard>
                         <span>Lunar Tags</span>
                         <span />
@@ -143,6 +142,16 @@ const Essentials = () => {
                         />
                     </SettingCard>
                     <SettingCard>
+                        <span>Guilds</span>
+                        <span />
+                        <ToggleButton
+                            onChange={async () => {
+                                useConfigStore.getState().setSettings({ ...settings, hypixel: { guilds: !settings.hypixel.guilds } });
+                            }}
+                            options={{ enabled: settings.hypixel.guilds }}
+                        />
+                    </SettingCard>
+                    <SettingCard>
                         <span>Keathiz/Antisniper</span>
                         <span />
                         <span>
@@ -153,13 +162,18 @@ const Essentials = () => {
                                 options={{ enabled: settings.keathiz }}
                             >
                                 <span>
-                                    <Tooltip title="This API is proxied to protect your IP.">
+                                    <Tooltip title='This API is proxied to protect your IP.'>
                                         <FontAwesomeIcon icon={faMapLocation} />
                                     </Tooltip>
                                 </span>
                             </ToggleButton>
                         </span>
                     </SettingCard>
+                    <SettingHeader>
+                        <span />
+                        <span>Other</span>
+                        <span />
+                    </SettingHeader>
                     <SettingCard>
                         <span>Astolfo Chat Bridge</span>
                         <span />
@@ -174,50 +188,20 @@ const Essentials = () => {
                         </span>
                     </SettingCard>
                     <SettingCard>
-                        <span>Auto Hide</span>
-                        <span />
-                        <ToggleButton
-                            onChange={async () => {
-                                useConfigStore.getState().setSettings({ ...settings, preferences: { autoHide: !settings.preferences.autoHide } });
-                            }}
-                            options={{ enabled: settings.preferences.autoHide }}
-                        />
-                    </SettingCard>
-                    <SettingCard>
-                        <span>Opacity</span>
+                        <span>Automatic Updates</span>
                         <span />
                         <span>
-                            <Slider
-                                aria-label='Opacity'
-                                value={opacityValue}
-                                onChange={(event, value) => {
-                                    const opacityValue: number = typeof value == "number" ? value : value[0];
-                                    setOpacityValue(opacityValue);
-                                    useConfigStore.getState().setBrowserWindow({ ...useConfigStore.getState().browserWindow, opacity: opacityValue });
+                            <ToggleButton
+                                onChange={async () => {
+                                    await window.config.set("settings.updater", !(await window.config.get("settings.updater")));
+                                    useConfigStore.getState().setSettings({ ...settings, updater: !settings.updater });
+                                    
                                 }}
-                                onBlur={() => {
-                                    useConfigStore.getState().setBrowserWindow({ height: browserWindow.height, opacity: opacityValue, width: browserWindow.width });
-                                }}
-                                getAriaValueText={(value) => `${value}`}
-                                valueLabelDisplay='auto'
-                                min={1}
-                                valueLabelFormat={(value: number) => {
-                                    return value;
-                                }}
-                            />
+                                options={{ enabled: settings.updater }}
+                            ></ToggleButton>
                         </span>
                     </SettingCard>
-                    <SettingCard>
-                        <span>Sorting</span>
-                        <span />
-                        <span>To sort players in order of stats, click the label of the column whose stats you'd like to sort by.</span>
-                    </SettingCard>
-                    <SettingCard>
-                        <span>Version</span>
-                        <span />
-                        <span>{useConfigStore.getState().version}</span>
-                    </SettingCard>
-                </div>
+                </Box>
             </NavigationBar>
         </div>
     );

@@ -9,13 +9,11 @@ export interface PlayerWinstreak {
     player: Player;
 }
 
-
 const PlayerWinstreak: React.ElementType = (props: PlayerWinstreak) => {
     const player = props.player;
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
 
-
-    let renderer:JSX.Element;
+    let renderer: JSX.Element;
     if (!player.nicked) {
         let playerValue = player.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
         if (player.sources.keathiz != null && localConfigStore.settings.keathiz) {
@@ -33,9 +31,7 @@ const PlayerWinstreak: React.ElementType = (props: PlayerWinstreak) => {
         renderer = getPlayerTagDividerNicked();
     }
 
-    return (
-        <span>{renderer}</span>
-    );
+    return <span>{renderer}</span>;
 };
 
 export default PlayerWinstreak;

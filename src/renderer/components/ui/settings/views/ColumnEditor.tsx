@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {ToggleButton} from "@components/user/ToggleButton";
-import {AgGridReact} from "ag-grid-react";
-import {ColDef, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent} from "ag-grid-community";
+import { ToggleButton } from "@components/user/ToggleButton";
+import { AgGridReact } from "ag-grid-react";
+import { ColDef, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerStar from "@common/utils/player/PlayerStar";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -12,8 +12,8 @@ import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import PlayerSession from "@common/utils/player/PlayerSession";
-import {Player} from "@common/utils/PlayerUtils";
-import {Box} from "@mui/material";
+import { Player } from "@common/utils/PlayerUtils";
+import { Box } from "@mui/material";
 
 const tinyColumnSize = 30;
 const smallColumnSize = 60;
@@ -22,7 +22,7 @@ const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
 const ColumnEditorView = () => {
-    const {columnState, browserWindow} = useConfigStore((state) => ({columnState: state.table.columnState, browserWindow: state.browserWindow}));
+    const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
     const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
     const toggleColumn = (columnId: string) => {
@@ -38,8 +38,8 @@ const ColumnEditorView = () => {
     };
 
     const onGridUpdate = (event) => {
-        event.columnApi.applyColumnState({state: columnState, applyOrder: true});
-        event.api.refreshCells({force: true});
+        event.columnApi.applyColumnState({ state: columnState, applyOrder: true });
+        event.api.refreshCells({ force: true });
     };
 
     const defaultColDefs: ColDef = {
@@ -53,67 +53,67 @@ const ColumnEditorView = () => {
         {
             field: "id",
             hide: true,
-            cellRenderer: ({data}) => data.uuid,
+            cellRenderer: ({ data }) => data.uuid,
         },
         {
             field: "head",
             minWidth: tinyColumnSize,
             sortable: false,
-            cellRenderer: ({data}) => <PlayerHead player={data} />,
+            cellRenderer: ({ data }) => <PlayerHead player={data} />,
         },
         {
             field: "star",
             minWidth: smallColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <PlayerStar player={data} />,
+            cellRenderer: ({ data }) => <PlayerStar player={data} />,
         },
         {
             field: "name",
             minWidth: extraLargeColumnSize,
             type: "string",
-            cellRenderer: ({data}) => <PlayerName player={data} isOverlayStats={false} />,
+            cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,
         },
         {
             field: "tags",
             minWidth: largeColumnSize,
-            cellRenderer: ({data}) => <PlayerTags player={data} />,
+            cellRenderer: ({ data }) => <PlayerTags player={data} />,
             sortable: false,
         },
         {
             field: "WS",
             minWidth: smallColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <PlayerWinstreak player={data} />,
+            cellRenderer: ({ data }) => <PlayerWinstreak player={data} />,
         },
         {
             field: "FKDR",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"fkdr"} />,
+            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />,
         },
         {
             field: "WLR",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"wlr"} />,
+            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />,
         },
         {
             field: "BBLR",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"bblr"} />,
+            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />,
         },
         {
             field: "wins",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"wins"} />,
+            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />,
         },
         {
             field: "losses",
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
+            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />,
         },
         {
             field: "final_kills",
@@ -121,20 +121,20 @@ const ColumnEditorView = () => {
             hide: true,
             minWidth: mediumColumnSize,
             type: "number",
-            cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
+            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
         },
         {
             field: "session",
             minWidth: smallColumnSize,
             type: "number",
             sortable: false,
-            cellRenderer: ({data}) => <PlayerSession player={data} />,
+            cellRenderer: ({ data }) => <PlayerSession player={data} />,
         },
     ];
 
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
-            event.columnApi.applyColumnState({state: columnState, applyOrder: true});
+            event.columnApi.applyColumnState({ state: columnState, applyOrder: true });
             event.api.setRowData(playerData);
         },
         onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
@@ -150,14 +150,8 @@ const ColumnEditorView = () => {
         columnDefs,
         autoSizePadding: 0,
         rowHeight: 25,
-        overlayNoRowsTemplate: "No Players",
+        overlayNoRowsTemplate: "Welcome to the Table Editor! In order to continue, Please click a button and I will display a preview here! ",
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
-    };
-
-    const backgroundStyle = {
-        height: 100,
-        OverflowX: "hidden",
-        OverflowY: "shown",
     };
 
     // TODO make it look nicer and cleaner
@@ -165,15 +159,15 @@ const ColumnEditorView = () => {
         <div>
             <NavigationBar>
                 <Box>
-                    <div className='ag-theme-alpine-dark' style={backgroundStyle}>
+                    <div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
                         <AgGridReact rowData={playerData} gridOptions={gridOptions} />
                     </div>
                     <div className={"grid grid-cols-6 justify-center"}>
                         {columnState.map((column) => (
                             <div key={column.colId}>
-                                <span className={"capitalize"}>{column.colId}</span>
+                                <span className={"capitalize"}>{column.colId.replace("_", " ")}</span>
                                 <span className={""}>
-                                    <ToggleButton onClick={() => toggleColumn(column.colId)} options={{enabled: !column.hide}}></ToggleButton>
+                                    <ToggleButton onClick={() => toggleColumn(column.colId)} options={{ enabled: !column.hide }}></ToggleButton>
                                 </span>
                             </div>
                         ))}
@@ -198,7 +192,739 @@ const constantPlayerData = () => {
             nicked: false,
             bot: false,
             friended: false,
-            hypixelGuild: null,
+            hypixelGuild: {
+                data:  {
+                    _id: "61e800b78ea8c991568ca03f",
+                    name: "The Hangover",
+                    name_lower: "the hangover",
+                    coins: 0,
+                    coinsEver: 0,
+                    created: 1642594487888,
+                    members: [
+                        {
+                            uuid: "96e3b5b8290c4d85a5381d9da63c3f22",
+                            rank: "Nickel",
+                            joined: 1642594514148,
+                            questParticipation: 197,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 4493,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "9f8136c2668f40f587d7d44aa03eab78",
+                            rank: "Bartender",
+                            joined: 1642595667315,
+                            questParticipation: 68,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "f0635cac56404260bf8dcd5f11dc27b9",
+                            rank: "Hungover",
+                            joined: 1642602442819,
+                            questParticipation: 23,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "3aa0ae4346c74359a44cdca3696196ea",
+                            rank: "Hungover",
+                            joined: 1642606605817,
+                            questParticipation: 189,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "56ed8324c9b649a79acead7f38a278b1",
+                            rank: "Pothead",
+                            joined: 1642609154478,
+                            questParticipation: 508,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "cec0af46f3fc42858fd6fd68807040bb",
+                            rank: "Pothead",
+                            joined: 1642616146572,
+                            questParticipation: 308,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "ef895ef3a3e84a47b78f015833bd9f2e",
+                            rank: "Hungover",
+                            joined: 1642621509796,
+                            questParticipation: 27,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 1015,
+                            },
+                        },
+                        {
+                            uuid: "2f1dc2b6a55343479593e712ca7612ae",
+                            rank: "Hungover",
+                            joined: 1642627269546,
+                            questParticipation: 28,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "bd1b351f710e42c99ebf45b443a395fd",
+                            rank: "Hungover",
+                            joined: 1642627988774,
+                            questParticipation: 282,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "27225951ad9543faae71464db714e688",
+                            rank: "Hungover",
+                            joined: 1642630152262,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "769e769ef7cc487ea0be05377ae3d340",
+                            rank: "Hungover",
+                            joined: 1642656248867,
+                            questParticipation: 328,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 1114,
+                            },
+                        },
+                        {
+                            uuid: "a899617d41fb4a02842de9caa51b9cea",
+                            rank: "Hungover",
+                            joined: 1642727665296,
+                            questParticipation: 53,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "49fa3f391af7477da372828f4a378330",
+                            rank: "Hungover",
+                            joined: 1642736087320,
+                            questParticipation: 63,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "94f8883cc4c04c3d8d2d8e03db4e9e4d",
+                            rank: "Hungover",
+                            joined: 1642768259125,
+                            questParticipation: 62,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "93870d06d48341ccb6d050ccbcc217a6",
+                            rank: "Hungover",
+                            joined: 1642776416167,
+                            questParticipation: 56,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "ec041ac7d2d74314ac8334a18e5bcc48",
+                            rank: "Hungover",
+                            joined: 1642779521878,
+                            questParticipation: 87,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "ab2b556c68664ba1a88858d8a9d4807e",
+                            rank: "Hungover",
+                            joined: 1642800952805,
+                            questParticipation: 330,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "c8ae89de20d34e379052004978ae6c61",
+                            rank: "Hungover",
+                            joined: 1642801598117,
+                            questParticipation: 43,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 146,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "c3c0fc8592c844bb93e757dfe8b5e26a",
+                            rank: "Pothead",
+                            joined: 1642802306227,
+                            questParticipation: 544,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 2449,
+                                "2022-09-30": 9597,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "7ac76ebbcb744b1c80dbf1deb9edf900",
+                            rank: "Hungover",
+                            joined: 1642812774263,
+                            questParticipation: 7,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "95bebc2ef8fe46dfaaf4aed042a4a2df",
+                            rank: "Hungover",
+                            joined: 1642818196799,
+                            questParticipation: 160,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "f5976b763b6e4407a70de430c266a5be",
+                            rank: "Pothead",
+                            joined: 1642902570896,
+                            questParticipation: 429,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "5679f8fa2442481d96d2e68d5b940ee9",
+                            rank: "Hungover",
+                            joined: 1643299657443,
+                            questParticipation: 304,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 3798,
+                                "2022-09-30": 421,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "09651dab5ffa4e16950190e567d2ba66",
+                            rank: "Bouncer",
+                            joined: 1643491356273,
+                            questParticipation: 59,
+                            mutedTill: 1645751831641,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "d5a0c0dde3da47c58d5a8af49be1dd75",
+                            rank: "Hungover",
+                            joined: 1643809975112,
+                            questParticipation: 232,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "eff3bd5a8f6844b89b2cf394aa54831d",
+                            rank: "Hungover",
+                            joined: 1643908420938,
+                            questParticipation: 36,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 25346,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "363a43568f7a43a381b5f813c51bb5eb",
+                            rank: "Hungover",
+                            joined: 1645302017305,
+                            questParticipation: 93,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "541d7a6a6fd0467f9b59fb93c07060fc",
+                            rank: "Hungover",
+                            joined: 1645653234002,
+                            mutedTill: 1645751415777,
+                            questParticipation: 38,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 1672,
+                                "2022-10-02": 0,
+                                "2022-10-01": 18338,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "6c71ff66b0a4458f8d9f1303ef32c424",
+                            rank: "Hungover",
+                            joined: 1646539643661,
+                            questParticipation: 24,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "806fcabe30f244959669110596a82c4d",
+                            rank: "Guild Master",
+                            joined: 1647111696993,
+                            questParticipation: 4,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "16b431153d6640e4a8ddf39176a3c237",
+                            rank: "Hungover",
+                            joined: 1647294129699,
+                            questParticipation: 7,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "861f2d0cea1d4dea9e5551ea4e5b2e52",
+                            rank: "Hungover",
+                            joined: 1647556944370,
+                            questParticipation: 54,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 1612,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "f1dd8ffa9fa14246a29244a8a598f890",
+                            rank: "Hungover",
+                            joined: 1648097744340,
+                            questParticipation: 1,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "ef1af9a1ca26467290ddc62bf306ed0d",
+                            rank: "Shitfaced",
+                            joined: 1648345814004,
+                            questParticipation: 7,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "36fe216fd5aa4ba89ddb0dc308f6f6e1",
+                            rank: "Hungover",
+                            joined: 1649456792649,
+                            questParticipation: 300,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "5b45cb4e71b646acbe293e1c7ce34bc6",
+                            rank: "Hungover",
+                            joined: 1649523803626,
+                            questParticipation: 126,
+                            expHistory: {
+                                "2022-10-05": 699,
+                                "2022-10-04": 820,
+                                "2022-10-03": 25,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "99cd61eef3684be989425d31ed1213db",
+                            rank: "Hungover",
+                            joined: 1649867637221,
+                            questParticipation: 56,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 414,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "7c0f2df82db849038f4825dc64596aa2",
+                            rank: "Hungover",
+                            joined: 1649891904806,
+                            questParticipation: 378,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 15491,
+                                "2022-10-03": 5134,
+                                "2022-10-02": 32519,
+                                "2022-10-01": 7499,
+                                "2022-09-30": 894,
+                                "2022-09-29": 102,
+                            },
+                        },
+                        {
+                            uuid: "bc84d71720714328ab042a07cde71937",
+                            rank: "Hungover",
+                            joined: 1650470104577,
+                            questParticipation: 28,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "a71375a9e8fe441f95be818eae6f00b9",
+                            rank: "Hungover",
+                            joined: 1654665438023,
+                            questParticipation: 39,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 690,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "9f8cc4fb6c3945e1ac67c382fef1e6cf",
+                            rank: "Hungover",
+                            joined: 1656880419066,
+                            questParticipation: 31,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "d6478f3008d644ecb4d762aacaef9135",
+                            rank: "Hungover",
+                            joined: 1663270103035,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                        {
+                            uuid: "00cd23cf979d4a30a2d841cfeab06c09",
+                            rank: "Bouncer",
+                            joined: 1663270707849,
+                            expHistory: {
+                                "2022-10-05": 0,
+                                "2022-10-04": 0,
+                                "2022-10-03": 0,
+                                "2022-10-02": 0,
+                                "2022-10-01": 0,
+                                "2022-09-30": 0,
+                                "2022-09-29": 0,
+                            },
+                        },
+                    ],
+                    ranks: [
+                        {
+                            name: "Hungover",
+                            default: true,
+                            tag: "Hung",
+                            created: 1642596337365,
+                            priority: 1,
+                        },
+                        {
+                            name: "Pothead",
+                            default: false,
+                            tag: "Head",
+                            created: 1642596296382,
+                            priority: 2,
+                        },
+                        {
+                            name: "Bartender",
+                            default: false,
+                            tag: "Tender",
+                            created: 1643404044064,
+                            priority: 5,
+                        },
+                        {
+                            name: "Bouncer",
+                            default: false,
+                            tag: "Bounce",
+                            created: 1648098680574,
+                            priority: 4,
+                        },
+                        {
+                            name: "Shitfaced",
+                            default: false,
+                            tag: "Shit",
+                            created: 1642634969889,
+                            priority: 3,
+                        },
+                    ],
+                    achievements: {
+                        WINNERS: 1413,
+                        EXPERIENCE_KINGS: 334014,
+                        ONLINE_PLAYERS: 34,
+                    },
+                    exp: 62823831,
+                    description: "https://discord.gg/cpQ86vgnMp - Apply Here <3",
+                    tagColor: "GRAY",
+                    tag: "HANG",
+                    chatMute: 0,
+                    guildExpByGameType: {
+                        MCGO: 220938,
+                        VAMPIREZ: 276782,
+                        WALLS3: 202916,
+                        SURVIVAL_GAMES: 723717,
+                        MURDER_MYSTERY: 1133169,
+                        UHC: 533155,
+                        BATTLEGROUND: 19014,
+                        ARENA: 27811,
+                        ARCADE: 2090379,
+                        DUELS: 4855237,
+                        PIT: 112696,
+                        WOOL_GAMES: 193215,
+                        REPLAY: 0,
+                        LEGACY: 0,
+                        SMP: 0,
+                        HOUSING: 1994486,
+                        WALLS: 141604,
+                        BUILD_BATTLE: 1751808,
+                        GINGERBREAD: 5648,
+                        TNTGAMES: 2181119,
+                        SKYWARS: 7691707,
+                        SPEED_UHC: 0,
+                        QUAKECRAFT: 101162,
+                        SKYBLOCK: 0,
+                        SUPER_SMASH: 74785,
+                        PAINTBALL: 24323,
+                        BEDWARS: 122197351,
+                        PROTOTYPE: 26301541,
+                    },
+                }, status: 200
+            },
             hypixelPlayer: {
                 _id: "5f1d33d2273efab4375d5b63",
                 uuid: "8589389e8b6b46c288084eb71ec3479e",

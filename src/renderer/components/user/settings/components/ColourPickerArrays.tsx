@@ -1,8 +1,8 @@
-import React, {useState} from "react";
-import {Box, FormControl, FormControlLabel, FormLabel, Modal, Radio, RadioGroup} from "@mui/material";
-import {InputBoxButton} from "@components/user/InputBoxButton";
-import {HexColorPicker} from "react-colorful";
-import {TagArray} from "@common/utils/Schemas";
+import React, { useState } from "react";
+import { Box, FormControl, FormControlLabel, FormLabel, Modal, Radio, RadioGroup } from "@mui/material";
+import { InputBoxButton } from "@components/user/InputBoxButton";
+import { HexColorPicker } from "react-colorful";
+import { TagArray } from "@common/utils/Schemas";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import useTagStore from "@renderer/store/zustand/TagStore";
 
@@ -10,7 +10,7 @@ export interface ColourPickerArray {
     children: React.ReactElement | React.ReactElement[];
     setColour: (colour: TagArray) => void;
     text?: string;
-    colourObject: {display: string; colour?: Array<TagArray>, colours?: Array<TagArray>};
+    colourObject: { display: string; colour?: Array<TagArray>; colours?: Array<TagArray> };
 }
 
 export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) => {
@@ -28,7 +28,7 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
         }
     };
 
-    const [arrayItem, setArrayItem] = useState({colour: "", requirement: 0, operator: "<="});
+    const [arrayItem, setArrayItem] = useState({ colour: "", requirement: 0, operator: "<=" });
     const [customColour, setCustomColour] = useState("242424");
     const [defaultValue, setDefaultValue] = useState(props.colourObject[originalColourArray][0].requirement);
 
@@ -42,7 +42,7 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
                     <FormControlLabel value={obj.requirement} control={<Radio />} label={""} />
                     <span>{obj.requirement}</span>
                     <span>{obj.operator}</span>
-                    <span style={{color: "#" + obj.colour}}>{obj.colour}</span>
+                    <span style={{ color: "#" + obj.colour }}>{obj.colour}</span>
                     <span></span>
                 </div>,
             );
@@ -70,7 +70,11 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
                 setCustomColour(`#${arrayItem.colour}`);
             }
         });
-        setArrayItem({requirement: Number.parseInt((event.target as HTMLInputElement).value), colour: "", operator: "<="});
+        setArrayItem({
+            requirement: Number.parseInt((event.target as HTMLInputElement).value),
+            colour: "",
+            operator: "<=",
+        });
     };
 
     const style = {
@@ -90,10 +94,10 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
     return (
         <div>
             <InputBoxButton onClick={handleOpen} text={props?.text ?? "Pick!"} />
-            <Modal open={open} onClose={handleClose} style={{color: configStore.colours.primaryColour}}>
+            <Modal open={open} onClose={handleClose} style={{ color: configStore.colours.primaryColour }}>
                 <Box sx={style}>
                     <FormControl>
-                        <FormLabel id="colour-array">Select which item you'd like to edit</FormLabel>
+                        <FormLabel id={"colour-array"}>Select which item you'd like to edit</FormLabel>
                         <RadioGroup defaultValue={defaultValue} onChange={handleRadioChange}>
                             {colourArrayData}
                         </RadioGroup>

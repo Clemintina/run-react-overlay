@@ -1,4 +1,4 @@
-import {Static, Type} from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 
 export const RUNElectronStore = Type.Optional(
     Type.Object({
@@ -11,8 +11,8 @@ export const RUNElectronStore = Type.Optional(
                     }),
                     browserWindow: Type.Optional(
                         Type.Object({
-                            width: Type.Number({default: 600}),
-                            height: Type.Number({default: 800}),
+                            width: Type.Number({ default: 600 }),
+                            height: Type.Number({ default: 800 }),
                         }),
                     ),
                 }),
@@ -40,7 +40,7 @@ export const RUNElectronStore = Type.Optional(
                     description: "The Logs path which the overlay uses to read players",
                     default: "",
                 }),
-                first_launch: Type.Boolean({default: true}),
+                first_launch: Type.Boolean({ default: true }),
                 table: Type.Optional(
                     Type.Object({
                         columns: Type.Optional(Type.Array(Type.Any())),
@@ -64,7 +64,7 @@ export const RUNElectronStore = Type.Optional(
                         hostname: Type.String({
                             default: "",
                         }),
-                        port: Type.String({default: ""}),
+                        port: Type.String({ default: "" }),
                         username: Type.String({
                             default: "",
                         }),
@@ -79,7 +79,7 @@ export const RUNElectronStore = Type.Optional(
                             default: "",
                             description: "Keathiz Api Key for https://api.antisniper.net",
                         }),
-                        valid: Type.Boolean({default: false}),
+                        valid: Type.Boolean({ default: false }),
                     }),
                 ),
             }),
@@ -94,11 +94,15 @@ export const RUNElectronStore = Type.Optional(
                     description: "Enable Boomza API",
                     default: true,
                 }),
+                updater: Type.Boolean({
+                    description: "Enable Automatic Updates",
+                    default: true,
+                }),
                 keathiz: Type.Boolean({
                     description: "Enable Keathiz API",
                     default: false,
                 }),
-                autoHide: Type.Boolean({description:"Hides the overlay automatically",default: true})
+                autoHide: Type.Boolean({ description: "Hides the overlay automatically", default: true }),
             }),
         ),
     }),
@@ -113,7 +117,8 @@ export const getDefaultElectronStore: RUNElectronStoreType = {
         lunar: true,
         boomza: true,
         keathiz: false,
-        autoHide: true
+        updater: true,
+        autoHide: true,
     },
 };
 
@@ -164,7 +169,7 @@ export const RUNElectronStoreTags = Type.Object({
                     colour: Type.String({
                         description: "The colours for the Encounters tag",
                     }),
-                    operator: Type.String({description: "Conditional used for this object"}),
+                    operator: Type.String({ description: "Conditional used for this object" }),
                 }),
                 {
                     description: "Sets the colours for the tags using dynamic values",
@@ -184,7 +189,7 @@ export const RUNElectronStoreTags = Type.Object({
                     colour: Type.String({
                         description: "The colours for the Safelist tag",
                     }),
-                    operator: Type.String({description: "Conditional used for this object"}),
+                    operator: Type.String({ description: "Conditional used for this object" }),
                 }),
                 {
                     description: "Sets the colours for the tags using dynamic values",
@@ -202,53 +207,53 @@ export const RUNElectronStoreTags = Type.Object({
             }),
         }),
         name_change: Type.Object({
-            display: Type.String({description: "If the player recently changed their name", default: "NC"}),
-            colour: Type.String({description: "The colour of this tag", default: "FF55FF"}),
+            display: Type.String({ description: "If the player recently changed their name", default: "NC" }),
+            colour: Type.String({ description: "The colour of this tag", default: "FF55FF" }),
         }),
     }),
     core: Type.Object({
         fkdr: Type.Object({
             colours: Type.Array(
                 Type.Object({
-                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
-                    colour: Type.String({description: "What colour should this be."}),
-                    operator: Type.String({description: "Conditional used for this object"}),
+                    requirement: Type.Number({ description: "When you'd like this colour to be used." }),
+                    colour: Type.String({ description: "What colour should this be." }),
+                    operator: Type.String({ description: "Conditional used for this object" }),
                 }),
             ),
         }),
         bblr: Type.Object({
             colours: Type.Array(
                 Type.Object({
-                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
-                    colour: Type.String({description: "What colour should this be."}),
-                    operator: Type.String({description: "Conditional used for this object"}),
+                    requirement: Type.Number({ description: "When you'd like this colour to be used." }),
+                    colour: Type.String({ description: "What colour should this be." }),
+                    operator: Type.String({ description: "Conditional used for this object" }),
                 }),
             ),
         }),
         wlr: Type.Object({
             colours: Type.Array(
                 Type.Object({
-                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
-                    colour: Type.String({description: "What colour should this be."}),
-                    operator: Type.String({description: "Conditional used for this object"}),
+                    requirement: Type.Number({ description: "When you'd like this colour to be used." }),
+                    colour: Type.String({ description: "What colour should this be." }),
+                    operator: Type.String({ description: "Conditional used for this object" }),
                 }),
             ),
         }),
         winstreak: Type.Object({
             colours: Type.Array(
                 Type.Object({
-                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
-                    colour: Type.String({description: "What colour should this be."}),
-                    operator: Type.String({description: "Conditional used for this object"}),
+                    requirement: Type.Number({ description: "When you'd like this colour to be used." }),
+                    colour: Type.String({ description: "What colour should this be." }),
+                    operator: Type.String({ description: "Conditional used for this object" }),
                 }),
             ),
         }),
         kdr: Type.Object({
             colours: Type.Array(
                 Type.Object({
-                    requirement: Type.Number({description: "When you'd like this colour to be used."}),
-                    colour: Type.String({description: "What colour should this be."}),
-                    operator: Type.String({description: "Conditional used for this object"}),
+                    requirement: Type.Number({ description: "When you'd like this colour to be used." }),
+                    colour: Type.String({ description: "What colour should this be." }),
+                    operator: Type.String({ description: "Conditional used for this object" }),
                 }),
             ),
         }),
@@ -312,15 +317,18 @@ export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
             display: "✓",
             colour: [
                 {
-                    requirement: 1,operator: "<=",
+                    requirement: 1,
+                    operator: "<=",
                     colour: "FF5555",
                 },
                 {
-                    requirement: 10,operator: "<=",
+                    requirement: 10,
+                    operator: "<=",
                     colour: "FFFF55",
                 },
                 {
-                    requirement: 20,operator: "<=",
+                    requirement: 20,
+                    operator: "<=",
                     colour: "55FF55",
                 },
             ],
@@ -337,67 +345,67 @@ export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
     core: {
         fkdr: {
             colours: [
-                {requirement: 1, colour: "AAAAAA", operator: "=="},
-                {requirement: 3, colour: "AAAAAA", operator: "<="},
-                {requirement: 10, colour: "FFFFFF", operator: "<="},
-                {requirement: 20, colour: "FFAA00", operator: "<="},
-                {requirement: 30, colour: "00AA00", operator: "<="},
-                {requirement: 60, colour: "FF5555", operator: "<="},
-                {requirement: 100, colour: "AA0000", operator: "<="},
-                {requirement: 500, colour: "FF55FF", operator: "<="},
-                {requirement: 700, colour: "AA00AA", operator: "<="},
+                { requirement: 1, colour: "AAAAAA", operator: "==" },
+                { requirement: 3, colour: "AAAAAA", operator: "<=" },
+                { requirement: 10, colour: "FFFFFF", operator: "<=" },
+                { requirement: 20, colour: "FFAA00", operator: "<=" },
+                { requirement: 30, colour: "00AA00", operator: "<=" },
+                { requirement: 60, colour: "FF5555", operator: "<=" },
+                { requirement: 100, colour: "AA0000", operator: "<=" },
+                { requirement: 500, colour: "FF55FF", operator: "<=" },
+                { requirement: 700, colour: "AA00AA", operator: "<=" },
             ],
         },
         bblr: {
             colours: [
-                {requirement: 1, colour: "AAAAAA", operator: "=="},
-                {requirement: 2, colour: "AAAAAA", operator: "<="},
-                {requirement: 4, colour: "FFFFFF", operator: "<="},
-                {requirement: 6, colour: "FFAA00", operator: "<="},
-                {requirement: 7, colour: "00AA00", operator: "<="},
-                {requirement: 10, colour: "FF5555", operator: "<="},
-                {requirement: 15, colour: "AA0000", operator: "<="},
-                {requirement: 50, colour: "FF55FF", operator: "<="},
-                {requirement: 100, colour: "AA00AA", operator: "<="},
+                { requirement: 1, colour: "AAAAAA", operator: "==" },
+                { requirement: 2, colour: "AAAAAA", operator: "<=" },
+                { requirement: 4, colour: "FFFFFF", operator: "<=" },
+                { requirement: 6, colour: "FFAA00", operator: "<=" },
+                { requirement: 7, colour: "00AA00", operator: "<=" },
+                { requirement: 10, colour: "FF5555", operator: "<=" },
+                { requirement: 15, colour: "AA0000", operator: "<=" },
+                { requirement: 50, colour: "FF55FF", operator: "<=" },
+                { requirement: 100, colour: "AA00AA", operator: "<=" },
             ],
         },
         wlr: {
             colours: [
-                {requirement: 1, colour: "AAAAAA", operator: "=="},
-                {requirement: 2, colour: "AAAAAA", operator: "<="},
-                {requirement: 4, colour: "FFFFFF", operator: "<="},
-                {requirement: 6, colour: "FFAA00", operator: "<="},
-                {requirement: 7, colour: "00AA00", operator: "<="},
-                {requirement: 10, colour: "FF5555", operator: "<="},
-                {requirement: 15, colour: "AA0000", operator: "<="},
-                {requirement: 50, colour: "FF55FF", operator: "<="},
-                {requirement: 100, colour: "AA00AA", operator: "<="},
+                { requirement: 1, colour: "AAAAAA", operator: "==" },
+                { requirement: 2, colour: "AAAAAA", operator: "<=" },
+                { requirement: 4, colour: "FFFFFF", operator: "<=" },
+                { requirement: 6, colour: "FFAA00", operator: "<=" },
+                { requirement: 7, colour: "00AA00", operator: "<=" },
+                { requirement: 10, colour: "FF5555", operator: "<=" },
+                { requirement: 15, colour: "AA0000", operator: "<=" },
+                { requirement: 50, colour: "FF55FF", operator: "<=" },
+                { requirement: 100, colour: "AA00AA", operator: "<=" },
             ],
         },
         winstreak: {
             colours: [
-                {requirement: 0, colour: "AAAAAA", operator: "=="},
-                {requirement: 50, colour: "AAAAAA", operator: "<="},
-                {requirement: 200, colour: "FFFFFF", operator: "<="},
-                {requirement: 350, colour: "FFAA00", operator: "<="},
-                {requirement: 500, colour: "00AA00", operator: "<="},
-                {requirement: 650, colour: "FF5555", operator: "<="},
-                {requirement: 800, colour: "AA0000", operator: "<="},
-                {requirement: 1000, colour: "FF55FF", operator: "<="},
-                {requirement: 1500, colour: "AA00AA", operator: "<="},
+                { requirement: 0, colour: "AAAAAA", operator: "==" },
+                { requirement: 50, colour: "AAAAAA", operator: "<=" },
+                { requirement: 200, colour: "FFFFFF", operator: "<=" },
+                { requirement: 350, colour: "FFAA00", operator: "<=" },
+                { requirement: 500, colour: "00AA00", operator: "<=" },
+                { requirement: 650, colour: "FF5555", operator: "<=" },
+                { requirement: 800, colour: "AA0000", operator: "<=" },
+                { requirement: 1000, colour: "FF55FF", operator: "<=" },
+                { requirement: 1500, colour: "AA00AA", operator: "<=" },
             ],
         },
         kdr: {
             colours: [
-                {requirement: 1, colour: "AAAAAA", operator: "=="},
-                {requirement: 2, colour: "AAAAAA", operator: "<="},
-                {requirement: 4, colour: "FFFFFF", operator: "<="},
-                {requirement: 6, colour: "FFAA00", operator: "<="},
-                {requirement: 7, colour: "00AA00", operator: "<="},
-                {requirement: 10, colour: "FF5555", operator: "<="},
-                {requirement: 15, colour: "AA0000", operator: "<="},
-                {requirement: 50, colour: "FF55FF", operator: "<="},
-                {requirement: 100, colour: "AA00AA", operator: "<="},
+                { requirement: 1, colour: "AAAAAA", operator: "==" },
+                { requirement: 2, colour: "AAAAAA", operator: "<=" },
+                { requirement: 4, colour: "FFFFFF", operator: "<=" },
+                { requirement: 6, colour: "FFAA00", operator: "<=" },
+                { requirement: 7, colour: "00AA00", operator: "<=" },
+                { requirement: 10, colour: "FF5555", operator: "<=" },
+                { requirement: 15, colour: "AA0000", operator: "<=" },
+                { requirement: 50, colour: "FF55FF", operator: "<=" },
+                { requirement: 100, colour: "AA00AA", operator: "<=" },
             ],
         },
     },
@@ -414,7 +422,6 @@ export const getDefaultElectronStoreObject: RUNElectronStoreTagsType = {
  * {@link [StackOverflow](https://stackoverflow.com/questions/47057649/typescript-string-dot-notation-of-nested-object)}
  */
 
-export type PathsToStringProps<T> = T extends string ? [] : {[K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>]}[Extract<keyof T, string>];
+export type PathsToStringProps<T> = T extends string ? [] : { [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>] }[Extract<keyof T, string>];
 
 export type Join<T extends string[], D extends string> = T extends [] ? never : T extends [infer F] ? F : T extends [infer F, ...infer R] ? (F extends string ? `${F}${D}${Join<Extract<R, string[]>, D>}` : never) : string;
-

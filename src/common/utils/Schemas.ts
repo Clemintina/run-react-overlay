@@ -94,11 +94,15 @@ export interface SettingsConfig {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
+    updater: boolean;
     astolfo: boolean;
+    hypixel: {
+        guilds: boolean;
+    };
     run: {
         friends: boolean;
     };
-    preferences: {autoHide: boolean};
+    preferences: { autoHide: boolean };
 }
 
 export interface ClientSetting {
@@ -139,4 +143,8 @@ export interface PlayerNickname {
     name: string;
     nick: string;
     added: number;
+}
+
+export interface FontConfig {
+    family: string;
 }

@@ -1,5 +1,5 @@
 import fastJson from "fast-json-stringify";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import { IPCResponse } from "@common/utils/externalapis/RunApi";
 
 export const handleIPCSend = <T>(data: IPCResponse<T>) => {
     const stringify = fastJson({
@@ -10,12 +10,12 @@ export const handleIPCSend = <T>(data: IPCResponse<T>) => {
                 type: "object",
                 patternProperties: {
                     "^.*$": {
-                        anyOf: [{type: "string"}, {type: "boolean"}, {type: "number"}, {type: "object"}],
+                        anyOf: [{ type: "string" }, { type: "boolean" }, { type: "number" }, { type: "object" }],
                     },
                 },
                 additionalProperties: false,
             },
-            status: {type: "number", default: 200},
+            status: { type: "number", default: 200 },
         },
         required: ["data", "status"],
     });

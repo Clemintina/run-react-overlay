@@ -1,7 +1,7 @@
-import {Components, Paths} from "@common/zikeji";
-import {Method} from "@common/zikeji/util/Method";
-import {getResultArray, ResultArray} from "../util/ResultArray";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import { Components, Paths } from "@common/zikeji";
+import { Method } from "@common/zikeji/util/Method";
+import { getResultArray, ResultArray } from "../util/ResultArray";
+import { IPCResponse } from "@common/utils/externalapis/RunApi";
 
 export class Friends extends Method {
     /**
@@ -14,6 +14,9 @@ export class Friends extends Method {
      * @category API
      */
     public async uuid(uuid: Components.Parameters.PlayerUuid.Uuid): Promise<IPCResponse<ResultArray<Paths.Friends.Get.Responses.$200, "records">>> {
-        return {data: getResultArray(await this.client.call<Paths.Friends.Get.Responses.$200>("friends", {uuid}), "records") as never, status: 200};
+        return {
+            data: getResultArray(await this.client.call<Paths.Friends.Get.Responses.$200>("friends", { uuid }), "records") as never,
+            status: 200,
+        };
     }
 }

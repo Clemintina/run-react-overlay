@@ -1,26 +1,27 @@
-import {app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
-import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell } from "electron";
+import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
 import path from "path";
-import axios, {AxiosRequestConfig} from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import fs from "fs";
-import {exec} from "child_process";
+import { exec } from "child_process";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {HypixelApi} from "./HypixelApi";
+import { getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
+import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { HypixelApi } from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
-import {ProxyStore, ProxyType} from "@common/utils/Schemas";
+import { BoomzaAntisniper, KeathizEndpoints } from "@common/utils/externalapis/BoomzaApi";
+import { ProxyStore, ProxyType } from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
-import {handleIPCSend} from "@main/Utils";
+import { handleIPCSend } from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
-import {LogFileMessage} from "@common/utils/LogFileReader";
-import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
+import { LogFileMessage } from "@common/utils/LogFileReader";
+import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import log from "electron-log";
+import psList from "ps-list";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 // Electron Forge automatically creates these entry points
@@ -32,8 +33,8 @@ const registeredGlobalKeybinds = new Set<string>();
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
-const playerCache = cacheManager.caching({ttl: 60 * 5, store: "memory"});
-const mojangCache = cacheManager.caching({ttl: 60000, store: "memory"});
+const playerCache = cacheManager.caching({ ttl: 60 * 5, store: "memory" });
+const mojangCache = cacheManager.caching({ ttl: 60000, store: "memory" });
 /**
  * Checks if the app is running in Production or Development
  */
@@ -123,8 +124,9 @@ export const createAppWindow = (): BrowserWindow => {
     appWindow.setAlwaysOnTop(true, "screen-saver");
     appWindow.setVisibleOnAllWorkspaces(true);
     mainWindowState.manage(appWindow);
+    let updates = electronStore.get("settings.updater");
 
-    if (!isDevelopment) {
+    if (!(isDevelopment) && updates) {
         if (!require("electron-squirrel-startup") && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             log.info("Running updater");
@@ -134,9 +136,9 @@ export const createAppWindow = (): BrowserWindow => {
                 log.info("Checking for updates...");
             });
             autoUpdater.on("error", async (error) => log.error(error));
-            autoUpdater.on("update-available", async () =>  {
+            autoUpdater.on("update-available", async () => {
                 log.info("Update available");
-        });
+            });
             autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
                 log.info("Updating Overlay to " + releaseName);
                 autoUpdater.quitAndInstall();
@@ -144,7 +146,7 @@ export const createAppWindow = (): BrowserWindow => {
         }
     }
 
-    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, {userAgent: "SeraphOverlay"});
+    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, { userAgent: "SeraphOverlay" });
 
     appWindow.on("ready-to-show", () => appWindow.show());
 
@@ -199,13 +201,11 @@ const registerSeraphIPC = () => {
                     } else if (key.startsWith("key")) {
                         ttl = 30;
                     }
-                    return playerCache.set(`hypixel:${key}`, value, {
-                        ttl: ttl,
-                    });
+                    return playerCache.set(`hypixel:${key}`, value, { ttl });
                 },
             },
             userAgent: "Run-Bedwars-React-Overlay-" + overlayVersion,
-            retries: 2,
+            retries: 4,
             timeout: 7200,
         });
         const client = hypixelClient.getClient();
@@ -251,6 +251,13 @@ const registerSeraphIPC = () => {
             } catch (e) {
                 return getErrorHandler(e);
             }
+        } else if (resource === RequestType.GUILD_PLAYER) {
+            const [uuid] = args as [string];
+            try {
+                return await hypixelClient.getClient().guild.player(uuid);
+            } catch (e) {
+                return getErrorHandler(e);
+            }
         }
         return null;
     });
@@ -271,9 +278,9 @@ const registerSeraphIPC = () => {
         }
         try {
             const response = await axiosClient(url);
-            return {data: response.data, status: response.status};
+            return { data: response.data, status: response.status };
         } catch (e) {
-            return {data: null, status: 400};
+            return { data: null, status: 400 };
         }
     });
 
@@ -289,7 +296,7 @@ const registerSeraphIPC = () => {
                     "run-api-uuid": overlayUuid,
                 },
             });
-            return {data: response.data, status: response.status};
+            return { data: response.data, status: response.status };
         } else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, {
                 headers: {
@@ -298,7 +305,7 @@ const registerSeraphIPC = () => {
                     "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
                 },
             });
-            return {data: response.data.data, status: response.status};
+            return { data: response.data.data, status: response.status };
         } else if (endpoint == RunEndpoints.DENICKER) {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}/${uuid}`, {
                 headers: {
@@ -307,7 +314,7 @@ const registerSeraphIPC = () => {
                     "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
                 },
             });
-            return {data: response.data, status: response.status};
+            return { data: response.data, status: response.status };
         } else {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
                 headers: {
@@ -321,13 +328,13 @@ const registerSeraphIPC = () => {
                     "RUN-API-UUID": overlayUuid,
                 },
             });
-            return {data: response.data, status: response.status};
+            return { data: response.data, status: response.status };
         }
     });
 
     ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, uuid: string) => {
         const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`);
-        return {status: response.status, data: response.data};
+        return { status: response.status, data: response.data };
     });
 
     ipcMain.on("ContactStaff", async (event, ...args) => {
@@ -354,19 +361,19 @@ const registerSeraphIPC = () => {
  * Register Store Inter Process Communication
  */
 const registerElectronStore = () => {
-    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+    ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStore.set(data.key, data.data);
     });
 
-    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+    ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
         return electronStore.get(data.key);
     });
 
-    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: {key: string; data: string | number | boolean}) => {
+    ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStoreTags.set(data.key, data.data);
     });
 
-    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: {key: string}) => {
+    ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
         if (data.key == "*") {
             return electronStore;
         }
@@ -374,7 +381,7 @@ const registerElectronStore = () => {
     });
 
     ipcMain.handle("getWholeStore", async () => {
-        return {data: {tags: electronStoreTags.store, config: electronStore.store}, status: 200};
+        return { data: { tags: electronStoreTags.store, config: electronStore.store }, status: 200 };
     });
 };
 
@@ -395,7 +402,7 @@ const registerLogCommunications = () => {
     ipcMain.handle("selectLogFile", async () => {
         return await dialog.showOpenDialog(appWindow, {
             defaultPath: app.getPath("appData"),
-            filters: [{name: "Logs", extensions: ["log"]}],
+            filters: [{ name: "Logs", extensions: ["log"] }],
             properties: ["openFile"],
         });
     });
@@ -421,11 +428,11 @@ const registerLogCommunications = () => {
 
             logFileReadline.on("line", async (line) => {
                 if (line.includes("[Client thread/INFO]: [CHAT]") || line.includes("[main/INFO]: [CHAT] ")) {
-                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: line}, status: 200}));
+                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: line }, status: 200 }));
                 } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
                     const newLine = line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
-                    console.log(newLine)
-                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({data: {message: newLine}, status: 200}));
+                    console.log(newLine);
+                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: newLine }, status: 200 }));
                 } else {
                     return;
                 }
@@ -449,7 +456,7 @@ const registerLogCommunications = () => {
                 appPath = null;
                 break;
         }
-        return {data: appPath, status: 200};
+        return { data: appPath, status: 200 };
     });
 };
 
@@ -482,7 +489,7 @@ const registerMainWindowCommunications = () => {
     });
 
     ipcMain.handle("getAppInfo", async () => {
-        return {version: overlayVersion};
+        return { version: overlayVersion };
     });
 };
 
@@ -501,11 +508,11 @@ const registerExternalApis = () => {
         const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;
         try {
-            json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};
+            json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
         } catch (e) {
-            json = {sniper: false, report: 0, error: true, username: username};
+            json = { sniper: false, report: 0, error: true, username: username };
         }
-        return {data: json, status: response.status};
+        return { data: json, status: response.status };
     });
 
     ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string, apikey: string) => {
@@ -522,7 +529,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        return {data: response.data, status: response.status};
+        return { data: response.data, status: response.status };
     });
 
     ipcMain.handle("observer", async (event: IpcMainInvokeEvent, uuid: string) => {
@@ -532,7 +539,7 @@ const registerExternalApis = () => {
                 Accept: "application/json",
             },
         });
-        return {data: response.data, status: response.status};
+        return { data: response.data, status: response.status };
     });
 
     ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, uuid: string) => {
@@ -541,7 +548,7 @@ const registerExternalApis = () => {
                 Accept: "application/json",
             },
         });
-        return {data: response.data, status: response.status};
+        return { data: response.data, status: response.status };
     });
 };
 
@@ -564,9 +571,33 @@ const registerOverlayFeatures = () => {
         }, 60000);
     });
 
-    ipcMain.handle(('isAdmin'), async (event:IpcMainInvokeEvent, ...args)=>{
+    ipcMain.handle("isAdmin", async (event: IpcMainInvokeEvent, ...args) => {
         let isAdmin = false;
-        return {data: isAdmin, status: 200}
+        return { data: isAdmin, status: 200 };
+    });
+
+    ipcMain.handle("autoLog", async (event: IpcMainInvokeEvent, ...args) => {
+        let processNames: string[] = [];
+        let appData = app.getPath("appData").replace(/\\/g, "/");
+        let home = app.getPath("home").replace(/\\/g, "/");
+        let isMacOs = appData.includes("Application Support");
+        let path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";;
+        psList().then(data => {
+            for (const process of data) {
+                processNames.push(process.name);
+            }
+            if (processNames.includes("Badlion Client.exe")) {
+                path = isMacOs ? appData + "/minecraft/logs/blclient/minecraft/" : appData + "/.minecraft/logs/blclient/minecraft/";
+            }
+            else if (processNames.includes("Lunar Client.exe")) {
+                path = home + "/.lunarclient/offline/multiver/logs/";
+            }
+            else if (processNames.includes("MinecraftLauncher.exe")) {
+                path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
+            }
+        });
+        path += "latest.log";
+        electronStore.set("overlay.logPath", path);
     });
 
     ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
@@ -600,14 +631,14 @@ const registerOverlayFeatures = () => {
             </Loggers>
         </Configuration>`;
         fs.writeFileSync(appData + "/.minecraft/log4j2.xml", source);
-        exec(`[System.Environment]::SetEnvironmentVariable('_JAVA_OPTIONS','-Dlog4j.configurationFile="${appData}/.minecraft/log4j2.xml"',[System.EnvironmentVariableTarget]::User)`, {shell: "powershell.exe"}, (error, stdout, stderr) => {});
+        exec(`[System.Environment]::SetEnvironmentVariable('_JAVA_OPTIONS','-Dlog4j.configurationFile="${appData}/.minecraft/log4j2.xml"',[System.EnvironmentVariableTarget]::User)`, { shell: "powershell.exe" }, (error, stdout, stderr) => { });
     });
 };
 
 const getProxyChannel = () => {
     let proxyStore: ProxyStore = electronStore.get("external.proxy");
     if (proxyStore == undefined) {
-        proxyStore = {enableProxies: true, hasAuth: true, hostname: "p.webshare.io", port: "80", username: "twtmuzmg-rotate", password: "8nhzubu4xg33", type: ProxyType.HTTP};
+        proxyStore = { enableProxies: true, hasAuth: true, hostname: "p.webshare.io", port: "80", username: "twtmuzmg-rotate", password: "8nhzubu4xg33", type: ProxyType.HTTP };
     }
     return tunnel.httpsOverHttp({
         proxy: {
@@ -622,7 +653,7 @@ const getErrorHandler = (e) => {
     if (e instanceof RateLimitError) return e.getJson();
     else if (e instanceof InvalidKeyError) return e.getJson();
     else if (e instanceof GenericHTTPError) return e.getJson();
-    else return {data: undefined, status: 400};
+    else return { data: undefined, status: 400 };
 };
 
 const registeredGlobalKeybindsForApp = () => {

@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/named
-import {ColumnState} from "ag-grid-community";
+import { ColumnState } from "ag-grid-community";
 import create from "zustand";
-import {BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
-import {ResultObject} from "@common/zikeji/util/ResultObject";
-import {Paths} from "@common/zikeji";
-import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {awaitTimeout} from "@common/helpers";
-import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {devtools, persist} from "../../../../node_modules/zustand/middleware";
+import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
+import { ResultObject } from "@common/zikeji/util/ResultObject";
+import { Paths } from "@common/zikeji";
+import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { awaitTimeout } from "@common/helpers";
+import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { devtools, persist } from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export type ConfigStore = {
@@ -25,6 +25,8 @@ export type ConfigStore = {
     setLogs: (clientSetting: ClientSetting) => void;
     error: DisplayErrorMessage;
     setErrorMessage: (error: DisplayErrorMessage) => void;
+    successMessage: DisplayErrorMessage;
+    setSuccessMessage: (success: DisplayErrorMessage) => void;
     keathiz: {
         key: string;
         valid: boolean;
@@ -43,6 +45,10 @@ export type ConfigStore = {
     settings: SettingsConfig;
     setSettings: (settingsSettings: SettingsConfig) => void;
     setStore: (store: ConfigStore) => void;
+    font: {
+        family: string;
+    };
+    setFont: (font: FontConfig) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
 };
@@ -70,18 +76,24 @@ const useConfigStore = create<ConfigStore>()(
                     }
                     const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixelApiKey);
                     if (apiResponse.status === 200 && apiResponse?.data?.key !== undefined) {
+                        get().setErrorMessage({
+                            title: "Hypixel Key Set",
+                            cause: "Successfully set your Hypixel API key!",
+                            code: 200,
+                        });
                         set(() => ({
                             hypixel: {
                                 apiKey: hypixelApiKey,
                                 apiKeyValid: true,
                                 apiKeyOwner: apiResponse.data.owner,
                             },
+
                         }));
                     } else {
                         get().setErrorMessage({
                             title: "Invalid Hypixel Key",
-                            cause: "The Hypixel API key provided is not valid!",
-                            code: 401,
+                            cause: "The Hypixel API key provided is not valid! Generate one with /api new.",
+                            code: 400,
                         });
                         set(() => ({
                             hypixel: {
@@ -106,7 +118,7 @@ const useConfigStore = create<ConfigStore>()(
                 setVersion: async () => {
                     const appInfo = await window.ipcRenderer.invoke("getAppInfo");
                     const version = appInfo.version;
-                    set(() => ({version}));
+                    set(() => ({ version }));
                 },
                 logs: {
                     logPath: "",
@@ -122,17 +134,17 @@ const useConfigStore = create<ConfigStore>()(
                     });
                 },
                 error: {
-                    code: 200,
+                    code: 201,
                     title: "",
                     cause: "",
                     detail: "",
                 },
                 setErrorMessage: async (structuredError) => {
-                    set({error: structuredError});
+                    set({ error: structuredError });
                     await awaitTimeout(5 * 1000);
                     set({
                         error: {
-                            code: 200,
+                            code: 201,
                             title: "",
                             cause: "",
                             detail: "",
@@ -166,9 +178,9 @@ const useConfigStore = create<ConfigStore>()(
                         }
                     } else {
                         get().setErrorMessage({
-                            title: "Invalid Keathiz Key",
-                            cause: "The API key provided is not valid!",
-                            code: 401,
+                            title: "Invalid Antisniper Key",
+                            cause: "The Antisniper API key provided is not valid!",
+                            code: 400,
                         });
                     }
                 },
@@ -182,24 +194,24 @@ const useConfigStore = create<ConfigStore>()(
                     const apiKey = await window.ipcRenderer.invoke<RunApiKey>("seraph", RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner);
                     if (runkey.length == 0) return;
                     if (apiKey.status == 200) {
+                        get().setErrorMessage({
+                            title: "Seraph Key Set",
+                            cause: "Successfully set your Seraph API key!",
+                            code: 200,
+                        });
                         set({
                             run: {
                                 apiKey: runkey,
                                 valid: true,
                             },
-                            error: {
-                                code: 200,
-                                cause: "",
-                                title: "",
-                            },
                         });
                     } else {
                         get().setErrorMessage({
-                            title: "Invalid RUN Key",
-                            cause: "The RUN API key provided is invalid or locked!",
-                            code: 401,
+                            title: "Invalid Seraph Key",
+                            cause: "The Seraph API key provided is invalid or locked!",
+                            code: 400,
                         });
-                        await window.ipcRenderer.invoke("notifications", "Your RUN Key has been locked!");
+                        await window.ipcRenderer.invoke("notifications", "Your Seraph Key has been locked!");
                     }
                 },
                 browserWindow: {
@@ -208,7 +220,7 @@ const useConfigStore = create<ConfigStore>()(
                     opacity: 100,
                 },
                 setBrowserWindow: (browserWindow) => {
-                    set({browserWindow});
+                    set({ browserWindow });
                 },
                 table: {
                     columnState: Array<ColumnState>(
@@ -398,13 +410,17 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);
-                    set({table});
+                    set({ table });
                 },
                 settings: {
                     lunar: true,
                     keathiz: false,
+                    updater: true,
                     astolfo: false,
                     boomza: true,
+                    hypixel: {
+                        guilds: false,
+                    },
                     run: {
                         friends: false,
                     },
@@ -413,16 +429,28 @@ const useConfigStore = create<ConfigStore>()(
                     },
                 },
                 setSettings: async (settings) => {
-                    set({settings});
+                    set({ settings });
                     usePlayerStore.getState().updatePlayers();
+                },
+                font: {
+                    family: "Times New Roman",
+                },
+                setFont: async (font) => {
+                    set({ font });
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {
-                    set({nicks});
+                    set({ nicks });
                 },
                 setStore: (store) => set(store),
             }),
-            {name: "user_settings"},
+            {
+                name: "user_settings",
+                version: 4,
+                migrate: (persistedState: any) => {
+                    return { ...persistedState, settings: { hypixel: { guilds: false } , updater: true}, font: { family: "Times New Roman" }, error: {code: 201} };
+                },
+            },
         ),
     ),
 );

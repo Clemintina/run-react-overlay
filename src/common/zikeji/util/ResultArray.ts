@@ -1,5 +1,5 @@
-import {DefaultMeta} from "../types/DefaultMeta";
-import {Components} from "../types/api";
+import { DefaultMeta } from "../types/DefaultMeta";
+import { Components } from "../types/api";
 
 /**
  * Generic intersection type for result arrays to include metadata as a non-enumerable property.
@@ -23,7 +23,7 @@ export function getResultArray<T extends Components.Schemas.ApiSuccess, K extend
         throw new TypeError(`Key "${String(key)}" was not in the response.`);
     }
     const items = clonedResponse[key];
-    const {ratelimit, cached, cloudflareCache} = clonedResponse;
+    const { ratelimit, cached, cloudflareCache } = clonedResponse;
     if (!Array.isArray(items)) {
         throw new TypeError(`Key "${String(key)}" is not an array.`);
     }

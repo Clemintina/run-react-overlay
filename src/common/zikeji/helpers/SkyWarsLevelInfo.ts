@@ -8,7 +8,7 @@
  */
 
 import {Components} from "../types/api";
-import {getSkyWarsPrestigeForLevel, SkyWarsPrestiges, SkyWarsPrestige} from "./SkyWarsPrestige";
+import {getSkyWarsPrestigeForLevel, SkyWarsPrestige, SkyWarsPrestiges} from "./SkyWarsPrestige";
 
 /** @internal */
 const skyWarsLevelConstants = {
