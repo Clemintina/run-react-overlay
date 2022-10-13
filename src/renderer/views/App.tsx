@@ -23,8 +23,8 @@ import PlayerGuild from "@common/utils/player/PlayerGuild";
 let columnApi: ColumnApi;
 
 const tinyColumnSize = 30;
-const smallColumnSize = 60;
-const mediumColumnSize = 60;
+const smallColumnSize = 30;
+const mediumColumnSize = 30;
 const largeColumnSize = 130;
 const extraLargeColumnSize = 200;
 
@@ -51,24 +51,24 @@ export const columns: ColDef[] = [
     },
     {
         field: "name",
-        minWidth: extraLargeColumnSize,
+        minWidth: mediumColumnSize,
         type: "string",
         headerTooltip: "The players name",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
-        cellRenderer: ({data}) => <PlayerName player={data} isOverlayStats={false} />,
+        cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,
     },
     {
         field: "tags",
-        minWidth: largeColumnSize,
-        cellRenderer: ({data}) => <PlayerTags player={data} />,
+        minWidth: mediumColumnSize,
+        cellRenderer: ({ data }) => <PlayerTags player={data} />,
         sortable: false,
     },
     {
         field: "WS",
-        minWidth: smallColumnSize,
+        minWidth: tinyColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
-        cellRenderer: ({data}) => <PlayerWinstreak player={data} />,
+        cellRenderer: ({ data }) => <PlayerWinstreak player={data} />,
     },
     {
         field: "FKDR",

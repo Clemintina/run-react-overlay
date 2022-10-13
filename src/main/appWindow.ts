@@ -3,7 +3,6 @@ import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
 import path from "path";
 import axios, { AxiosRequestConfig } from "axios";
 import fs from "fs";
-import { exec } from "child_process";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
@@ -149,6 +148,21 @@ export const createAppWindow = (): BrowserWindow => {
     appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, { userAgent: "SeraphOverlay" });
 
     appWindow.on("ready-to-show", () => appWindow.show());
+
+    const express = require("express");
+    const app = express();
+    const port = 5000;
+
+    app.post("/mc_chat", async (req, res) => {
+        const line = req.query.msg;
+        const newLine = line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "");
+        appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: newLine }, status: 200 }));
+        res.status(200).send({ success: true, code: 200 });
+    });
+
+    app.listen(port, () => {
+        console.log("Express started");
+    });
 
     registerMainIPC();
 
@@ -505,7 +519,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
@@ -581,18 +595,17 @@ const registerOverlayFeatures = () => {
         let appData = app.getPath("appData").replace(/\\/g, "/");
         let home = app.getPath("home").replace(/\\/g, "/");
         let isMacOs = appData.includes("Application Support");
-        let path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";;
+        let path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
+        ;
         psList().then(data => {
             for (const process of data) {
                 processNames.push(process.name);
             }
             if (processNames.includes("Badlion Client.exe")) {
                 path = isMacOs ? appData + "/minecraft/logs/blclient/minecraft/" : appData + "/.minecraft/logs/blclient/minecraft/";
-            }
-            else if (processNames.includes("Lunar Client.exe")) {
+            } else if (processNames.includes("Lunar Client.exe")) {
                 path = home + "/.lunarclient/offline/multiver/logs/";
-            }
-            else if (processNames.includes("MinecraftLauncher.exe")) {
+            } else if (processNames.includes("MinecraftLauncher.exe")) {
                 path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
             }
         });
@@ -601,38 +614,9 @@ const registerOverlayFeatures = () => {
     });
 
     ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
-        let appData = app.getPath("appData").replace(/\\/g, "/");
-        let source = `<?xml version="1.0" encoding="UTF-8"?>
-        <Configuration status="WARN" packages="net.minecraft,com.mojang">
-            <Appenders>
-                <Console name="SysOut" target="SYSTEM_OUT">
-                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
-                </Console>
-                <Queue name="ServerGuiConsole">
-                    <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
-                </Queue>
-                <RollingRandomAccessFile name="File" fileName="${appData}/.minecraft/logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" charset="UTF-8" />
-                    <Policies>
-                        <TimeBasedTriggeringPolicy />
-                        <OnStartupTriggeringPolicy />
-                    </Policies>
-                </RollingRandomAccessFile>
-            </Appenders>
-            <Loggers>
-                <Root level="info">
-                    <filters>
-                        <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
-                    </filters>
-                    <AppenderRef ref="SysOut"/>
-                    <AppenderRef ref="File"/>
-                    <AppenderRef ref="ServerGuiConsole"/>
-                </Root>
-            </Loggers>
-        </Configuration>`;
-        fs.writeFileSync(appData + "/.minecraft/log4j2.xml", source);
-        exec(`[System.Environment]::SetEnvironmentVariable('_JAVA_OPTIONS','-Dlog4j.configurationFile="${appData}/.minecraft/log4j2.xml"',[System.EnvironmentVariableTarget]::User)`, { shell: "powershell.exe" }, (error, stdout, stderr) => { });
+
     });
+
 };
 
 const getProxyChannel = () => {

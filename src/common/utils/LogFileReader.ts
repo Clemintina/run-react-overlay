@@ -1,5 +1,5 @@
-import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {Player} from "@common/utils/PlayerUtils";
+import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
@@ -74,7 +74,7 @@ export class LogFileReader {
         });
     };
 
-    public startApiKeyHandler = async() => {
+    public startApiKeyHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
             if (line.includes("Your new API key is ")) {
@@ -82,7 +82,7 @@ export class LogFileReader {
                 configStore.setHypixelApiKey(line.split("Your new API key is ")[1]);
             }
         });
-    }
+    };
 
     public startCommandListener = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
@@ -209,6 +209,10 @@ const clearOverlayTable = async () => {
 const readLogLine = (data: string) => {
     const response: IPCResponse<LogFileMessage> = destr(data);
     if (typeof response === "object") {
+        console.log(response.data.message);
+        if (!response.data.message.includes("[CHAT]")) {
+            return `[17:46:23] [Client thread/INFO]: [CHAT] ${response.data.message}`.replaceAll("%20", " ");
+        }
         return response.data.message;
     }
     return "";
