@@ -151,7 +151,6 @@ export const createAppWindow = (): BrowserWindow => {
 
     const express = require("express");
     const app = express();
-    const port = 5000;
 
     app.post("/mc_chat", async (req, res) => {
         const line = req.query.msg;
@@ -160,7 +159,7 @@ export const createAppWindow = (): BrowserWindow => {
         res.status(200).send({ success: true, code: 200 });
     });
 
-    app.listen(port, () => {
+    app.listen(5000, () => {
         console.log("Express started");
     });
 

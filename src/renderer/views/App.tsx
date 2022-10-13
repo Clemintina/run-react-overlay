@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/named
-import { ColDef, ColumnApi, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, SortChangedEvent } from "ag-grid-community";
+import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, SortChangedEvent } from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
 import React, { useEffect } from "react";
@@ -23,35 +23,29 @@ import PlayerGuild from "@common/utils/player/PlayerGuild";
 let columnApi: ColumnApi;
 
 const tinyColumnSize = 30;
-const smallColumnSize = 30;
-const mediumColumnSize = 30;
-const largeColumnSize = 130;
-const extraLargeColumnSize = 200;
 
-export const defaultColDefs: ColDef = {
+export const defaultColDef: ColDef = {
     resizable: true,
     sortingOrder: ["desc", "asc"],
     sortable: true,
     flex: 1,
+    minWidth: tinyColumnSize,
 };
 
-export const columns: ColDef[] = [
+export const columnDefs: ColDef[] = [
     {
         field: "head",
-        minWidth: tinyColumnSize,
         sortable: false,
-        cellRenderer: ({data}) => <PlayerHead player={data} />,
+        cellRenderer: ({ data }) => <PlayerHead player={data} />,
     },
     {
         field: "star",
-        minWidth: smallColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
-        cellRenderer: ({data}) => <PlayerStar player={data} />,
+        cellRenderer: ({ data }) => <PlayerStar player={data} />,
     },
     {
         field: "name",
-        minWidth: mediumColumnSize,
         type: "string",
         headerTooltip: "The players name",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
@@ -59,48 +53,41 @@ export const columns: ColDef[] = [
     },
     {
         field: "tags",
-        minWidth: mediumColumnSize,
         cellRenderer: ({ data }) => <PlayerTags player={data} />,
         sortable: false,
     },
     {
         field: "WS",
-        minWidth: tinyColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
         cellRenderer: ({ data }) => <PlayerWinstreak player={data} />,
     },
     {
         field: "FKDR",
-        minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
         cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"fkdr"} />,
     },
     {
         field: "WLR",
-        minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
         cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"wlr"} />,
     },
     {
         field: "BBLR",
-        minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
         cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"bblr"} />,
     },
     {
         field: "wins",
-        minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
         cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"wins"} />,
     },
     {
         field: "losses",
-        minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
         cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
@@ -109,21 +96,18 @@ export const columns: ColDef[] = [
         field: "final_kills",
         headerName: "Final Kills",
         hide: true,
-        minWidth: mediumColumnSize,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "finalkills"),
         cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
     },
     {
         field: "session",
-        minWidth: smallColumnSize,
         type: "number",
         sortable: false,
         cellRenderer: ({data}) => <PlayerSession player={data} />,
     },
     {
         field: "guild",
-        minWidth: smallColumnSize,
         type: "string",
         sortable: false,
         cellRenderer: ({data}) => <PlayerGuild player={data} />,
@@ -198,12 +182,15 @@ const AppTable = () => {
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
             columnApi = event.columnApi;
-            columnApi.applyColumnState({state: columnState, applyOrder: true});
+            columnApi.applyColumnState({ state: columnState, applyOrder: true });
             event.api.setRowData(players);
             onGridReady = true;
             this.suppressDragLeaveHidesColumns = true;
         },
         onGridColumnsChanged(event: GridColumnsChangedEvent) {
+            onSaveGridColumnState(event.columnApi);
+        },
+        onColumnResized(event: ColumnResizedEvent<Player>) {
             onSaveGridColumnState(event.columnApi);
         },
         onSortChanged(event: SortChangedEvent<Player>) {
@@ -212,20 +199,21 @@ const AppTable = () => {
         onColumnMoved(event: ColumnMovedEvent) {
             onSaveGridColumnState(event.columnApi);
         },
-        columnDefs: columns,
-        defaultColDef: defaultColDefs,
+        columnDefs,
+        defaultColDef,
         animateRows: true,
         autoSizePadding: 0,
         rowData: players,
         rowHeight: 25,
+        suppressCellFocus: true,
         overlayNoRowsTemplate: "No Players",
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
     };
 
     return (
         <Box height={"100vh"}>
-            <div className="w-full h-full">
-                <div className="ag-theme-alpine-dark" style={{height: "89vh"}}>
+            <div className="pl-1 pr-1 w-full h-full">
+                <div className="ag-theme-alpine-dark" style={{ height: "89vh" }}>
                     <AgGridReact gridOptions={gridOptions} rowData={players} />
                 </div>
             </div>
