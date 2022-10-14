@@ -613,7 +613,43 @@ const registerOverlayFeatures = () => {
     });
 
     ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
+        let content = `local char_to_hex = function(c)
+        return string.format("%%%02X", string.byte(c))
+      end
+      
+      local function urlencode(url)
+        if url == nil then
+          return
+        end
+        url = url:gsub("\n", "\r\n")
+        url = string.gsub(url, "([^%w _ %- . ~])", char_to_hex)
+        url = url:gsub(" ", "+")
+        return url
+      end
+      
+      local chat_bridge = {
+        on_receive_packet = function(e)
+          if e.packet_id == 2 then
+            local chat_msg = urlencode(e.message)
+            http.post_async("http://127.0.0.1:5000/mc_chat?msg=" .. chat_msg, {
+                run = function(text)
+                end
+            })
+          end
+        end
+      }
+      
+      
+      module_manager.register("chat_bridge", chat_bridge)`;
 
+      let appData = app.getPath("appData").replace(/\\/g, "/");
+      let path = appData + "/astolfo/scripts/chat_bridge.lua"
+      try {
+      fs.writeFileSync(path, content);
+      }
+      catch(err) {
+        console.error(err);
+      }
     });
 
 };
