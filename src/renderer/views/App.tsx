@@ -47,6 +47,7 @@ export const columnDefs: ColDef[] = [
     {
         field: "name",
         type: "string",
+        minWidth: 150,
         headerTooltip: "The players name",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
         cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,

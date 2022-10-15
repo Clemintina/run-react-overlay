@@ -210,7 +210,7 @@ const NewTitlebar = ({ children }) => {
                 <Divider />
                 <List>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        <ListItemButton href = "https://discord.gg/9eZ7eDN8Nw">
                             <ListItemIcon><FontAwesomeIcon icon={faDiscord} /></ListItemIcon>
                             <ListItemText>Discord</ListItemText>
                         </ListItemButton>
