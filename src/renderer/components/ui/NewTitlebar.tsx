@@ -26,6 +26,7 @@ import { Alert, useTheme } from "@mui/material";
 import { Home, Sell, ViewColumn } from "@mui/icons-material";
 import { MenuOption } from "@common/utils/Schemas";
 import BrushIcon from "@mui/icons-material/Brush";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
@@ -208,12 +209,16 @@ const NewTitlebar = ({ children }) => {
                 </List>
                 <Divider />
                 <List>
-                    <ListItem>
-                        <List>
-                            <ListItemButton>
-                                <ListItemText primary={useConfigStore.getState().version} />
-                            </ListItemButton>
-                        </List>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemIcon><FontAwesomeIcon icon={faDiscord} /></ListItemIcon>
+                            <ListItemText>Discord</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText className={'text-center'} primary={useConfigStore.getState().version} />
+                        </ListItemButton>
                     </ListItem>
                 </List>
             </Drawer>

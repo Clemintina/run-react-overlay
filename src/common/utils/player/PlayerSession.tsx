@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/named
-import React, {useEffect} from "react";
-import {Player} from "@common/utils/PlayerUtils";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import React, { useEffect, useState } from "react";
+import { Player } from "@common/utils/PlayerUtils";
 
 export interface PlayerSession {
     player: Player;
@@ -9,11 +8,13 @@ export interface PlayerSession {
 
 const PlayerSession: React.ElementType = ({player}: PlayerSession) => {
     const values: [string, string][] = [];
-    const {players} = usePlayerStore((state) => ({players: state.players}))
+    const [timer,setTimer] = useState(0)
 
     useEffect(() => {
-
-    }, [])
+        setInterval(()=>{
+            setTimer(new Date().getUTCMilliseconds());
+        },1000)
+    }, [timer])
 
     if (player.hypixelPlayer != null) {
         if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {

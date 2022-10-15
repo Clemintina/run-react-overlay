@@ -1,10 +1,9 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {getBedwarsLevelInfo, getHighLevelPrestigeColour} from "@common/zikeji";
+import { getBedwarsLevelInfo, getHighLevelPrestigeColour } from "@common/zikeji";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {Player} from "@common/utils/PlayerUtils";
-import {Interweave} from "interweave";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import { Player } from "@common/utils/PlayerUtils";
+import { Interweave } from "interweave";
 
 export interface PlayerStar {
     player: Player;
@@ -13,7 +12,6 @@ export interface PlayerStar {
 const PlayerStar: React.ElementType = (props: PlayerStar) => {
     const player = props.player;
     const {run} = useTagStore((state) => ({run: state.run}));
-    const {players} = usePlayerStore((state) => ({players: state.players}))
 
     let starRenderer: JSX.Element;
     if (!player.nicked && player.hypixelPlayer !== null) {

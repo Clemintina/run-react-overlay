@@ -1,22 +1,9 @@
 import create from "zustand";
-import {Player} from "@common/utils/PlayerUtils";
-import {Components} from "@common/zikeji";
-import {
-    Blacklist,
-    IPCResponse,
-    LunarAPIResponse,
-    PlayerAPI,
-    RequestType,
-    RunEndpoints,
-    RunFriendList
-} from "@common/utils/externalapis/RunApi";
-import {
-    BoomzaAntisniper,
-    KeathizDenick,
-    KeathizEndpoints,
-    KeathizOverlayRun
-} from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import { Player } from "@common/utils/PlayerUtils";
+import { Components } from "@common/zikeji";
+import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
+import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -29,7 +16,7 @@ export type PlayerStore = {
         partyStore: Array<string>;
         addPartyMember: () => void;
         removePartyMember: () => void;
-    }
+    };
     tagStore: {
         config: object;
         tags: object;
@@ -158,7 +145,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         if (!playerData.nicked && playerData.hypixelPlayer != null) {
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
-
             playerObject.data = playerData;
             const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
 
@@ -173,6 +159,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             }
 
             if (runApi.status == 200) {
+                playerData.loaded = true;
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
                 if (!playerData.bot) {
                     const [boomza, keathizApi, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
@@ -198,7 +185,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             }
         }
 
-        playerData.loaded = true;
         playerObject.data = playerData;
         const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
         if (exists != -1) {

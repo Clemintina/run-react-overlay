@@ -1,10 +1,9 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {Player} from "@common/utils/PlayerUtils";
-import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig} from "@common/utils/player/RenderComponent";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import { Player } from "@common/utils/PlayerUtils";
+import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@common/utils/player/RenderComponent";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
 
 export interface PlayerWinstreak {
     player: Player;
@@ -13,7 +12,6 @@ export interface PlayerWinstreak {
 const PlayerWinstreak: React.ElementType = (props: PlayerWinstreak) => {
     const player = props.player;
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
-    const {players} = usePlayerStore((state) => ({players: state.players}))
 
     let renderer: JSX.Element;
     if (!player.nicked) {

@@ -1,22 +1,11 @@
 // eslint-disable-next-line import/named
-import {
-    ColDef,
-    ColumnApi,
-    ColumnMovedEvent,
-    ColumnResizedEvent,
-    GetRowIdParams,
-    GridColumnsChangedEvent,
-    GridOptions,
-    GridReadyEvent,
-    RowNode,
-    SortChangedEvent
-} from "ag-grid-community";
+import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowNode, SortChangedEvent } from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
-import React, {useEffect} from "react";
-import {Player} from "@common/utils/PlayerUtils";
-import {AgGridReact} from "ag-grid-react";
-import {assertDefaultError} from "@common/helpers";
+import React, { useEffect } from "react";
+import { Player } from "@common/utils/PlayerUtils";
+import { AgGridReact } from "ag-grid-react";
+import { assertDefaultError } from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -25,10 +14,10 @@ import PlayerTags from "@common/utils/player/PlayerTags";
 import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
-import {TableState} from "@common/utils/Schemas";
+import { TableState } from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 import PlayerGuild from "@common/utils/player/PlayerGuild";
 
 let columnApi: ColumnApi;
@@ -210,6 +199,9 @@ const AppTable = () => {
         onColumnMoved(event: ColumnMovedEvent) {
             onSaveGridColumnState(event.columnApi);
         },
+        onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
+            event.api.redrawRows();
+        },
         columnDefs,
         defaultColDef,
         animateRows: false,
@@ -217,6 +209,7 @@ const AppTable = () => {
         rowData: players,
         rowHeight: 25,
         suppressCellFocus: true,
+        suppressChangeDetection: false,
         overlayNoRowsTemplate: "No Players",
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
     };
