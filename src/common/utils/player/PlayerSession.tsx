@@ -1,13 +1,20 @@
 // eslint-disable-next-line import/named
-import React from "react";
-import { Player } from "@common/utils/PlayerUtils";
+import React, {useEffect} from "react";
+import {Player} from "@common/utils/PlayerUtils";
+import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export interface PlayerSession {
     player: Player;
 }
 
-const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
+const PlayerSession: React.ElementType = ({player}: PlayerSession) => {
     const values: [string, string][] = [];
+    const {players} = usePlayerStore((state) => ({players: state.players}))
+
+    useEffect(() => {
+
+    }, [])
+
     if (player.hypixelPlayer != null) {
         if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
             values.push(["N/A", "ff0000"]);

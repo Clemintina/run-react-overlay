@@ -1,9 +1,22 @@
 import create from "zustand";
-import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/zikeji";
-import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
-import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import {Player} from "@common/utils/PlayerUtils";
+import {Components} from "@common/zikeji";
+import {
+    Blacklist,
+    IPCResponse,
+    LunarAPIResponse,
+    PlayerAPI,
+    RequestType,
+    RunEndpoints,
+    RunFriendList
+} from "@common/utils/externalapis/RunApi";
+import {
+    BoomzaAntisniper,
+    KeathizDenick,
+    KeathizEndpoints,
+    KeathizOverlayRun
+} from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -12,6 +25,11 @@ export type PlayerStore = {
     updatePlayers: () => void;
     clearPlayers: () => void;
     setStore: (store) => void;
+    party: {
+        partyStore: Array<string>;
+        addPartyMember: () => void;
+        removePartyMember: () => void;
+    }
     tagStore: {
         config: object;
         tags: object;
@@ -30,6 +48,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             nicked: false,
             bot: false,
             friended: false,
+            loaded: false,
             hypixelGuild: null,
             hypixelPlayer: null,
             hypixelFriends: null,
@@ -39,7 +58,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 runApi: null,
             },
         };
-        const playerObject: IPCResponse<Player> = { status: 400, cause: "none", data: playerData };
+        const playerObject: IPCResponse<Player> = {status: 400, cause: "none", data: playerData};
         const configStore: ConfigStore = useConfigStore.getState();
         const apiKey = configStore.hypixel.apiKey;
         const keathizApiKey = configStore.keathiz.key;
@@ -50,7 +69,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 cause: "No Hypixel API Key",
                 code: 400,
             });
-            return { status: 403, cause: "No API Key", data: null };
+            return {status: 403, cause: "No API Key", data: null};
         }
 
         if (configStore.nicks.filter((nickname) => nickname.nick.toLowerCase() == username.toLowerCase()).length != 0) {
@@ -105,6 +124,22 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     playerData.nicked = false;
                 }
             }
+            playerObject.data = playerData;
+            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
+
+            if (exists == -1) {
+                set((state) => ({
+                    players: [...state.players, playerObject.data],
+                }));
+            } else {
+                set((state) => {
+                    const playerArr = [...state.players];
+                    playerArr[exists] = playerObject.data;
+                    return {
+                        players: playerArr,
+                    };
+                });
+            }
         } catch (e) {
             const mcUtilsRequest = await window.ipcRenderer.invoke<PlayerAPI>("mcutils", RequestType.USERNAME, playerData.name);
             const mcUtils = mcUtilsRequest.data;
@@ -123,6 +158,20 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         if (!playerData.nicked && playerData.hypixelPlayer != null) {
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
+
+            playerObject.data = playerData;
+            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
+
+            if (exists != -1) {
+                set((state) => {
+                    const playerArr = [...state.players];
+                    playerArr[exists] = playerObject.data;
+                    return {
+                        players: playerArr,
+                    };
+                });
+            }
+
             if (runApi.status == 200) {
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
                 if (!playerData.bot) {
@@ -149,14 +198,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             }
         }
 
+        playerData.loaded = true;
         playerObject.data = playerData;
         const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-
-        if (exists == -1) {
-            set((state) => ({
-                players: [...state.players, playerObject.data],
-            }));
-        } else {
+        if (exists != -1) {
             set((state) => {
                 const playerArr = [...state.players];
                 playerArr[exists] = playerObject.data;
@@ -229,6 +274,15 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }
     },
     setStore: (store) => set(store),
+    party: {
+        partyStore: Array<string>(),
+        addPartyMember: () => {
+
+        },
+        removePartyMember: () => {
+
+        }
+    },
     tagStore: {
         config: {},
         tags: {},
@@ -241,7 +295,7 @@ const getBoomza = async (player: Player) => {
         api = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
     } else {
         api = {
-            data: { sniper: false, report: 0, error: false, username: player.name },
+            data: {sniper: false, report: 0, error: false, username: player.name},
             status: useConfigStore.getState().settings.boomza ? 417 : 400,
         };
     }
@@ -258,23 +312,23 @@ const getRunApi = async (player: Player) => {
             data: {
                 code: 400,
                 data: {
-                    annoylist: { tagged: false },
+                    annoylist: {tagged: false},
                     blacklist: {
                         reason: "",
                         report_type: "",
                         tagged: false,
                         timestamp: 0,
                     },
-                    bot: { kay: false, tagged: false, unidentified: false },
+                    bot: {kay: false, tagged: false, unidentified: false},
                     customTag: null,
-                    migrated: { tagged: false },
+                    migrated: {tagged: false},
                     safelist: {
                         personal: false,
                         security_level: 0,
                         tagged: false,
                         timesKilled: 0,
                     },
-                    statistics: { encounters: 0, threat_level: 0 },
+                    statistics: {encounters: 0, threat_level: 0},
                     username: "",
                     uuid: "",
                 },
@@ -301,10 +355,10 @@ const getLunarTags = async (player: Player) => {
                     uuid: "unknown",
                     online: false,
                     status: "Error connecting to the server",
-                    cosmetics: { activeCosmetics: [], cachedCosmetics: [], count: 0 },
-                    lunarPlus: { clothCloak: false, plusColour: 0, premium: false },
-                    rank: { unknownBooleanB: false, unknownBooleanC: false },
-                    unknown: { unknownBooleanA: false, unknownBooleanB: false, unknownBooleanC: false },
+                    cosmetics: {activeCosmetics: [], cachedCosmetics: [], count: 0},
+                    lunarPlus: {clothCloak: false, plusColour: 0, premium: false},
+                    rank: {unknownBooleanB: false, unknownBooleanC: false},
+                    unknown: {unknownBooleanA: false, unknownBooleanB: false, unknownBooleanC: false},
                 },
                 success: false,
             },
@@ -403,7 +457,7 @@ const getKeathizData = async (player: Player) => {
         const state = useConfigStore.getState();
         if (state != undefined) api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, state.keathiz.key);
     }
-    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({ status: 200, data: api.data }));
+    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({status: 200, data: api.data}));
 };
 
 const getHypixelFriends = async (player: Player) => {

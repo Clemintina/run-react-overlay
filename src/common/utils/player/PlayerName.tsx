@@ -1,13 +1,14 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import { StatsisticsTooltip } from "@components/tooltips/StatisticsTooltip";
-import { getPlayerRank } from "@common/zikeji";
+import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
+import {getPlayerRank} from "@common/zikeji";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import { Player } from "@common/utils/PlayerUtils";
-import { Interweave } from "interweave";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import {Player} from "@common/utils/PlayerUtils";
+import {Interweave} from "interweave";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export interface PlayerName {
     player: Player;
@@ -18,6 +19,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     const player = props.player;
     const tagStore = useTagStore((state) => state);
     const configStore = useConfigStore((state) => state);
+    const {players} = usePlayerStore((state) => ({players: state.players}))
 
     const handleDenickEvent = () => {
         const store = configStore;

@@ -1,4 +1,4 @@
-import { MetricsObject, TagArray, TagObject } from "@common/utils/Schemas";
+import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import jsonLogic from "json-logic-js";
 import React from "react";
 import useTagStore from "@renderer/store/zustand/TagStore";
@@ -9,24 +9,24 @@ export const getTagsFromConfig = (tagDisplayPath, value?: number) => {
     const tagArray: string | Array<TagArray> | undefined = tag?.colour ?? "FF5555";
 
     if (tagDisplayPath == "run.blacklist") {
-        return <span style={{ color: `#${tagArray}` }}>{value}</span>;
+        return <span style={{color: `#${tagArray}`}}>{value}</span>;
     } else if (Array.isArray(tagArray) && value != undefined) {
         const tempArray = [...tagArray];
         const arr = tempArray.sort((a, b) => b.requirement - a.requirement);
-        for (const { colour, requirement } of arr) {
+        for (const {colour, requirement} of arr) {
             if (value >= requirement) {
                 return (
                     <span>
-                        <span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
-                        <span className={"pl-1"} />
+                        <span style={{color: `#${colour}`}}>{tagDisplayIcon}</span>
+                        <span className={"pl-1"}/>
                     </span>
                 );
             }
         }
     } else {
-        return <span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>;
+        return <span style={{color: `#${tagArray?.toString()}`}}>{tagDisplayIcon}</span>;
     }
-    return <span style={{ color: "red" }}>{tagDisplayIcon}</span>;
+    return <span style={{color: "red"}}>{tagDisplayIcon}</span>;
 };
 
 export const getCoreFromConfig = (tagDisplayPath, value: number) => {
@@ -41,23 +41,23 @@ export const getCoreFromConfig = (tagDisplayPath, value: number) => {
         if (Array.isArray(coreArray)) {
             const tempArray = [...coreArray];
             const arr = tempArray.sort((a, b) => a.requirement - b.requirement);
-            for (const { colour, requirement, operator } of arr) {
-                if (jsonLogic.apply({ [operator]: [value, requirement] })) {
+            for (const {colour, requirement, operator} of arr) {
+                if (jsonLogic.apply({[operator]: [value, requirement]})) {
                     return (
                         <span>
-                            <span style={{ color: `#${colour}` }}>{displayValue}</span>
-                            <span className={"pl-1"} />
+                            <span style={{color: `#${colour}`}}>{displayValue}</span>
+                            <span className={"pl-1"}/>
                         </span>
                     );
                 }
             }
-            return <span style={{ color: `#ffffff` }}>{displayValue}</span>;
+            return <span style={{color: `#ffffff`}}>{displayValue}</span>;
         } else {
-            return <span style={{ color: `#${coreArray}` }}>{displayValue}</span>;
+            return <span style={{color: `#${coreArray}`}}>{displayValue}</span>;
         }
     } catch (e) {
-        return <span style={{ color: `#ff5555` }}>{tagDisplayPath}</span>;
+        return <span style={{color: `#ff5555`}}>{tagDisplayPath}</span>;
     }
 };
 
-export const getPlayerTagDividerNicked = () => <span style={{ color: "red" }}>?</span>;
+export const getPlayerTagDividerNicked = () => <span style={{color: "red"}}>?</span>;

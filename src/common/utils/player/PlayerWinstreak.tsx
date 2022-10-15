@@ -4,6 +4,7 @@ import {Player} from "@common/utils/PlayerUtils";
 import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
 import {getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig} from "@common/utils/player/RenderComponent";
 import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export interface PlayerWinstreak {
     player: Player;
@@ -12,6 +13,7 @@ export interface PlayerWinstreak {
 const PlayerWinstreak: React.ElementType = (props: PlayerWinstreak) => {
     const player = props.player;
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
+    const {players} = usePlayerStore((state) => ({players: state.players}))
 
     let renderer: JSX.Element;
     if (!player.nicked) {
@@ -22,7 +24,7 @@ const PlayerWinstreak: React.ElementType = (props: PlayerWinstreak) => {
                 playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
             }
         }
-        if (player.sources.runApi?.data.data.blacklist.tagged) {
+        if (player.sources.runApi?.data.data.blacklist.tagged && player.loaded) {
             renderer = getTagsFromConfig("run.blacklist", playerValue);
         } else {
             renderer = getCoreFromConfig(`core.winstreak`, playerValue);
