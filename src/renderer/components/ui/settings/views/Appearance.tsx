@@ -5,6 +5,7 @@ import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import { Box, Slider, SxProps } from "@mui/material";
 import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import GoogleFontLoader from "react-google-font-loader";
 
 const Appearance = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
@@ -70,6 +71,7 @@ const Appearance = () => {
                             sx={styledProps}
                             helperText={"Font you want to use."}
                         />
+                        <GoogleFontLoader fonts={[{ font: font.family, weights: [400] }]} />
                     </SettingCard>
                 </Box>
             </NavigationBar>

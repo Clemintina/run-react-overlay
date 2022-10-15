@@ -111,6 +111,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     playerData.nicked = false;
                 }
             }
+
             playerObject.data = playerData;
             const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
 
@@ -146,8 +147,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
             playerObject.data = playerData;
-            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
 
+            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
             if (exists != -1) {
                 set((state) => {
                     const playerArr = [...state.players];

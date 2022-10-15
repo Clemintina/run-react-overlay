@@ -6,15 +6,15 @@ export interface PlayerSession {
     player: Player;
 }
 
-const PlayerSession: React.ElementType = ({player}: PlayerSession) => {
+const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
     const values: [string, string][] = [];
-    const [timer,setTimer] = useState(0)
+    const [timer, setTimer] = useState(0);
 
     useEffect(() => {
-        setInterval(()=>{
+        setInterval(() => {
             setTimer(new Date().getUTCMilliseconds());
-        },1000)
-    }, [timer])
+        }, 1000);
+    }, [timer]);
 
     if (player.hypixelPlayer != null) {
         if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {

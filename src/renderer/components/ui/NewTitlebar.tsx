@@ -244,7 +244,6 @@ const NewTitlebar = ({ children }) => {
                             <span className={"p-1"}>
                             Cause: <span className={"errorMessage"}> {localStore.error.cause}</span>
                             </span>
-
                         </Typography>
                     </Alert>
                 ) : (

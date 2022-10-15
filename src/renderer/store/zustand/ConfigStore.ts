@@ -433,7 +433,7 @@ const useConfigStore = create<ConfigStore>()(
                     usePlayerStore.getState().updatePlayers();
                 },
                 font: {
-                    family: "Times New Roman",
+                    family: "Nunito",
                 },
                 setFont: async (font) => {
                     set({ font });
