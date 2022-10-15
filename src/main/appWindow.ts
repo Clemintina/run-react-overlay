@@ -373,6 +373,7 @@ const registerSeraphIPC = () => {
 /**
  * Register Store Inter Process Communication
  */
+
 const registerElectronStore = () => {
     ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStore.set(data.key, data.data);
