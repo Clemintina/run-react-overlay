@@ -21,6 +21,8 @@ import { LogFileMessage } from "@common/utils/LogFileReader";
 import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import log from "electron-log";
 import psList from "ps-list";
+import express from "express";
+import portfinder from "portfinder";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 // Electron Forge automatically creates these entry points
@@ -125,7 +127,7 @@ export const createAppWindow = (): BrowserWindow => {
     mainWindowState.manage(appWindow);
     let updates = electronStore.get("settings.updater");
 
-    if (!(isDevelopment) && updates) {
+    if (!isDevelopment && updates) {
         if (!require("electron-squirrel-startup") && process.platform === "win32") {
             const autoUpdater = new AppUpdater().getAutoUpdater();
             log.info("Running updater");
@@ -147,21 +149,27 @@ export const createAppWindow = (): BrowserWindow => {
 
     appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, { userAgent: "SeraphOverlay" });
 
-    appWindow.on("ready-to-show", () => appWindow.show());
-
-    const express = require("express");
-    const app = express();
-
-    app.post("/mc_chat", async (req, res) => {
+    const expressApplication = express();
+    expressApplication.post("/mc_chat", async (req, res) => {
         const line = req.query.msg;
+        // @ts-ignore
         const newLine = line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "");
         appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: newLine }, status: 200 }));
         res.status(200).send({ success: true, code: 200 });
     });
 
-    app.listen(5000, () => {
-        console.log("Express started");
-    });
+    let isPortOpen = false;
+    portfinder.getPortPromise({port: 5000}).then(() => {
+        isPortOpen = true
+    }).catch((err) => {});
+
+    if (isPortOpen){
+        expressApplication.listen(5000, () => {
+            console.log("Express started");
+        });
+    }
+
+    appWindow.on("ready-to-show", () => appWindow.show());
 
     registerMainIPC();
 
@@ -519,7 +527,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
@@ -596,8 +604,7 @@ const registerOverlayFeatures = () => {
         let home = app.getPath("home").replace(/\\/g, "/");
         let isMacOs = appData.includes("Application Support");
         let path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
-        ;
-        psList().then(data => {
+        psList().then((data) => {
             for (const process of data) {
                 processNames.push(process.name);
             }
@@ -647,16 +654,14 @@ const registerOverlayFeatures = () => {
       
       module_manager.register("chat_bridge", chat_bridge)`;
 
-      let appData = app.getPath("appData").replace(/\\/g, "/");
-      let path = appData + "/astolfo/scripts/chat_bridge.lua"
-      try {
-      fs.writeFileSync(path, content);
-      }
-      catch(err) {
-        console.error(err);
-      }
+        let appData = app.getPath("appData").replace(/\\/g, "/");
+        let path = appData + "/astolfo/scripts/chat_bridge.lua";
+        try {
+            fs.writeFileSync(path, content);
+        } catch (err) {
+            console.error(err);
+        }
     });
-
 };
 
 const getProxyChannel = () => {
