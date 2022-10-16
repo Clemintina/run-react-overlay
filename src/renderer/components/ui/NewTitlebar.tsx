@@ -208,9 +208,10 @@ const NewTitlebar = ({ children }) => {
                     ))}
                 </List>
                 <Divider />
-                <List>
+                <List className={"nodrag"}>
                     <ListItem disablePadding>
-                        <ListItemButton href = "https://discord.gg/9eZ7eDN8Nw">
+                        <ListItemButton onClick = {() =>
+                        window.ipcRenderer.invoke("openlink", "https://discord.gg/9eZ7eDN8Nw")}>
                             <ListItemIcon><FontAwesomeIcon icon={faDiscord} /></ListItemIcon>
                             <ListItemText>Discord</ListItemText>
                         </ListItemButton>

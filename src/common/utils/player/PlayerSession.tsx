@@ -12,9 +12,9 @@ const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
 
     useEffect(() => {
         if (player?.hypixelPlayer?.lastLogout) {
-            setInterval(() => {
+            setTimeout(()=>{
                 setTimer(new Date().getUTCMilliseconds());
-            }, 1000);
+            },1000)
         }
     }, [timer]);
 

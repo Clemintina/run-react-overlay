@@ -613,6 +613,10 @@ const registerOverlayFeatures = () => {
         electronStore.set("overlay.logPath", path);
     });
 
+    ipcMain.handle("openlink", async (event: IpcMainInvokeEvent, link: string, ...args) => {
+        await shell.openExternal(link);
+    });
+
     ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
         let content = `local char_to_hex = function(c)
         return string.format("%%%02X", string.byte(c))
