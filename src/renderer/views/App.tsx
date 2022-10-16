@@ -48,7 +48,6 @@ export const columnDefs: ColDef[] = [
         field: "name",
         type: "string",
         minWidth: 150,
-        headerTooltip: "The players name",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
         cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,
     },
@@ -118,9 +117,9 @@ export const columnDefs: ColDef[] = [
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "bblr" | "wins" | "losses" | "finalkills") => {
     const p1: Player = nodeA.data,
         p2: Player = nodeB.data;
-    if (p1.sources.runApi?.data.data.blacklist.tagged || p1.nicked) {
+    if (p1.sources.runApi?.data.data?.blacklist?.tagged || p1.nicked) {
         return isDescending ? 1 : -1;
-    } else if (p2.sources.runApi?.data.data.blacklist.tagged || p2.nicked) {
+    } else if (p2.sources.runApi?.data.data?.blacklist?.tagged || p2.nicked) {
         return isDescending ? -1 : 1;
     }
 
@@ -205,7 +204,7 @@ const AppTable = () => {
         },
         columnDefs,
         defaultColDef,
-        animateRows: false,
+        animateRows: true,
         autoSizePadding: 0,
         rowData: players,
         rowHeight: 25,

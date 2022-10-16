@@ -29,7 +29,7 @@ const RenderRatioColour: React.ElementType = (props: RenderRatioColour) => {
                 break;
         }
 
-        if (player.sources.runApi?.data.data.blacklist.tagged && player.loaded) {
+        if (player.sources.runApi?.data.data?.blacklist.tagged && player.loaded) {
             let displayValue = playerValue;
             if (!isFinite(playerValue)) displayValue = ~~Number((((0 - 18) / 0) * 100).toFixed(2));
             if (!Number.isInteger(playerValue)) displayValue = playerValue.toFixed(2);

@@ -185,7 +185,7 @@ const NewTitlebar = ({ children }) => {
                     <IconButton onClick={handleDrawerClose}>{theme.direction === "ltr" ? <ChevronLeftIcon /> : <ChevronRightIcon />}</IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List>
+                <List className={"nodrag"}>
                     <ListItem disablePadding>
                         <Link to={"/"} onClick={() => setOpen(!open)} className={"nodrag"}>
                             <ListItemButton sx={{ width: drawerWidth }}>

@@ -31,7 +31,7 @@ export const OverlayTooltip: React.FC<PropsWithChildren<OverlayTooltip>> = (prop
     }));
     let renderTooltip;
 
-    if (player != undefined && (player.nicked || player.sources.runApi?.data.data.bot.tagged)) {
+    if (player != undefined && (player.nicked || player.sources.runApi?.data.data?.bot?.tagged)) {
         renderTooltip = props.children;
     } else {
         renderTooltip = (

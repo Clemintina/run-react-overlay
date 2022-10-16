@@ -60,7 +60,7 @@ const RenderCoreStatsColour: React.ElementType = (props: RenderCoreStatsColour) 
                 playerValue = player.hypixelPlayer?.stats?.Bedwars?.[modeObj + "games_played_bedwars"] ?? 0;
         }
         if (player.loaded) {
-            if (!player.sources.runApi?.data.data.blacklist.tagged) renderer = getCoreFromConfig("core.statistics", playerValue);
+            if (!player.sources.runApi?.data.data?.blacklist.tagged) renderer = getCoreFromConfig("core.statistics", playerValue);
             else renderer = getTagsFromConfig("run.blacklist", playerValue);
         } else {
             renderer = getCoreFromConfig("core.statistics", playerValue);

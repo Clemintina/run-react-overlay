@@ -16,7 +16,7 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
     const playerFormatter = new PlayerUtils();
 
     let blacklistedReason = <span />;
-    if (player.sources.runApi?.data.data.blacklist.tagged) {
+    if (player.sources.runApi?.data.data?.blacklist?.tagged) {
         blacklistedReason = (
             <div>
                 <span>Reason:</span>

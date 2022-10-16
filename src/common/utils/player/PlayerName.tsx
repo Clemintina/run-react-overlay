@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
-import {getPlayerRank} from "@common/zikeji";
+import { StatsisticsTooltip } from "@components/tooltips/StatisticsTooltip";
+import { getPlayerRank } from "@common/zikeji";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {Player} from "@common/utils/PlayerUtils";
-import {Interweave} from "interweave";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import { Player } from "@common/utils/PlayerUtils";
+import { Interweave } from "interweave";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
@@ -27,7 +27,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     };
 
     let rankPlayer: JSX.Element;
-    if (player.hypixelPlayer && !player.sources.runApi?.data.data.blacklist.tagged) {
+    if (player.hypixelPlayer && !player.sources.runApi?.data?.data?.blacklist?.tagged) {
         const rank = getPlayerRank(player?.hypixelPlayer, false);
         let playerName = player?.hypixelPlayer?.displayname;
         if (player.denicked) {

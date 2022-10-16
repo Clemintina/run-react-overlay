@@ -22,7 +22,7 @@ const PlayerWinstreak: React.ElementType = (props: PlayerWinstreak) => {
                 playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
             }
         }
-        if (player.sources.runApi?.data.data.blacklist.tagged && player.loaded) {
+        if (player.sources.runApi?.data.data?.blacklist.tagged && player.loaded) {
             renderer = getTagsFromConfig("run.blacklist", playerValue);
         } else {
             renderer = getCoreFromConfig(`core.winstreak`, playerValue);
