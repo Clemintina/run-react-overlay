@@ -210,14 +210,13 @@ const NewTitlebar = ({ children }) => {
                 <Divider />
                 <List className={"nodrag"}>
                     <ListItem disablePadding>
-                        <ListItemButton onClick = {() =>
-                        window.ipcRenderer.invoke("openlink", "https://discord.gg/9eZ7eDN8Nw")}>
+                        <ListItemButton onClick={() => window.ipcRenderer.invoke("openlink", "https://seraph.si/discord")}>
                             <ListItemIcon><FontAwesomeIcon icon={faDiscord} /></ListItemIcon>
                             <ListItemText>Discord</ListItemText>
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        <ListItemButton onClick = {() => window.ipcRenderer.invoke("openlink", "https://seraph.si")}>
                             <ListItemText className={'text-center'} primary={useConfigStore.getState().version} />
                         </ListItemButton>
                     </ListItem>

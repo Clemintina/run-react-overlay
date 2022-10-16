@@ -12,12 +12,12 @@ const ColourRenderer = (props: { children: JSX.Element }) => {
     const theme = createTheme({
         ...useExistingTheme,
         typography: {
-            fontFamily: font.family,
+            fontFamily: `"${font.family}", sans-serif`,
         },
     });
 
     return (
-        <div style={{ fontFamily: font.family, backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
+        <div style={{ backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
             <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
         </div>
     );
