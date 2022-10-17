@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
-import {ColumnState} from "ag-grid-community";
-import {Player} from "./PlayerUtils";
+import { ColumnState } from "ag-grid-community";
+import { Player } from "./PlayerUtils";
 
 export interface PlayerHandler {
     status: number;
@@ -147,4 +147,11 @@ export interface PlayerNickname {
 
 export interface FontConfig {
     family: string;
+}
+
+export type KeyboardFocusType = "none" | "open_overlay" | "clear_players";
+
+export interface KeybindInterface {
+    focus: KeyboardFocusType;
+    keybind: string;
 }

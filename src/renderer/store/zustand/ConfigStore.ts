@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import { ColumnState } from "ag-grid-community";
 import create from "zustand";
-import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
+import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, KeybindInterface, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
 import { ResultObject } from "@common/zikeji/util/ResultObject";
 import { Paths } from "@common/zikeji";
 import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
@@ -25,8 +25,6 @@ export type ConfigStore = {
     setLogs: (clientSetting: ClientSetting) => void;
     error: DisplayErrorMessage;
     setErrorMessage: (error: DisplayErrorMessage) => void;
-    successMessage: DisplayErrorMessage;
-    setSuccessMessage: (success: DisplayErrorMessage) => void;
     keathiz: {
         key: string;
         valid: boolean;
@@ -48,6 +46,8 @@ export type ConfigStore = {
     font: {
         family: string;
     };
+    keybinds: Array<KeybindInterface>;
+    setKeybinds: (keybinds) => void;
     setFont: (font: FontConfig) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
@@ -432,6 +432,10 @@ const useConfigStore = create<ConfigStore>()(
                     set({ settings });
                     usePlayerStore.getState().updatePlayers();
                 },
+                keybinds: [],
+                setKeybinds: async (keybinds)=>{
+                  set({keybinds})
+                },
                 font: {
                     family: "Nunito",
                 },
@@ -447,8 +451,16 @@ const useConfigStore = create<ConfigStore>()(
             {
                 name: "user_settings",
                 version: 4,
-                migrate: (persistedState: any) => {
-                    return { ...persistedState, settings: { hypixel: { guilds: false } , updater: true}, font: { family: "Times New Roman" }, error: {code: 201} };
+                migrate: (persistedState: any, version) => {
+                    let updatedState = persistedState;
+                    if (version==4){
+                        updatedState = {
+                            ...persistedState,
+                            settings: { hypixel: { guilds: false } , updater: true},
+                            font: { family: "Times New Roman" }, error: {code: 201}
+                        };
+                    }
+                    return updatedState;
                 },
             },
         ),
