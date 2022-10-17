@@ -22,7 +22,6 @@ import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikej
 import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
-import portfinder from "portfinder";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 // Electron Forge automatically creates these entry points
@@ -159,17 +158,24 @@ export const createAppWindow = (): BrowserWindow => {
     });
 
     let isPortOpen = false;
-    portfinder.getPortPromise({port: 5000}).then(() => {
-        isPortOpen = true
-    }).catch((err) => {});
 
-    if (isPortOpen){
-        expressApplication.listen(5000, () => {
-            console.log("Express started");
-        });
-    }
+    const portfinder = require("portfinder");
 
-    appWindow.on("ready-to-show", () => appWindow.show());
+    portfinder.setBasePort(5000);
+    portfinder.setHighestPort(5000);
+    portfinder.getPortPromise({ port: 5000, host: "localhost" }).then(() => {
+        isPortOpen = true;
+    }).catch(() => {
+    });
+
+    appWindow.on("ready-to-show", () => {
+        appWindow.show();
+        if (isPortOpen) {
+            expressApplication.listen(5000, () => {
+                console.log("Express started");
+            });
+        }
+    });
 
     registerMainIPC();
 
@@ -527,7 +533,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
