@@ -13,6 +13,7 @@ import NickView from "@components/ui/settings/views/Nicks";
 import NewTitlebar from "@components/ui/NewTitlebar";
 import ColumnEditorView from "@components/ui/settings/views/ColumnEditor";
 import Appearance from "@components/ui/settings/views/Appearance";
+import KeybindEditor from "@components/ui/settings/views/KeybindEditor";
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
@@ -81,6 +82,7 @@ createRoot(document.getElementById("app")!).render(
                             <Route path='/settings/essentials' element={<Essentials />} />
                             <Route path='/settings/tags' element={<TagEditor />} />
                             <Route path='/settings/nicks' element={<NickView />} />
+                            <Route path='/settings/keybinds' element={<KeybindEditor />} />
                             <Route path='/settings/columneditor' element={<ColumnEditorView />} />
                             <Route path={"/settings/appearance"} element={<Appearance />} />
                         </Routes>

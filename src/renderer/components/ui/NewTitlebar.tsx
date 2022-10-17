@@ -27,6 +27,7 @@ import { Home, Sell, ViewColumn } from "@mui/icons-material";
 import { MenuOption } from "@common/utils/Schemas";
 import BrushIcon from "@mui/icons-material/Brush";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
+import KeyboardIcon from "@mui/icons-material/Keyboard";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
@@ -34,6 +35,7 @@ const menuOptions = Array<MenuOption>(
     { menuName: "Essentials", menuLink: "/settings/essentials" },
     { menuName: "Tags", menuLink: "/settings/tags" },
     { menuName: "Nicks", menuLink: "/settings/nicks" },
+    {menuName: 'Keybinds', menuLink:'/settings/keybinds'},
     {
         menuName: "Table Editor",
         menuLink: "/settings/columneditor",
@@ -99,6 +101,8 @@ const getIconType = (menuObject: MenuOption) => {
             return <ViewColumn />;
         case 'appearance':
             return <BrushIcon />
+        case 'keybinds':
+            return <KeyboardIcon/>
         default:
             return <span />;
     }
