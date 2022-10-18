@@ -39,19 +39,16 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
         } else if (runApi?.bot?.tagged) {
             tagArray.push(<span style={{ color: `#${run.bot.colour.toString()}` }}>{run.bot.display}</span>);
         } else if (runApi?.customTag) {
-            parseColour(runApi.customTag).forEach((tag: [string, string]) => tagArray.push(<span
-                style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
+            parseColour(runApi.customTag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
         } else {
             if (player?.sources?.boomza?.status === 200) {
                 const boomza = destr(player.sources.boomza.data);
                 if (boomza.sniper) {
-                    tagArray.push(<span
-                        style={{ color: `#${boomzaTag.sniper.colour.toString()}` }}>{boomzaTag.sniper.display}</span>);
+                    tagArray.push(<span style={{ color: `#${boomzaTag.sniper.colour.toString()}` }}>{boomzaTag.sniper.display}</span>);
                     tagArray.push(<span className={"pl-1"} />);
                 }
                 if (boomza.report) {
-                    tagArray.push(<span
-                        style={{ color: `#${boomzaTag.hacker.colour.toString()}` }}>{boomzaTag.hacker.display}</span>);
+                    tagArray.push(<span style={{ color: `#${boomzaTag.hacker.colour.toString()}` }}>{boomzaTag.hacker.display}</span>);
                     tagArray.push(<span className={"pl-1"} />);
                 }
             }
@@ -98,7 +95,7 @@ const RenderKeathizTags = (props: PlayerTags) => {
     if (player.sources.keathiz == null) {
         keathizTagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>ERROR</span>);
     } else {
-        if (player?.sources?.keathiz?.status == 200) {
+        if (player?.sources?.keathiz?.status == 200 && player?.sources?.keathiz?.data) {
             const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
             if (keathizTags.player?.exits?.last_10_min >= 1) {
                 keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`E10`}</span>);
@@ -128,8 +125,7 @@ const RenderKeathizTags = (props: PlayerTags) => {
                 keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`C`}</span>);
             }
         } else {
-            if (useConfigStore.getState().settings.keathiz) keathizTagArray.push(<span
-                style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>{`FAILED`}</span>);
+            if (useConfigStore.getState().settings.keathiz) keathizTagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>{`FAILED`}</span>);
         }
     }
 

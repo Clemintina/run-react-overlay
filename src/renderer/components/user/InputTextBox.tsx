@@ -19,6 +19,7 @@ export interface InputTextBox {
         resetOnEnter?: boolean;
         resetOnBlur?: boolean;
         clear?: boolean;
+        liveUpdate?: boolean;
     };
     icon?: JSX.Element;
     size?: "small" | "medium";
@@ -57,6 +58,21 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                         props?.onKeyDown(event, getTextField);
                         if (props?.error) {
                             setError(props.error);
+                        }
+                        if (props?.options?.liveUpdate) {
+                            let inputKey: string;
+                            if (event.altKey) {
+                                inputKey = "Alt";
+                            } else if (event.ctrlKey) {
+                                inputKey = "Ctrl";
+                            } else if (event.metaKey) {
+                                inputKey = "Meta";
+                            } else if (event.shiftKey) {
+                                inputKey = "Shift";
+                            } else {
+                                inputKey = event.key;
+                            }
+                            setTextField(getTextField + inputKey);
                         }
                     }
                     if (event.key === "Enter" && props?.options?.resetOnEnter) {

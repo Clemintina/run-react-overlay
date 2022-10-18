@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import { ColumnState } from "ag-grid-community";
 import create from "zustand";
-import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, KeybindInterface, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
+import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
 import { ResultObject } from "@common/zikeji/util/ResultObject";
 import { Paths } from "@common/zikeji";
 import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
@@ -47,7 +47,9 @@ export type ConfigStore = {
         family: string;
     };
     keybinds: Array<KeybindInterface>;
-    setKeybinds: (keybinds) => void;
+    addKeybind: (focus: KeyboardFocusType, keybind: string) => void;
+    removeKeybind: (focus: KeyboardFocusType) => void;
+    getKeybind: (focus: KeyboardFocusType) => KeybindInterface;
     setFont: (font: FontConfig) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
@@ -87,7 +89,6 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKeyValid: true,
                                 apiKeyOwner: apiResponse.data.owner,
                             },
-
                         }));
                     } else {
                         get().setErrorMessage({
@@ -433,8 +434,21 @@ const useConfigStore = create<ConfigStore>()(
                     usePlayerStore.getState().updatePlayers();
                 },
                 keybinds: [],
-                setKeybinds: async (keybinds)=>{
-                  set({keybinds})
+                addKeybind: async (focus, keybind) => {
+                    if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
+                        get().keybinds.push({ keybind, focus });
+                    } else {
+                        get().removeKeybind(focus);
+                        get().keybinds.push({ keybind, focus });
+                    }
+                },
+                removeKeybind: (focus: KeyboardFocusType) => {
+                    set({
+                        keybinds: get().keybinds.filter((arr) => arr.focus !== focus),
+                    });
+                },
+                getKeybind: (focus: KeyboardFocusType)=>{
+                    return get().keybinds.filter((arr) => arr.focus == focus)[0];
                 },
                 font: {
                     family: "Nunito",
@@ -453,11 +467,12 @@ const useConfigStore = create<ConfigStore>()(
                 version: 4,
                 migrate: (persistedState: any, version) => {
                     let updatedState = persistedState;
-                    if (version==4){
+                    if (version == 4) {
                         updatedState = {
                             ...persistedState,
-                            settings: { hypixel: { guilds: false } , updater: true},
-                            font: { family: "Times New Roman" }, error: {code: 201}
+                            settings: { hypixel: { guilds: false }, updater: true },
+                            font: { family: "Times New Roman" },
+                            error: { code: 201 },
                         };
                     }
                     return updatedState;

@@ -154,4 +154,5 @@ export type KeyboardFocusType = "none" | "open_overlay" | "clear_players";
 export interface KeybindInterface {
     focus: KeyboardFocusType;
     keybind: string;
+    enabled?: boolean;
 }

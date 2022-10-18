@@ -35,7 +35,7 @@ const menuOptions = Array<MenuOption>(
     { menuName: "Essentials", menuLink: "/settings/essentials" },
     { menuName: "Tags", menuLink: "/settings/tags" },
     { menuName: "Nicks", menuLink: "/settings/nicks" },
-    // {menuName: 'Keybinds', menuLink:'/settings/keybinds'},
+    {menuName: 'Keybinds', menuLink:'/settings/keybinds'},
     {
         menuName: "Table Editor",
         menuLink: "/settings/columneditor",

@@ -163,10 +163,12 @@ export const createAppWindow = (): BrowserWindow => {
 
     portfinder.setBasePort(5000);
     portfinder.setHighestPort(5000);
-    portfinder.getPortPromise({ port: 5000, host: "localhost" }).then(() => {
-        isPortOpen = true;
-    }).catch(() => {
-    });
+    portfinder
+        .getPortPromise({ port: 5000, host: "localhost" })
+        .then(() => {
+            isPortOpen = true;
+        })
+        .catch(() => {});
 
     appWindow.on("ready-to-show", () => {
         appWindow.show();
@@ -504,6 +506,10 @@ const registerMainWindowCommunications = () => {
         appWindow?.showInactive();
     });
 
+    ipcMain.on("windowToggle", () => {
+        appWindow?.isVisible() ? appWindow?.minimize() : appWindow?.showInactive();
+    });
+
     ipcMain.on("opacity", async (event, ...args) => {
         appWindow.setOpacity(args[0]);
     });
@@ -533,7 +539,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
@@ -698,10 +704,12 @@ const registeredGlobalKeybindsForApp = () => {
             registeredGlobalKeybinds.delete(shortcut);
         }
 
-        for (const shortcut of keybinds) {
+        
+
+        for (const { keybind } of keybinds) {
             try {
-                globalShortcut.register(shortcut, () => appWindow?.webContents.send("globalShortcutPressed", shortcut));
-                registeredGlobalKeybinds.add(shortcut);
+                globalShortcut.register(keybind, () => appWindow?.webContents.send("globalShortcutPressed", keybind));
+                registeredGlobalKeybinds.add(keybind);
             } catch (err) {
                 console.log(err);
             }
