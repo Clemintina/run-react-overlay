@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/named
 import React, { useEffect, useState } from "react";
 import { Player } from "@common/utils/PlayerUtils";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface PlayerSession {
     player: Player;
@@ -9,12 +10,13 @@ export interface PlayerSession {
 const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
     const values: [string, string][] = [];
     const [timer, setTimer] = useState(0);
+    const { table } = useConfigStore((state) => ({ table: state.table }));
 
     useEffect(() => {
         if (player?.hypixelPlayer?.lastLogout) {
-            setTimeout(()=>{
+            setTimeout(() => {
                 setTimer(new Date().getUTCMilliseconds());
-            },1000)
+            }, 1000);
         }
     }, [timer]);
 
@@ -44,13 +46,13 @@ const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
     }
 
     return (
-        <span className=''>
+        <div style={{textAlign: table.settings.textAlign}}>
             {values.map((value, index) => (
                 <span key={index} color={`#${value[1]}`}>
                     {value[0]}
                 </span>
             ))}
-        </span>
+        </div>
     );
 };
 

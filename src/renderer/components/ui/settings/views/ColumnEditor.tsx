@@ -1,22 +1,15 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {ToggleButton} from "@components/user/ToggleButton";
-import {AgGridReact} from "ag-grid-react";
-import {
-    ColumnMovedEvent,
-    GetRowIdParams,
-    GridColumnsChangedEvent,
-    GridOptions,
-    GridReadyEvent,
-    RowDataUpdatedEvent
-} from "ag-grid-community";
-import {Player} from "@common/utils/PlayerUtils";
-import {Box} from "@mui/material";
-import {columnDefs, defaultColDef} from "@renderer/views/App";
+import { ToggleButton } from "@components/user/ToggleButton";
+import { AgGridReact } from "ag-grid-react";
+import { ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
+import { Player } from "@common/utils/PlayerUtils";
+import { Box } from "@mui/material";
+import { columnDefsBase, defaultColDefBase } from "@renderer/views/App";
 
 const ColumnEditorView = () => {
-    const {columnState} = useConfigStore((state) => ({columnState: state.table.columnState}));
+    const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
     const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
     const toggleColumn = (columnId: string) => {
@@ -50,8 +43,8 @@ const ColumnEditorView = () => {
         onColumnMoved(event: ColumnMovedEvent) {
             onGridUpdate(event);
         },
-        defaultColDef,
-        columnDefs,
+        defaultColDef: defaultColDefBase,
+        columnDefs: columnDefsBase,
         autoSizePadding: 0,
         rowHeight: 25,
         overlayNoRowsTemplate: "Welcome to the Table Editor! In order to continue, Please click a button and I will display a preview here! ",
@@ -63,7 +56,7 @@ const ColumnEditorView = () => {
         <div>
             <NavigationBar>
                 <Box>
-                    <div className="ag-theme-alpine-dark" style={{ height: "15vh" }}>
+                    <div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
                         <AgGridReact rowData={playerData} gridOptions={gridOptions} />
                     </div>
                     <div className={"grid grid-cols-6 justify-center"}>

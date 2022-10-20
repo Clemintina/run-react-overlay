@@ -32,17 +32,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 
 const drawerWidth = 200;
-const menuOptions = Array<MenuOption>(
-    { menuName: "Appearance", menuLink: "/settings/appearance" },
-    { menuName: "Essentials", menuLink: "/settings/essentials" },
-    { menuName: "Tags", menuLink: "/settings/tags" },
-    { menuName: "Nicks", menuLink: "/settings/nicks" },
-    { menuName: "Keybinds", menuLink: "/settings/keybinds" },
-    {
-        menuName: "Table Editor",
-        menuLink: "/settings/columneditor",
-    },
-);
+const menuOptions = Array<MenuOption>({ menuName: "Appearance", menuLink: "/settings/appearance" }, { menuName: "Essentials", menuLink: "/settings/essentials" }, { menuName: "Tags", menuLink: "/settings/tags" }, { menuName: "Nicks", menuLink: "/settings/nicks" }, { menuName: "Keybinds", menuLink: "/settings/keybinds" }, { menuName: "Table Editor", menuLink: "/settings/columneditor" });
 
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;

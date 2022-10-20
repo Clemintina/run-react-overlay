@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
-import {getPlayerRank} from "@common/zikeji";
+import { StatsisticsTooltip } from "@components/tooltips/StatisticsTooltip";
+import { getPlayerRank } from "@common/zikeji";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {Player} from "@common/utils/PlayerUtils";
-import {Interweave} from "interweave";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import { Player } from "@common/utils/PlayerUtils";
+import { Interweave } from "interweave";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
@@ -19,7 +19,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     const player = props.player;
     const tagStore = useTagStore((state) => state);
     const configStore = useConfigStore((state) => state);
-    const {settings} = useConfigStore((state) => ({settings: state.settings}))
+    const {settings, table} = useConfigStore((state) => ({settings: state.settings, table:state.table}))
     const {players} = usePlayerStore((state) => ({players: state.players}))
 
     const handleDenickEvent = () => {
@@ -65,8 +65,7 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
         rankPlayer = (
             <span>
                 <span style={{color: `#${tagStore.run.blacklist.colour}`}}>
-                    {" "}
-                    {""} {player?.hypixelPlayer?.displayname}
+                    {player?.hypixelPlayer?.displayname}
                 </span>
             </span>
         );
@@ -75,15 +74,11 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     }
 
     return (
-        <>
+        <div style={{textAlign: table.settings.textAlign}}>
             <StatsisticsTooltip player={player}>
-                <span className={"justify-content-start"}>
-                    <span>
-                        <span>{rankPlayer}</span>
-                    </span>
-                </span>
+                {rankPlayer}
             </StatsisticsTooltip>
-        </>
+        </div>
     );
 };
 

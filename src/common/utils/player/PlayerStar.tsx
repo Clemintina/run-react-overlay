@@ -4,6 +4,7 @@ import { getBedwarsLevelInfo, getHighLevelPrestigeColour } from "@common/zikeji"
 import useTagStore from "@renderer/store/zustand/TagStore";
 import { Player } from "@common/utils/PlayerUtils";
 import { Interweave } from "interweave";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface PlayerStar {
     player: Player;
@@ -11,6 +12,7 @@ export interface PlayerStar {
 
 const PlayerStar: React.ElementType = (props: PlayerStar) => {
     const player = props.player;
+    const {table} = useConfigStore((state)=>({table: state.table}))
     const {run} = useTagStore((state) => ({run: state.run}));
 
     let starRenderer: JSX.Element;
@@ -29,7 +31,7 @@ const PlayerStar: React.ElementType = (props: PlayerStar) => {
         starRenderer = <span style={{color: `#${run.blacklist.colour}`}}>?</span>;
     }
 
-    return <span>{starRenderer}</span>;
+    return <div style={{textAlign: table.settings.textAlign}}>{starRenderer}</div>;
 };
 
 export default PlayerStar;

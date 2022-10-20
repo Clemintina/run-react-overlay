@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@mui/material";
+import { InputTextBox } from "@components/user/InputTextBox";
 
 export interface TagEditor {
     onKeyDown?: (input: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -9,16 +9,20 @@ export interface TagEditor {
         placeholder?: string;
         colour?: string;
         className?: string;
+        label?: {
+            text?: string;
+        };
     };
 }
 
 export const TagEditor: React.ElementType = (props: TagEditor) => {
     return (
-        <span className="bg-transparent">
-            <TextField variant={"outlined"} sx={{ input: { color: `#${props?.options?.colour ?? "FFFFFF"}` } }}
-                       onKeyDown={props.onKeyDown} placeholder={props?.options?.placeholder ?? ""}
-                       className={props?.options?.className ?? ""} defaultValue={props?.options?.placeholder ?? ""}
-                       onBlur={props.onBlur} size={"small"} />
+        <span className='bg-transparent'>
+            <InputTextBox
+                options={{ placeholder: props?.options?.placeholder, value: props?.options?.placeholder, initialValue: props?.options?.placeholder, label: { text: props?.options?.label?.text ?? "" } }}
+                onBlur={props.onBlur}
+                onKeyDown={props.onKeyDown}
+                sx={{ input: { color: `#${props?.options?.colour ?? "FFFFFF"}` } }} />
         </span>
     );
 };

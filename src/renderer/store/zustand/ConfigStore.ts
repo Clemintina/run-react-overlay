@@ -408,6 +408,9 @@ const useConfigStore = create<ConfigStore>()(
                             flex: 1,
                         },
                     ),
+                    settings:{
+                        textAlign: 'center'
+                    }
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);
@@ -467,17 +470,18 @@ const useConfigStore = create<ConfigStore>()(
             }),
             {
                 name: "user_settings",
-                version: 4,
+                version: 3,
                 migrate: (persistedState: any, version) => {
                     if (version == 3) {
                         persistedState.settings.hypixel.guilds = false;
                         persistedState.settings.run.friends = false;
                         persistedState.settings.updater = true;
-                        persistedState.font.family = 'Nunito'
-                        persistedState.settings.error.code = 201
-                    }else if (version == 4){
+                        persistedState.font.family = "Nunito";
+                        persistedState.settings.error.code = 201;
+                    } else if (version == 4) {
                         persistedState.keybinds = [];
                         persistedState.settings.appearance.displayRank = true;
+                        persistedState.table.settings.textAlign = "left";
                     }
                     return persistedState;
                 },

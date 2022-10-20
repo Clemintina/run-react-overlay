@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {Player} from "@common/utils/PlayerUtils";
+import { Player } from "@common/utils/PlayerUtils";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface PlayerHead {
@@ -8,7 +8,7 @@ export interface PlayerHead {
 }
 
 const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
-    const { configStore } = useConfigStore((state) => ({ configStore: state }));
+    const { configStore,table } = useConfigStore((state) => ({ configStore: state,table: state.table }));
     let lunarRenderer: JSX.Element = <span />;
 
     let srcUrl = `https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`;
@@ -40,10 +40,10 @@ const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
     }
 
     return (
-        <span className='inline flex'>
+        <div className='inline flex' style={{textAlign: table.settings.textAlign}}>
             <img src={srcUrl} className="text-center" alt="player-head" />
             {lunarRenderer}
-        </span>
+        </div>
     );
 };
 

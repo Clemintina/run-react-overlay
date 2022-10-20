@@ -1,5 +1,5 @@
-import {Components} from "../types/api";
-import {MinecraftColourAsHex, MinecraftFormatting} from "@common/zikeji";
+import { Components } from "../types/api";
+import { MinecraftColourAsHex, MinecraftFormatting } from "@common/zikeji";
 
 /** @internal */
 export enum PlayerRanks {
@@ -231,7 +231,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.DARK_GREEN,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.DARK_GREEN],
                 staff: true,
-                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>[MOD]</span></span>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GREEN]}'>[MOD]</span>`,
             };
             break;
         case PlayerRanks.ADMIN:
@@ -244,7 +244,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.RED,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.RED],
                 staff: true,
-                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.RED]}'>[ADMIN]</span></span>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.RED]}'>[ADMIN]</span>`,
             };
             break;
         default:
@@ -257,7 +257,7 @@ export const getPlayerRank = (player: NonNullable<Components.Schemas.Player>, on
                 colourCode: MinecraftFormatting.GRAY,
                 colourHex: MinecraftColourAsHex[MinecraftFormatting.GRAY],
                 staff: false,
-                rankHtml: `<div style='color: #${MinecraftColourAsHex[MinecraftFormatting.GRAY]}'></span></div>`,
+                rankHtml: `<span style='color: #${MinecraftColourAsHex[MinecraftFormatting.GRAY]}'></span>`,
             };
             break;
     }
