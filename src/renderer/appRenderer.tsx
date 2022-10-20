@@ -4,7 +4,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import App from "@renderer/views/App";
 import { LogFileReader } from "@common/utils/LogFileReader";
 import "@assets/index.css";
-import { alpha, Box, createTheme, ThemeProvider } from "@mui/material";
+import {alpha, Box, createTheme, hexToRgb, ThemeOptions, ThemeProvider} from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
 import TagEditor from "@components/ui/settings/views/TagEditor";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
@@ -14,7 +14,8 @@ import NewTitlebar from "@components/ui/NewTitlebar";
 import ColumnEditorView from "@components/ui/settings/views/ColumnEditor";
 import Appearance from "@components/ui/settings/views/Appearance";
 import KeybindEditorView from "@components/ui/settings/views/KeybindEditor";
-import { KeybindHandlerUtils } from "@common/utils/KeybindHandler";
+import {KeybindHandlerUtils} from "@common/utils/KeybindHandler";
+import {rgb} from "polished";
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
@@ -38,10 +39,16 @@ reader.startLilithListener();
 const keys = new KeybindHandlerUtils();
 keys.startHandlingApp()
 
-const darkTheme = createTheme({
+const baseTheme = createTheme({
     palette: {
         mode: "dark",
+        primary: {
+            main: hexToRgb('#02e6ee')
+        }
     },
+})
+
+const themeArgs: ThemeOptions = {
     components: {
         MuiDrawer: {
             styleOverrides: {
@@ -50,26 +57,10 @@ const darkTheme = createTheme({
                 },
             },
         },
-        MuiTextField: {
-            styleOverrides: {
-                root: {
-                    "& .MuiOutlinedInput-root": {
-                        "&:hover fieldset": {
-                            borderColor: "cyan",
-                        },
-                    },
-                },
-            },
-        },
-        MuiPaper: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: alpha(useConfigStore.getState().colours.backgroundColour, useConfigStore.getState().browserWindow.opacity / 100),
-                },
-            },
-        },
-    },
-});
+    }
+}
+
+const darkTheme = createTheme(baseTheme, themeArgs);
 
 /**
  * Renders the document in the DOM and creates our React application.

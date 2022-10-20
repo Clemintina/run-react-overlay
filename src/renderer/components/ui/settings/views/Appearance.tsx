@@ -65,13 +65,28 @@ const Appearance = () => {
                                 }
                             }}
                             onBlur={(event, text) => {
-                                if (text.length != 0) useConfigStore.getState().setFont({ family: text });
+                                if (text.length != 0) useConfigStore.getState().setFont({family: text});
                             }}
-                            options={{ placeholder: font.family }}
+                            options={{placeholder: font.family, label: {text: 'Font'}}}
                             sx={styledProps}
                             helperText={"Font you want to use."}
                         />
-                        <GoogleFontLoader fonts={[{ font: font.family, weights: [400] }]} />
+                        <GoogleFontLoader fonts={[{font: font.family, weights: [400]}]}/>
+                    </SettingCard>
+                    <SettingCard>
+                        <span>Show Rank</span>
+                        <span/>
+                        <span>
+                          <ToggleButton
+                              onChange={async () => {
+                                  useConfigStore.getState().setSettings({
+                                      ...settings,
+                                      appearance: {displayRank: !settings.appearance.displayRank}
+                                  });
+                              }}
+                              options={{enabled: settings.appearance.displayRank}}
+                          />
+                        </span>
                     </SettingCard>
                 </Box>
             </NavigationBar>

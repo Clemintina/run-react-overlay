@@ -1,13 +1,24 @@
 // eslint-disable-next-line import/named
-import { ColumnState } from "ag-grid-community";
+import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
-import { ResultObject } from "@common/zikeji/util/ResultObject";
-import { Paths } from "@common/zikeji";
-import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { awaitTimeout } from "@common/helpers";
-import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import { devtools, persist } from "../../../../node_modules/zustand/middleware";
+import {
+    BrowserWindowSettings,
+    ClientSetting,
+    ColourSettings,
+    DisplayErrorMessage,
+    FontConfig,
+    KeybindInterface,
+    KeyboardFocusType,
+    PlayerNickname,
+    SettingsConfig,
+    TableState
+} from "@common/utils/Schemas";
+import {ResultObject} from "@common/zikeji/util/ResultObject";
+import {Paths} from "@common/zikeji";
+import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {awaitTimeout} from "@common/helpers";
+import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {devtools, persist} from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export type ConfigStore = {
@@ -119,7 +130,7 @@ const useConfigStore = create<ConfigStore>()(
                 setVersion: async () => {
                     const appInfo = await window.ipcRenderer.invoke("getAppInfo");
                     const version = appInfo.version;
-                    set(() => ({ version }));
+                    set(() => ({version}));
                 },
                 logs: {
                     logPath: "",
@@ -141,7 +152,7 @@ const useConfigStore = create<ConfigStore>()(
                     detail: "",
                 },
                 setErrorMessage: async (structuredError) => {
-                    set({ error: structuredError });
+                    set({error: structuredError});
                     await awaitTimeout(5 * 1000);
                     set({
                         error: {
@@ -221,7 +232,7 @@ const useConfigStore = create<ConfigStore>()(
                     opacity: 100,
                 },
                 setBrowserWindow: (browserWindow) => {
-                    set({ browserWindow });
+                    set({browserWindow});
                 },
                 table: {
                     columnState: Array<ColumnState>(
@@ -411,7 +422,7 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);
-                    set({ table });
+                    set({table});
                 },
                 settings: {
                     lunar: true,
@@ -428,18 +439,21 @@ const useConfigStore = create<ConfigStore>()(
                     preferences: {
                         autoHide: true,
                     },
+                    appearance: {
+                        displayRank: true
+                    }
                 },
                 setSettings: async (settings) => {
-                    set({ settings });
+                    set({settings});
                     usePlayerStore.getState().updatePlayers();
                 },
                 keybinds: [],
                 addKeybind: async (focus, keybind) => {
                     if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
-                        get().keybinds.push({ keybind, focus });
+                        get().keybinds.push({keybind, focus});
                     } else {
                         get().removeKeybind(focus);
-                        get().keybinds.push({ keybind, focus });
+                        get().keybinds.push({keybind, focus});
                     }
                 },
                 removeKeybind: (focus: KeyboardFocusType) => {
@@ -447,35 +461,29 @@ const useConfigStore = create<ConfigStore>()(
                         keybinds: get().keybinds.filter((arr) => arr.focus !== focus),
                     });
                 },
-                getKeybind: (focus: KeyboardFocusType)=>{
+                getKeybind: (focus: KeyboardFocusType) => {
                     return get().keybinds.filter((arr) => arr.focus == focus)[0];
                 },
                 font: {
                     family: "Nunito",
                 },
                 setFont: async (font) => {
-                    set({ font });
+                    set({font});
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {
-                    set({ nicks });
+                    set({nicks});
                 },
                 setStore: (store) => set(store),
             }),
             {
                 name: "user_settings",
-                version: 4,
+                version: 5,
                 migrate: (persistedState: any, version) => {
-                    let updatedState = persistedState;
                     if (version == 4) {
-                        updatedState = {
-                            ...persistedState,
-                            settings: { hypixel: { guilds: false }, updater: true },
-                            font: { family: "Times New Roman" },
-                            error: { code: 201 },
-                        };
+                        persistedState.settings.appearance.displayRank = true;
                     }
-                    return updatedState;
+                    return persistedState;
                 },
             },
         ),

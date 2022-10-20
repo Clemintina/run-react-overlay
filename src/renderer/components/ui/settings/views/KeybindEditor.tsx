@@ -49,9 +49,12 @@ const KeybindEditorView = () => {
                                 }}
                                 onFocus={() => {
                                     useConfigStore.getState().removeKeybind("clear_players");
-                                    setControlBind({ ...controlBind, keybind: "" });
+                                    setControlBind({...controlBind, keybind: ""});
                                 }}
-                                options={{ placeholder: "Open Overlay", value: useConfigStore.getState().getKeybind("clear_players")?.keybind }}
+                                options={{
+                                    placeholder: "Clear Players",
+                                    value: useConfigStore.getState().getKeybind("clear_players")?.keybind
+                                }}
                             />
                         </span>
                     </SettingCard>

@@ -14,10 +14,13 @@ import Tooltip from "@mui/material/Tooltip";
 
 const Essentials = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
-    const { hypixel, logs, settings, run } = useConfigStore((state) => ({ hypixel: state.hypixel, logs: state.logs, settings: state.settings, run: state.run }));
-
-    useConfigStore.getState().setVersion();
-
+    const {hypixel, logs, settings, run, keathiz} = useConfigStore((state) => ({
+        hypixel: state.hypixel,
+        logs: state.logs,
+        settings: state.settings,
+        run: state.run,
+        keathiz: state.keathiz
+    }));
     const styledProps: SxProps = {
         width: 0.86,
     };
@@ -40,10 +43,14 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setHypixelApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{ placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key" }}
+                                options={{
+                                    placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key",
+                                    label: {text: 'Hypixel API Key'}
+                                }}
                                 sx={styledProps}
                                 error={() => !hypixel.apiKeyValid}
                                 helperText={!hypixel.apiKeyValid ? "Enter a valid Hypixel API Key" : ""}
+                                initialValue={hypixel.apiKey}
                             />
                         </span>
                     </SettingCard>
@@ -60,10 +67,14 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setRunApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{ placeholder: run.valid ? run.apiKey : "Seraph API Key" }}
+                                options={{
+                                    placeholder: run.valid ? run.apiKey : "Seraph API Key",
+                                    label: {text: 'Seraph API Key'}
+                                }}
                                 sx={styledProps}
                                 error={() => !run.valid}
                                 helperText={!run.valid ? "Enter a valid Seraph API Key" : ""}
+                                initialValue={run.apiKey}
                             />
                         </span>
                     </SettingCard>
@@ -80,10 +91,14 @@ const Essentials = () => {
                                 onBlur={(event, text) => {
                                     useConfigStore.getState().setKeathizApiKey(text.replaceAll(" ", ""));
                                 }}
-                                options={{ placeholder: localConfigStore.keathiz.valid ? localConfigStore.keathiz.key : "Antisniper API Key" }}
+                                options={{
+                                    placeholder: keathiz.valid ? keathiz.key : "Antisniper API Key",
+                                    label: {text: 'Antisniper API Key'}
+                                }}
                                 sx={styledProps}
-                                error={() => !localConfigStore.keathiz.valid}
-                                helperText={!localConfigStore.keathiz.valid ? "Enter a valid Antisniper API Key" : ""}
+                                error={() => !keathiz.valid}
+                                helperText={!keathiz.valid ? "Enter a valid Antisniper API Key" : ""}
+                                initialValue={keathiz.key}
                             />
                         </span>
                     </SettingCard>

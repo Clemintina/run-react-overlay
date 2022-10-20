@@ -28,6 +28,9 @@ import {MenuOption} from "@common/utils/Schemas";
 import BrushIcon from "@mui/icons-material/Brush";
 import {faDiscord} from "@fortawesome/free-brands-svg-icons";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
+import CloseIcon from '@mui/icons-material/Close';
+import HideSourceIcon from '@mui/icons-material/HideSource';
+import MinimizeIcon from '@mui/icons-material/Minimize';
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
@@ -117,8 +120,8 @@ const NewTitlebar = ({children}) => {
         setOpen(false);
     };
     const theme = useTheme();
-    const localStore: ConfigStore = useConfigStore((state) => state);
-    const errorMessageCode = localStore.error.code;
+    const {error} = useConfigStore((state) => ({error: state.error}));
+    const errorMessageCode = error.code;
 
     return (
         <Box sx={{display: "flex"}} className={"drag"}>
@@ -136,7 +139,7 @@ const NewTitlebar = ({children}) => {
                         <div className={"flex items-center space-x-3 p-1 nodrag"}>
                             <span className={"flex"}>
                                 <InputTextBox
-                                    options={{placeholder: "Usernames", resetOnEnter: true}}
+                                    options={{placeholder: "", resetOnEnter: true, label: {text: 'Usernames'}}}
                                     onKeyDown={(event, textFieldState) => {
                                         if (event.key === "Enter") {
                                             if (textFieldState.includes(' ')) {
@@ -157,7 +160,7 @@ const NewTitlebar = ({children}) => {
                                         window.ipcRenderer.send("windowMinimise");
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faWindowMinimize}/>
+                                    <MinimizeIcon/>
                                 </button>
                             </div>
                             <div>
@@ -167,7 +170,7 @@ const NewTitlebar = ({children}) => {
                                         window.ipcRenderer.send("windowClose");
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faWindowClose}/>
+                                    <CloseIcon/>
                                 </button>
                             </div>
                         </div>
@@ -241,10 +244,10 @@ const NewTitlebar = ({children}) => {
                     <Alert color={"success"} sx={{opacity: 100}}>
                         <Typography sx={{opacity: 100}}>
                             <span className={"font-medium"}>
-                                Code: <span className={"errorMessage"}> {localStore.error.code}</span>
+                                Code: <span className={"errorMessage"}> {error.code}</span>
                             </span>
                             <span className={"p-1"}>
-                            Cause: <span className={"errorMessage"}> {localStore.error.cause}</span>
+                            Cause: <span className={"errorMessage"}> {error.cause}</span>
                             </span>
                         </Typography>
                     </Alert>
@@ -252,10 +255,10 @@ const NewTitlebar = ({children}) => {
                     <Alert color={"error"} sx={{opacity: 100}}>
                         <Typography sx={{opacity: 100}}>
                             <span className={"font-medium"}>
-                                Code: <span className={"errorMessage"}> {localStore.error.code}</span>
+                                Code: <span className={"errorMessage"}> {error.code}</span>
                             </span>
                             <span className={"p-1"}>
-                            Cause: <span className={"errorMessage"}> {localStore.error.cause}</span>
+                            Cause: <span className={"errorMessage"}> {error.cause}</span>
                             </span>
                         </Typography>
                     </Alert>

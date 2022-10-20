@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
-import { ColumnState } from "ag-grid-community";
-import { Player } from "./PlayerUtils";
+import {ColumnState} from "ag-grid-community";
+import {Player} from "./PlayerUtils";
 
 export interface PlayerHandler {
     status: number;
@@ -103,6 +103,9 @@ export interface SettingsConfig {
         friends: boolean;
     };
     preferences: { autoHide: boolean };
+    appearance: {
+        displayRank: boolean
+    }
 }
 
 export interface ClientSetting {

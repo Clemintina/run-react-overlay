@@ -1,11 +1,23 @@
 // eslint-disable-next-line import/named
-import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowNode, SortChangedEvent } from "ag-grid-community";
+import {
+    ColDef,
+    ColumnApi,
+    ColumnMovedEvent,
+    ColumnResizedEvent,
+    GetRowIdParams,
+    GridColumnsChangedEvent,
+    GridOptions,
+    GridReadyEvent,
+    RowDataUpdatedEvent,
+    RowNode,
+    SortChangedEvent
+} from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
-import React, { useEffect } from "react";
-import { Player } from "@common/utils/PlayerUtils";
-import { AgGridReact } from "ag-grid-react";
-import { assertDefaultError } from "@common/helpers";
+import React, {useEffect} from "react";
+import {Player} from "@common/utils/PlayerUtils";
+import {AgGridReact} from "ag-grid-react";
+import {assertDefaultError} from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -14,14 +26,13 @@ import PlayerTags from "@common/utils/player/PlayerTags";
 import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
-import { TableState } from "@common/utils/Schemas";
+import {TableState} from "@common/utils/Schemas";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import PlayerGuild from "@common/utils/player/PlayerGuild";
 
 let columnApi: ColumnApi;
-
 const tinyColumnSize = 30;
 
 export const defaultColDef: ColDef = {
@@ -36,61 +47,61 @@ export const columnDefs: ColDef[] = [
     {
         field: "head",
         sortable: false,
-        cellRenderer: ({ data }) => <PlayerHead player={data} />,
+        cellRenderer: ({data}) => <PlayerHead player={data}/>,
     },
     {
         field: "star",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
-        cellRenderer: ({ data }) => <PlayerStar player={data} />,
+        cellRenderer: ({data}) => <PlayerStar player={data}/>,
     },
     {
         field: "name",
         type: "string",
         minWidth: 150,
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
-        cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,
+        cellRenderer: ({data}) => <PlayerName player={data} isOverlayStats={false}/>,
     },
     {
         field: "tags",
-        cellRenderer: ({ data }) => <PlayerTags player={data} />,
+        cellRenderer: ({data}) => <PlayerTags player={data}/>,
         sortable: false,
     },
     {
         field: "WS",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
-        cellRenderer: ({ data }) => <PlayerWinstreak player={data} />,
+        cellRenderer: ({data}) => <PlayerWinstreak player={data}/>,
     },
     {
         field: "FKDR",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
-        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"fkdr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"fkdr"}/>,
     },
     {
         field: "WLR",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
-        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"wlr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"wlr"}/>,
     },
     {
         field: "BBLR",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
-        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"bblr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"bblr"}/>,
     },
     {
         field: "wins",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
-        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"wins"} />,
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"wins"}/>,
     },
     {
         field: "losses",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
-        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"}/>,
     },
     {
         field: "final_kills",
@@ -98,19 +109,19 @@ export const columnDefs: ColDef[] = [
         hide: true,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "finalkills"),
-        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"finalKills"}/>,
     },
     {
         field: "session",
         type: "number",
         sortable: false,
-        cellRenderer: ({data}) => <PlayerSession player={data} />,
+        cellRenderer: ({data}) => <PlayerSession player={data}/>,
     },
     {
         field: "guild",
         type: "string",
         sortable: false,
-        cellRenderer: ({data}) => <PlayerGuild player={data} />,
+        cellRenderer: ({data}) => <PlayerGuild player={data}/>,
     },
 ];
 
@@ -166,6 +177,7 @@ const AppTable = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        useConfigStore.getState().setVersion();
     }, []);
 
     const onSaveGridColumnState = (e: ColumnApi) => {
@@ -182,7 +194,7 @@ const AppTable = () => {
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
             columnApi = event.columnApi;
-            columnApi.applyColumnState({ state: columnState, applyOrder: true });
+            columnApi.applyColumnState({state: columnState, applyOrder: true});
             event.api.setRowData(players);
             onGridReady = true;
             this.suppressDragLeaveHidesColumns = true;
@@ -217,8 +229,8 @@ const AppTable = () => {
     return (
         <Box height={"100vh"}>
             <div className="pl-1 pr-1 w-full h-full">
-                <div className="ag-theme-alpine-dark" style={{ height: "89vh" }}>
-                    <AgGridReact gridOptions={gridOptions} rowData={players} />
+                <div className="ag-theme-alpine-dark" style={{height: "89vh"}}>
+                    <AgGridReact gridOptions={gridOptions} rowData={players}/>
                 </div>
             </div>
         </Box>

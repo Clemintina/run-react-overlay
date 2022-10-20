@@ -20,19 +20,19 @@ export interface InputTextBox {
         resetOnBlur?: boolean;
         clear?: boolean;
         liveUpdate?: boolean;
+        label?: {
+            text?: string
+        }
     };
     icon?: JSX.Element;
     size?: "small" | "medium";
     error?: () => boolean;
     helperText?: string;
+    initialValue: string,
     sx?: SxProps;
 }
 
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
-    const { colours, opacity } = useConfigStore((state) => ({
-        colours: state.colours,
-        opacity: state.browserWindow.opacity,
-    }));
     const [getTextField, setTextField] = useState(props.options?.value ?? "");
     const [getError, setError] = useState(props?.error ?? false);
 
@@ -40,11 +40,13 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
         setTextField(props?.options?.value ?? "");
     }, [props?.options?.value]);
 
-    const standardProp = {
-        "& .MuiInput-underline:after": {
-            borderBottomColor: "cyan",
-        },
+    const standardProp: SxProps = {
         width: 1,
+        "& label": {
+            "&.Mui-focused": {
+                backgroundColor: '#242424',
+            }
+        },
         ...props?.sx,
     };
 
@@ -79,11 +81,10 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                         setTextField("");
                     }
                 }}
-                style={{
-                    backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100),
-                    color: colours.primaryColour,
-                }}
                 onFocus={(event) => {
+                    if (props.initialValue != undefined && props?.initialValue?.length != 0) {
+                        setTextField(props.initialValue)
+                    }
                     if (props.onFocus != undefined) props?.onFocus(event, getTextField);
                 }}
                 onBlur={(event) => {
@@ -98,6 +99,7 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                 size={props?.size ?? "small"}
                 sx={standardProp}
                 value={getTextField}
+                label={props?.options?.label?.text}
                 error={getError}
                 helperText={props?.helperText ?? ""}
                 onChange={(event) => {
