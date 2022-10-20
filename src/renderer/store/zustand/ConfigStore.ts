@@ -470,7 +470,7 @@ const useConfigStore = create<ConfigStore>()(
             }),
             {
                 name: "user_settings",
-                version: 3,
+                version: 5,
                 migrate: (persistedState: any, version) => {
                     if (version == 3) {
                         persistedState.settings.hypixel.guilds = false;
