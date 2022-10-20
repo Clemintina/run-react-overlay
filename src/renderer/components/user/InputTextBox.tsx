@@ -9,6 +9,7 @@ import JSX = jsx.JSX;
 
 export interface InputTextBox {
     onKeyDown?: (input, textField) => void;
+    onKeyPressed?: (input, textField) => void
     onBlur?: (onExit, textField) => void;
     onFocus?: (onFocus, textField) => void;
     onChange?: (onChange, textField) => void;
@@ -60,21 +61,6 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                         props?.onKeyDown(event, getTextField);
                         if (props?.error) {
                             setError(props.error);
-                        }
-                        if (props?.options?.liveUpdate) {
-                            let inputKey: string;
-                            if (event.altKey) {
-                                inputKey = "Alt";
-                            } else if (event.ctrlKey) {
-                                inputKey = "Ctrl";
-                            } else if (event.metaKey) {
-                                inputKey = "Meta";
-                            } else if (event.shiftKey) {
-                                inputKey = "Shift";
-                            } else {
-                                inputKey = event.key;
-                            }
-                            setTextField(getTextField + inputKey);
                         }
                     }
                     if (event.key === "Enter" && props?.options?.resetOnEnter) {

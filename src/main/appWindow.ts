@@ -169,7 +169,7 @@ export const createAppWindow = (): BrowserWindow => {
     const expressApplication = express();
     let isPortOpen = false;
 
-    if (process.platform === 'win32') {
+    if (process.platform === 'win32' && !isDevelopment) {
         expressApplication.post("/mc_chat", async (req, res) => {
             const line = req.query.msg;
             // @ts-ignore

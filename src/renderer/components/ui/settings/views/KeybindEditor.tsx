@@ -8,7 +8,8 @@ import { KeybindInterface } from "@common/utils/Schemas";
 
 const KeybindEditorView = () => {
     const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));
-    const [controlBind, setControlBind] = useState<KeybindInterface>({ keybind: "", focus: "none" });
+    const [controlBind, setControlBind] = useState<KeybindInterface>({keybind: "", focus: "none"});
+    const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
 
     // TODO make it look nicer and cleaner
     return (
@@ -19,9 +20,27 @@ const KeybindEditorView = () => {
                         <span className={" "}>Toggle visibility</span>
                         <span className={" "}>
                             <InputTextBox
-                                onKeyDown={(event) => {
-                                    const keybind = controlBind.keybind.length != 0 ? controlBind.keybind + "+" + event.key : event.key;
-                                    setControlBind({ ...controlBind, keybind, focus: "open_overlay" });
+                                onKeyPressed={(event) => {
+                                    let inputKey: string;
+                                    if (event.altKey) {
+                                        inputKey = "Alt";
+                                    } else if (event.ctrlKey) {
+                                        inputKey = "Ctrl";
+                                    } else if (event.metaKey) {
+                                        inputKey = "Meta";
+                                    } else if (event.shiftKey) {
+                                        inputKey = "Shift";
+                                    } else {
+                                        inputKey = event.key;
+                                    }
+                                    if (lastKeyPressed == inputKey) {
+                                        console.log('same key pressed! ', event.key)
+                                    } else {
+                                        setLastKeyPressed(inputKey);
+                                        const keybind = controlBind.keybind.length != 0 ? controlBind.keybind + "+" + inputKey : inputKey;
+                                        setControlBind({keybind, focus: "open_overlay"});
+                                        console.log(keybind, controlBind)
+                                    }
                                 }}
                                 onBlur={async () => {
                                     await useConfigStore.getState().addKeybind(controlBind.focus, controlBind.keybind);
@@ -29,9 +48,13 @@ const KeybindEditorView = () => {
                                 }}
                                 onFocus={() => {
                                     useConfigStore.getState().removeKeybind("open_overlay");
-                                    setControlBind({ ...controlBind, keybind: "" });
+                                    setControlBind({...controlBind, keybind: "", focus: 'open_overlay'});
                                 }}
-                                options={{ liveUpdate: true, placeholder: "Open Overlay", value: useConfigStore.getState().getKeybind("open_overlay")?.keybind }}
+                                options={{
+                                    liveUpdate: true,
+                                    placeholder: "Open Overlay",
+                                    value: useConfigStore.getState().getKeybind("open_overlay")?.keybind
+                                }}
                             />
                         </span>
                     </SettingCard>
