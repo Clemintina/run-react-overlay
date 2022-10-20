@@ -8,8 +8,8 @@ import { KeybindInterface } from "@common/utils/Schemas";
 
 const KeybindEditorView = () => {
     const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));
-    const [controlBind, setControlBind] = useState<KeybindInterface>({keybind: "", focus: "none"});
-    const [lastKeyPressed, setLastKeyPressed] = useState<string>('');
+    const [controlBind, setControlBind] = useState<KeybindInterface>({ keybind: "", focus: "none" });
+    const [lastKeyPressed, setLastKeyPressed] = useState<string>("");
 
     // TODO make it look nicer and cleaner
     return (
@@ -34,12 +34,12 @@ const KeybindEditorView = () => {
                                         inputKey = event.key;
                                     }
                                     if (lastKeyPressed == inputKey) {
-                                        console.log('same key pressed! ', event.key)
+                                        console.log("same key pressed! ", event.key);
                                     } else {
                                         setLastKeyPressed(inputKey);
                                         const keybind = controlBind.keybind.length != 0 ? controlBind.keybind + "+" + inputKey : inputKey;
-                                        setControlBind({keybind, focus: "open_overlay"});
-                                        console.log(keybind, controlBind)
+                                        setControlBind({ keybind, focus: "open_overlay" });
+                                        console.log(keybind, controlBind);
                                     }
                                 }}
                                 onBlur={async () => {
@@ -48,12 +48,12 @@ const KeybindEditorView = () => {
                                 }}
                                 onFocus={() => {
                                     useConfigStore.getState().removeKeybind("open_overlay");
-                                    setControlBind({...controlBind, keybind: "", focus: 'open_overlay'});
+                                    setControlBind({ ...controlBind, keybind: "", focus: "open_overlay" });
                                 }}
                                 options={{
                                     liveUpdate: true,
                                     placeholder: "Open Overlay",
-                                    value: useConfigStore.getState().getKeybind("open_overlay")?.keybind
+                                    value: useConfigStore.getState().getKeybind("open_overlay")?.keybind,
                                 }}
                             />
                         </span>
@@ -72,11 +72,11 @@ const KeybindEditorView = () => {
                                 }}
                                 onFocus={() => {
                                     useConfigStore.getState().removeKeybind("clear_players");
-                                    setControlBind({...controlBind, keybind: ""});
+                                    setControlBind({ ...controlBind, keybind: "" });
                                 }}
                                 options={{
                                     placeholder: "Clear Players",
-                                    value: useConfigStore.getState().getKeybind("clear_players")?.keybind
+                                    value: useConfigStore.getState().getKeybind("clear_players")?.keybind,
                                 }}
                             />
                         </span>

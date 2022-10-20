@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { hexToRgbA } from "@components/ui/settings/ColourRenderer";
 import { Box, SxProps, TextField } from "@mui/material";
 import { jsx } from "@emotion/react";
 import JSX = jsx.JSX;
 
 export interface InputTextBox {
     onKeyDown?: (input, textField) => void;
-    onKeyPressed?: (input, textField) => void
+    onKeyPressed?: (input, textField) => void;
     onBlur?: (onExit, textField) => void;
     onFocus?: (onFocus, textField) => void;
     onChange?: (onChange, textField) => void;
@@ -22,14 +20,14 @@ export interface InputTextBox {
         clear?: boolean;
         liveUpdate?: boolean;
         label?: {
-            text?: string
-        }
+            text?: string;
+        };
     };
     icon?: JSX.Element;
     size?: "small" | "medium";
     error?: () => boolean;
     helperText?: string;
-    initialValue: string,
+    initialValue: string;
     sx?: SxProps;
 }
 
@@ -45,8 +43,8 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
         width: 1,
         "& label": {
             "&.Mui-focused": {
-                backgroundColor: '#242424',
-            }
+                backgroundColor: "#242424",
+            },
         },
         ...props?.sx,
     };
@@ -69,7 +67,7 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                 }}
                 onFocus={(event) => {
                     if (props.initialValue != undefined && props?.initialValue?.length != 0) {
-                        setTextField(props.initialValue)
+                        setTextField(props.initialValue);
                     }
                     if (props.onFocus != undefined) props?.onFocus(event, getTextField);
                 }}

@@ -1,9 +1,9 @@
 import * as React from "react";
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-import MuiAppBar, {AppBarProps as MuiAppBarProps} from "@mui/material/AppBar";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
@@ -16,29 +16,28 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import {Link} from "react-router-dom";
-import {InputTextBox} from "@components/user/InputTextBox";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import { Link } from "react-router-dom";
+import { InputTextBox } from "@components/user/InputTextBox";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faUserNinja, faWindowClose, faWindowMinimize} from "@fortawesome/free-solid-svg-icons";
-import {Alert, useTheme} from "@mui/material";
-import {Home, Sell, ViewColumn} from "@mui/icons-material";
-import {MenuOption} from "@common/utils/Schemas";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckCircle, faUserNinja } from "@fortawesome/free-solid-svg-icons";
+import { Alert, useTheme } from "@mui/material";
+import { Home, Sell, ViewColumn } from "@mui/icons-material";
+import { MenuOption } from "@common/utils/Schemas";
 import BrushIcon from "@mui/icons-material/Brush";
-import {faDiscord} from "@fortawesome/free-brands-svg-icons";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
-import CloseIcon from '@mui/icons-material/Close';
-import HideSourceIcon from '@mui/icons-material/HideSource';
-import MinimizeIcon from '@mui/icons-material/Minimize';
+import CloseIcon from "@mui/icons-material/Close";
+import MinimizeIcon from "@mui/icons-material/Minimize";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
-    {menuName: "Appearance", menuLink: "/settings/appearance"},
-    {menuName: "Essentials", menuLink: "/settings/essentials"},
-    {menuName: "Tags", menuLink: "/settings/tags"},
-    {menuName: "Nicks", menuLink: "/settings/nicks"},
-    {menuName: 'Keybinds', menuLink: '/settings/keybinds'},
+    { menuName: "Appearance", menuLink: "/settings/appearance" },
+    { menuName: "Essentials", menuLink: "/settings/essentials" },
+    { menuName: "Tags", menuLink: "/settings/tags" },
+    { menuName: "Nicks", menuLink: "/settings/nicks" },
+    { menuName: "Keybinds", menuLink: "/settings/keybinds" },
     {
         menuName: "Table Editor",
         menuLink: "/settings/columneditor",
@@ -49,7 +48,7 @@ interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
 }
 
-const Main = styled("main", {shouldForwardProp: (prop) => prop !== "open"})<AppBarProps>(({theme, open}) => ({
+const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<AppBarProps>(({ theme, open }) => ({
     flexGrow: 1,
     transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
@@ -65,7 +64,7 @@ const Main = styled("main", {shouldForwardProp: (prop) => prop !== "open"})<AppB
     }),
 }));
 
-const AppBar = styled(MuiAppBar, {shouldForwardProp: (prop) => prop !== "open"})<AppBarProps>(({theme, open}) => ({
+const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== "open" })<AppBarProps>(({ theme, open }) => ({
     // Make the sidebar open correctly
     transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.sharp,
@@ -82,7 +81,7 @@ const AppBar = styled(MuiAppBar, {shouldForwardProp: (prop) => prop !== "open"})
     }),
 }));
 
-const DrawerHeader = styled("div")(({theme}) => ({
+const DrawerHeader = styled("div")(({ theme }) => ({
     // How text is displayed
     display: "flex",
     alignItems: "center",
@@ -95,23 +94,23 @@ const getIconType = (menuObject: MenuOption) => {
     const ime = menuObject.menuName.toLowerCase();
     switch (ime) {
         case "essentials":
-            return <FontAwesomeIcon icon={faCheckCircle}/>;
+            return <FontAwesomeIcon icon={faCheckCircle} />;
         case "nicks":
-            return <FontAwesomeIcon icon={faUserNinja}/>;
+            return <FontAwesomeIcon icon={faUserNinja} />;
         case "tags":
-            return <Sell/>;
+            return <Sell />;
         case "table editor":
-            return <ViewColumn/>;
-        case 'appearance':
-            return <BrushIcon/>
-        case 'keybinds':
-            return <KeyboardIcon/>
+            return <ViewColumn />;
+        case "appearance":
+            return <BrushIcon />;
+        case "keybinds":
+            return <KeyboardIcon />;
         default:
-            return <span/>;
+            return <span />;
     }
 };
 
-const NewTitlebar = ({children}) => {
+const NewTitlebar = ({ children }) => {
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -120,32 +119,31 @@ const NewTitlebar = ({children}) => {
         setOpen(false);
     };
     const theme = useTheme();
-    const {error} = useConfigStore((state) => ({error: state.error}));
+    const { error } = useConfigStore((state) => ({ error: state.error }));
     const errorMessageCode = error.code;
 
     return (
-        <Box sx={{display: "flex"}} className={"drag"}>
-            <CssBaseline/>
-            <AppBar position={"fixed"} open={open} className={"drag"} sx={{opacity: 100}}>
+        <Box sx={{ display: "flex" }} className={"drag"}>
+            <CssBaseline />
+            <AppBar position={"fixed"} open={open} className={"drag"} sx={{ opacity: 100 }}>
                 <Toolbar>
-                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge="start" className={"nodrag"}
-                                sx={{mr: 2, ...(open && {display: "none"})}}>
-                        <MenuIcon/>
+                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge='start' className={"nodrag"} sx={{ mr: 2, ...(open && { display: "none" }) }}>
+                        <MenuIcon />
                     </IconButton>
                     <Typography variant={"h6"} noWrap component={"div"} className={"text-bold"}>
                         Seraph
                     </Typography>
-                    <Typography sx={{marginLeft: "auto"}}>
+                    <Typography sx={{ marginLeft: "auto" }}>
                         <div className={"flex items-center space-x-3 p-1 nodrag"}>
                             <span className={"flex"}>
                                 <InputTextBox
-                                    options={{placeholder: "", resetOnEnter: true, label: {text: 'Usernames'}}}
+                                    options={{ placeholder: "", resetOnEnter: true, label: { text: "Usernames" } }}
                                     onKeyDown={(event, textFieldState) => {
                                         if (event.key === "Enter") {
-                                            if (textFieldState.includes(' ')) {
-                                                textFieldState.split(' ').map(async (player) => {
+                                            if (textFieldState.includes(" ")) {
+                                                textFieldState.split(" ").map(async (player) => {
                                                     usePlayerStore.getState().addPlayer(player);
-                                                })
+                                                });
                                             } else {
                                                 usePlayerStore.getState().addPlayer(textFieldState);
                                             }
@@ -160,7 +158,7 @@ const NewTitlebar = ({children}) => {
                                         window.ipcRenderer.send("windowMinimise");
                                     }}
                                 >
-                                    <MinimizeIcon/>
+                                    <MinimizeIcon />
                                 </button>
                             </div>
                             <div>
@@ -170,7 +168,7 @@ const NewTitlebar = ({children}) => {
                                         window.ipcRenderer.send("windowClose");
                                     }}
                                 >
-                                    <CloseIcon/>
+                                    <CloseIcon />
                                 </button>
                             </div>
                         </div>
@@ -196,74 +194,74 @@ const NewTitlebar = ({children}) => {
                 open={open}
             >
                 <DrawerHeader className={"nodrag"}>
-                    <IconButton onClick={handleDrawerClose}>{theme.direction === "ltr" ? <ChevronLeftIcon/> :
-                        <ChevronRightIcon/>}</IconButton>
+                    <IconButton onClick={handleDrawerClose}>{theme.direction === "ltr" ? <ChevronLeftIcon /> : <ChevronRightIcon />}</IconButton>
                 </DrawerHeader>
-                <Divider/>
+                <Divider />
                 <List className={"nodrag"}>
                     <ListItem disablePadding>
                         <Link to={"/"} onClick={() => setOpen(!open)} className={"nodrag"}>
-                            <ListItemButton sx={{width: drawerWidth}}>
+                            <ListItemButton sx={{ width: drawerWidth }}>
                                 <ListItemIcon>
-                                    <Home/>
+                                    <Home />
                                 </ListItemIcon>
-                                <ListItemText primary={"Home"}/>
+                                <ListItemText primary={"Home"} />
                             </ListItemButton>
                         </Link>
                     </ListItem>
                     {menuOptions.map((text, index) => (
                         <ListItem key={index} disablePadding>
                             <Link to={text.menuLink} onClick={() => setOpen(!open)} className={"nodrag"}>
-                                <ListItemButton sx={{width: drawerWidth}}>
+                                <ListItemButton sx={{ width: drawerWidth }}>
                                     <ListItemIcon>{getIconType(text)}</ListItemIcon>
-                                    <ListItemText primary={text.menuName}/>
+                                    <ListItemText primary={text.menuName} />
                                 </ListItemButton>
                             </Link>
                         </ListItem>
                     ))}
                 </List>
-                <Divider/>
+                <Divider />
                 <List className={"nodrag"}>
                     <ListItem disablePadding>
-                        <ListItemButton
-                            onClick={() => window.ipcRenderer.invoke("openlink", "https://seraph.si/discord")}>
-                            <ListItemIcon><FontAwesomeIcon icon={faDiscord}/></ListItemIcon>
+                        <ListItemButton onClick={() => window.ipcRenderer.invoke("openlink", "https://seraph.si/discord")}>
+                            <ListItemIcon>
+                                <FontAwesomeIcon icon={faDiscord} />
+                            </ListItemIcon>
                             <ListItemText>Discord</ListItemText>
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
                         <ListItemButton onClick={() => window.ipcRenderer.invoke("openlink", "https://seraph.si")}>
-                            <ListItemText className={'text-center'} primary={useConfigStore.getState().version}/>
+                            <ListItemText className={"text-center"} primary={useConfigStore.getState().version} />
                         </ListItemButton>
                     </ListItem>
                 </List>
             </Drawer>
             <Main open={open}>
-                <DrawerHeader/>
+                <DrawerHeader />
                 {errorMessageCode === 200 ? (
-                    <Alert color={"success"} sx={{opacity: 100}}>
-                        <Typography sx={{opacity: 100}}>
+                    <Alert color={"success"} sx={{ opacity: 100 }}>
+                        <Typography sx={{ opacity: 100 }}>
                             <span className={"font-medium"}>
                                 Code: <span className={"errorMessage"}> {error.code}</span>
                             </span>
                             <span className={"p-1"}>
-                            Cause: <span className={"errorMessage"}> {error.cause}</span>
+                                Cause: <span className={"errorMessage"}> {error.cause}</span>
                             </span>
                         </Typography>
                     </Alert>
                 ) : errorMessageCode === 400 ? (
-                    <Alert color={"error"} sx={{opacity: 100}}>
-                        <Typography sx={{opacity: 100}}>
+                    <Alert color={"error"} sx={{ opacity: 100 }}>
+                        <Typography sx={{ opacity: 100 }}>
                             <span className={"font-medium"}>
                                 Code: <span className={"errorMessage"}> {error.code}</span>
                             </span>
                             <span className={"p-1"}>
-                            Cause: <span className={"errorMessage"}> {error.cause}</span>
+                                Cause: <span className={"errorMessage"}> {error.cause}</span>
                             </span>
                         </Typography>
                     </Alert>
                 ) : (
-                    <span/>
+                    <span />
                 )}
                 <div className={"nodrag"}>
                     <Box height={"100vh"} display={"flex"} flexDirection={"column"}>
