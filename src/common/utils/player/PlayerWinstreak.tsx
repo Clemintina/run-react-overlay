@@ -11,7 +11,7 @@ export interface PlayerWinstreak {
 
 const PlayerWinstreak: React.ElementType = (props: PlayerWinstreak) => {
     const player = props.player;
-    const {table, settings} = useConfigStore((state)=>({table:state.table,settings:state.settings}))
+    const { table, settings } = useConfigStore((state) => ({ table: state.table, settings: state.settings }));
 
     let renderer: JSX.Element;
     if (!player.nicked) {
@@ -31,7 +31,7 @@ const PlayerWinstreak: React.ElementType = (props: PlayerWinstreak) => {
         renderer = getPlayerTagDividerNicked();
     }
 
-    return <div style={{textAlign: table.settings.textAlign}}>{renderer}</div>;
+    return <div style={{ textAlign: table.settings.textAlign }}>{renderer}</div>;
 };
 
 export default PlayerWinstreak;

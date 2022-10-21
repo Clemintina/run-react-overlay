@@ -14,7 +14,7 @@ const RenderRatioColour: React.ElementType = (props: RenderRatioColour) => {
     const player = props.player;
     let renderer: JSX.Element;
     let playerValue;
-    const {table} = useConfigStore((state)=>({table:state.table}))
+    const { table } = useConfigStore((state) => ({ table: state.table }));
 
     if (!player.nicked) {
         switch (props.ratio) {
@@ -44,7 +44,7 @@ const RenderRatioColour: React.ElementType = (props: RenderRatioColour) => {
         renderer = getPlayerTagDividerNicked();
     }
 
-    return <span style={{ textAlign: table.settings.textAlign, display: props?.isTooltip?'' : 'block'  }}>{renderer}</span>;
+    return <span style={{ textAlign: table.settings.textAlign, display: props?.isTooltip ? "" : "block" }}>{renderer}</span>;
 };
 
 export default RenderRatioColour;

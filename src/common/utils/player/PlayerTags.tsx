@@ -93,7 +93,7 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
 const RenderKeathizTags = (props: PlayerTags) => {
     const keathizTagArray: Array<JSX.Element> = [];
     const player = props.player;
-    if (player.sources.keathiz == null) {
+    if (player.sources.keathiz == null && player.loaded) {
         keathizTagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>ERROR</span>);
     } else {
         if (player?.sources?.keathiz?.status == 200 && player?.sources?.keathiz?.data) {

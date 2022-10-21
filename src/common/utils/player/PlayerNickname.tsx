@@ -38,7 +38,7 @@ const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; ha
                             useConfigStore.getState().setNicks([...users, playerNickname]);
                         }
                     }}
-                    options={{ placeholder: "Username", value: playerNickname.name }}
+                    options={{ placeholder: "Username", value: playerNickname.name, label: { text: "Username" } }}
                 />
             </span>
             <span className={" "}>
@@ -51,7 +51,7 @@ const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; ha
                             useConfigStore.getState().setNicks([...users, playerNickname]);
                         }
                     }}
-                    options={{ placeholder: "Nickname", value: playerNickname.nick }}
+                    options={{ placeholder: "Nickname", value: playerNickname.nick, label: { text: "Nickname" } }}
                 />
             </span>
             <span className={""}>

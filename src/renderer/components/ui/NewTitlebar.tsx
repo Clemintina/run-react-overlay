@@ -142,24 +142,25 @@ const NewTitlebar = ({ children }) => {
                                 />
                             </span>
                             <div>
-                                <button
+                                <IconButton
                                     className={"hover:text-cyan-500"}
                                     onClick={() => {
                                         window.ipcRenderer.send("windowMinimise");
                                     }}
                                 >
                                     <MinimizeIcon />
-                                </button>
+                                </IconButton>
                             </div>
                             <div>
-                                <button
+                                <IconButton
                                     className={"hover:text-cyan-500"}
                                     onClick={() => {
                                         window.ipcRenderer.send("windowClose");
                                     }}
+                                    sx={{color: 'red'}}
                                 >
                                     <CloseIcon />
-                                </button>
+                                </IconButton>
                             </div>
                         </div>
                     </Typography>

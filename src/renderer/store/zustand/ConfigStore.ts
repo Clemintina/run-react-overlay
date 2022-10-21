@@ -65,7 +65,7 @@ const useConfigStore = create<ConfigStore>()(
                     apiKeyOwner: "",
                 },
                 setHypixelApiKey: async (hypixelApiKey) => {
-                    if (hypixelApiKey.length === 0) {
+                    if (hypixelApiKey.length === 0 || get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase()) {
                         const oldHypixel = get().hypixel;
                         if (oldHypixel.apiKeyValid) return;
                         set(() => ({
@@ -408,9 +408,9 @@ const useConfigStore = create<ConfigStore>()(
                             flex: 1,
                         },
                     ),
-                    settings:{
-                        textAlign: 'center'
-                    }
+                    settings: {
+                        textAlign: "center",
+                    },
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);
@@ -470,20 +470,21 @@ const useConfigStore = create<ConfigStore>()(
             }),
             {
                 name: "user_settings",
-                version: 3,
+                version: 5,
                 migrate: (persistedState: any, version) => {
+                    const updatedState = persistedState;
                     if (version == 3) {
-                        persistedState.settings.hypixel.guilds = false;
-                        persistedState.settings.run.friends = false;
-                        persistedState.settings.updater = true;
-                        persistedState.font.family = "Nunito";
-                        persistedState.settings.error.code = 201;
+                        updatedState.settings.hypixel.guilds = false;
+                        updatedState.settings.run.friends = false;
+                        updatedState.settings.updater = true;
+                        updatedState.font.family = "Nunito";
+                        updatedState.settings.error.code = 201;
                     } else if (version == 4) {
-                        persistedState.keybinds = [];
-                        persistedState.settings.appearance.displayRank = true;
-                        persistedState.table.settings.textAlign = "left";
+                        updatedState.keybinds = [];
+                        updatedState.settings.appearance.displayRank = true;
+                        updatedState.table.settings.textAlign = "left";
                     }
-                    return persistedState;
+                    return updatedState;
                 },
             },
         ),

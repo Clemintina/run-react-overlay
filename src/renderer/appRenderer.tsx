@@ -4,7 +4,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import App from "@renderer/views/App";
 import { LogFileReader } from "@common/utils/LogFileReader";
 import "@assets/index.css";
-import {alpha, Box, createTheme, hexToRgb, ThemeOptions, ThemeProvider} from "@mui/material";
+import { alpha, Box, createTheme, hexToRgb, ThemeOptions, ThemeProvider } from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
 import TagEditor from "@components/ui/settings/views/TagEditor";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
@@ -14,8 +14,7 @@ import NewTitlebar from "@components/ui/NewTitlebar";
 import ColumnEditorView from "@components/ui/settings/views/ColumnEditor";
 import Appearance from "@components/ui/settings/views/Appearance";
 import KeybindEditorView from "@components/ui/settings/views/KeybindEditor";
-import {KeybindHandlerUtils} from "@common/utils/KeybindHandler";
-import {rgb} from "polished";
+import { KeybindHandlerUtils } from "@common/utils/KeybindHandler";
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
@@ -57,6 +56,13 @@ const themeArgs: ThemeOptions = {
                 },
             },
         },
+        MuiInputLabel:{
+            styleOverrides:{
+                root:{
+                    backgroundColor: alpha('#242424',1),
+                }
+            }
+        }
     }
 }
 

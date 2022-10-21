@@ -201,7 +201,7 @@ const AppTable = () => {
         onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
             event.api.redrawRows();
         },
-        animateRows: true,
+        animateRows: false,
         autoSizePadding: 0,
         rowData: players,
         rowHeight: 25,

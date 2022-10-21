@@ -8,6 +8,7 @@ import { Components } from "@common/zikeji";
 import { RequestType } from "@common/utils/externalapis/RunApi";
 import { InputBoxButton } from "@components/user/InputBoxButton";
 import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { SxProps } from "@mui/material";
 
 const NickView = () => {
     const { nicks, hypixelApiKey } = useConfigStore((state) => ({
@@ -16,6 +17,9 @@ const NickView = () => {
     }));
     const [playerNickname, setPlayerNickname] = useState({ name: "", nick: "", added: 0, uuid: "" });
     const [clearText, setClearText] = useState(false);
+    const styledProps: SxProps = {
+        width: 0.86,
+    };
 
     useEffect(() => {
         if (clearText) {
@@ -77,10 +81,16 @@ const NickView = () => {
                                             useConfigStore.getState().setNicks([...users, playerNickname]);
                                         }
                                     }}
-                                    onFocus={(event) => {
+                                    onFocus={() => {
                                         setPlayerNickname({ ...playerNickname, name: "" });
                                     }}
-                                    options={{ placeholder: "Username", value: playerNickname.name, clear: clearText }}
+                                    options={{
+                                        placeholder: "Username",
+                                        value: playerNickname.name,
+                                        clear: clearText,
+                                        label: { text: "Username" },
+                                        colour: "info",
+                                    }}
                                 />
                             </span>
                             <span className={" "}>
@@ -93,13 +103,19 @@ const NickView = () => {
                                             useConfigStore.getState().setNicks([...users, playerNickname]);
                                         }
                                     }}
-                                    options={{ placeholder: "Nickname", value: playerNickname.nick, clear: clearText }}
+                                    options={{
+                                        placeholder: "Nickname",
+                                        value: playerNickname.nick,
+                                        clear: clearText,
+                                        colour: "info",
+                                        label: { text: "Nickname" },
+                                    }}
                                 />
                             </span>
                             <span className={""}>
                                 <InputBoxButton
                                     text={"Add"}
-                                    onClick={(event) => {
+                                    onClick={() => {
                                         addPlayer(playerNickname);
                                     }}
                                 />
@@ -108,9 +124,8 @@ const NickView = () => {
                     </div>
                     <div>
                         {nicks.map((playerNick) => (
-                            <div key={playerNick.nick}>
-                                <PlayerNicknameView key={playerNick.nick} playerNick={playerNick} handleAdd={addPlayer}
-                                                    handleRemove={removePlayer} />
+                            <div key={playerNick.nick} className={"pt-2"}>
+                                <PlayerNicknameView key={playerNick.nick} playerNick={playerNick} handleAdd={addPlayer} handleRemove={removePlayer} />
                             </div>
                         ))}
                     </div>

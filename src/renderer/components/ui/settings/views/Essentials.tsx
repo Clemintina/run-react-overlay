@@ -44,9 +44,10 @@ const Essentials = () => {
                             options={{
                                 placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key",
                                 label: { text: "Hypixel API Key" },
+                                colour: hypixel.apiKeyValid ? "success" : "error",
+                                focused: true,
                             }}
                             sx={styledProps}
-                            error={() => !hypixel.apiKeyValid}
                             helperText={!hypixel.apiKeyValid ? "Enter a valid Hypixel API Key" : ""}
                             initialValue={hypixel.apiKey}
                         />
@@ -68,9 +69,10 @@ const Essentials = () => {
                             options={{
                                 placeholder: run.valid ? run.apiKey : "Seraph API Key",
                                 label: { text: "Seraph API Key" },
+                                colour: run.valid ? "success" : "error",
+                                focused: true,
                             }}
                             sx={styledProps}
-                            error={() => !run.valid}
                             helperText={!run.valid ? "Enter a valid Seraph API Key" : ""}
                             initialValue={run.apiKey}
                         />
@@ -92,9 +94,10 @@ const Essentials = () => {
                             options={{
                                 placeholder: keathiz.valid ? keathiz.key : "Antisniper API Key",
                                 label: { text: "Antisniper API Key" },
+                                colour: keathiz.valid ? "success" : "error",
+                                focused: true,
                             }}
                             sx={styledProps}
-                            error={() => !keathiz.valid}
                             helperText={!keathiz.valid ? "Enter a valid Antisniper API Key" : ""}
                             initialValue={keathiz.key}
                         />

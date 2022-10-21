@@ -22,6 +22,8 @@ export interface InputTextBox {
         label?: {
             text?: string;
         };
+        colour?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
+        focused?: boolean;
     };
     icon?: JSX.Element;
     size?: "small" | "medium";
@@ -34,11 +36,7 @@ export interface InputTextBox {
 export const InputTextBox: React.ElementType = (props: InputTextBox) => {
     const [getTextField, setTextField] = useState(props.options?.value ?? "");
     const [getError, setError] = useState(props?.error ?? false);
-
-    useEffect(() => {
-        setTextField(props?.options?.value ?? "");
-    }, [props?.options?.value]);
-
+    const [isFocused, setFocus] = useState(props?.options?.focused ?? false);
     const standardProp: SxProps = {
         width: 1,
         "& label": {
@@ -48,6 +46,11 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
         },
         ...props?.sx,
     };
+    let colour = props?.options?.colour ?? "primary";
+
+    useEffect(() => {
+        setTextField(props?.options?.value ?? "");
+    }, [props?.options?.value]);
 
     return (
         <Box className='w-full'>
@@ -69,10 +72,16 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                     if (props.initialValue != undefined && props?.initialValue?.length != 0) {
                         setTextField(props.initialValue);
                     }
+                    if (props?.options?.focused == undefined){
+                        setFocus(true)
+                    }
                     if (props.onFocus != undefined) props?.onFocus(event, getTextField);
                 }}
                 onBlur={(event) => {
                     if (props.onBlur != undefined) props?.onBlur(event, getTextField);
+                    if (props?.options?.focused == undefined){
+                        setFocus(false)
+                    }
                     if (props?.options?.resetOnBlur) {
                         setTextField("");
                     }
@@ -85,11 +94,13 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                 value={getTextField}
                 label={props?.options?.label?.text}
                 error={getError}
+                color={colour}
                 helperText={props?.helperText ?? ""}
                 onChange={(event) => {
                     setTextField(event.target.value);
                     if (props.onChange != undefined) props?.onChange(event, getTextField);
                 }}
+                focused={props?.options?.focused ?? isFocused}
             />
         </Box>
     );
