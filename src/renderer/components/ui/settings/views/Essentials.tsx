@@ -1,7 +1,6 @@
 import React from "react";
 import { SettingCard } from "@components/user/settings/components/SettingCard";
 import { InputTextBox } from "@components/user/InputTextBox";
-import { ValidationIcon } from "@components/user/settings/components/ValidationIcon";
 import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
 import { SettingHeader } from "@components/user/settings/components/SettingHeader";
 import { ToggleButton } from "@components/user/ToggleButton";
@@ -108,7 +107,6 @@ const Essentials = () => {
                     <span />
                     <span>
                         <span className={"inline-flex flex"}>
-                            {<ValidationIcon valid={logs.readable} />}
                             <LogSelectorModal />
                         </span>
                     </span>
@@ -128,7 +126,7 @@ const Essentials = () => {
                         }}
                         options={{ enabled: settings.boomza }}
                     >
-                        <span>
+                        <span className={"pl-2"}>
                             <Tooltip title='This API is proxied to protect your IP.'>
                                 <FontAwesomeIcon icon={faMapLocation} />
                             </Tooltip>
@@ -175,7 +173,7 @@ const Essentials = () => {
                             }}
                             options={{ enabled: settings.keathiz }}
                         >
-                            <span>
+                            <span className={"pl-2"}>
                                 <Tooltip title='This API is proxied to protect your IP.'>
                                     <FontAwesomeIcon icon={faMapLocation} />
                                 </Tooltip>

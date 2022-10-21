@@ -55,7 +55,7 @@ const ColumnEditorView = () => {
     return (
         <div>
             <NavigationBar>
-                <Box>
+                <Box className={"pl-2"}>
                     <div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
                         <AgGridReact rowData={playerData} gridOptions={gridOptions} />
                     </div>

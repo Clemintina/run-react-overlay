@@ -1,42 +1,24 @@
-import {
-    app,
-    BrowserWindow,
-    dialog,
-    globalShortcut,
-    ipcMain,
-    IpcMainInvokeEvent,
-    Notification,
-    NotificationConstructorOptions,
-    shell
-} from "electron";
-import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell } from "electron";
+import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
 import path from "path";
-import axios, {AxiosRequestConfig} from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import fs from "fs";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import {
-    getDefaultElectronStore,
-    getDefaultElectronStoreObject,
-    Join,
-    PathsToStringProps,
-    RUNElectronStore,
-    RUNElectronStoreTagsType,
-    RUNElectronStoreType
-} from "@renderer/store/ElectronStoreUtils";
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {HypixelApi} from "./HypixelApi";
+import { getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
+import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { HypixelApi } from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
-import {ProxyStore, ProxyType} from "@common/utils/Schemas";
+import { BoomzaAntisniper, KeathizEndpoints } from "@common/utils/externalapis/BoomzaApi";
+import { ProxyStore, ProxyType } from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
-import {handleIPCSend} from "@main/Utils";
+import { handleIPCSend } from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
-import {LogFileMessage} from "@common/utils/LogFileReader";
-import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
+import { LogFileMessage } from "@common/utils/LogFileReader";
+import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
@@ -51,8 +33,8 @@ const registeredGlobalKeybinds = new Set<string>();
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
-const playerCache = cacheManager.caching({ttl: 60 * 5, store: "memory"});
-const mojangCache = cacheManager.caching({ttl: 60000, store: "memory"});
+const playerCache = cacheManager.caching({ ttl: 60 * 5, store: "memory" });
+const mojangCache = cacheManager.caching({ ttl: 60000, store: "memory" });
 /**
  * Checks if the app is running in Production or Development
  */
@@ -164,37 +146,40 @@ export const createAppWindow = (): BrowserWindow => {
         }
     }
 
-    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, {userAgent: "SeraphOverlay"});
+    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, { userAgent: "SeraphOverlay" });
 
     const expressApplication = express();
     let isPortOpen = false;
 
-    if (process.platform === 'win32' && !isDevelopment) {
+    if (process.platform === "win32" && !isDevelopment) {
         expressApplication.post("/mc_chat", async (req, res) => {
             const line = req.query.msg;
             // @ts-ignore
             const newLine = line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "");
-            appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({
-                data: {message: newLine},
-                status: 200
-            }));
-            res.status(200).send({success: true, code: 200});
+            console.log(newLine);
+            appWindow?.webContents.send(
+                "logFileLine",
+                handleIPCSend<LogFileMessage>({
+                    data: { message: newLine },
+                    status: 200,
+                }),
+            );
+            res.status(200).send({ success: true, code: 200 });
         });
         const portfinder = require("portfinder");
         portfinder.setBasePort(5000);
         portfinder.setHighestPort(5000);
         portfinder
-            .getPortPromise({port: 5000, host: "localhost"})
+            .getPortPromise({ port: 5000, host: "localhost" })
             .then(() => {
                 isPortOpen = true;
             })
-            .catch(() => {
-            });
+            .catch(() => {});
     }
 
     appWindow.on("ready-to-show", () => {
         appWindow.show();
-        if (isPortOpen && process.platform === 'win32') {
+        if (isPortOpen && process.platform === "win32") {
             expressApplication.listen(5000, () => {
                 console.log("Express started");
             });
@@ -252,7 +237,7 @@ const registerSeraphIPC = () => {
                     } else if (key.startsWith("key")) {
                         ttl = 30;
                     }
-                    return playerCache.set(`hypixel:${key}`, value, {ttl});
+                    return playerCache.set(`hypixel:${key}`, value, { ttl });
                 },
             },
             userAgent: "Run-Bedwars-React-Overlay-" + overlayVersion,
@@ -329,9 +314,9 @@ const registerSeraphIPC = () => {
         }
         try {
             const response = await axiosClient(url);
-            return {data: response.data, status: response.status};
+            return { data: response.data, status: response.status };
         } catch (e) {
-            return {data: null, status: 400};
+            return { data: null, status: 400 };
         }
     });
 
@@ -347,7 +332,7 @@ const registerSeraphIPC = () => {
                     "run-api-uuid": overlayUuid,
                 },
             });
-            return {data: response.data, status: response.status};
+            return { data: response.data, status: response.status };
         } else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, {
                 headers: {
@@ -356,7 +341,7 @@ const registerSeraphIPC = () => {
                     "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
                 },
             });
-            return {data: response.data.data, status: response.status};
+            return { data: response.data.data, status: response.status };
         } else if (endpoint == RunEndpoints.DENICKER) {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}/${uuid}`, {
                 headers: {
@@ -365,7 +350,7 @@ const registerSeraphIPC = () => {
                     "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
                 },
             });
-            return {data: response.data, status: response.status};
+            return { data: response.data, status: response.status };
         } else {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
                 headers: {
@@ -379,13 +364,13 @@ const registerSeraphIPC = () => {
                     "RUN-API-UUID": overlayUuid,
                 },
             });
-            return {data: response.data, status: response.status};
+            return { data: response.data, status: response.status };
         }
     });
 
     ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, uuid: string) => {
         const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`);
-        return {status: response.status, data: response.data};
+        return { status: response.status, data: response.data };
     });
 
     ipcMain.on("ContactStaff", async (event, ...args) => {
@@ -433,7 +418,7 @@ const registerElectronStore = () => {
     });
 
     ipcMain.handle("getWholeStore", async () => {
-        return {data: {tags: electronStoreTags.store, config: electronStore.store}, status: 200};
+        return { data: { tags: electronStoreTags.store, config: electronStore.store }, status: 200 };
     });
 };
 
@@ -454,7 +439,7 @@ const registerLogCommunications = () => {
     ipcMain.handle("selectLogFile", async () => {
         return await dialog.showOpenDialog(appWindow, {
             defaultPath: app.getPath("appData"),
-            filters: [{name: "Logs", extensions: ["log"]}],
+            filters: [{ name: "Logs", extensions: ["log"] }],
             properties: ["openFile"],
         });
     });
@@ -480,17 +465,23 @@ const registerLogCommunications = () => {
 
             logFileReadline.on("line", async (line) => {
                 if (line.includes("[Client thread/INFO]: [CHAT]") || line.includes("[main/INFO]: [CHAT] ")) {
-                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({
-                        data: {message: line},
-                        status: 200
-                    }));
+                    appWindow?.webContents.send(
+                        "logFileLine",
+                        handleIPCSend<LogFileMessage>({
+                            data: { message: line },
+                            status: 200,
+                        }),
+                    );
                 } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
                     const newLine = line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
                     console.log(newLine);
-                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({
-                        data: {message: newLine},
-                        status: 200
-                    }));
+                    appWindow?.webContents.send(
+                        "logFileLine",
+                        handleIPCSend<LogFileMessage>({
+                            data: { message: newLine },
+                            status: 200,
+                        }),
+                    );
                 } else {
                     return;
                 }
@@ -514,7 +505,7 @@ const registerLogCommunications = () => {
                 appPath = null;
                 break;
         }
-        return {data: appPath, status: 200};
+        return { data: appPath, status: 200 };
     });
 };
 
@@ -551,7 +542,7 @@ const registerMainWindowCommunications = () => {
     });
 
     ipcMain.handle("getAppInfo", async () => {
-        return {version: overlayVersion};
+        return { version: overlayVersion };
     });
 };
 
@@ -570,11 +561,11 @@ const registerExternalApis = () => {
         const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
         let json: BoomzaAntisniper;
         try {
-            json = {sniper: json_response.sniper, report: json_response.report, error: false, username: username};
+            json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
         } catch (e) {
-            json = {sniper: false, report: 0, error: true, username: username};
+            json = { sniper: false, report: 0, error: true, username: username };
         }
-        return {data: json, status: response.status};
+        return { data: json, status: response.status };
     });
 
     ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string, apikey: string) => {
@@ -591,7 +582,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        return {data: response.data, status: response.status};
+        return { data: response.data, status: response.status };
     });
 
     ipcMain.handle("observer", async (event: IpcMainInvokeEvent, uuid: string) => {
@@ -601,7 +592,7 @@ const registerExternalApis = () => {
                 Accept: "application/json",
             },
         });
-        return {data: response.data, status: response.status};
+        return { data: response.data, status: response.status };
     });
 
     ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, uuid: string) => {
@@ -610,7 +601,7 @@ const registerExternalApis = () => {
                 Accept: "application/json",
             },
         });
-        return {data: response.data, status: response.status};
+        return { data: response.data, status: response.status };
     });
 };
 
@@ -635,7 +626,7 @@ const registerOverlayFeatures = () => {
 
     ipcMain.handle("isAdmin", async (event: IpcMainInvokeEvent, ...args) => {
         let isAdmin = false;
-        return {data: isAdmin, status: 200};
+        return { data: isAdmin, status: 200 };
     });
 
     ipcMain.handle("autoLog", async (event: IpcMainInvokeEvent, ...args) => {
@@ -714,7 +705,7 @@ const getProxyChannel = () => {
             port: "80",
             username: "twtmuzmg-rotate",
             password: "8nhzubu4xg33",
-            type: ProxyType.HTTP
+            type: ProxyType.HTTP,
         };
     }
     return tunnel.httpsOverHttp({
@@ -730,7 +721,7 @@ const getErrorHandler = (e) => {
     if (e instanceof RateLimitError) return e.getJson();
     else if (e instanceof InvalidKeyError) return e.getJson();
     else if (e instanceof GenericHTTPError) return e.getJson();
-    else return {data: undefined, status: 400};
+    else return { data: undefined, status: 400 };
 };
 
 const registeredGlobalKeybindsForApp = () => {
@@ -740,8 +731,7 @@ const registeredGlobalKeybindsForApp = () => {
             registeredGlobalKeybinds.delete(shortcut);
         }
 
-
-        for (const {keybind} of keybinds) {
+        for (const { keybind } of keybinds) {
             try {
                 globalShortcut.register(keybind, () => appWindow?.webContents.send("globalShortcutPressed", keybind));
                 registeredGlobalKeybinds.add(keybind);

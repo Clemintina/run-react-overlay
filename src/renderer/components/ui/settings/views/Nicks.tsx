@@ -3,29 +3,41 @@ import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerNicknameView from "@common/utils/player/PlayerNickname";
 import { PlayerNickname } from "@common/utils/Schemas";
-import { InputTextBox } from "@components/user/InputTextBox";
 import { Components } from "@common/zikeji";
 import { RequestType } from "@common/utils/externalapis/RunApi";
 import { InputBoxButton } from "@components/user/InputBoxButton";
 import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { SxProps } from "@mui/material";
+import { Autocomplete, Box, TextField } from "@mui/material";
+import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import { Player } from "@common/utils/PlayerUtils";
 
 const NickView = () => {
     const { nicks, hypixelApiKey } = useConfigStore((state) => ({
         nicks: state.nicks,
         hypixelApiKey: state.hypixel.apiKey,
     }));
+    const { players } = usePlayerStore((state) => ({ players: state.players }));
     const [playerNickname, setPlayerNickname] = useState({ name: "", nick: "", added: 0, uuid: "" });
     const [clearText, setClearText] = useState(false);
-    const styledProps: SxProps = {
-        width: 0.86,
-    };
+    const [usernameInput, setUsernameInput] = useState("");
+    const [nickInput, setNickInput] = useState("");
 
     useEffect(() => {
         if (clearText) {
             setClearText(false);
         }
     }, [clearText]);
+
+    const playerArray: Array<string> = [];
+    const nickArray: Array<string> = [];
+
+    players.map((p: Player) => {
+        if (!p.nicked) {
+            playerArray.push(p?.hypixelPlayer?.displayname ?? p.name);
+        } else {
+            nickArray.push(p.name);
+        }
+    });
 
     const addPlayer = (nickname: PlayerNickname) => {
         const pNick = nickname;
@@ -55,6 +67,12 @@ const NickView = () => {
 
     const clearPlayer = () => {
         setPlayerNickname({ ...playerNickname, name: "", nick: "", added: 0, uuid: "" });
+        setNickInput("");
+        setUsernameInput("");
+    };
+
+    const commonSx = {
+        minHeight: 20,
     };
 
     // TODO make it look nicer and cleaner
@@ -64,8 +82,8 @@ const NickView = () => {
                 <div className='h-full w-full p-2 text-center'>
                     <div>
                         <SettingCard className={"border-2 border-cyan-500"}>
-                            <span className={" "}>
-                                <InputTextBox
+                            <Box>
+                                {/* <InputTextBox
                                     onBlur={async (event) => {
                                         const userInput = event.currentTarget.value;
                                         if (userInput.length == 0) return;
@@ -91,35 +109,84 @@ const NickView = () => {
                                         label: { text: "Username" },
                                         colour: "info",
                                     }}
+                                />*/}
+                                <Autocomplete
+                                    freeSolo
+                                    disablePortal
+                                    options={[...playerArray]}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label={"Username"}
+                                            variant={"outlined"}
+                                            onBlur={async (event) => {
+                                                const userInput = event.currentTarget.value;
+                                                if (userInput.length == 0) return;
+                                                const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, userInput, hypixelApiKey);
+                                                setPlayerNickname({
+                                                    ...playerNickname,
+                                                    uuid: hypixelRequest?.data?.uuid ?? userInput,
+                                                    name: hypixelRequest?.data?.displayname ?? userInput,
+                                                });
+                                                const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
+                                                if (user) {
+                                                    const users = nicks.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
+                                                    useConfigStore.getState().setNicks([...users, playerNickname]);
+                                                }
+                                            }}
+                                            onFocus={() => {
+                                                setPlayerNickname({ ...playerNickname, name: "" });
+                                            }}
+                                            onChange={(event) => {
+                                                setUsernameInput(event.target.value);
+                                            }}
+                                            value={usernameInput}
+                                        />
+                                    )}
                                 />
-                            </span>
-                            <span className={" "}>
-                                <InputTextBox
-                                    onBlur={(event) => {
-                                        setPlayerNickname({ ...playerNickname, nick: event.currentTarget.value });
-                                        const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
-                                        if (user) {
-                                            const users = nicks.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
-                                            useConfigStore.getState().setNicks([...users, playerNickname]);
-                                        }
-                                    }}
-                                    options={{
-                                        placeholder: "Nickname",
-                                        value: playerNickname.nick,
-                                        clear: clearText,
-                                        colour: "info",
-                                        label: { text: "Nickname" },
-                                    }}
+                            </Box>
+                            <Box className={" "}>
+                                <Autocomplete
+                                    freeSolo
+                                    disablePortal
+                                    options={[...nickArray]}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label={"Nickname"}
+                                            variant={"outlined"}
+                                            onBlur={(event) => {
+                                                setPlayerNickname({ ...playerNickname, nick: event.currentTarget.value });
+                                                const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
+                                                if (user) {
+                                                    const users = nicks.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
+                                                    useConfigStore.getState().setNicks([...users, playerNickname]);
+                                                }
+                                            }}
+                                            onChange={(event) => {
+                                                setNickInput(event.target.value);
+                                            }}
+                                            value={nickInput}
+                                        />
+                                    )}
                                 />
-                            </span>
-                            <span className={""}>
+                            </Box>
+                            <div className={""}>
                                 <InputBoxButton
                                     text={"Add"}
+                                    sx={{
+                                        width: "50%",
+                                        height: "100%",
+                                    }}
                                     onClick={() => {
                                         addPlayer(playerNickname);
+                                        clearPlayer();
+                                    }}
+                                    options={{
+                                        colour: "success",
                                     }}
                                 />
-                            </span>
+                            </div>
                         </SettingCard>
                     </div>
                     <div>

@@ -15,10 +15,6 @@ const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; ha
     const users = nicksLocal.filter((player) => player.nick.toLowerCase() == props.playerNick.nick.toLowerCase());
     const [playerNickname, setPlayerNickname] = useState(users[0]);
 
-    const clearPlayer = () => {
-        setPlayerNickname({ name: "", nick: "", added: 0, uuid: "" });
-    };
-
     return (
         <SettingCard className={"border-2 border-cyan-500"}>
             <span className={" "}>
@@ -60,6 +56,7 @@ const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; ha
                     onClick={(event) => {
                         props.handleRemove(playerNickname);
                     }}
+                    options={{ colour: "error" }}
                 />
             </span>
         </SettingCard>

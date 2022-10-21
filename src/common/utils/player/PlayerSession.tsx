@@ -34,7 +34,7 @@ const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
                 const timeDiff = new Date(now_timezoned.getTime() - lastLoginDate.getTime());
                 if ((timeDiff.getUTCHours() >= 3 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 4) {
                     values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "00ff00"]);
-                } else if ((timeDiff.getUTCHours() >= 1 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 2) {
+                } else if ((timeDiff.getUTCHours() >= 0 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 2) {
                     values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ffff00"]);
                 } else {
                     values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ff0000"]);
@@ -47,9 +47,9 @@ const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
 
     return (
         <div style={{textAlign: table.settings.textAlign}}>
-            {values.map((value, index) => (
-                <span key={index} color={`#${value[1]}`}>
-                    {value[0]}
+            {values.map(([session_timer,hex], index) => (
+                <span key={index} style={{color: `#${hex}`}}>
+                    {session_timer}
                 </span>
             ))}
         </div>
