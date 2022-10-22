@@ -72,7 +72,7 @@ const RenderCoreStatsColour: React.ElementType = (props: RenderCoreStatsColour) 
     } else {
         renderer = getPlayerTagDividerNicked();
     }
-    return <span style={{ textAlign: table.settings.textAlign, display: props?.isTooltip?'' : 'block'  }}>{renderer}</span>;
+    return <span style={{ textAlign: table.settings.textAlign, display: props?.isTooltip ? "" : "block" }}>{renderer}</span>;
 };
 
 export default RenderCoreStatsColour;

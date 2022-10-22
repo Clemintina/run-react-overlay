@@ -13,8 +13,7 @@ export const UserAccordion = (props: UserAccordion) => {
     return (
         <div>
             <Accordion>
-                <AccordionSummary sx={{ backgroundColor: "transparent" }} expandIcon={<ExpandMoreIcon />}
-                                  aria-controls={`${props.name}-content`} id={`${props.name}-header`}>
+                <AccordionSummary sx={{ backgroundColor: "transparent" }} expandIcon={<ExpandMoreIcon />} aria-controls={`${props.name}-content`} id={`${props.name}-header`}>
                     <Typography className={"text-gray-400"}>{props.name}</Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ backgroundColor: "transparent" }}>{props.children}</AccordionDetails>

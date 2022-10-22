@@ -46,9 +46,9 @@ const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
     }
 
     return (
-        <div style={{textAlign: table.settings.textAlign}}>
-            {values.map(([session_timer,hex], index) => (
-                <span key={index} style={{color: `#${hex}`}}>
+        <div style={{ textAlign: table.settings.textAlign }}>
+            {values.map(([session_timer, hex], index) => (
+                <span key={index} style={{ color: `#${hex}` }}>
                     {session_timer}
                 </span>
             ))}

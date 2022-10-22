@@ -72,15 +72,15 @@ export const InputTextBox: React.ElementType = (props: InputTextBox) => {
                     if (props.initialValue != undefined && props?.initialValue?.length != 0) {
                         setTextField(props.initialValue);
                     }
-                    if (props?.options?.focused == undefined){
-                        setFocus(true)
+                    if (props?.options?.focused == undefined) {
+                        setFocus(true);
                     }
                     if (props.onFocus != undefined) props?.onFocus(event, getTextField);
                 }}
                 onBlur={(event) => {
                     if (props.onBlur != undefined) props?.onBlur(event, getTextField);
-                    if (props?.options?.focused == undefined){
-                        setFocus(false)
+                    if (props?.options?.focused == undefined) {
+                        setFocus(false);
                     }
                     if (props?.options?.resetOnBlur) {
                         setTextField("");

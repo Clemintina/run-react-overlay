@@ -36,16 +36,16 @@ reader.startPartyListener();
 reader.startLilithListener();
 
 const keys = new KeybindHandlerUtils();
-keys.startHandlingApp()
+keys.startHandlingApp();
 
 const baseTheme = createTheme({
     palette: {
         mode: "dark",
         primary: {
-            main: hexToRgb('#02e6ee')
-        }
+            main: hexToRgb("#02e6ee"),
+        },
     },
-})
+});
 
 const themeArgs: ThemeOptions = {
     components: {
@@ -56,15 +56,15 @@ const themeArgs: ThemeOptions = {
                 },
             },
         },
-        MuiInputLabel:{
-            styleOverrides:{
-                root:{
-                    backgroundColor: alpha('#242424',1),
-                }
-            }
-        }
-    }
-}
+        MuiInputLabel: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: alpha("#242424", 1),
+                },
+            },
+        },
+    },
+};
 
 const darkTheme = createTheme(baseTheme, themeArgs);
 

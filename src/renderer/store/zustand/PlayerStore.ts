@@ -264,12 +264,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     setStore: (store) => set(store),
     party: {
         partyStore: Array<string>(),
-        addPartyMember: () => {
-
-        },
-        removePartyMember: () => {
-
-        },
+        addPartyMember: () => {},
+        removePartyMember: () => {},
     },
     tagStore: {
         config: {},
@@ -459,12 +455,16 @@ const getHypixelFriends = async (player: Player) => {
             status: 400,
         };
     }
-    return new Promise<IPCResponse<{
-        _id: string;
-        uuidSender: string;
-        uuidReceiver: string;
-        started: number;
-    }[]>>((resolve) => resolve(api));
+    return new Promise<
+        IPCResponse<
+            {
+                _id: string;
+                uuidSender: string;
+                uuidReceiver: string;
+                started: number;
+            }[]
+        >
+    >((resolve) => resolve(api));
 };
 
 const getGuildData = async (player: Player) => {

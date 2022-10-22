@@ -7,7 +7,7 @@
  * For the original full copyright and license information, please view the LICENSE-HYPIXEL-PHP.md that was distributed with this source code.
  */
 
-import {Components} from "../types/api";
+import { Components } from "../types/api";
 
 /**
  * Describes the results from a {@link getNetworkLevel} function call.

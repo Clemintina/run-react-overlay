@@ -42,7 +42,7 @@
 			"tag": "Q3-1"
 		}
 	],
-	"custom_bots": [],
+	"custom_bots": [ ],
 	"custom_tag_rules": [
 		{
 			"color": {

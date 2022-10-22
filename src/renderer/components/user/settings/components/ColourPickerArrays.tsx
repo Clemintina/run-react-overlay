@@ -4,7 +4,6 @@ import { InputBoxButton } from "@components/user/InputBoxButton";
 import { HexColorPicker } from "react-colorful";
 import { TagArray } from "@common/utils/Schemas";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import useTagStore from "@renderer/store/zustand/TagStore";
 
 export interface ColourPickerArray {
     children: React.ReactElement | React.ReactElement[];
@@ -16,7 +15,7 @@ export interface ColourPickerArray {
 export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) => {
     // @ts-ignore
     let originalColourArray = props.colourObject?.colour != undefined ? "colour" : "colours";
-    const {colours} = useConfigStore((state) => ({colours: state.colours}));
+    const { colours } = useConfigStore((state) => ({ colours: state.colours }));
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -92,8 +91,8 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
 
     return (
         <div>
-            <InputBoxButton onClick={handleOpen} text={props?.text ?? "Pick!"}/>
-            <Modal open={open} onClose={handleClose} style={{color: colours.primaryColour}}>
+            <InputBoxButton onClick={handleOpen} text={props?.text ?? "Pick!"} />
+            <Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
                 <Box sx={style}>
                     <FormControl>
                         <FormLabel id={"colour-array"}>Select which item you'd like to edit</FormLabel>
@@ -102,7 +101,7 @@ export const ColourPickerArray: React.ElementType = (props: ColourPickerArray) =
                         </RadioGroup>
                     </FormControl>
                     <div className={"grid place-items-center"}>
-                        <HexColorPicker onChange={handleChange} color={`#${customColour}`}/>
+                        <HexColorPicker onChange={handleChange} color={`#${customColour}`} />
                     </div>
                 </Box>
             </Modal>

@@ -1,4 +1,4 @@
-import {BaseClient} from "./BaseClient";
+import { BaseClient } from "./BaseClient";
 
 /** @internal */
 export abstract class Method {

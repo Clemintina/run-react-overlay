@@ -7,7 +7,7 @@
  * For the original full copyright and license information, please view the LICENSE-HYPIXEL-PHP.md that was distributed with this source code.
  */
 
-import {MinecraftColourAsHex, MinecraftFormatting} from "./MinecraftFormatting";
+import { MinecraftColourAsHex, MinecraftFormatting } from "./MinecraftFormatting";
 
 /**
  * Describes the properties of a Prestige object returned by {@link getSkyWarsPrestigeForLevel}.

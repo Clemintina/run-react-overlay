@@ -24,7 +24,7 @@ export const InputBoxButton: React.ElementType = (props: InputBoxButton) => {
     return (
         <span className=' w-full h-full'>
             <Button
-                variant={props?.options?.variant ?? 'outlined'}
+                variant={props?.options?.variant ?? "outlined"}
                 sx={props?.sx}
                 onClick={props.onClick}
                 style={{

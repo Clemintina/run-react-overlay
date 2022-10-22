@@ -1,6 +1,6 @@
-const rules = require('./webpack.rules');
-const plugins = require('./webpack.plugins');
-const resolver = require('./webpack.resolve.helper');
+const rules = require("./webpack.rules");
+const plugins = require("./webpack.plugins");
+const resolver = require("./webpack.resolve.helper");
 
 module.exports = {
     module: {
@@ -8,5 +8,5 @@ module.exports = {
     },
     plugins: plugins,
     resolve: resolver.resolve,
-    stats: 'minimal',
+    stats: "minimal",
 };

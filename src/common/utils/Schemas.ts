@@ -104,8 +104,8 @@ export interface SettingsConfig {
     };
     preferences: { autoHide: boolean };
     appearance: {
-        displayRank: boolean
-    }
+        displayRank: boolean;
+    };
 }
 
 export interface ClientSetting {

@@ -6,6 +6,14 @@
 @tailwind components;
 @tailwind utilities;
 
-.ag-header-cell-label-center { justify-content: center }
-.ag-header-cell-label-left { justify-content: left }
-.ag-header-cell-label-right { justify-content: right }
+.ag-header-cell-label-center {
+    justify-content: center
+}
+
+.ag-header-cell-label-left {
+    justify-content: left
+}
+
+.ag-header-cell-label-right {
+    justify-content: right
+}

@@ -27,28 +27,28 @@ export default (props: ICustomHeader) => {
     }, []);
 
     let sort: JSX.Element | null = null;
-    if (props.enableSorting && noSort=='inactive') {
-        if (ascSort == 'inactive'){
+    if (props.enableSorting && noSort == "inactive") {
+        if (ascSort == "inactive") {
             sort = (
                 <span onClick={(event) => onSortRequested("desc", event)} onTouchEnd={(event) => onSortRequested("desc", event)} className={`customSortUpLabel ${descSort}`}>
-                    <ArrowDropUpIcon/>
+                    <ArrowDropUpIcon />
                 </span>
-            )
-        }else if (descSort == 'inactive'){
+            );
+        } else if (descSort == "inactive") {
             sort = (
                 <span onClick={(event) => onSortRequested("asc", event)} onTouchEnd={(event) => onSortRequested("asc", event)} className={`customSortDownLabel ${ascSort}`}>
-                    <ArrowDropDownIcon/>
+                    <ArrowDropDownIcon />
                 </span>
-            )
+            );
         }
     }
 
     return (
-       <div style={{textAlign: useConfigStore.getState().table.settings.textAlign}}>
-           <div onClick={(event) => onSortRequested(ascSort == 'active' ? 'desc' : 'asc', event)}>
-               <span>{props.displayName}</span>
-               {sort}
-           </div>
-       </div>
+        <div style={{ textAlign: useConfigStore.getState().table.settings.textAlign }}>
+            <div onClick={(event) => onSortRequested(ascSort == "active" ? "desc" : "asc", event)}>
+                <span>{props.displayName}</span>
+                {sort}
+            </div>
+        </div>
     );
 };

@@ -1,4 +1,4 @@
-# Overlay contributors 
+# Overlay contributors
 
 - **Kay**
 - **Arman**
@@ -9,7 +9,7 @@
 
 - [RUN / Seraph](https://antisniper.seraph.si/api/) - **Kay**
 - [Lunar](https://api.seraph.si/lunar) - **Kay** & **Hunter**
-<br>
+  <br>
 
 <h3>External APIs</h3>
 

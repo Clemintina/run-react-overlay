@@ -64,11 +64,8 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                                 <MenuItem value={"Bug"}>Bug</MenuItem>
                                 <MenuItem value={"Suggestion"}>Suggestion</MenuItem>
                             </Select>
-                            <FormHelperText
-                                className={"text-red-500 font-bold"}>{"The type of report you'd like to submit!"}</FormHelperText>
-                            <FeedbackForm
-                                options={{ text: feedbackType, formHelper: "Please write as descriptively as possible" }}
-                                onChange={(event) => setFeedbackTypeMessage(event.target.value)} />
+                            <FormHelperText className={"text-red-500 font-bold"}>{"The type of report you'd like to submit!"}</FormHelperText>
+                            <FeedbackForm options={{ text: feedbackType, formHelper: "Please write as descriptively as possible" }} onChange={(event) => setFeedbackTypeMessage(event.target.value)} />
                         </FormControl>
                         <span>
                             <InputBoxButton
@@ -91,7 +88,7 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                                 }}
                                 text={"Submit"}
                             />
-                            <span style={feedbackResponse ? {} : {display: "none"}} className="pl-2 text-green-500">
+                            <span style={feedbackResponse ? {} : { display: "none" }} className='pl-2 text-green-500'>
                                 ✓
                             </span>
                         </span>

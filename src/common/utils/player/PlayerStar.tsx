@@ -12,8 +12,8 @@ export interface PlayerStar {
 
 const PlayerStar: React.ElementType = (props: PlayerStar) => {
     const player = props.player;
-    const {table} = useConfigStore((state)=>({table: state.table}))
-    const {run} = useTagStore((state) => ({run: state.run}));
+    const { table } = useConfigStore((state) => ({ table: state.table }));
+    const { run } = useTagStore((state) => ({ run: state.run }));
 
     let starRenderer: JSX.Element;
     if (!player.nicked && player.hypixelPlayer !== null) {
@@ -28,10 +28,10 @@ const PlayerStar: React.ElementType = (props: PlayerStar) => {
             starRenderer = <span style={{ color: `#${run.blacklist.colour}` }}>{bwLevel.level ?? 0}</span>;
         }
     } else {
-        starRenderer = <span style={{color: `#${run.blacklist.colour}`}}>?</span>;
+        starRenderer = <span style={{ color: `#${run.blacklist.colour}` }}>?</span>;
     }
 
-    return <div style={{textAlign: table.settings.textAlign}}>{starRenderer}</div>;
+    return <div style={{ textAlign: table.settings.textAlign }}>{starRenderer}</div>;
 };
 
 export default PlayerStar;

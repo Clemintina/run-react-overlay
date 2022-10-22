@@ -15,7 +15,7 @@ export interface LogSelectorModal {
 let label = "Select Log File";
 
 export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => {
-    const { logs, colours, error } = useConfigStore((state) => ({ logs: state.logs, colours:state.colours,error: state.error }));
+    const { logs, colours, error } = useConfigStore((state) => ({ logs: state.logs, colours: state.colours, error: state.error }));
     if (logs.clientName !== null && logs.clientName !== undefined) label = logs.clientName;
     const [open, setOpen] = React.useState<boolean>(false);
     const handleOpen = () => setOpen(true);
@@ -85,18 +85,21 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
 
     return (
         <div>
-            <InputBoxButton onClick={handleOpen} text={label} options={{colour: logs.readable ? 'success': 'error'}} />
-            <Modal className={'rounded'} open={open} onClose={handleClose}
-                   style={{ color: colours.primaryColour }}
-                   sx={{
-                       borderRadius: '25px'
-                   }}
+            <InputBoxButton onClick={handleOpen} text={label} options={{ colour: logs.readable ? "success" : "error" }} />
+            <Modal
+                className={"rounded"}
+                open={open}
+                onClose={handleClose}
+                style={{ color: colours.primaryColour }}
+                sx={{
+                    borderRadius: "25px",
+                }}
             >
                 <Fade in={open}>
                     <Box sx={style}>
                         <Typography sx={{ mt: 0 }}>Please select the client you use</Typography>
                         <Typography sx={{ mt: 2 }}>
-                            <FormControl fullWidth color={logs.readable ? 'success' : 'error'}>
+                            <FormControl fullWidth color={logs.readable ? "success" : "error"}>
                                 <InputLabel>Client</InputLabel>
                                 <Select value={clientLocal} label='Client' onChange={handleChange}>
                                     <MenuItem value={"vanilla"}>Vanilla / Forge</MenuItem>
@@ -136,10 +139,9 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                         }
                                     }
                                 }}
-                                options={{colour: logs.readable ? 'success': 'error'}}
+                                options={{ colour: logs.readable ? "success" : "error" }}
                                 text={"Select Log File"}
                             />
-
                         </Typography>
                     </Box>
                 </Fade>

@@ -209,7 +209,7 @@ export declare namespace Components {
              * Most of the properties in the schema always show up, however in some instances they were absent. Additional unlisted properties can be assumed to be numbers.
              *
              */
-                GuildExpByGameType;
+            GuildExpByGameType;
             hideGmTag?: boolean;
             joinable?: boolean;
             legacyRanking?: number;
@@ -741,7 +741,7 @@ export declare namespace Components {
              * In addition to the all_time property, other properties may appear that have properties that start with "day_" but have the same schema as all_time.
              *
              */
-                PlayerChallenges;
+            PlayerChallenges;
             quests?: /* An object which has properties which match quests described by the /resources/quests endpoint. */ PlayerQuests;
             aprilFoolsStaffClicked_0?: string[];
             anniversaryNPCProgress2020?: number;
@@ -763,94 +763,94 @@ export declare namespace Components {
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             adventRewards2018?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             adventRewards_v2_2018?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             adventRewards2019?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             adventRewards_v2_2019?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             christmas2019Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             summer2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             easter2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             easter2020Cooldowns2?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             halloween2016Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             halloween2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             holiday2016Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             specialtyCooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             upcomingLanguageRelease_Korean?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-                PlayerUpcomingLanguageRelease;
+            PlayerUpcomingLanguageRelease;
             upcomingLanguageRelease_Portuguese?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-                PlayerUpcomingLanguageRelease;
+            PlayerUpcomingLanguageRelease;
             upcomingLanguageRelease_Russian?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-                PlayerUpcomingLanguageRelease;
+            PlayerUpcomingLanguageRelease;
             plotResets?: PlayerPlotResets;
             achievementPoints: number;
             achievementRewardsNew?: /* Object property keys are in the format "for_points_NUMBER". */ PlayerAchievementRewardsNew;
@@ -1021,14 +1021,14 @@ export declare namespace Components {
              * For example, a key might be "ARCADE__farm_hunt_challenge"
              *
              */
-                PlayerChallengesObject;
+            PlayerChallengesObject;
 
             all_time: /**
              * Each property key correlates with an ID from the /resources/challenges endpoint.
              * For example, a key might be "ARCADE__farm_hunt_challenge"
              *
              */
-                PlayerChallengesObject;
+            PlayerChallengesObject;
         }
 
         /**
@@ -1266,94 +1266,94 @@ export declare namespace Components {
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             adventRewards2018?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             adventRewards_v2_2018?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             adventRewards2019?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             adventRewards_v2_2019?: /**
              * An object where each property is the day of the reward and the value is the timestamp it was claimed. Property keys look like "dayNUMBER" e.g. day1.
              * The property keys on the player object generally follow the format "adventRewardsYEAR" or "adventrewards_v2_YEAR".
              *
              */
-                PlayerAdventRewards;
+            PlayerAdventRewards;
             christmas2019Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             summer2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             easter2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             easter2020Cooldowns2?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             halloween2016Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             halloween2020Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             holiday2016Cooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             specialtyCooldowns?: /**
              * Event cooldown information where the property keys are a rank + number and the values are booleans. e.g. "NORMAL0" = "TRUE".
              * The property keys on the player object generally follow the format "eventCooldowns" e.g. "halloween2020Cooldowns".
              *
              */
-                PlayerEventCooldown;
+            PlayerEventCooldown;
             upcomingLanguageRelease_Korean?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-                PlayerUpcomingLanguageRelease;
+            PlayerUpcomingLanguageRelease;
             upcomingLanguageRelease_Portuguese?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-                PlayerUpcomingLanguageRelease;
+            PlayerUpcomingLanguageRelease;
             upcomingLanguageRelease_Russian?: /**
              * An object describing what I assume to be testers who've logged in with a specific language.
              *
              */
-                PlayerUpcomingLanguageRelease;
+            PlayerUpcomingLanguageRelease;
             plotResets?: PlayerPlotResets;
         }
 
@@ -1468,8 +1468,8 @@ export declare namespace Components {
                 | string
                 | number
                 | {
-                [name: string]: string;
-            };
+                      [name: string]: string;
+                  };
 
             compass?: {
                 [name: string]: string;
@@ -1611,7 +1611,7 @@ export declare namespace Components {
              * Housing stats, generally limited to layout items - either the layout_items property will exist or there may be a property in the format of "layout_items_UUID".
              *
              */
-                PlayerStatsHousing;
+            PlayerStatsHousing;
         }
 
         /**
@@ -2006,7 +2006,7 @@ export declare namespace Components {
              * In addition to the all_time property, other properties may appear that have properties that start with "day_" but have the same schema as all_time.
              *
              */
-                PlayerChallenges;
+            PlayerChallenges;
             quests?: /* An object which has properties which match quests described by the /resources/quests endpoint. */ PlayerQuests;
         }
 
@@ -2020,8 +2020,8 @@ export declare namespace Components {
                 | string
                 | boolean
                 | {
-                [name: string]: number;
-            }
+                      [name: string]: number;
+                  }
                 | PlayerTourneyGameData;
 
             first_join_lobby?: number;
@@ -3609,8 +3609,8 @@ export declare namespace Components {
                 | undefined
                 | number
                 | {
-                [name: string]: undefined | boolean;
-            };
+                      [name: string]: undefined | boolean;
+                  };
 
             boss_kills_tier_0?: number;
             boss_kills_tier_1?: number;
@@ -4809,17 +4809,17 @@ export declare namespace Paths {
                  * example:
                  * 553490650cf26f12ae5bac8f
                  */
-                    Parameters.Id;
+                Parameters.Id;
                 player?: /**
                  * example:
                  * 20934ef9488c465180a78f861586b4cf
                  */
-                    Parameters.Player;
+                Parameters.Player;
                 name?: /**
                  * example:
                  * Mini Squid
                  */
-                    Parameters.Name;
+                Parameters.Name;
             }
 
             namespace Responses {
@@ -6258,17 +6258,17 @@ export declare namespace Paths {
                  * example:
                  * 347ef6c1daac45ed9d1fa02818cf0fb6
                  */
-                    Parameters.Player;
+                Parameters.Player;
                 profile?: /**
                  * example:
                  * 347ef6c1daac45ed9d1fa02818cf0fb6
                  */
-                    Parameters.Profile;
+                Parameters.Profile;
                 uuid?: /**
                  * example:
                  * 409a1e0f261a49849493278d6cd9305a
                  */
-                    Parameters.Uuid;
+                Parameters.Uuid;
             }
 
             namespace Responses {
@@ -6294,7 +6294,7 @@ export declare namespace Paths {
                  * example:
                  * 1
                  */
-                    Parameters.Page;
+                Parameters.Page;
             }
 
             namespace Responses {
@@ -6341,7 +6341,7 @@ export declare namespace Paths {
                  * example:
                  * 20934ef9488c465180a78f861586b4cf
                  */
-                    Parameters.Profile;
+                Parameters.Profile;
             }
 
             namespace Responses {

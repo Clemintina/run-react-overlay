@@ -821,7 +821,8 @@ const constantPlayerData = () => {
                         BEDWARS: 122197351,
                         PROTOTYPE: 26301541,
                     },
-                }, status: 200,
+                },
+                status: 200,
             },
             hypixelPlayer: {
                 _id: "5f1d33d2273efab4375d5b63",

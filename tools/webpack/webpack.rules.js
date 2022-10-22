@@ -7,7 +7,7 @@ module.exports = [
     {
         // Webpack asset relocator loader
         test: /\.(m?js|node)$/,
-        parser: {amd: false},
+        parser: { amd: false },
         use: {
             loader: "@marshallofsound/webpack-asset-relocator-loader",
             options: {
@@ -29,21 +29,21 @@ module.exports = [
     {
         // CSS Loader
         test: /\.css$/,
-        use: [{loader: "style-loader"}, {loader: "css-loader"}],
+        use: [{ loader: "style-loader" }, { loader: "css-loader" }],
     },
     {
         // SCSS (SASS) Loader
         test: /\.s[ac]ss$/i,
-        use: [{loader: "style-loader"}, {loader: "css-loader"}, {loader: "sass-loader"}],
+        use: [{ loader: "style-loader" }, { loader: "css-loader" }, { loader: "sass-loader" }],
     },
     {
         // Less loader
         test: /\.less$/,
-        use: [{loader: "style-loader"}, {loader: "css-loader"}, {loader: "less-loader"}],
+        use: [{ loader: "style-loader" }, { loader: "css-loader" }, { loader: "less-loader" }],
     },
     {
         test: /\.s?css$/,
-        use: [{loader: "postcss-loader"}],
+        use: [{ loader: "postcss-loader" }],
     },
     {
         // Assets loader

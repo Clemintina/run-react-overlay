@@ -77,6 +77,7 @@ export const columnDefsBase: ColDef[] = [
     {
         field: "KDR",
         type: "number",
+        hide: true,
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "KDR"),
         cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"kdr"} />,
     },
@@ -116,6 +117,7 @@ export const columnDefsBase: ColDef[] = [
         field: "guild",
         type: "string",
         sortable: false,
+        hide: true,
         cellRenderer: ({ data }) => <PlayerGuild player={data} />,
     },
 ];
@@ -172,7 +174,7 @@ const AppTable = () => {
         useConfigStore.getState().setVersion();
     }, []);
 
-    const defaultColDef ={...defaultColDefBase}
+    const defaultColDef = { ...defaultColDefBase };
 
     const columnDefs = [...columnDefsBase];
 
@@ -220,20 +222,14 @@ const AppTable = () => {
     };
 
     const frameworkComponents = {
-        agColumnHeader: CustomHeader
+        agColumnHeader: CustomHeader,
     };
 
     return (
         <Box height={"100vh"}>
             <div className='pl-1 pr-1 w-full h-full'>
                 <div className='ag-theme-alpine-dark' style={{ height: "89vh" }}>
-                    <AgGridReact
-                        gridOptions={gridOptions}
-                        rowData={players}
-                        defaultColDef={defaultColDef}
-                        columnDefs={columnDefs}
-                        components={frameworkComponents}
-                    />
+                    <AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={frameworkComponents} />
                 </div>
             </div>
         </Box>

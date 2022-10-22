@@ -16,7 +16,7 @@ export const request = async <T extends Components.Schemas.ApiSuccess & { cause?
             Accept: "application/json",
         },
         timeout: options.timeout,
-        timeoutErrorMessage: JSON.stringify({status: 408, data: {success: false}}),
+        timeoutErrorMessage: JSON.stringify({ status: 408, data: { success: false } }),
         validateStatus: () => true,
     });
     const axiosResponse = await axiosClient.get(options.url);

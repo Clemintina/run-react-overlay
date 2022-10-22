@@ -25,11 +25,11 @@ const parseColour = (text: string) => {
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
     const { run, boomzaTag } = useTagStore((state) => ({ run: state.run, boomzaTag: state.boomza }));
-    const { settings, hypixel, runConfig,table } = useConfigStore((state) => ({
+    const { settings, hypixel, runConfig, table } = useConfigStore((state) => ({
         settings: state.settings,
         hypixel: state.hypixel,
         runConfig: state.run,
-        table: state.table
+        table: state.table,
     }));
 
     const tagArray: Array<JSX.Element> = [];
@@ -82,7 +82,7 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
     }
 
     return (
-        <div style={{textAlign: table.settings.textAlign}}>
+        <div style={{ textAlign: table.settings.textAlign }}>
             {tagArray.map((value, index) => (
                 <span key={index}>{value}</span>
             ))}
