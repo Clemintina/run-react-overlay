@@ -470,16 +470,16 @@ const useConfigStore = create<ConfigStore>()(
             }),
             {
                 name: "user_settings",
-                version: 5,
+                version: 6,
                 migrate: (persistedState: any, version) => {
                     const updatedState = persistedState;
-                    if (version == 3) {
+                    if (version == 4) {
                         updatedState.settings.hypixel.guilds = false;
                         updatedState.settings.run.friends = false;
                         updatedState.settings.updater = true;
                         updatedState.font.family = "Nunito";
                         updatedState.settings.error.code = 201;
-                    } else if (version == 4) {
+                    } else if (version == 5) {
                         updatedState.keybinds = [];
                         updatedState.settings.appearance.displayRank = true;
                         updatedState.table.settings.textAlign = "left";

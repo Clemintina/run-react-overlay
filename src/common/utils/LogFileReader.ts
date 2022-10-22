@@ -110,7 +110,6 @@ export class LogFileReader {
     };
 
     public startPartyListener = async () => {
-        // TODO Add party handling
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             let line = readLogLine(data);
             if (line != null) {
@@ -209,7 +208,6 @@ const clearOverlayTable = async () => {
 const readLogLine = (data: string) => {
     const response: IPCResponse<LogFileMessage> = destr(data);
     if (typeof response === "object") {
-        console.log(response.data.message);
         if (!response.data.message.includes("[CHAT]")) {
             return `[17:46:23] [Client thread/INFO]: [CHAT] ${response.data.message}`.replaceAll("%20", " ");
         }

@@ -26,7 +26,7 @@ const Essentials = () => {
     // TODO make it look nicer and cleaner
     return (
         <NavigationBar>
-            <Box className={"pl-2"}>
+            <Box className={"pl-2 pt-2"}>
                 <SettingCard>
                     <span>Hypixel API Key</span>
                     <span />

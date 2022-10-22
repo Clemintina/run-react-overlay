@@ -156,7 +156,6 @@ export const createAppWindow = (): BrowserWindow => {
             const line = req.query.msg;
             // @ts-ignore
             const newLine = line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "");
-            console.log(newLine);
             appWindow?.webContents.send(
                 "logFileLine",
                 handleIPCSend<LogFileMessage>({
