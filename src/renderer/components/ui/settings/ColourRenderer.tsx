@@ -1,6 +1,7 @@
 import React from "react";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import { createTheme, ThemeProvider, useTheme } from "@mui/material";
+import GoogleFontLoader from "react-google-font-loader";
 
 const ColourRenderer = (props: { children: JSX.Element }) => {
     const { colours, opacity, font } = useConfigStore((state) => ({
@@ -12,13 +13,16 @@ const ColourRenderer = (props: { children: JSX.Element }) => {
     const theme = createTheme({
         ...useExistingTheme,
         typography: {
-            fontFamily: `"${font.family}", sans-serif`,
+            fontFamily: `"${font.family}"`,
         },
     });
 
     return (
-        <div style={{ fontFamily: font.family, backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
-            <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+        <div style={{ backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
+            <ThemeProvider theme={theme}>
+                <GoogleFontLoader fonts={[{ font: font.family, weights: [400] }]} />
+                {props.children}
+            </ThemeProvider>
         </div>
     );
 };

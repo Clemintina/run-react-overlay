@@ -4,7 +4,6 @@ import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import { Autocomplete, Box, FormControl, InputLabel, Select, SelectChangeEvent, Slider, SxProps, TextField } from "@mui/material";
 import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
-import GoogleFontLoader from "react-google-font-loader";
 import MenuItem from "@mui/material/MenuItem";
 
 const Appearance = () => {
@@ -86,11 +85,11 @@ const Appearance = () => {
                                         if (event.currentTarget.value.length != 0 && font.availableFonts.includes(event.currentTarget.value)) useConfigStore.getState().setFont({ ...font, family: event.currentTarget.value });
                                     }}
                                     sx={styledProps}
+                                    placeholder={font.family}
                                     helperText={"Font you want to use."}
                                 />
                             )}
                         />
-                        <GoogleFontLoader fonts={[{ font: font.family, weights: [400] }]} />
                     </SettingCard>
                     <SettingCard>
                         <span>Show Rank</span>
