@@ -46,7 +46,6 @@ export class LogFileReader {
                 if (useConfigStore.getState().settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
                 players.map(async (player) => {
                     if (player.match("\[x\d]") || player.match("\(x\d)")) return;
-                    if (player.includes("(")) return;
                     addPlayer(player);
                 });
             } else if (line.includes("Online Players (")) {
