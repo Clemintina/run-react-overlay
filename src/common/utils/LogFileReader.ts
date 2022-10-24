@@ -45,15 +45,17 @@ export class LogFileReader {
                 clearOverlayTable();
                 if (useConfigStore.getState().settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
                 players.map(async (player) => {
-                if (player.includes("(")) return;
-                addPlayer(player)});
+                    if (player.match("\[x\d]") || player.match("\(x\d)")) return;
+                    if (player.includes("(")) return;
+                    addPlayer(player);
+                });
             } else if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
                 players.shift();
                 const playerNames = players[0].split(", ");
                 clearOverlayTable();
                 playerNames.map(async (name) => {
-                    if (name.includes(" ")) name = (name.split(" ")[name.split(" ").length - 1]).trim();
+                    if (name.includes(" ")) name = name.split(" ")[name.split(" ").length - 1].trim();
                     addPlayer(name);
                 });
             }
