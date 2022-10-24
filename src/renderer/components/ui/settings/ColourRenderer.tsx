@@ -17,7 +17,7 @@ const ColourRenderer = (props: { children: JSX.Element }) => {
     });
 
     return (
-        <div style={{ backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
+        <div style={{ fontFamily: font.family, backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
             <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
         </div>
     );

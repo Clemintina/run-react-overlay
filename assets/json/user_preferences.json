@@ -1,27 +1,26 @@
 {
 	"state": {
 		"hypixel": {
-			"apiKey": "713f75ec-0eba-495c-8696-7d61fe4ec6c0",
+			"apiKey": "312a2a47-a6f3-401f-bcfe-f32563442ec7",
 			"apiKeyValid": true,
-			"apiKeyOwner": "8589389e-8b6b-46c2-8808-4eb71ec3479e"
+			"apiKeyOwner": "6e466222-1b80-4458-b210-cb15d20141ca"
 		},
 		"colours": {
 			"backgroundColour": "#242424",
 			"primaryColour": "#808080",
 			"secondaryColour": "#00FFFF"
 		},
-		"version": "1.5.63-STABLE",
+		"version": "1.5.67-STABLE",
 		"logs": {
 			"clientName": "lunar_mlv",
 			"readable": true,
-			"logPath": "C:/Users/kk/.lunarclient/offline/multiver/logs/latest.log"
+			"logPath": "/Users/kk/.lunarclient/offline/multiver/logs/latest.log"
 		},
 		"error": {
-			"code": 403,
-			"title": "Locked RUN Key",
-			"cause": "The RUN Key provided is currently locked, Please contact support.",
-			"detail": "This key has been locked for security reasons, please contact support.",
-			"referenceId": "RUN_KEY_LOCK"
+			"code": 201,
+			"title": "",
+			"cause": "",
+			"detail": ""
 		},
 		"keathiz": {
 			"key": "",
@@ -29,7 +28,7 @@
 			"showNick": true
 		},
 		"run": {
-			"apiKey": "0fdf1fba-e51e-46ef-b4d6-5524679df21d",
+			"apiKey": "public",
 			"valid": true
 		},
 		"browserWindow": {
@@ -41,8 +40,8 @@
 			"columnState": [
 				{
 					"colId": "head",
-					"width": 46,
-					"hide": true,
+					"width": 30,
+					"hide": false,
 					"pinned": null,
 					"sort": null,
 					"sortIndex": null,
@@ -55,7 +54,7 @@
 				},
 				{
 					"colId": "star",
-					"width": 56,
+					"width": 45,
 					"hide": false,
 					"pinned": null,
 					"sort": null,
@@ -65,11 +64,39 @@
 					"rowGroupIndex": null,
 					"pivot": false,
 					"pivotIndex": null,
-					"flex": null
+					"flex": 1
 				},
 				{
 					"colId": "name",
-					"width": 182,
+					"width": 150,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "tags",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "WS",
+					"width": 45,
 					"hide": false,
 					"pinned": null,
 					"sort": "desc",
@@ -79,39 +106,11 @@
 					"rowGroupIndex": null,
 					"pivot": false,
 					"pivotIndex": null,
-					"flex": null
-				},
-				{
-					"colId": "tags",
-					"width": 120,
-					"hide": false,
-					"pinned": null,
-					"sort": null,
-					"sortIndex": null,
-					"aggFunc": null,
-					"rowGroup": false,
-					"rowGroupIndex": null,
-					"pivot": false,
-					"pivotIndex": null,
-					"flex": null
-				},
-				{
-					"colId": "WS",
-					"width": 53,
-					"hide": false,
-					"pinned": null,
-					"sort": null,
-					"sortIndex": null,
-					"aggFunc": null,
-					"rowGroup": false,
-					"rowGroupIndex": null,
-					"pivot": false,
-					"pivotIndex": null,
-					"flex": null
+					"flex": 1
 				},
 				{
 					"colId": "FKDR",
-					"width": 51,
+					"width": 45,
 					"hide": false,
 					"pinned": null,
 					"sort": null,
@@ -125,7 +124,7 @@
 				},
 				{
 					"colId": "WLR",
-					"width": 51,
+					"width": 45,
 					"hide": false,
 					"pinned": null,
 					"sort": null,
@@ -139,7 +138,7 @@
 				},
 				{
 					"colId": "BBLR",
-					"width": 51,
+					"width": 45,
 					"hide": false,
 					"pinned": null,
 					"sort": null,
@@ -153,7 +152,7 @@
 				},
 				{
 					"colId": "wins",
-					"width": 51,
+					"width": 45,
 					"hide": false,
 					"pinned": null,
 					"sort": null,
@@ -167,7 +166,7 @@
 				},
 				{
 					"colId": "losses",
-					"width": 51,
+					"width": 45,
 					"hide": false,
 					"pinned": null,
 					"sort": null,
@@ -181,8 +180,22 @@
 				},
 				{
 					"colId": "session",
-					"width": 51,
+					"width": 45,
 					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "KDR",
+					"width": 200,
+					"hide": true,
 					"pinned": null,
 					"sort": null,
 					"sortIndex": null,
@@ -221,9 +234,26 @@
 					"pivotIndex": null,
 					"flex": 1
 				}
-			]
+			],
+			"settings": {
+				"textAlign": "center"
+			}
 		},
 		"settings": {
+			"lunar": true,
+			"keathiz": false,
+			"updater": true,
+			"astolfo": false,
+			"boomza": true,
+			"hypixel": {
+				"guilds": false
+			},
+			"run": {
+				"friends": false
+			},
+			"preferences": {
+				"autoHide": true
+			},
 			"appearance": {
 				"displayRank": true
 			}
@@ -234,5 +264,5 @@
 		},
 		"nicks": [ ]
 	},
-	"version": 5
+	"version": 6
 }

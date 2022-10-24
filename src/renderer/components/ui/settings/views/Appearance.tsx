@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { InputTextBox } from "@components/user/InputTextBox";
 import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import { Box, FormControl, InputLabel, Select, SelectChangeEvent, Slider, SxProps } from "@mui/material";
+import { Autocomplete, Box, FormControl, InputLabel, Select, SelectChangeEvent, Slider, SxProps, TextField } from "@mui/material";
 import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
 import GoogleFontLoader from "react-google-font-loader";
 import MenuItem from "@mui/material/MenuItem";
@@ -16,7 +15,7 @@ const Appearance = () => {
         width: 0.86,
     };
 
-    const [textAlignment, setTextAlignment] = React.useState(table.settings.textAlign);
+    const [textAlignment, setTextAlignment] = useState(table.settings.textAlign);
 
     const handleChange = (event: SelectChangeEvent) => {
         if (event.target.value == "left" || event.target.value == "right" || event.target.value == "center") {
@@ -67,19 +66,29 @@ const Appearance = () => {
                     <SettingCard>
                         <span>Font</span>
                         <span />
-                        <InputTextBox
-                            onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
-                                console.log(text, font.family);
-                                if (event.key === "Enter") {
-                                    useConfigStore.getState().setFont({ family: text });
-                                }
+                        <Autocomplete
+                            disablePortal
+                            options={[...font.availableFonts]}
+                            onChange={(event) => {
+                                if (event.currentTarget.innerHTML.length != 0 && font.availableFonts.includes(event.currentTarget.innerHTML)) useConfigStore.getState().setFont({ ...font, family: event.currentTarget.innerHTML });
                             }}
-                            onBlur={(event, text) => {
-                                if (text.length != 0) useConfigStore.getState().setFont({ family: text });
-                            }}
-                            options={{ placeholder: font.family, label: { text: "Font" } }}
-                            sx={styledProps}
-                            helperText={"Font you want to use."}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label={"Font"}
+                                    variant={"outlined"}
+                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                                        if (event.key === "Enter") {
+                                            if (font.availableFonts.includes(event.currentTarget.value)) useConfigStore.getState().setFont({ ...font, family: event.currentTarget.value });
+                                        }
+                                    }}
+                                    onBlur={(event) => {
+                                        if (event.currentTarget.value.length != 0 && font.availableFonts.includes(event.currentTarget.value)) useConfigStore.getState().setFont({ ...font, family: event.currentTarget.value });
+                                    }}
+                                    sx={styledProps}
+                                    helperText={"Font you want to use."}
+                                />
+                            )}
                         />
                         <GoogleFontLoader fonts={[{ font: font.family, weights: [400] }]} />
                     </SettingCard>

@@ -153,6 +153,7 @@ export interface PlayerNickname {
 
 export interface FontConfig {
     family: string;
+    availableFonts: Array<string>;
 }
 
 export type KeyboardFocusType = "none" | "open_overlay" | "clear_players";

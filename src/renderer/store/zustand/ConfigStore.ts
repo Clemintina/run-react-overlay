@@ -9,6 +9,7 @@ import { awaitTimeout } from "@common/helpers";
 import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import { devtools, persist } from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import axios from "axios";
 
 export type ConfigStore = {
     hypixel: {
@@ -43,9 +44,7 @@ export type ConfigStore = {
     settings: SettingsConfig;
     setSettings: (settingsSettings: SettingsConfig) => void;
     setStore: (store: ConfigStore) => void;
-    font: {
-        family: string;
-    };
+    font: FontConfig;
     keybinds: Array<KeybindInterface>;
     addKeybind: (focus: KeyboardFocusType, keybind: string) => void;
     removeKeybind: (focus: KeyboardFocusType) => void;
@@ -120,6 +119,19 @@ const useConfigStore = create<ConfigStore>()(
                     const appInfo = await window.ipcRenderer.invoke("getAppInfo");
                     const version = appInfo.version;
                     set(() => ({ version }));
+                    const googleFontArray = await axios.get("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBwIX97bVWr3-6AIUvGkcNnmFgirefZ6Sw");
+                    if (googleFontArray.status == 200) {
+                        const fontsAvailable:Array<string> = []
+                        googleFontArray.data.items.forEach((item)=>{
+                            fontsAvailable.push(item.family);
+                        })
+                        set({
+                            font: {
+                                ...get().font,
+                                availableFonts: fontsAvailable,
+                            },
+                        });
+                    }
                 },
                 logs: {
                     logPath: "",
@@ -458,9 +470,10 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 font: {
                     family: "Nunito",
+                    availableFonts: [],
                 },
                 setFont: async (font) => {
-                    set({ font });
+                    set({...font, font });
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {
