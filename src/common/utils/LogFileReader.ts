@@ -45,7 +45,7 @@ export class LogFileReader {
                 clearOverlayTable();
                 if (useConfigStore.getState().settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
                 players.map(async (player) => {
-                if (player.includes("(")) return;
+                if (player.includes("(") || player.includes("[")) return;
                 addPlayer(player)});
             } else if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
