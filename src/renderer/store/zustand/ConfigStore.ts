@@ -473,13 +473,22 @@ const useConfigStore = create<ConfigStore>()(
                     availableFonts: [],
                 },
                 setFont: async (font) => {
-                    set({...font, font });
+                    set({ font });
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {
                     set({ nicks });
                 },
                 setStore: (store) => set(store),
+                appInformation: {
+                    version: "",
+                    update: {
+                        release: "",
+                        updateAvailable: false,
+                        ready: false,
+                        releaseDate: new Date(),
+                    },
+                },
             }),
             {
                 name: "user_settings",
@@ -496,6 +505,12 @@ const useConfigStore = create<ConfigStore>()(
                         updatedState.keybinds = [];
                         updatedState.settings.appearance.displayRank = true;
                         updatedState.table.settings.textAlign = "left";
+                    } else if (version == 6) {
+                        updatedState.appInformation.version = "";
+                        updatedState.appInformation.update.release = "";
+                        updatedState.appInformation.update.ready = false;
+                        updatedState.appInformation.update.updateAvailable = false;
+                        updatedState.appInformation.update.releaseDate = new Date();
                     }
                     return updatedState;
                 },
