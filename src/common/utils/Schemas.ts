@@ -163,3 +163,13 @@ export interface KeybindInterface {
     keybind: string;
     enabled?: boolean;
 }
+
+export interface AppInformation {
+    version: string,
+    update: {
+        release: string,
+        updateAvailable: boolean,
+        ready: boolean,
+        releaseDate: Date
+    }
+}

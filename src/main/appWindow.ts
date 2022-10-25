@@ -12,7 +12,7 @@ import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { HypixelApi } from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
 import { BoomzaAntisniper, KeathizEndpoints } from "@common/utils/externalapis/BoomzaApi";
-import { ProxyStore, ProxyType } from "@common/utils/Schemas";
+import { AppInformation, ProxyStore, ProxyType } from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
 import { handleIPCSend } from "@main/Utils";
 import destr from "destr";
@@ -60,6 +60,13 @@ const electronStoreTags = new Store<RUNElectronStoreTagsType>({
 export type RUNElectronStoreTyped = Join<PathsToStringProps<typeof electronStore.store>, ".">;
 export type RUNElectronStoreTagsTyped = Join<PathsToStringProps<typeof electronStoreTags.store>, ".">;
 electronStore.set("run.overlay.version", app.getVersion());
+
+let update = {
+    release: app.getVersion(),
+    updateAvailable: false,
+    ready: false,
+    releaseDate: new Date(),
+};
 
 /**
  * Configures the log reader. See {@link [TailFile](https://www.npmjs.com/package/@logdna/tail-file)} for more information.
@@ -126,26 +133,6 @@ export const createAppWindow = (): BrowserWindow => {
     mainWindowState.manage(appWindow);
     let updates = electronStore.get("settings.updater");
 
-    if (!isDevelopment && updates) {
-        if (!require("electron-squirrel-startup") && process.platform === "win32") {
-            const autoUpdater = new AppUpdater().getAutoUpdater();
-            log.info("Running updater");
-            autoUpdater.checkForUpdates();
-            setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
-            autoUpdater.on("checking-for-update", async () => {
-                log.info("Checking for updates...");
-            });
-            autoUpdater.on("error", async (error) => log.error(error));
-            autoUpdater.on("update-available", async () => {
-                log.info("Update available");
-            });
-            autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
-                log.info("Updating Overlay to " + releaseName);
-                autoUpdater.quitAndInstall();
-            });
-        }
-    }
-
     appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, { userAgent: "SeraphOverlay" });
 
     const expressApplication = express();
@@ -173,10 +160,36 @@ export const createAppWindow = (): BrowserWindow => {
             .then(() => {
                 isPortOpen = true;
             })
-            .catch(() => {});
+            .catch(() => {
+            });
     }
 
     appWindow.on("ready-to-show", () => {
+        if (!isDevelopment && updates) {
+            if (!require("electron-squirrel-startup") && process.platform === "win32") {
+                const autoUpdater = new AppUpdater().getAutoUpdater();
+                log.info("Running updater");
+                autoUpdater.checkForUpdates();
+                setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
+                autoUpdater.on("checking-for-update", async () => {
+                    log.info("Checking for updates...");
+                });
+                autoUpdater.on("error", async (error) => log.error(error));
+                autoUpdater.on("update-available", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
+                    log.info("Update available");
+                    update = {
+                        ...update,
+                        updateAvailable: true,
+                        release: releaseName,
+                        releaseDate,
+                    };
+                });
+                autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
+                    log.info("Updating Overlay to " + releaseName);
+                    appWindow?.webContents.send("updater", handleIPCSend<AppInformation>({ data: { version: app.getVersion(), update: { ...update, ready: true } }, status: 200 }));
+                });
+            }
+        }
         appWindow.show();
         if (isPortOpen && process.platform === "win32") {
             expressApplication.listen(5000, () => {
@@ -541,7 +554,8 @@ const registerMainWindowCommunications = () => {
     });
 
     ipcMain.handle("getAppInfo", async () => {
-        return { version: overlayVersion };
+        appWindow?.webContents.send("updater", handleIPCSend<AppInformation>({ data: { version: app.getVersion(), update: { ...update } }, status: 200 }));
+        return { data: { version: app.getVersion(), update }, status: 200 };
     });
 };
 
@@ -557,7 +571,7 @@ const registerExternalApis = () => {
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
