@@ -1,24 +1,24 @@
-import { app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell } from "electron";
-import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
+import {app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
+import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
 import path from "path";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import fs from "fs";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import { getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
-import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { HypixelApi } from "./HypixelApi";
+import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
+import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import { BoomzaAntisniper, KeathizEndpoints } from "@common/utils/externalapis/BoomzaApi";
-import { AppInformation, ProxyStore, ProxyType } from "@common/utils/Schemas";
+import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
+import {AppInformation, ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
-import { handleIPCSend } from "@main/Utils";
+import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
-import { LogFileMessage } from "@common/utils/LogFileReader";
-import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
+import {LogFileMessage} from "@common/utils/LogFileReader";
+import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
 import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
@@ -161,6 +161,7 @@ export const createAppWindow = (): BrowserWindow => {
                 isPortOpen = true;
             })
             .catch(() => {
+                console.log("Port closed");
             });
     }
 
@@ -638,15 +639,15 @@ const registerOverlayFeatures = () => {
     });
 
     ipcMain.handle("isAdmin", async (event: IpcMainInvokeEvent, ...args) => {
-        let isAdmin = false;
+        const isAdmin = false;
         return { data: isAdmin, status: 200 };
     });
 
     ipcMain.handle("autoLog", async (event: IpcMainInvokeEvent, ...args) => {
-        let processNames: string[] = [];
-        let appData = app.getPath("appData").replace(/\\/g, "/");
-        let home = app.getPath("home").replace(/\\/g, "/");
-        let isMacOs = appData.includes("Application Support");
+        const processNames: string[] = [];
+        const appData = app.getPath("appData").replace(/\\/g, "/");
+        const home = app.getPath("home").replace(/\\/g, "/");
+        const isMacOs = appData.includes("Application Support");
         let path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
         psList().then((data) => {
             for (const process of data) {
@@ -669,7 +670,7 @@ const registerOverlayFeatures = () => {
     });
 
     ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
-        let content = `local char_to_hex = function(c)
+        const content = `local char_to_hex = function(c)
         return string.format("%%%02X", string.byte(c))
       end
       
@@ -698,8 +699,8 @@ const registerOverlayFeatures = () => {
       
       module_manager.register("chat_bridge", chat_bridge)`;
 
-        let appData = app.getPath("appData").replace(/\\/g, "/");
-        let path = appData + "/astolfo/scripts/chat_bridge.lua";
+        const appData = app.getPath("appData").replace(/\\/g, "/");
+        const path = appData + "/astolfo/scripts/chat_bridge.lua";
         try {
             fs.writeFileSync(path, content);
         } catch (err) {

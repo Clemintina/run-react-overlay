@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/named
-import { ColumnState } from "ag-grid-community";
+import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
-import { ResultObject } from "@common/zikeji/util/ResultObject";
-import { Paths } from "@common/zikeji";
-import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { awaitTimeout } from "@common/helpers";
-import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import { devtools, persist } from "../../../../node_modules/zustand/middleware";
+import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {ResultObject} from "@common/zikeji/util/ResultObject";
+import {Paths} from "@common/zikeji";
+import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {awaitTimeout} from "@common/helpers";
+import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {devtools, persist} from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import axios from "axios";
 
@@ -116,15 +116,15 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 version: "",
                 setVersion: async () => {
-                    const appInfo = await window.ipcRenderer.invoke("getAppInfo");
-                    const version = appInfo.version;
-                    set(() => ({ version }));
+                    const appInfo = await window.ipcRenderer.invoke<AppInformation>("getAppInfo");
+                    const version = appInfo.data.version;
+                    set(() => ({version}));
                     const googleFontArray = await axios.get("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBwIX97bVWr3-6AIUvGkcNnmFgirefZ6Sw");
                     if (googleFontArray.status == 200) {
-                        const fontsAvailable:Array<string> = []
-                        googleFontArray.data.items.forEach((item)=>{
+                        const fontsAvailable: Array<string> = [];
+                        googleFontArray.data.items.forEach((item) => {
                             fontsAvailable.push(item.family);
-                        })
+                        });
                         set({
                             font: {
                                 ...get().font,
