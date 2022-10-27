@@ -21,13 +21,8 @@ import {BrowserTracing} from "@sentry/tracing";
 Sentry.init({
     dsn: "https://007f83196f744701bdb2854ce0e50fad@o4504048318939136.ingest.sentry.io/4504048320839680",
     integrations: [new BrowserTracing()],
-
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
     tracesSampleRate: 1.0,
 });
-
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
