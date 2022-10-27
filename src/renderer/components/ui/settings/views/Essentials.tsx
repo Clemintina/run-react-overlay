@@ -1,18 +1,19 @@
 import React from "react";
-import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { InputTextBox } from "@components/user/InputTextBox";
-import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
-import { SettingHeader } from "@components/user/settings/components/SettingHeader";
-import { ToggleButton } from "@components/user/ToggleButton";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
+import {InputTextBox} from "@components/user/InputTextBox";
+import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
+import {SettingHeader} from "@components/user/settings/components/SettingHeader";
+import {ToggleButton} from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import { Box, SxProps } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
+import {Box, SxProps} from "@mui/material";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import Tooltip from "@mui/material/Tooltip";
+import {TextSettingCard} from "@components/user/settings/components/TextSettingCard";
 
 const Essentials = () => {
-    const { hypixel, logs, settings, run, keathiz } = useConfigStore((state) => ({
+    const {hypixel, logs, settings, run, keathiz} = useConfigStore((state) => ({
         hypixel: state.hypixel,
         logs: state.logs,
         settings: state.settings,
@@ -27,32 +28,30 @@ const Essentials = () => {
     return (
         <NavigationBar>
             <Box className={"pl-2 pt-2"}>
-                <SettingCard>
+                <TextSettingCard>
                     <span>Hypixel API Key</span>
                     <span />
-                    <span>
-                        <InputTextBox
-                            onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
-                                if (event.key === "Enter") {
-                                    useConfigStore.getState().setHypixelApiKey(text.replaceAll(" ", ""));
-                                }
-                            }}
-                            onBlur={(event, text) => {
+                    <InputTextBox
+                        onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
+                            if (event.key === "Enter") {
                                 useConfigStore.getState().setHypixelApiKey(text.replaceAll(" ", ""));
-                            }}
-                            options={{
-                                placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key",
-                                label: { text: "Hypixel API Key" },
-                                colour: hypixel.apiKeyValid ? "success" : "error",
-                                focused: true,
-                            }}
-                            sx={styledProps}
-                            helperText={!hypixel.apiKeyValid ? "Enter a valid Hypixel API Key" : ""}
-                            initialValue={hypixel.apiKey}
-                        />
-                    </span>
-                </SettingCard>
-                <SettingCard>
+                            }
+                        }}
+                        onBlur={(event, text) => {
+                            useConfigStore.getState().setHypixelApiKey(text.replaceAll(" ", ""));
+                        }}
+                        options={{
+                            placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key",
+                            label: {text: "Hypixel API Key"},
+                            colour: hypixel.apiKeyValid ? "success" : "error",
+                            focused: true,
+                        }}
+                        sx={styledProps}
+                        helperText={!hypixel.apiKeyValid ? "Enter a valid Hypixel API Key" : ""}
+                        initialValue={hypixel.apiKey}
+                    />
+                </TextSettingCard>
+                <TextSettingCard>
                     <span>Seraph API Key</span>
                     <span />
                     <span>
@@ -67,7 +66,7 @@ const Essentials = () => {
                             }}
                             options={{
                                 placeholder: run.valid ? run.apiKey : "Seraph API Key",
-                                label: { text: "Seraph API Key" },
+                                label: {text: "Seraph API Key"},
                                 colour: run.valid ? "success" : "error",
                                 focused: true,
                             }}
@@ -76,8 +75,8 @@ const Essentials = () => {
                             initialValue={run.apiKey}
                         />
                     </span>
-                </SettingCard>
-                <SettingCard options={{ shown: settings.keathiz }}>
+                </TextSettingCard>
+                <SettingCard options={{shown: settings.keathiz}}>
                     <span>Antisniper API Key</span>
                     <span />
                     <span>

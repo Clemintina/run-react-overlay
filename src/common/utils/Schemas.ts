@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
-import { ColumnState } from "ag-grid-community";
-import { Player } from "./PlayerUtils";
+import {ColumnState} from "ag-grid-community";
+import {Player} from "./PlayerUtils";
 
 export interface PlayerHandler {
     status: number;
@@ -17,7 +17,7 @@ export interface HypixelApiKey {
 }
 
 export interface DisplayErrorMessage {
-    code: number;
+    code?: number;
     title: string;
     cause: string;
     detail?: string;
@@ -170,6 +170,6 @@ export interface AppInformation {
         release: string,
         updateAvailable: boolean,
         ready: boolean,
-        releaseDate: Date
+        releaseDate: number
     }
 }

@@ -20,6 +20,7 @@ import {Box} from "@mui/material";
 import PlayerGuild from "@common/utils/player/PlayerGuild";
 import CustomHeader from "@components/ui/table/CustomHeader";
 import {Interweave} from "interweave";
+import {AppInformation} from "@common/utils/Schemas";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;
@@ -37,68 +38,68 @@ export const columnDefsBase: ColDef[] = [
     {
         field: "head",
         sortable: false,
-        cellRenderer: ({ data }) => <PlayerHead player={data} />,
+        cellRenderer: ({data}) => <PlayerHead player={data} />,
     },
     {
         field: "star",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
-        cellRenderer: ({ data }) => <PlayerStar player={data} />,
+        cellRenderer: ({data}) => <PlayerStar player={data} />,
     },
     {
         field: "name",
         type: "string",
         minWidth: 150,
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
-        cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,
+        cellRenderer: ({data}) => <PlayerName player={data} isOverlayStats={false} />,
     },
     {
         field: "tags",
-        cellRenderer: ({ data }) => <PlayerTags player={data} />,
+        cellRenderer: ({data}) => <PlayerTags player={data} />,
         sortable: false,
     },
     {
         field: "WS",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
-        cellRenderer: ({ data }) => <PlayerWinstreak player={data} />,
+        cellRenderer: ({data}) => <PlayerWinstreak player={data} />,
     },
     {
         field: "FKDR",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
-        cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"fkdr"} />,
     },
     {
         field: "WLR",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
-        cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"wlr"} />,
     },
     {
         field: "KDR",
         type: "number",
         hide: true,
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "KDR"),
-        cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"kdr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"kdr"} />,
     },
     {
         field: "BBLR",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
-        cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />,
+        cellRenderer: ({data}) => <RenderRatioColour player={data} ratio={"bblr"} />,
     },
     {
         field: "wins",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
-        cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />,
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"wins"} />,
     },
     {
         field: "losses",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
-        cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />,
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"losses"} />,
     },
     {
         field: "final_kills",
@@ -106,7 +107,7 @@ export const columnDefsBase: ColDef[] = [
         hide: true,
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "finalkills"),
-        cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
+        cellRenderer: ({data}) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
     },
     {
         field: "session",
@@ -176,10 +177,26 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
     return 0;
 };
 
+window.ipcRenderer.on("updater", async (event, args) => {
+    const appUpdater = JSON.parse(args).data as AppInformation;
+    if (appUpdater.update.ready) {
+        useConfigStore.getState().setErrorMessage({
+            title: "Overlay Update",
+            cause: "The overlay is ready to update, Restarting in 5 seconds",
+        });
+    } else if (appUpdater.update.updateAvailable) {
+        useConfigStore.getState().setErrorMessage({
+            title: "Overlay Update",
+            cause: "An update is currently being downloaded!",
+        });
+    }
+});
+
 // a2db40d5-d629-4042-9d1a-6963b2a7e000
 const AppTable = () => {
-    const { columnState, table } = useConfigStore((state) => ({ columnState: state.table.columnState, table: state.table }));
-    const { players } = usePlayerStore((state) => ({ players: state.players }));
+    const {columnState, table} = useConfigStore((state) => ({columnState: state.table.columnState, table: state.table}));
+    const {players} = usePlayerStore((state) => ({players: state.players}));
+
     let onGridReady = false;
 
     useEffect(() => {
@@ -187,24 +204,24 @@ const AppTable = () => {
         useConfigStore.getState().setVersion();
     }, []);
 
-    const defaultColDef = { ...defaultColDefBase };
+    const defaultColDef = {...defaultColDefBase};
 
     const columnDefs = [...columnDefsBase];
 
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
-        if (onGridReady) useConfigStore.getState().setTableState({ ...table, columnState });
+        if (onGridReady) useConfigStore.getState().setTableState({...table, columnState});
     };
 
     const onSortingOrderChange = (e: SortChangedEvent<Player>) => {
         const columnState = e.columnApi.getColumnState();
-        useConfigStore.getState().setTableState({ ...table, columnState });
+        useConfigStore.getState().setTableState({...table, columnState});
     };
 
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
             columnApi = event.columnApi;
-            columnApi.applyColumnState({ state: columnState, applyOrder: true });
+            columnApi.applyColumnState({state: columnState, applyOrder: true});
             event.api.setRowData(players);
             onGridReady = true;
             this.suppressDragLeaveHidesColumns = true;
@@ -240,8 +257,8 @@ const AppTable = () => {
 
     return (
         <Box height={"100vh"}>
-            <div className='pl-1 pr-1 w-full h-full'>
-                <div className='ag-theme-alpine-dark' style={{ height: "89vh" }}>
+            <div className="pl-1 pr-1 w-full h-full">
+                <div className="ag-theme-alpine-dark" style={{height: "89vh"}}>
                     <AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={frameworkComponents} />
                 </div>
             </div>

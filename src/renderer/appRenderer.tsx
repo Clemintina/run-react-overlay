@@ -17,12 +17,16 @@ import KeybindEditorView from "@components/ui/settings/views/KeybindEditor";
 import {KeybindHandlerUtils} from "@common/utils/KeybindHandler";
 import * as Sentry from "@sentry/react";
 import {BrowserTracing} from "@sentry/tracing";
+import {inDev} from "@common/helpers";
+import CustomLinks from "@components/ui/settings/views/CustomLinks";
 
-Sentry.init({
-    dsn: "https://007f83196f744701bdb2854ce0e50fad@o4504048318939136.ingest.sentry.io/4504048320839680",
-    integrations: [new BrowserTracing()],
-    tracesSampleRate: 1.0,
-});
+if (!inDev()) {
+    Sentry.init({
+        dsn: "https://007f83196f744701bdb2854ce0e50fad@o4504048318939136.ingest.sentry.io/4504048320839680",
+        integrations: [new BrowserTracing()],
+        tracesSampleRate: 1.0,
+    });
+}
 
 const logs = useConfigStore.getState().logs;
 if (logs.readable) {
@@ -81,19 +85,20 @@ const darkTheme = createTheme(baseTheme, themeArgs);
  */
 createRoot(document.getElementById("app")!).render(
     <ThemeProvider theme={darkTheme}>
-        <Box className='mainBody text-gray-400' id={"main-body"}>
+        <Box className={"mainBody text-gray-400"} id={"main-body"}>
             <ColourRenderer>
-                <HashRouter basename='/'>
+                <HashRouter basename={"/"}>
                     <NewTitlebar>
                         <Routes>
-                            <Route path='/' element={<App />} />
-                            <Route path='/settings' element={<Essentials />} />
-                            <Route path='/settings/essentials' element={<Essentials />} />
-                            <Route path='/settings/tags' element={<TagEditor />} />
-                            <Route path='/settings/nicks' element={<NickView />} />
-                            <Route path='/settings/keybinds' element={<KeybindEditorView />} />
-                            <Route path='/settings/columneditor' element={<ColumnEditorView />} />
+                            <Route path={"/"} element={<App />} />
+                            <Route path={"/settings"} element={<Essentials />} />
+                            <Route path={"/settings/essentials"} element={<Essentials />} />
+                            <Route path={"/settings/tags"} element={<TagEditor />} />
+                            <Route path={"/settings/nicks"} element={<NickView />} />
+                            <Route path={"/settings/keybinds"} element={<KeybindEditorView />} />
+                            <Route path={"/settings/columneditor"} element={<ColumnEditorView />} />
                             <Route path={"/settings/appearance"} element={<Appearance />} />
+                            <Route path={"/settings/customlinks"} element={<CustomLinks />} />
                         </Routes>
                     </NewTitlebar>
                 </HashRouter>

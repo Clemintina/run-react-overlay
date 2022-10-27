@@ -153,7 +153,12 @@ const useConfigStore = create<ConfigStore>()(
                     detail: "",
                 },
                 setErrorMessage: async (structuredError) => {
-                    set({ error: structuredError });
+                    set({
+                        error: {
+                            ...structuredError,
+                            code: structuredError?.code ?? 200,
+                        },
+                    });
                     await awaitTimeout(5 * 1000);
                     set({
                         error: {
