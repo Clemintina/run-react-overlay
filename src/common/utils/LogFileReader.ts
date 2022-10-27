@@ -41,11 +41,11 @@ export class LogFileReader {
             if (line.includes("Sending you to")) {
                 await clearOverlayTable();
             } else if (line.includes(" ONLINE: ")) {
-                const players = line.split(" [CHAT] ONLINE: ")[1].split(/^\w\d{1,16}$/gi);
+                const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 clearOverlayTable();
                 if (useConfigStore.getState().settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
                 players.map(async (player) => {
-                    if (player.match(/[x\d]/) || player.match(/(x\d)/)) return;
+                    if (player.includes("(") || player.includes("[")) return;
                     addPlayer(player);
                 });
             } else if (line.includes("Online Players (")) {
