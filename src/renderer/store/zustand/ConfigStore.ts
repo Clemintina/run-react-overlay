@@ -75,8 +75,8 @@ const useConfigStore = create<ConfigStore>()(
                         }));
                         return;
                     }
-                    const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixelApiKey);
-                    if (apiResponse.status === 200 && apiResponse?.data?.key !== undefined) {
+                    const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", [RequestType.KEY, hypixelApiKey]);
+                    if (apiResponse?.status === 200 && apiResponse?.data?.key !== undefined) {
                         get().setErrorMessage({
                             title: "Hypixel Key Set",
                             cause: "Successfully set your Hypixel API key!",

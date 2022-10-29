@@ -1,9 +1,10 @@
 import create from "zustand";
-import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/zikeji";
-import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
-import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import {Player} from "@common/utils/PlayerUtils";
+import {Components} from "@common/zikeji";
+import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
+import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import {ipcRendererExtension, IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -45,7 +46,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 runApi: null,
             },
         };
-        const playerObject: IPCResponse<Player> = { status: 400, cause: "none", data: playerData };
+        const playerObject: IPCResponse<Player> = {status: 400, cause: "none", data: playerData};
         const configStore: ConfigStore = useConfigStore.getState();
         const apiKey = configStore.hypixel.apiKey;
         const keathizApiKey = configStore.keathiz.key;
@@ -56,7 +57,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 cause: "No Hypixel API Key",
                 code: 400,
             });
-            return { status: 403, cause: "No API Key", data: null };
+            return {status: 403, cause: "No API Key", data: null};
         }
 
         if (configStore.nicks.filter((nickname) => nickname.nick.toLowerCase() == username.toLowerCase()).length != 0) {
@@ -64,7 +65,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }
 
         try {
-            const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name, apiKey) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""), apiKey);
+            const ipcHypixelPlayer = playerData.name.length <= 16 ? await ipcRendererExtension.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name]) : await ipcRendererExtension.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", "")]);
+
             if (ipcHypixelPlayer?.data?.uuid == null && configStore?.settings?.keathiz) {
                 const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>("keathiz", KeathizEndpoints.DENICK, playerData.name, keathizApiKey);
                 if (ipcKeathizDenicker.data?.player?.uuid) {
@@ -129,13 +131,15 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 });
             }
         } catch (e) {
-            const mcUtilsRequest = await window.ipcRenderer.invoke<PlayerAPI>("mcutils", RequestType.USERNAME, playerData.name);
+            console.log("Player API");
+            const mcUtilsRequest = await ipcRendererExtension.invoke<PlayerAPI>(IpcValidInvokeChannels.MCUTILS, [RequestType.USERNAME, playerData.name.replaceAll("-", "")]);
             const mcUtils = mcUtilsRequest.data;
+            console.log(mcUtilsRequest);
             playerData.nicked = true;
             if (mcUtilsRequest.status === 200) {
                 playerData.nicked = false;
                 playerData.id = mcUtils.player.uuid;
-                const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", apiKey, RequestType.UUID, mcUtils.player.uuid);
+                const ipcHypixelPlayer = await ipcRendererExtension.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", "")]);
                 playerData.hypixelPlayer = ipcHypixelPlayer.data;
             }
             playerObject.status = mcUtilsRequest.status;
@@ -264,8 +268,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     setStore: (store) => set(store),
     party: {
         partyStore: Array<string>(),
-        addPartyMember: () => {},
-        removePartyMember: () => {},
+        addPartyMember: () => {
+        },
+        removePartyMember: () => {
+        },
     },
     tagStore: {
         config: {},
@@ -279,7 +285,7 @@ const getBoomza = async (player: Player) => {
         api = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
     } else {
         api = {
-            data: { sniper: false, report: 0, error: false, username: player.name },
+            data: {sniper: false, report: 0, error: false, username: player.name},
             status: useConfigStore.getState().settings.boomza ? 417 : 400,
         };
     }
@@ -296,23 +302,23 @@ const getRunApi = async (player: Player) => {
             data: {
                 code: 400,
                 data: {
-                    annoylist: { tagged: false },
+                    annoylist: {tagged: false},
                     blacklist: {
                         reason: "",
                         report_type: "",
                         tagged: false,
                         timestamp: 0,
                     },
-                    bot: { kay: false, tagged: false, unidentified: false },
+                    bot: {kay: false, tagged: false, unidentified: false},
                     customTag: null,
-                    migrated: { tagged: false },
+                    migrated: {tagged: false},
                     safelist: {
                         personal: false,
                         security_level: 0,
                         tagged: false,
                         timesKilled: 0,
                     },
-                    statistics: { encounters: 0, threat_level: 0 },
+                    statistics: {encounters: 0, threat_level: 0},
                     username: "",
                     uuid: "",
                 },
@@ -339,10 +345,10 @@ const getLunarTags = async (player: Player) => {
                     uuid: "unknown",
                     online: false,
                     status: "Error connecting to the server",
-                    cosmetics: { activeCosmetics: [], cachedCosmetics: [], count: 0 },
-                    lunarPlus: { clothCloak: false, plusColour: 0, premium: false },
-                    rank: { unknownBooleanB: false, unknownBooleanC: false },
-                    unknown: { unknownBooleanA: false, unknownBooleanB: false, unknownBooleanC: false },
+                    cosmetics: {activeCosmetics: [], cachedCosmetics: [], count: 0},
+                    lunarPlus: {clothCloak: false, plusColour: 0, premium: false},
+                    rank: {unknownBooleanB: false, unknownBooleanC: false},
+                    unknown: {unknownBooleanA: false, unknownBooleanB: false, unknownBooleanC: false},
                 },
                 success: false,
             },
@@ -441,7 +447,7 @@ const getKeathizData = async (player: Player) => {
         const state = useConfigStore.getState();
         if (state != undefined) api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, state.keathiz.key);
     }
-    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({ status: 200, data: api.data }));
+    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({status: 200, data: api.data}));
 };
 
 const getHypixelFriends = async (player: Player) => {
@@ -455,16 +461,12 @@ const getHypixelFriends = async (player: Player) => {
             status: 400,
         };
     }
-    return new Promise<
-        IPCResponse<
-            {
-                _id: string;
-                uuidSender: string;
-                uuidReceiver: string;
-                started: number;
-            }[]
-        >
-    >((resolve) => resolve(api));
+    return new Promise<IPCResponse<{
+        _id: string;
+        uuidSender: string;
+        uuidReceiver: string;
+        started: number;
+    }[]>>((resolve) => resolve(api));
 };
 
 const getGuildData = async (player: Player) => {

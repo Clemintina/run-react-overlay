@@ -19,7 +19,7 @@ declare global {
     interface SeraphIpcRenderer extends NodeJS.EventEmitter {
         invoke(channel: IPCValidInvokeChannels, ...args: string[] | unknown[]): Promise<never>;
 
-        invoke<T>(channel: IPCValidInvokeChannels, ...args: string[] | unknown[]): Promise<IPCResponse<T>>;
+        invoke<T>(channel: IPCValidInvokeChannels | string, ...args: string[] | unknown[]): Promise<IPCResponse<T>>;
 
         on(channel: IPCValidOnChannels, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
 

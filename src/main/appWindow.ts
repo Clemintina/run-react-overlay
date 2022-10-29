@@ -141,6 +141,7 @@ export const createAppWindow = (): BrowserWindow => {
     if (process.platform === "win32" && !isDevelopment) {
         expressApplication.post("/mc_chat", async (req, res) => {
             const line = req.query.msg;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const newLine = line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "");
             appWindow?.webContents.send(
@@ -232,16 +233,12 @@ const registerMainIPC = () => {
  * Register Seraph Inter Process Communication
  */
 const registerSeraphIPC = () => {
-    ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, resource: RequestType, ...args: unknown[]) => {
-        let apiKey: string;
-        switch (resource) {
-            case RequestType.KEY:
-                apiKey = args.length !== 0 ? (args[0] as string) : electronStore.get("hypixel.apiKey");
-                break;
-            default:
-                apiKey = args.length > 1 ? (args[1] as string) : electronStore.get("hypixel.apiKey");
-                break;
-        }
+    ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const resource = args[0] as string;
+        const apiKey = args[1] as string;
+        let playerName: string = "" as string;
+        if (args[2] != undefined) playerName = args[2] as string;
+
         const hypixelClient = new HypixelApi(apiKey, {
             cache: {
                 get(key) {
@@ -271,19 +268,18 @@ const registerSeraphIPC = () => {
                 return getErrorHandler(e);
             }
         } else if (resource === RequestType.USERNAME) {
-            const [name] = args as [string];
-            const uuid: string | undefined = await mojangCache.get(`mojang:${name}`);
-            if (uuid !== undefined || name.length == 32) {
+            const uuid: string | undefined = await mojangCache.get(`mojang:${playerName}`);
+            if (uuid !== undefined || playerName.length == 32) {
                 try {
-                    return await hypixelClient.getClient().player.uuid(uuid ?? name);
+                    return await hypixelClient.getClient().player.uuid(uuid ?? playerName);
                 } catch (e) {
                     return getErrorHandler(e);
                 }
             } else {
                 try {
-                    const res = await hypixelClient.getClient().player.username(name);
+                    const res = await hypixelClient.getClient().player.username(playerName);
                     if (res?.data?.uuid) {
-                        await mojangCache.set(`mojang:${name}`, res.data.uuid);
+                        await mojangCache.set(`mojang:${playerName}`, res.data.uuid);
                     }
                     return res;
                 } catch (e) {
@@ -291,23 +287,20 @@ const registerSeraphIPC = () => {
                 }
             }
         } else if (resource === RequestType.UUID) {
-            const [uuid] = args as [string];
             try {
-                return await hypixelClient.getClient().player.uuid(uuid);
+                return await hypixelClient.getClient().player.uuid(playerName);
             } catch (e) {
                 return getErrorHandler(e);
             }
         } else if (resource === RequestType.FRIENDS) {
-            const [uuid] = args as [string];
             try {
-                return await hypixelClient.getClient().friends.uuid(uuid);
+                return await hypixelClient.getClient().friends.uuid(playerName);
             } catch (e) {
                 return getErrorHandler(e);
             }
         } else if (resource === RequestType.GUILD_PLAYER) {
-            const [uuid] = args as [string];
             try {
-                return await hypixelClient.getClient().guild.player(uuid);
+                return await hypixelClient.getClient().guild.player(playerName);
             } catch (e) {
                 return getErrorHandler(e);
             }
@@ -315,9 +308,11 @@ const registerSeraphIPC = () => {
         return null;
     });
 
-    ipcMain.handle("mcutils", async (event: IpcMainInvokeEvent, resource: RequestType, player: string) => {
+    ipcMain.handle("mcutils", async (event: IpcMainInvokeEvent, args) => {
         let url: string;
-        const playerClean = player.replace("-", "");
+        const playerClean = args[0] as string;
+        const resource = args[1] as string;
+        console.log(args);
         switch (resource) {
             case RequestType.USERNAME:
                 url = `https://mc.seraph.si/uuid/${playerClean}`;

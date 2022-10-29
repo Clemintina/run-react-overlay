@@ -82,6 +82,7 @@ export enum RequestType {
     USERNAME = "player.username",
     RECENT_GAMES = "player.games",
     GUILD_PLAYER = "guild.player",
+    UNKNOWN = "unknown",
 }
 
 export interface LunarCosmetic {
