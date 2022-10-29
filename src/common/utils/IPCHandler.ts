@@ -1,4 +1,5 @@
 import {IPCResponse, RequestType} from "@common/utils/externalapis/RunApi";
+import { KeathizEndpoints } from "./externalapis/BoomzaApi";
 
 /**
  * Adds intellisense to each IpcRenderer
@@ -42,6 +43,36 @@ export interface IpcChannelMap {
     [IpcValidInvokeChannels.MCUTILS]: [
         resource: RequestType,
         name: string
+    ],
+    [IpcValidInvokeChannels.IS_FILE_READABLE]: [
+        path: string
+    ],
+    [IpcValidInvokeChannels.BOOMZA]: [
+        username: string
+    ],
+    [IpcValidInvokeChannels.KEATHIZ]: [
+        endpoint: KeathizEndpoints,
+        uuid: string,
+        apiKey: string
+    ],
+    [IpcValidInvokeChannels.OBSERVER]: [
+        uuid: string
+    ],
+    [IpcValidInvokeChannels.LUNAR]: [
+        uuid: string
+    ],
+    [IpcValidInvokeChannels.PLAYER_DB]: [
+        uuid: string
+    ],
+    [IpcValidInvokeChannels.GET_FILE_PATH]: [
+        request: string
+    ],
+    [IpcValidInvokeChannels.NOTIFICATIONS]: [
+        message: string,
+        subtitle: string | undefined
+    ],
+    [IpcValidInvokeChannels.OPEN_LINK]: [
+        link: string
     ];
 }
 
