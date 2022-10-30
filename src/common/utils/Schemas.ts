@@ -177,5 +177,12 @@ export interface AppInformation {
 export interface CustomLinkFile {
     path: string,
     readable: boolean,
-    data: Array<string> | Array<{uuid: string, blacklisted: boolean, tags: Array<{tag: string, hex: string}>}> | null
+    data: Array<string> | Array<CustomFileJsonType> | null
 }
+
+export interface CustomFileIpc {
+    fileType: "text" | "json";
+    contents: Array<string> | Array<CustomFileJsonType> | string;
+}
+
+export type CustomFileJsonType = {uuid: string, blacklisted: boolean, tags: Array<{tag: string, hex: string, singularTag?: boolean}>};

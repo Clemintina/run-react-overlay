@@ -12,7 +12,7 @@ import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
 import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
-import {AppInformation, ProxyStore, ProxyType} from "@common/utils/Schemas";
+import {AppInformation, CustomFileIpc, ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
 import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
@@ -455,17 +455,21 @@ const registerLogCommunications = () => {
 
     ipcMain.handle("selectLogFile", async (event, args) => {
         return await dialog.showOpenDialog(appWindow, {
-            defaultPath: app.getPath("appData"),
+            defaultPath: args[1] ?? app.getPath("appData"),
             filters: args[0],
             properties: ["openFile"],
         });
     });
 
     ipcMain.handle("readFile", (event, args) => {
-        return {
-            data: fs.readFileSync(args[0], {
+        const data: CustomFileIpc = {
+            fileType: "text",
+            contents: fs.readFileSync(args[0], {
                 encoding: "utf-8",
-            }), status: 200,
+            }),
+        };
+        return {
+            data, status: 200,
         };
     });
 

@@ -30,14 +30,15 @@ import {faDiscord} from "@fortawesome/free-brands-svg-icons";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
+import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
-    { menuName: "Appearance", menuLink: "/settings/appearance" },
-    { menuName: "Essentials", menuLink: "/settings/essentials" },
-    { menuName: "Tags", menuLink: "/settings/tags" },
-    { menuName: "Nicks", menuLink: "/settings/nicks" },
-    { menuName: "Custom", menuLink: "/settings/customlinks" },
+    {menuName: "Appearance", menuLink: "/settings/appearance"},
+    {menuName: "Essentials", menuLink: "/settings/essentials"},
+    {menuName: "Tags", menuLink: "/settings/tags"},
+    {menuName: "Nicks", menuLink: "/settings/nicks"},
+    {menuName: "Custom", menuLink: "/settings/customlinks"},
     {
         menuName: "Table Editor",
         menuLink: "/settings/columneditor",
@@ -50,7 +51,7 @@ interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
 }
 
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<AppBarProps>(({ theme, open }) => ({
+const Main = styled("main", {shouldForwardProp: (prop) => prop !== "open"})<AppBarProps>(({theme, open}) => ({
     flexGrow: 1,
     transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
@@ -66,7 +67,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<Ap
     }),
 }));
 
-const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== "open" })<AppBarProps>(({ theme, open }) => ({
+const AppBar = styled(MuiAppBar, {shouldForwardProp: (prop) => prop !== "open"})<AppBarProps>(({theme, open}) => ({
     // Make the sidebar open correctly
     transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.sharp,
@@ -83,7 +84,7 @@ const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== "open" 
     }),
 }));
 
-const DrawerHeader = styled("div")(({ theme }) => ({
+const DrawerHeader = styled("div")(({theme}) => ({
     // How text is displayed
     display: "flex",
     alignItems: "center",
@@ -107,12 +108,14 @@ const getIconType = (menuObject: MenuOption) => {
             return <BrushIcon />;
         case "keybinds":
             return <KeyboardIcon />;
+        case "custom":
+            return <DashboardCustomizeIcon />;
         default:
             return <span />;
     }
 };
 
-const NewTitlebar = ({ children }) => {
+const NewTitlebar = ({children}) => {
     const [open, setOpen] = React.useState(false);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -121,25 +124,25 @@ const NewTitlebar = ({ children }) => {
         setOpen(false);
     };
     const theme = useTheme();
-    const { error } = useConfigStore((state) => ({ error: state.error }));
+    const {error} = useConfigStore((state) => ({error: state.error}));
     const errorMessageCode = error.code;
 
     return (
-        <Box sx={{ display: "flex" }} className={"drag"}>
+        <Box sx={{display: "flex"}} className={"drag"}>
             <CssBaseline />
-            <AppBar position={"fixed"} open={open} className={"drag"} sx={{ opacity: 100 }}>
+            <AppBar position={"fixed"} open={open} className={"drag"} sx={{opacity: 100}}>
                 <Toolbar>
-                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge='start' className={"nodrag"} sx={{ mr: 2, ...(open && { display: "none" }) }}>
+                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge="start" className={"nodrag"} sx={{mr: 2, ...(open && {display: "none"})}}>
                         <MenuIcon />
                     </IconButton>
                     <Typography variant={"h6"} noWrap component={"div"} className={"text-bold"}>
                         Seraph
                     </Typography>
-                    <Typography sx={{ marginLeft: "auto" }}>
+                    <Typography sx={{marginLeft: "auto"}}>
                         <div className={"flex items-center space-x-3 p-1 nodrag"}>
                             <span className={"flex"}>
                                 <InputTextBox
-                                    options={{ placeholder: "", resetOnEnter: true, label: { text: "Usernames" } }}
+                                    options={{placeholder: "", resetOnEnter: true, label: {text: "Usernames"}}}
                                     onKeyDown={(event, textFieldState) => {
                                         if (event.key === "Enter") {
                                             if (textFieldState.includes(" ")) {
@@ -169,7 +172,7 @@ const NewTitlebar = ({ children }) => {
                                     onClick={() => {
                                         window.ipcRenderer.send("windowClose");
                                     }}
-                                    sx={{ color: "red" }}
+                                    sx={{color: "red"}}
                                 >
                                     <CloseIcon />
                                 </IconButton>
@@ -203,7 +206,7 @@ const NewTitlebar = ({ children }) => {
                 <List className={"nodrag"}>
                     <ListItem disablePadding>
                         <Link to={"/"} onClick={() => setOpen(!open)} className={"nodrag"}>
-                            <ListItemButton sx={{ width: drawerWidth }}>
+                            <ListItemButton sx={{width: drawerWidth}}>
                                 <ListItemIcon>
                                     <Home />
                                 </ListItemIcon>
@@ -214,7 +217,7 @@ const NewTitlebar = ({ children }) => {
                     {menuOptions.map((text, index) => (
                         <ListItem key={index} disablePadding>
                             <Link to={text.menuLink} onClick={() => setOpen(!open)} className={"nodrag"}>
-                                <ListItemButton sx={{ width: drawerWidth }}>
+                                <ListItemButton sx={{width: drawerWidth}}>
                                     <ListItemIcon>{getIconType(text)}</ListItemIcon>
                                     <ListItemText primary={text.menuName} />
                                 </ListItemButton>
@@ -242,16 +245,16 @@ const NewTitlebar = ({ children }) => {
             <Main open={open}>
                 <DrawerHeader />
                 {errorMessageCode === 200 ? (
-                    <Alert color={"success"} sx={{ opacity: 100 }}>
-                        <Typography sx={{ opacity: 100 }}>
+                    <Alert color={"success"} sx={{opacity: 100}}>
+                        <Typography sx={{opacity: 100}}>
                             <span className={"p-1"}>
                                 <span className={"errorMessage"}> {error.cause}</span>
                             </span>
                         </Typography>
                     </Alert>
                 ) : errorMessageCode === 400 ? (
-                    <Alert color={"error"} sx={{ opacity: 100 }}>
-                        <Typography sx={{ opacity: 100 }}>
+                    <Alert color={"error"} sx={{opacity: 100}}>
+                        <Typography sx={{opacity: 100}}>
                             <span className={"font-medium"}>
                                 Code: <span className={"errorMessage"}> {error.code}</span>
                             </span>
