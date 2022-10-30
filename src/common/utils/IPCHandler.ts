@@ -61,7 +61,7 @@ export interface IpcChannelMap {
     [IpcValidInvokeChannels.ASTOLFO]: [];
     [IpcValidInvokeChannels.IS_ADMIN]: [];
     [IpcValidInvokeChannels.AUTOLOG]: [];
-    [IpcValidInvokeChannels.SELECT_LOG_FILE]: [filters: Array<{name: string, extensions: Array<string>}>, cwd?: string];
+    [IpcValidInvokeChannels.SELECT_LOG_FILE]: [filters: Array<{ name: string; extensions: Array<string> }>, cwd?: string];
     [IpcValidInvokeChannels.GET_APP_INFO]: [];
     [IpcValidInvokeChannels.READ_FILE]: [path: string];
 
@@ -85,4 +85,4 @@ class IpcRendererExtension<ChannelMap> {
 
 const ipcRendererExtension = new IpcRendererExtension<IpcChannelMap>();
 
-export {ipcRendererExtension, IpcValidInvokeChannels};
+export { ipcRendererExtension, IpcValidInvokeChannels };

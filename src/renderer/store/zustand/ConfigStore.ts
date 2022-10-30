@@ -54,7 +54,7 @@ export type ConfigStore = {
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
     customFile: CustomLinkFile;
-    setCustomFile: (customFile: CustomLinkFile) => void
+    setCustomFile: (customFile: CustomLinkFile) => void;
 };
 
 const useConfigStore = create<ConfigStore>()(
@@ -458,7 +458,7 @@ const useConfigStore = create<ConfigStore>()(
                     },
                 },
                 setSettings: async (settings) => {
-                    set({settings});
+                    set({ settings });
                     usePlayerStore.getState().updatePlayers();
                 },
                 customFile: {
@@ -474,10 +474,10 @@ const useConfigStore = create<ConfigStore>()(
                 keybinds: [],
                 addKeybind: async (focus, keybind) => {
                     if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
-                        get().keybinds.push({keybind, focus});
+                        get().keybinds.push({ keybind, focus });
                     } else {
                         get().removeKeybind(focus);
-                        get().keybinds.push({keybind, focus});
+                        get().keybinds.push({ keybind, focus });
                     }
                 },
                 removeKeybind: (focus: KeyboardFocusType) => {

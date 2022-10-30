@@ -13,7 +13,7 @@ export interface ColourPicker {
 }
 
 export const ColourPicker: React.ElementType = (props: ColourPicker) => {
-    const {colours} = useConfigStore((state) => ({colours: state.colours}));
+    const { colours } = useConfigStore((state) => ({ colours: state.colours }));
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -40,7 +40,7 @@ export const ColourPicker: React.ElementType = (props: ColourPicker) => {
     return (
         <div className={props?.className ?? ""}>
             <InputBoxButton onClick={handleOpen} text={props?.text ?? "Pick!"} />
-            <Modal open={open} onClose={handleClose} style={{color: colours.primaryColour}}>
+            <Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
                 <Box sx={style}>
                     <HexColorPicker color={colour} onChange={handleChange} />
                 </Box>

@@ -102,7 +102,7 @@ export interface SettingsConfig {
     run: {
         friends: boolean;
     };
-    preferences: {autoHide: boolean; customFile: boolean; customUrl: boolean};
+    preferences: { autoHide: boolean; customFile: boolean; customUrl: boolean };
     appearance: {
         displayRank: boolean;
     };
@@ -175,9 +175,9 @@ export interface AppInformation {
 }
 
 export interface CustomLinkFile {
-    path: string,
-    readable: boolean,
-    data: Array<string> | Array<CustomFileJsonType> | null
+    path: string;
+    readable: boolean;
+    data: Array<string> | Array<CustomFileJsonType> | null;
 }
 
 export interface CustomFileIpc {
@@ -185,4 +185,4 @@ export interface CustomFileIpc {
     contents: Array<string> | Array<CustomFileJsonType> | string;
 }
 
-export type CustomFileJsonType = {uuid: string, blacklisted: boolean, tags: Array<{tag: string, hex: string, singularTag?: boolean}>};
+export type CustomFileJsonType = { uuid: string; blacklisted: boolean; tags: Array<{ tag: string; hex: string; singularTag?: boolean }> };

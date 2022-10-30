@@ -8,8 +8,8 @@ import React, {useEffect, useState} from "react";
 import {Components} from "@common/zikeji";
 import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
-const PlayerNicknameView = (props: {key: string; playerNick: PlayerNickname; handleAdd: (player) => void; handleRemove: (player) => void}) => {
-    const {nicksLocal, hypixelApiKey} = useConfigStore((state) => ({
+const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; handleAdd: (player) => void; handleRemove: (player) => void }) => {
+    const { nicksLocal, hypixelApiKey } = useConfigStore((state) => ({
         nicksLocal: state.nicks,
         hypixelApiKey: state.hypixel.apiKey,
     }));
@@ -17,8 +17,7 @@ const PlayerNicknameView = (props: {key: string; playerNick: PlayerNickname; han
     const [playerNickname, setPlayerNickname] = useState<PlayerNickname>(users[0]);
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    useEffect(() => {
-    }, [playerNickname]);
+    useEffect(() => {}, [playerNickname]);
 
     return (
         <SettingCard className={"border-2 border-cyan-500"}>
@@ -39,7 +38,7 @@ const PlayerNicknameView = (props: {key: string; playerNick: PlayerNickname; han
                             useConfigStore.getState().setNicks([...users, playerNickname]);
                         }
                     }}
-                    options={{placeholder: "Username", value: playerNickname.name, label: {text: "Username"}}}
+                    options={{ placeholder: "Username", value: playerNickname.name, label: { text: "Username" } }}
                 />
             </span>
             <span className={" "}>
@@ -47,7 +46,7 @@ const PlayerNicknameView = (props: {key: string; playerNick: PlayerNickname; han
                     onBlur={async (event) => {
                         const userInput = event.currentTarget.value;
                         if (userInput.length == 0) return;
-                        setPlayerNickname({...playerNickname, nick: userInput});
+                        setPlayerNickname({ ...playerNickname, nick: userInput });
                         const user = nicksLocal.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
                         if (user) {
                             const users = nicksLocal.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
@@ -57,9 +56,9 @@ const PlayerNicknameView = (props: {key: string; playerNick: PlayerNickname; han
                     onChange={async (event) => {
                         const userInput = event.currentTarget.value;
                         if (userInput.length == 0 || userInput.toLowerCase() == playerNickname.nick.toLowerCase()) return;
-                        setPlayerNickname({...playerNickname, nick: userInput});
+                        setPlayerNickname({ ...playerNickname, nick: userInput });
                     }}
-                    options={{placeholder: "Nickname", value: playerNickname.nick, label: {text: "Nickname"}}}
+                    options={{ placeholder: "Nickname", value: playerNickname.nick, label: { text: "Nickname" } }}
                 />
             </span>
             <span className={""}>
@@ -68,7 +67,7 @@ const PlayerNicknameView = (props: {key: string; playerNick: PlayerNickname; han
                     onClick={() => {
                         props.handleRemove(playerNickname);
                     }}
-                    options={{colour: "error"}}
+                    options={{ colour: "error" }}
                 />
             </span>
         </SettingCard>
