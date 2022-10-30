@@ -165,11 +165,11 @@ export interface KeybindInterface {
 }
 
 export interface AppInformation {
-    version: string,
+    version: string;
     update: {
-        release: string,
-        updateAvailable: boolean,
-        ready: boolean,
-        releaseDate: number
-    }
+        release: string;
+        updateAvailable: boolean;
+        ready: boolean;
+        releaseDate: number;
+    };
 }

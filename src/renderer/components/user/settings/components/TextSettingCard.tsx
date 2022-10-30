@@ -14,9 +14,7 @@ export const TextSettingCard: React.ElementType = (props: TextSettingCard) => {
     return (
         <Box style={showSetting ? {} : {display: "none"}}>
             <div className={"text-gray-400 hover:text-white pb-3"}>
-                <div className="grid grid-cols-2 gap-3">
-                    {props.children}
-                </div>
+                <div className="grid grid-cols-2 gap-3">{props.children}</div>
             </div>
         </Box>
     );

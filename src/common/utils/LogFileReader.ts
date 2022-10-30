@@ -3,6 +3,7 @@ import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
@@ -71,7 +72,7 @@ export class LogFileReader {
                 const players = usePlayerStore.getState();
                 const player: Player | undefined = players.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
                 if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
-                    await window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner);
+                    await window.ipcRenderer.invoke(IpcValidInvokeChannels.SERAPH, [RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner]);
                 }
             }
         });

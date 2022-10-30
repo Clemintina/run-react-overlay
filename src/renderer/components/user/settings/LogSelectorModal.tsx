@@ -1,12 +1,13 @@
 // eslint-disable-next-line import/named
-import { Box, Fade, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { InputBoxButton } from "@components/user/InputBoxButton";
+import {Box, Fade, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
+import React, {useState} from "react";
+import {InputBoxButton} from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { ClientSetting } from "@common/utils/Schemas";
+import {ClientSetting} from "@common/utils/Schemas";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];
@@ -15,7 +16,7 @@ export interface LogSelectorModal {
 let label = "Select Log File";
 
 export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => {
-    const { logs, colours, error } = useConfigStore((state) => ({ logs: state.logs, colours: state.colours, error: state.error }));
+    const {logs, colours, error} = useConfigStore((state) => ({logs: state.logs, colours: state.colours, error: state.error}));
     if (logs.clientName !== null && logs.clientName !== undefined) label = logs.clientName;
     const [open, setOpen] = React.useState<boolean>(false);
     const handleOpen = () => setOpen(true);
@@ -30,8 +31,8 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
         };
         setClientLocal(clientSettings.clientName);
 
-        const appData = (await window.ipcRenderer.invoke<string>("getFilePath", "appData")).data;
-        const userHome = (await window.ipcRenderer.invoke<string>("getFilePath", "home")).data;
+        const appData = (await window.ipcRenderer.invoke<string>(IpcValidInvokeChannels.GET_FILE_PATH, ["appData"])).data;
+        const userHome = (await window.ipcRenderer.invoke<string>(IpcValidInvokeChannels.GET_FILE_PATH, ["home"])).data;
 
         const isMacOs = appData.includes("Application Support");
 
@@ -50,7 +51,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
             }
             path += "latest.log";
             clientSettings.logPath = path;
-            const readable = await window.ipcRenderer.invoke<boolean>("isFileReadable", clientSettings.logPath);
+            const readable = await window.ipcRenderer.invoke<boolean>(IpcValidInvokeChannels.IS_FILE_READABLE, [clientSettings.logPath]);
             if (readable.data) {
                 clientSettings.readable = readable.data;
                 window.ipcRenderer.send("logFileSet", clientSettings.logPath);
@@ -119,7 +120,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                                     const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke("selectLogFile");
                                     if (path.filePaths[0] !== undefined) {
                                         const logPath = path.filePaths[0];
-                                        const readable = await window.ipcRenderer.invoke<boolean>("isFileReadable", logPath);
+                                        const readable = await window.ipcRenderer.invoke<boolean>(IpcValidInvokeChannels.IS_FILE_READABLE, [logPath]);
                                         if (readable.data) {
                                             window.ipcRenderer.send("logFileSet", logPath);
                                             const clientSettings: ClientSetting = {

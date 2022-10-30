@@ -238,7 +238,6 @@ const registerSeraphIPC = () => {
         const apiKey = args[1] as string;
         let playerName: string = "" as string;
         if (args[2] != undefined) playerName = args[2] as string;
-
         const hypixelClient = new HypixelApi(apiKey, {
             cache: {
                 get(key) {
@@ -308,11 +307,10 @@ const registerSeraphIPC = () => {
         return null;
     });
 
-    ipcMain.handle("mcutils", async (event: IpcMainInvokeEvent, args) => {
+    ipcMain.handle("mcutils", async (event: IpcMainInvokeEvent, args: string[]) => {
         let url: string;
         const playerClean = args[0] as string;
         const resource = args[1] as string;
-        console.log(args);
         switch (resource) {
             case RequestType.USERNAME:
                 url = `https://mc.seraph.si/uuid/${playerClean}`;
@@ -332,7 +330,13 @@ const registerSeraphIPC = () => {
         }
     });
 
-    ipcMain.handle("seraph", async (event: IpcMainInvokeEvent, endpoint: RunEndpoints, uuid: string, hypixelApiKey: string, hypixelApiKeyOwner: string, runApiKey: string, overlayUuid: string) => {
+    ipcMain.handle("seraph", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const endpoint = args[0],
+            uuid = args[1],
+            hypixelApiKey = args[2],
+            hypixelApiKeyOwner = args[3],
+            runApiKey = args[4],
+            overlayUuid = args[5];
         if (endpoint === RunEndpoints.KEY) {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/key`, {
                 headers: {
@@ -380,7 +384,8 @@ const registerSeraphIPC = () => {
         }
     });
 
-    ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, uuid: string) => {
+    ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const uuid = args[0];
         const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`);
         return {status: response.status, data: response.data};
     });
@@ -438,10 +443,10 @@ const registerElectronStore = () => {
  * Register Log Inter Process Communication
  */
 const registerLogCommunications = () => {
-    ipcMain.handle("isFileReadable", async (event: IpcMainInvokeEvent, path: string) => {
+    ipcMain.handle("isFileReadable", async (event: IpcMainInvokeEvent, args: string[]) => {
         return {
             data: await fs.promises
-                .access(path, fs.constants.R_OK)
+                .access(args[0], fs.constants.R_OK)
                 .then(() => true)
                 .catch(() => false),
             status: 200,
@@ -456,7 +461,8 @@ const registerLogCommunications = () => {
         });
     });
 
-    ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, path: string) => {
+    ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const path = args[0];
         electronStore.set("overlay.logPath", path);
         logFileReadline?.close();
         logFileReadline = null;
@@ -501,7 +507,8 @@ const registerLogCommunications = () => {
         }
     });
 
-    ipcMain.handle("getFilePath", async (event: IpcMainInvokeEvent, request: string) => {
+    ipcMain.handle("getFilePath", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const request = args[0];
         let appPath;
         switch (request) {
             case "home":
@@ -541,14 +548,15 @@ const registerMainWindowCommunications = () => {
         appWindow?.isVisible() ? appWindow?.minimize() : appWindow?.showInactive();
     });
 
-    ipcMain.on("opacity", async (event, ...args) => {
-        appWindow.setOpacity(args[0]);
+    ipcMain.on("opacity", async (event, args: string[]) => {
+        appWindow.setOpacity(Number.parseInt(args[0]));
     });
 
-    ipcMain.on("openExternal", async (event, type: "config_file" | "tag_file", ...args) => {
-        if (type == "config_file") {
+    ipcMain.on("openExternal", async (event, args: string[]) => {
+        const file_type = args[0];
+        if (file_type == "config_file") {
             await shell.openExternal(electronStore.path);
-        } else if (type == "tag_file") {
+        } else if (file_type == "tag_file") {
             await shell.openExternal(electronStoreTags.path);
         }
     });
@@ -563,7 +571,8 @@ const registerMainWindowCommunications = () => {
  * Register External Inter Process Communications
  */
 const registerExternalApis = () => {
-    ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, username: string) => {
+    ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const username = args[0];
         const response = await axiosClient(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
             headers: {
                 Accept: "application/json",
@@ -581,7 +590,10 @@ const registerExternalApis = () => {
         return {data: json, status: response.status};
     });
 
-    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string, apikey: string) => {
+    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const endpoint = args[0],
+            uuid = args[1],
+            apikey = args[2];
         let params;
         if (endpoint == KeathizEndpoints.OVERLAY_RUN) {
             params = `&uuid=${uuid}`;
@@ -598,7 +610,8 @@ const registerExternalApis = () => {
         return {data: response.data, status: response.status};
     });
 
-    ipcMain.handle("observer", async (event: IpcMainInvokeEvent, uuid: string) => {
+    ipcMain.handle("observer", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const uuid = args[0];
         const apikey = electronStore.get("external.observer.apiKey");
         const response = await axiosClient(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
             headers: {
@@ -608,7 +621,8 @@ const registerExternalApis = () => {
         return {data: response.data, status: response.status};
     });
 
-    ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, uuid: string) => {
+    ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const uuid = args[0];
         const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${uuid}`, {
             headers: {
                 Accept: "application/json",
@@ -637,12 +651,12 @@ const registerOverlayFeatures = () => {
         }, 60000);
     });
 
-    ipcMain.handle("isAdmin", async (event: IpcMainInvokeEvent, ...args) => {
+    ipcMain.handle("isAdmin", async () => {
         const isAdmin = false;
         return {data: isAdmin, status: 200};
     });
 
-    ipcMain.handle("autoLog", async (event: IpcMainInvokeEvent, ...args) => {
+    ipcMain.handle("autoLog", async () => {
         const processNames: string[] = [];
         const appData = app.getPath("appData").replace(/\\/g, "/");
         const home = app.getPath("home").replace(/\\/g, "/");
@@ -664,11 +678,11 @@ const registerOverlayFeatures = () => {
         electronStore.set("overlay.logPath", path);
     });
 
-    ipcMain.handle("openlink", async (event: IpcMainInvokeEvent, link: string, ...args) => {
-        await shell.openExternal(link);
+    ipcMain.handle("openlink", async (event: IpcMainInvokeEvent, args: string[]) => {
+        await shell.openExternal(args[0]);
     });
 
-    ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
+    ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, args: string[]) => {
         const content = `local char_to_hex = function(c)
         return string.format("%%%02X", string.byte(c))
       end

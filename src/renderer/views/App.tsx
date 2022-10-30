@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/named
-import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowNode, SortChangedEvent } from "ag-grid-community";
+import {ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowNode, SortChangedEvent} from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
-import React, { useEffect } from "react";
-import { Player, PlayerUtils } from "@common/utils/PlayerUtils";
-import { AgGridReact } from "ag-grid-react";
-import { assertDefaultError } from "@common/helpers";
+import React, {useEffect} from "react";
+import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
+import {AgGridReact} from "ag-grid-react";
+import {assertDefaultError} from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -16,11 +16,11 @@ import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import PlayerGuild from "@common/utils/player/PlayerGuild";
 import CustomHeader from "@components/ui/table/CustomHeader";
-import { Interweave } from "interweave";
-import { AppInformation } from "@common/utils/Schemas";
+import {Interweave} from "interweave";
+import {AppInformation} from "@common/utils/Schemas";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;
@@ -260,7 +260,7 @@ const AppTable = () => {
     return (
         <Box height={"100vh"}>
             <div className="pl-1 pr-1 w-full h-full">
-                <div className="ag-theme-alpine-dark" style={{ height: "89vh" }}>
+                <div className="ag-theme-alpine-dark" style={{height: "89vh"}}>
                     <AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={frameworkComponents} />
                 </div>
             </div>

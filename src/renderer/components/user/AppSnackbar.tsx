@@ -2,7 +2,7 @@ import {Alert, Snackbar} from "@mui/material";
 import React from "react";
 
 export interface AppSnackbar {
-    message: string,
+    message: string;
     timeout?: number;
     display?: boolean;
 }
@@ -21,11 +21,7 @@ const AppSnackbar = (props: AppSnackbar) => {
     };
 
     return (
-        <Snackbar
-            open={open}
-            onClose={handleClose}
-            autoHideDuration={props?.timeout ?? 6000}
-        >
+        <Snackbar open={open} onClose={handleClose} autoHideDuration={props?.timeout ?? 6000}>
             <Alert severity={"success"} sx={{width: "100%"}}>
                 {props.message}
             </Alert>

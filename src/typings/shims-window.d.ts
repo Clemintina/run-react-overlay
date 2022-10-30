@@ -1,11 +1,13 @@
 import {IpcRendererEvent} from "electron";
-import {IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
+import {IpcChannelMap, IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
 import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
 import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
+const ipcRendererExtension = new IpcRendererExtension<IpcChannelMap>();
+
 declare global {
     interface Window {
-        ipcRenderer: SeraphIpcRenderer;
+        ipcRenderer: SeraphIpcRenderer<IpcChannelMap>;
         config: {
             set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
             get(key: RUNElectronStoreTyped | string);
@@ -16,12 +18,12 @@ declare global {
         };
     }
 
-    interface SeraphIpcRenderer extends NodeJS.EventEmitter {
+    interface SeraphIpcRenderer<ChannelMap> extends NodeJS.EventEmitter {
         invoke(channel: IPCValidInvokeChannels, ...args: string[] | unknown[]): Promise<never>;
 
-        invoke<T>(channel: IPCValidInvokeChannels | string, ...args: string[] | unknown[]): Promise<IPCResponse<T>>;
+        invoke<T>(channel: keyof ChannelMap, ...args: ChannelMap[typeof channel][]): Promise<IPCResponse<T>>;
 
-        on(channel: IPCValidOnChannels, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
+        on(channel: IPCValidOnChannels | string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
 
         once(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
 
@@ -31,7 +33,7 @@ declare global {
 
         removeListener(channel: string, listener: (...args: any[]) => void): this;
 
-        send(channel: IPCValidSendChannels, ...args: any[]): void;
+        send(channel: IPCValidSendChannels | string, ...args: string[] | unknown[]): void;
 
         sendSync(channel: string, ...args: any[]): any;
 

@@ -10,6 +10,7 @@ import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/Bo
 import {devtools, persist} from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import axios from "axios";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 export type ConfigStore = {
     hypixel: {
@@ -75,7 +76,7 @@ const useConfigStore = create<ConfigStore>()(
                         }));
                         return;
                     }
-                    const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", [RequestType.KEY, hypixelApiKey]);
+                    const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>(IpcValidInvokeChannels.HYPIXEL, [RequestType.KEY, hypixelApiKey]);
                     if (apiResponse?.status === 200 && apiResponse?.data?.key !== undefined) {
                         get().setErrorMessage({
                             title: "Hypixel Key Set",
@@ -116,7 +117,7 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 version: "",
                 setVersion: async () => {
-                    const appInfo = await window.ipcRenderer.invoke<AppInformation>("getAppInfo");
+                    const appInfo = await window.ipcRenderer.invoke<AppInformation>(IpcValidInvokeChannels.GET_APP_INFO);
                     const version = appInfo.data.version;
                     set(() => ({version}));
                     const googleFontArray = await axios.get("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBwIX97bVWr3-6AIUvGkcNnmFgirefZ6Sw");
@@ -175,7 +176,7 @@ const useConfigStore = create<ConfigStore>()(
                     showNick: true,
                 },
                 setKeathizApiKey: async (keathizApiKey) => {
-                    const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5", keathizApiKey);
+                    const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5", keathizApiKey]);
                     if (keathizApiKey.length == 0) return;
                     if (apiKey.status == 200) {
                         set({
@@ -187,7 +188,7 @@ const useConfigStore = create<ConfigStore>()(
                         });
                         for (const player of usePlayerStore.getState().players) {
                             if (player.hypixelPlayer?.uuid && !player.nicked) {
-                                const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey);
+                                const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey]);
                                 if (keathiz.status == 200) {
                                     console.log(keathiz.status);
                                     player.sources.keathiz = keathiz;
@@ -209,7 +210,7 @@ const useConfigStore = create<ConfigStore>()(
                 setRunApiKey: async (runkey) => {
                     if (runkey.length == 0 || get()?.run?.apiKey.toLowerCase() == runkey) return;
                     const getHypixel = get().hypixel;
-                    const apiKey = await window.ipcRenderer.invoke<RunApiKey>("seraph", RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner);
+                    const apiKey = await window.ipcRenderer.invoke<RunApiKey>(IpcValidInvokeChannels.SERAPH, [RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner]);
                     if (runkey.length == 0) return;
                     if (apiKey.status == 200) {
                         get().setErrorMessage({

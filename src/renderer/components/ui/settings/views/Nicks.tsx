@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerNicknameView from "@common/utils/player/PlayerNickname";
-import { PlayerNickname } from "@common/utils/Schemas";
-import { Components } from "@common/zikeji";
-import { RequestType } from "@common/utils/externalapis/RunApi";
-import { InputBoxButton } from "@components/user/InputBoxButton";
-import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { Autocomplete, Box, TextField } from "@mui/material";
+import {PlayerNickname} from "@common/utils/Schemas";
+import {Components} from "@common/zikeji";
+import {RequestType} from "@common/utils/externalapis/RunApi";
+import {InputBoxButton} from "@components/user/InputBoxButton";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
+import {Autocomplete, Box, TextField} from "@mui/material";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import { Player } from "@common/utils/PlayerUtils";
+import {Player} from "@common/utils/PlayerUtils";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 const NickView = () => {
-    const { nicks, hypixelApiKey } = useConfigStore((state) => ({
+    const {nicks, hypixelApiKey} = useConfigStore((state) => ({
         nicks: state.nicks,
         hypixelApiKey: state.hypixel.apiKey,
     }));
-    const { players } = usePlayerStore((state) => ({ players: state.players }));
-    const [playerNickname, setPlayerNickname] = useState({ name: "", nick: "", added: 0, uuid: "" });
+    const {players} = usePlayerStore((state) => ({players: state.players}));
+    const [playerNickname, setPlayerNickname] = useState({name: "", nick: "", added: 0, uuid: ""});
     const [clearText, setClearText] = useState(false);
     const [usernameInput, setUsernameInput] = useState("");
     const [nickInput, setNickInput] = useState("");
@@ -122,7 +123,7 @@ const NickView = () => {
                                             onBlur={async (event) => {
                                                 const userInput = event.currentTarget.value;
                                                 if (userInput.length == 0) return;
-                                                const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, userInput, hypixelApiKey);
+                                                const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, userInput, hypixelApiKey]);
                                                 setPlayerNickname({
                                                     ...playerNickname,
                                                     uuid: hypixelRequest?.data?.uuid ?? userInput,
