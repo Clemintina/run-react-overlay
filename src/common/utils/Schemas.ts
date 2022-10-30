@@ -102,7 +102,7 @@ export interface SettingsConfig {
     run: {
         friends: boolean;
     };
-    preferences: { autoHide: boolean };
+    preferences: { autoHide: boolean; customFile: boolean; customUrl: boolean };
     appearance: {
         displayRank: boolean;
     };

@@ -6,7 +6,7 @@ import {Box, SxProps} from "@mui/material";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 const CustomLinks = () => {
-    const {settings, browserWindow, font, table} = useConfigStore((state) => ({settings: state.settings, browserWindow: state.browserWindow, font: state.font, table: state.table}));
+    const { settings } = useConfigStore((state) => ({ settings: state.settings }));
     const styledProps: SxProps = {
         width: 0.86,
     };
@@ -15,15 +15,15 @@ const CustomLinks = () => {
     return (
         <div>
             <NavigationBar>
-                <Box className="p-2 space-y-2">
+                <Box className='p-2 space-y-2'>
                     <SettingCard>
                         <span>Custom File</span>
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, preferences: {autoHide: !settings.preferences.autoHide}});
+                                useConfigStore.getState().setSettings({ ...settings, preferences: { ...settings.preferences, customFile: !settings.preferences.customFile } });
                             }}
-                            options={{enabled: settings.preferences.autoHide}}
+                            options={{ enabled: settings.preferences.customFile }}
                         />
                     </SettingCard>
                 </Box>

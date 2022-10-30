@@ -259,8 +259,8 @@ const AppTable = () => {
 
     return (
         <Box height={"100vh"}>
-            <div className="pl-1 pr-1 w-full h-full">
-                <div className="ag-theme-alpine-dark" style={{height: "89vh"}}>
+            <div className='pl-1 pr-1 w-full h-full'>
+                <div className='ag-theme-alpine-dark' style={{ height: "89vh" }}>
                     <AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={frameworkComponents} />
                 </div>
             </div>

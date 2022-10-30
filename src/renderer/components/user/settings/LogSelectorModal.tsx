@@ -16,7 +16,7 @@ export interface LogSelectorModal {
 let label = "Select Log File";
 
 export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => {
-    const {logs, colours, error} = useConfigStore((state) => ({logs: state.logs, colours: state.colours, error: state.error}));
+    const { logs, colours, error } = useConfigStore((state) => ({ logs: state.logs, colours: state.colours, error: state.error }));
     if (logs.clientName !== null && logs.clientName !== undefined) label = logs.clientName;
     const [open, setOpen] = React.useState<boolean>(false);
     const handleOpen = () => setOpen(true);

@@ -22,7 +22,7 @@ const AppSnackbar = (props: AppSnackbar) => {
 
     return (
         <Snackbar open={open} onClose={handleClose} autoHideDuration={props?.timeout ?? 6000}>
-            <Alert severity={"success"} sx={{width: "100%"}}>
+            <Alert severity={"success"} sx={{ width: "100%" }}>
                 {props.message}
             </Alert>
         </Snackbar>

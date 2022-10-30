@@ -8,8 +8,8 @@ import React, {useState} from "react";
 import {Components} from "@common/zikeji";
 import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
-const PlayerNicknameView = (props: {key: string; playerNick: PlayerNickname; handleAdd: (player) => void; handleRemove: (player) => void}) => {
-    const {nicksLocal, hypixelApiKey} = useConfigStore((state) => ({
+const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; handleAdd: (player) => void; handleRemove: (player) => void }) => {
+    const { nicksLocal, hypixelApiKey } = useConfigStore((state) => ({
         nicksLocal: state.nicks,
         hypixelApiKey: state.hypixel.apiKey,
     }));

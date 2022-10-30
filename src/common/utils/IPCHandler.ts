@@ -83,4 +83,4 @@ class IpcRendererExtension<ChannelMap> {
 
 const ipcRendererExtension = new IpcRendererExtension<IpcChannelMap>();
 
-export {ipcRendererExtension, IpcValidInvokeChannels};
+export { ipcRendererExtension, IpcValidInvokeChannels };

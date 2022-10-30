@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import {TextSettingCard} from "@components/user/settings/components/TextSettingCard";
 
 const Essentials = () => {
-    const {hypixel, logs, settings, run, keathiz} = useConfigStore((state) => ({
+    const { hypixel, logs, settings, run, keathiz } = useConfigStore((state) => ({
         hypixel: state.hypixel,
         logs: state.logs,
         settings: state.settings,
@@ -42,7 +42,7 @@ const Essentials = () => {
                         }}
                         options={{
                             placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key",
-                            label: {text: "Hypixel API Key"},
+                            label: { text: "Hypixel API Key" },
                             colour: hypixel.apiKeyValid ? "success" : "error",
                             focused: true,
                         }}
@@ -66,7 +66,7 @@ const Essentials = () => {
                             }}
                             options={{
                                 placeholder: run.valid ? run.apiKey : "Seraph API Key",
-                                label: {text: "Seraph API Key"},
+                                label: { text: "Seraph API Key" },
                                 colour: run.valid ? "success" : "error",
                                 focused: true,
                             }}
@@ -76,7 +76,7 @@ const Essentials = () => {
                         />
                     </span>
                 </TextSettingCard>
-                <SettingCard options={{shown: settings.keathiz}}>
+                <SettingCard options={{ shown: settings.keathiz }}>
                     <span>Antisniper API Key</span>
                     <span />
                     <span>

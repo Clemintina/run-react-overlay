@@ -53,6 +53,10 @@ export type ConfigStore = {
     setFont: (font: FontConfig) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
+    customFile: {
+        path: string;
+        url: string;
+    };
 };
 
 const useConfigStore = create<ConfigStore>()(
@@ -119,7 +123,7 @@ const useConfigStore = create<ConfigStore>()(
                 setVersion: async () => {
                     const appInfo = await window.ipcRenderer.invoke<AppInformation>(IpcValidInvokeChannels.GET_APP_INFO);
                     const version = appInfo.data.version;
-                    set(() => ({version}));
+                    set(() => ({ version }));
                     const googleFontArray = await axios.get("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBwIX97bVWr3-6AIUvGkcNnmFgirefZ6Sw");
                     if (googleFontArray.status == 200) {
                         const fontsAvailable: Array<string> = [];
@@ -448,10 +452,16 @@ const useConfigStore = create<ConfigStore>()(
                     },
                     preferences: {
                         autoHide: true,
+                        customFile: false,
+                        customUrl: false,
                     },
                     appearance: {
                         displayRank: true,
                     },
+                },
+                customFile: {
+                    path: "",
+                    url: "",
                 },
                 setSettings: async (settings) => {
                     set({ settings });
@@ -517,6 +527,11 @@ const useConfigStore = create<ConfigStore>()(
                         updatedState.appInformation.update.ready = false;
                         updatedState.appInformation.update.updateAvailable = false;
                         updatedState.appInformation.update.releaseDate = new Date();
+                    } else if (version == 7) {
+                        updatedState.settings.customFile = false;
+                        updatedState.settings.customUrl = false;
+                        updatedState.customFile.path = "";
+                        updatedState.customFile.url = "";
                     }
                     return updatedState;
                 },

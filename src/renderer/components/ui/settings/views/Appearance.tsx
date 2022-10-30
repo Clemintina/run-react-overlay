@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { ToggleButton } from "@components/user/ToggleButton";
+import React, {useState} from "react";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
+import {ToggleButton} from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import { Autocomplete, Box, FormControl, InputLabel, Select, SelectChangeEvent, Slider, SxProps, TextField } from "@mui/material";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import {Autocomplete, Box, FormControl, InputLabel, Select, SelectChangeEvent, Slider, SxProps, TextField} from "@mui/material";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 import MenuItem from "@mui/material/MenuItem";
 
 const Appearance = () => {
@@ -33,7 +33,7 @@ const Appearance = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({ ...settings, preferences: { autoHide: !settings.preferences.autoHide } });
+                                useConfigStore.getState().setSettings({ ...settings, preferences: { ...settings.preferences, autoHide: !settings.preferences.autoHide } });
                             }}
                             options={{ enabled: settings.preferences.autoHide }}
                         />
@@ -43,7 +43,6 @@ const Appearance = () => {
                         <span />
                         <span>
                             <Slider
-                                aria-label='Opacity'
                                 value={opacityValue}
                                 onChange={(event, value) => {
                                     const opacityValue: number = typeof value == "number" ? value : value[0];
@@ -54,7 +53,7 @@ const Appearance = () => {
                                     useConfigStore.getState().setBrowserWindow({ height: browserWindow.height, opacity: opacityValue, width: browserWindow.width });
                                 }}
                                 getAriaValueText={(value) => `${value}`}
-                                valueLabelDisplay='auto'
+                                valueLabelDisplay={"auto"}
                                 min={1}
                                 valueLabelFormat={(value: number) => {
                                     return value;

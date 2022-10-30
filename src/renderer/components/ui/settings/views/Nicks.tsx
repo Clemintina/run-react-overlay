@@ -13,12 +13,12 @@ import {Player} from "@common/utils/PlayerUtils";
 import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 const NickView = () => {
-    const {nicks, hypixelApiKey} = useConfigStore((state) => ({
+    const { nicks, hypixelApiKey } = useConfigStore((state) => ({
         nicks: state.nicks,
         hypixelApiKey: state.hypixel.apiKey,
     }));
-    const {players} = usePlayerStore((state) => ({players: state.players}));
-    const [playerNickname, setPlayerNickname] = useState({name: "", nick: "", added: 0, uuid: ""});
+    const { players } = usePlayerStore((state) => ({ players: state.players }));
+    const [playerNickname, setPlayerNickname] = useState({ name: "", nick: "", added: 0, uuid: "" });
     const [clearText, setClearText] = useState(false);
     const [usernameInput, setUsernameInput] = useState("");
     const [nickInput, setNickInput] = useState("");

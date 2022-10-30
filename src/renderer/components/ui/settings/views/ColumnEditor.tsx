@@ -9,7 +9,7 @@ import {Box} from "@mui/material";
 import {columnDefsBase, defaultColDefBase} from "@renderer/views/App";
 
 const ColumnEditorView = () => {
-    const {columnState} = useConfigStore((state) => ({columnState: state.table.columnState}));
+    const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
     const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
     const toggleColumn = (columnId: string) => {
@@ -64,7 +64,7 @@ const ColumnEditorView = () => {
                             <div key={column.colId}>
                                 <span className={"capitalize"}>{column.colId.replace("_", " ")}</span>
                                 <span className={""}>
-                                    <ToggleButton onClick={() => toggleColumn(column.colId)} options={{enabled: !column.hide}}></ToggleButton>
+                                    <ToggleButton onClick={() => toggleColumn(column.colId)} options={{ enabled: !column.hide }}></ToggleButton>
                                 </span>
                             </div>
                         ))}
