@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
@@ -53,10 +53,8 @@ export type ConfigStore = {
     setFont: (font: FontConfig) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
-    customFile: {
-        path: string;
-        url: string;
-    };
+    customFile: CustomLinkFile;
+    setCustomFile: (customFile: CustomLinkFile) => void
 };
 
 const useConfigStore = create<ConfigStore>()(
@@ -459,21 +457,27 @@ const useConfigStore = create<ConfigStore>()(
                         displayRank: true,
                     },
                 },
+                setSettings: async (settings) => {
+                    set({settings});
+                    usePlayerStore.getState().updatePlayers();
+                },
                 customFile: {
                     path: "",
-                    url: "",
+                    readable: false,
+                    data: null,
                 },
-                setSettings: async (settings) => {
-                    set({ settings });
-                    usePlayerStore.getState().updatePlayers();
+                setCustomFile: (customFile) => {
+                    set({
+                        customFile,
+                    });
                 },
                 keybinds: [],
                 addKeybind: async (focus, keybind) => {
                     if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
-                        get().keybinds.push({ keybind, focus });
+                        get().keybinds.push({keybind, focus});
                     } else {
                         get().removeKeybind(focus);
-                        get().keybinds.push({ keybind, focus });
+                        get().keybinds.push({keybind, focus});
                     }
                 },
                 removeKeybind: (focus: KeyboardFocusType) => {
@@ -531,7 +535,7 @@ const useConfigStore = create<ConfigStore>()(
                         updatedState.settings.customFile = false;
                         updatedState.settings.customUrl = false;
                         updatedState.customFile.path = "";
-                        updatedState.customFile.url = "";
+                        updatedState.customFile.readable = false;
                     }
                     return updatedState;
                 },

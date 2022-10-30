@@ -117,7 +117,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                         <Typography sx={{ mt: 2 }} style={clientLocal == "custom" ? {} : { display: "none" }}>
                             <InputBoxButton
                                 onClick={async () => {
-                                    const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke("selectLogFile");
+                                    const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke(IpcValidInvokeChannels.SELECT_LOG_FILE, [[{name: "Logs", extensions: ["log"]}]]);
                                     if (path.filePaths[0] !== undefined) {
                                         const logPath = path.filePaths[0];
                                         const readable = await window.ipcRenderer.invoke<boolean>(IpcValidInvokeChannels.IS_FILE_READABLE, [logPath]);

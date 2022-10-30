@@ -32,6 +32,7 @@ enum IpcValidInvokeChannels {
     GET_APP_INFO = "getAppInfo",
     ASTOLFO = "astolfo",
     OPEN_LINK = "openlink",
+    READ_FILE = "readFile",
 }
 
 enum IpcValidSendChannels {
@@ -60,8 +61,9 @@ export interface IpcChannelMap {
     [IpcValidInvokeChannels.ASTOLFO]: [];
     [IpcValidInvokeChannels.IS_ADMIN]: [];
     [IpcValidInvokeChannels.AUTOLOG]: [];
-    [IpcValidInvokeChannels.SELECT_LOG_FILE]: [];
+    [IpcValidInvokeChannels.SELECT_LOG_FILE]: [filters: Array<{name: string, extensions: Array<string>}>];
     [IpcValidInvokeChannels.GET_APP_INFO]: [];
+    [IpcValidInvokeChannels.READ_FILE]: [path: string];
 
     [IpcValidSendChannels.LOG_FILE_SET]: [path: string];
     [IpcValidSendChannels.WINDOW_TOGGLE]: [];
@@ -83,4 +85,4 @@ class IpcRendererExtension<ChannelMap> {
 
 const ipcRendererExtension = new IpcRendererExtension<IpcChannelMap>();
 
-export { ipcRendererExtension, IpcValidInvokeChannels };
+export {ipcRendererExtension, IpcValidInvokeChannels};

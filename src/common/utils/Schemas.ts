@@ -102,7 +102,7 @@ export interface SettingsConfig {
     run: {
         friends: boolean;
     };
-    preferences: { autoHide: boolean; customFile: boolean; customUrl: boolean };
+    preferences: {autoHide: boolean; customFile: boolean; customUrl: boolean};
     appearance: {
         displayRank: boolean;
     };
@@ -172,4 +172,10 @@ export interface AppInformation {
         ready: boolean;
         releaseDate: number;
     };
+}
+
+export interface CustomLinkFile {
+    path: string,
+    readable: boolean,
+    data: Array<string> | Array<{uuid: string, blacklisted: boolean, tags: Array<{tag: string, hex: string}>}> | null
 }
