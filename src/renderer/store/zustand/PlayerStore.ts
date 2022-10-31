@@ -298,12 +298,12 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                             for (const statePlayers of storedPlayers) {
                                 if (statePlayers.hypixelPlayer !== null && statePlayers.hypixelPlayer !== undefined) {
                                     if (friendUuid.uuidReceiver === player.hypixelPlayer.uuid) {
-                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidSender.includes(statePlayers.hypixelPlayer.uuid)) {
+                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidSender?.includes(statePlayers.hypixelPlayer.uuid)) {
                                             player.friended = true;
                                             statePlayers.friended = true;
                                         }
                                     } else {
-                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidReceiver.includes(statePlayers.hypixelPlayer.uuid)) {
+                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidReceiver?.includes(statePlayers.hypixelPlayer.uuid)) {
                                             player.friended = true;
                                             statePlayers.friended = true;
                                         }

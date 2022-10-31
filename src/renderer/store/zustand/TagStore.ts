@@ -68,8 +68,8 @@ const useTagStore = create<TagStoreSchema>()(
                     ],
                 },
                 personal_safelist: {
-                    display: "✓",
-                    colour: "FF5555",
+                    display: "(✓)",
+                    colour: "FF5555"
                 },
                 name_change: {
                     display: "NC",
