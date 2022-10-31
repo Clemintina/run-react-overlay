@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
 import React from "react";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import { MinecraftColours, Player } from "@common/utils/PlayerUtils";
+import {MinecraftColours, Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { getTagsFromConfig } from "@common/utils/player/RenderComponent";
-import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import { MinecraftColourAsHex } from "@common/zikeji";
+import {getTagsFromConfig} from "@common/utils/player/RenderComponent";
+import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {MinecraftColourAsHex} from "@common/zikeji";
 
 export interface PlayerTags {
     player: Player;
@@ -43,16 +43,30 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
         } else if (runApi?.customTag) {
             parseColour(runApi.customTag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
         } else {
+            if (settings.preferences.customFile && customData?.tags != null) {
+                for (const tag of customData.tags) {
+                    if (tag?.singularTag) {
+                        tagArray = [];
+                        if (tag.tag.includes("§")) parseColour(tag.tag).forEach((tag: [string, string]) => tagArray.push(<span style={{color: `#${tag[1]}`}}>{tag[0]}</span>));
+                        else tagArray.push(<span style={{color: tag.hex}}>{tag.tag}</span>);
+                        break;
+                    } else {
+                        if (tag.tag.includes("§")) parseColour(tag.tag).forEach((tag: [string, string]) => tagArray.push(<span style={{color: `#${tag[1]}`}}>{tag[0]}</span>));
+                        else tagArray.push(<span style={{color: tag.hex}}>{tag.tag}</span>);
+
+                    }
+                }
+            }
             if (player?.sources?.boomza?.status === 200) {
                 const boomza = destr(player.sources.boomza.data);
                 if (boomza.sniper) {
                     tagArray.push(<span
-                      style={{ color: `#${boomzaTag.sniper.colour.toString()}` }}>{boomzaTag.sniper.display}</span>);
+                        style={{color: `#${boomzaTag.sniper.colour.toString()}`}}>{boomzaTag.sniper.display}</span>);
                     tagArray.push(<span className={"pl-1"} />);
                 }
                 if (boomza.report) {
                     tagArray.push(<span
-                      style={{ color: `#${boomzaTag.hacker.colour.toString()}` }}>{boomzaTag.hacker.display}</span>);
+                        style={{color: `#${boomzaTag.hacker.colour.toString()}`}}>{boomzaTag.hacker.display}</span>);
                     tagArray.push(<span className={"pl-1"} />);
                 }
             }
@@ -76,15 +90,6 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             }
             if (settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
                 tagArray.push(<RenderKeathizTags player={player} />);
-            }
-            if (settings.preferences.customFile && customData?.tags != null) {
-                for (const tag of customData.tags) {
-                    if (tag?.singularTag) {
-                        tagArray = [];
-                        tagArray.push(<span style={{ color: tag.hex }}>{tag.tag}</span>);
-                        break;
-                    } else tagArray.push(<span style={{ color: tag.hex }}>{tag.tag}</span>);
-                }
             }
         }
     } else {

@@ -1,9 +1,9 @@
-import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { Player } from "@common/utils/PlayerUtils";
+import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
@@ -211,6 +211,7 @@ const clearOverlayTable = async () => {
 
 const readLogLine = (data: string) => {
     const response: IPCResponse<LogFileMessage> = destr(data);
+    console.log(response);
     if (typeof response === "object") {
         if (!response.data.message.includes("[CHAT]")) {
             return `[17:46:23] [Client thread/INFO]: [CHAT] ${response.data.message}`.replaceAll("%20", " ");

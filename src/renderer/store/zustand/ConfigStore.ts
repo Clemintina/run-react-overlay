@@ -1,29 +1,16 @@
 // eslint-disable-next-line import/named
-import { ColumnState } from "ag-grid-community";
+import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import {
-    AppInformation,
-    BrowserWindowSettings,
-    ClientSetting,
-    ColourSettings,
-    CustomLinkFile,
-    DisplayErrorMessage,
-    FontConfig,
-    KeybindInterface,
-    KeyboardFocusType,
-    PlayerNickname,
-    SettingsConfig,
-    TableState
-} from "@common/utils/Schemas";
-import { ResultObject } from "@common/zikeji/util/ResultObject";
-import { Paths } from "@common/zikeji";
-import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { awaitTimeout } from "@common/helpers";
-import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import { devtools, persist } from "../../../../node_modules/zustand/middleware";
+import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {ResultObject} from "@common/zikeji/util/ResultObject";
+import {Paths} from "@common/zikeji";
+import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {awaitTimeout} from "@common/helpers";
+import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {devtools, persist} from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import axios from "axios";
-import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 export type ConfigStore = {
     hypixel: {
@@ -45,6 +32,7 @@ export type ConfigStore = {
         valid: boolean;
         showNick: boolean;
     };
+    setKeathizData: (data: {key: string; valid: boolean; showNick: boolean;}) => void
     setKeathizApiKey: (keathizkey: string) => void;
     run: {
         apiKey: string;
@@ -134,7 +122,7 @@ const useConfigStore = create<ConfigStore>()(
                 setVersion: async () => {
                     const appInfo = await window.ipcRenderer.invoke<AppInformation>(IpcValidInvokeChannels.GET_APP_INFO);
                     const version = appInfo.data.version;
-                    set(() => ({ version }));
+                    set(() => ({version}));
                     const googleFontArray = await axios.get("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBwIX97bVWr3-6AIUvGkcNnmFgirefZ6Sw");
                     if (googleFontArray.status == 200) {
                         const fontsAvailable: Array<string> = [];
@@ -189,6 +177,11 @@ const useConfigStore = create<ConfigStore>()(
                     key: "",
                     valid: false,
                     showNick: true,
+                },
+                setKeathizData: (keathizstore) => {
+                    set({
+                        keathiz: keathizstore,
+                    });
                 },
                 setKeathizApiKey: async (keathizApiKey) => {
                     const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5", keathizApiKey]);
@@ -254,7 +247,7 @@ const useConfigStore = create<ConfigStore>()(
                     opacity: 100,
                 },
                 setBrowserWindow: (browserWindow) => {
-                    set({ browserWindow });
+                    set({browserWindow});
                 },
                 table: {
                     columnState: Array<ColumnState>(
@@ -447,7 +440,7 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);
-                    set({ table });
+                    set({table});
                 },
                 settings: {
                     lunar: true,
@@ -471,7 +464,7 @@ const useConfigStore = create<ConfigStore>()(
                     },
                 },
                 setSettings: async (settings) => {
-                    set({ settings });
+                    set({settings});
                     usePlayerStore.getState().updatePlayers();
                 },
                 customFile: {
@@ -487,10 +480,10 @@ const useConfigStore = create<ConfigStore>()(
                 keybinds: [],
                 addKeybind: async (focus, keybind) => {
                     if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
-                        get().keybinds.push({ keybind, focus });
+                        get().keybinds.push({keybind, focus});
                     } else {
                         get().removeKeybind(focus);
-                        get().keybinds.push({ keybind, focus });
+                        get().keybinds.push({keybind, focus});
                     }
                 },
                 removeKeybind: (focus: KeyboardFocusType) => {
@@ -506,11 +499,11 @@ const useConfigStore = create<ConfigStore>()(
                     availableFonts: [],
                 },
                 setFont: async (font) => {
-                    set({ font });
+                    set({font});
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {
-                    set({ nicks });
+                    set({nicks});
                 },
                 setStore: (store) => set(store),
                 appInformation: {

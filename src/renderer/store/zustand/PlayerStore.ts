@@ -1,24 +1,11 @@
 import create from "zustand";
-import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/zikeji";
-import {
-    Blacklist,
-    IPCResponse,
-    LunarAPIResponse,
-    PlayerAPI,
-    RequestType,
-    RunEndpoints,
-    RunFriendList
-} from "@common/utils/externalapis/RunApi";
-import {
-    BoomzaAntisniper,
-    KeathizDenick,
-    KeathizEndpoints,
-    KeathizOverlayRun
-} from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
-import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
-import { CustomFileJsonType } from "@common/utils/Schemas";
+import {Player} from "@common/utils/PlayerUtils";
+import {Components} from "@common/zikeji";
+import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
+import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import {CustomFileJsonType} from "@common/utils/Schemas";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -42,6 +29,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     players: Array<Player>(),
     friendLists: Array<RunFriendList>(),
     addPlayer: async (username: string) => {
+        console.log(username);
         if (username == undefined || username == "") return;
         const playerData: Player = {
             name: username.toLowerCase(),
@@ -292,18 +280,18 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     }
                 }
                 if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
-                    const p1Friends = player.hypixelFriends.data;
+                    const p1Friends = player?.hypixelFriends?.data;
                     if (p1Friends !== undefined) {
                         for (const friendUuid of p1Friends) {
                             for (const statePlayers of storedPlayers) {
-                                if (statePlayers.hypixelPlayer !== null && statePlayers.hypixelPlayer !== undefined) {
-                                    if (friendUuid.uuidReceiver === player.hypixelPlayer.uuid) {
-                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidSender?.includes(statePlayers.hypixelPlayer.uuid)) {
+                                if (statePlayers?.hypixelPlayer !== null && statePlayers?.hypixelPlayer !== undefined) {
+                                    if (friendUuid?.uuidReceiver === player?.hypixelPlayer?.uuid) {
+                                        if (statePlayers?.hypixelPlayer?.uuid !== undefined && friendUuid?.uuidSender?.includes(statePlayers?.hypixelPlayer?.uuid ?? "")) {
                                             player.friended = true;
                                             statePlayers.friended = true;
                                         }
                                     } else {
-                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidReceiver?.includes(statePlayers.hypixelPlayer.uuid)) {
+                                        if (statePlayers?.hypixelPlayer?.uuid !== undefined && friendUuid?.uuidReceiver?.includes(statePlayers?.hypixelPlayer?.uuid ?? "")) {
                                             player.friended = true;
                                             statePlayers.friended = true;
                                         }
