@@ -3,6 +3,7 @@ import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
@@ -44,7 +45,10 @@ export class LogFileReader {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 clearOverlayTable();
                 if (useConfigStore.getState().settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
-                players.map(async (player) => addPlayer(player));
+                players.map(async (player) => {
+                    if (player.includes("(") || player.includes("[")) return;
+                    addPlayer(player);
+                });
             } else if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
                 players.shift();
@@ -68,13 +72,13 @@ export class LogFileReader {
                 const players = usePlayerStore.getState();
                 const player: Player | undefined = players.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
                 if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
-                    await window.ipcRenderer.invoke("seraph", RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner);
+                    await window.ipcRenderer.invoke(IpcValidInvokeChannels.SERAPH, [RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner]);
                 }
             }
         });
     };
 
-    public startApiKeyHandler = async() => {
+    public startApiKeyHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
             if (line.includes("Your new API key is ")) {
@@ -82,13 +86,13 @@ export class LogFileReader {
                 configStore.setHypixelApiKey(line.split("Your new API key is ")[1]);
             }
         });
-    }
+    };
 
     public startCommandListener = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
             if (line.toLowerCase().includes("Can't find a player by the name of ".toLowerCase())) {
-                const command = line.split("[CHAT]")[1].split("Can't find a player by the name of ")[1].replaceAll("'", "").trim();
+                const command = line.split("[CHAT]")[1].split("Can't find a player by the name of ")[1].replaceAll("'", "").trim().toLowerCase();
                 const commands = [".c", ".clear", ".h", ".hide", ".s", ".show", ".r"];
                 const command_clean = command.replace(".", "").replace("@", "").replace("-", "").replace(",", "").toLowerCase();
                 if (command === ".c" || command === ".clear") {
@@ -110,7 +114,6 @@ export class LogFileReader {
     };
 
     public startPartyListener = async () => {
-        // TODO Add party handling
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             let line = readLogLine(data);
             if (line != null) {
@@ -209,6 +212,9 @@ const clearOverlayTable = async () => {
 const readLogLine = (data: string) => {
     const response: IPCResponse<LogFileMessage> = destr(data);
     if (typeof response === "object") {
+        if (!response.data.message.includes("[CHAT]")) {
+            return `[17:46:23] [Client thread/INFO]: [CHAT] ${response.data.message}`.replaceAll("%20", " ");
+        }
         return response.data.message;
     }
     return "";

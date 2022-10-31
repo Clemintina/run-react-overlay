@@ -1,14 +1,16 @@
 // eslint-disable-next-line import/named
-import { ColumnState } from "ag-grid-community";
+import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import { BrowserWindowSettings, ClientSetting, ColourSettings, DisplayErrorMessage, FontConfig, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
-import { ResultObject } from "@common/zikeji/util/ResultObject";
-import { Paths } from "@common/zikeji";
-import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { awaitTimeout } from "@common/helpers";
-import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import { devtools, persist } from "../../../../node_modules/zustand/middleware";
+import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {ResultObject} from "@common/zikeji/util/ResultObject";
+import {Paths} from "@common/zikeji";
+import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {awaitTimeout} from "@common/helpers";
+import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {devtools, persist} from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import axios from "axios";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 export type ConfigStore = {
     hypixel: {
@@ -25,8 +27,6 @@ export type ConfigStore = {
     setLogs: (clientSetting: ClientSetting) => void;
     error: DisplayErrorMessage;
     setErrorMessage: (error: DisplayErrorMessage) => void;
-    successMessage: DisplayErrorMessage;
-    setSuccessMessage: (success: DisplayErrorMessage) => void;
     keathiz: {
         key: string;
         valid: boolean;
@@ -45,12 +45,16 @@ export type ConfigStore = {
     settings: SettingsConfig;
     setSettings: (settingsSettings: SettingsConfig) => void;
     setStore: (store: ConfigStore) => void;
-    font: {
-        family: string;
-    };
+    font: FontConfig;
+    keybinds: Array<KeybindInterface>;
+    addKeybind: (focus: KeyboardFocusType, keybind: string) => void;
+    removeKeybind: (focus: KeyboardFocusType) => void;
+    getKeybind: (focus: KeyboardFocusType) => KeybindInterface;
     setFont: (font: FontConfig) => void;
     nicks: Array<PlayerNickname>;
     setNicks: (nicks: Array<PlayerNickname>) => void;
+    customFile: CustomLinkFile;
+    setCustomFile: (customFile: CustomLinkFile) => void;
 };
 
 const useConfigStore = create<ConfigStore>()(
@@ -63,7 +67,7 @@ const useConfigStore = create<ConfigStore>()(
                     apiKeyOwner: "",
                 },
                 setHypixelApiKey: async (hypixelApiKey) => {
-                    if (hypixelApiKey.length === 0) {
+                    if (hypixelApiKey.length === 0 || get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase()) {
                         const oldHypixel = get().hypixel;
                         if (oldHypixel.apiKeyValid) return;
                         set(() => ({
@@ -74,8 +78,8 @@ const useConfigStore = create<ConfigStore>()(
                         }));
                         return;
                     }
-                    const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>("hypixel", RequestType.KEY, hypixelApiKey);
-                    if (apiResponse.status === 200 && apiResponse?.data?.key !== undefined) {
+                    const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>(IpcValidInvokeChannels.HYPIXEL, [RequestType.KEY, hypixelApiKey]);
+                    if (apiResponse?.status === 200 && apiResponse?.data?.key !== undefined) {
                         get().setErrorMessage({
                             title: "Hypixel Key Set",
                             cause: "Successfully set your Hypixel API key!",
@@ -87,7 +91,6 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKeyValid: true,
                                 apiKeyOwner: apiResponse.data.owner,
                             },
-
                         }));
                     } else {
                         get().setErrorMessage({
@@ -116,9 +119,22 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 version: "",
                 setVersion: async () => {
-                    const appInfo = await window.ipcRenderer.invoke("getAppInfo");
-                    const version = appInfo.version;
+                    const appInfo = await window.ipcRenderer.invoke<AppInformation>(IpcValidInvokeChannels.GET_APP_INFO);
+                    const version = appInfo.data.version;
                     set(() => ({ version }));
+                    const googleFontArray = await axios.get("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBwIX97bVWr3-6AIUvGkcNnmFgirefZ6Sw");
+                    if (googleFontArray.status == 200) {
+                        const fontsAvailable: Array<string> = [];
+                        googleFontArray.data.items.forEach((item) => {
+                            fontsAvailable.push(item.family);
+                        });
+                        set({
+                            font: {
+                                ...get().font,
+                                availableFonts: fontsAvailable,
+                            },
+                        });
+                    }
                 },
                 logs: {
                     logPath: "",
@@ -140,7 +156,12 @@ const useConfigStore = create<ConfigStore>()(
                     detail: "",
                 },
                 setErrorMessage: async (structuredError) => {
-                    set({ error: structuredError });
+                    set({
+                        error: {
+                            ...structuredError,
+                            code: structuredError?.code ?? 200,
+                        },
+                    });
                     await awaitTimeout(5 * 1000);
                     set({
                         error: {
@@ -157,7 +178,7 @@ const useConfigStore = create<ConfigStore>()(
                     showNick: true,
                 },
                 setKeathizApiKey: async (keathizApiKey) => {
-                    const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5", keathizApiKey);
+                    const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5", keathizApiKey]);
                     if (keathizApiKey.length == 0) return;
                     if (apiKey.status == 200) {
                         set({
@@ -169,7 +190,7 @@ const useConfigStore = create<ConfigStore>()(
                         });
                         for (const player of usePlayerStore.getState().players) {
                             if (player.hypixelPlayer?.uuid && !player.nicked) {
-                                const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey);
+                                const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey]);
                                 if (keathiz.status == 200) {
                                     console.log(keathiz.status);
                                     player.sources.keathiz = keathiz;
@@ -189,9 +210,9 @@ const useConfigStore = create<ConfigStore>()(
                     valid: true,
                 },
                 setRunApiKey: async (runkey) => {
-                    if (runkey.length == 0) return;
+                    if (runkey.length == 0 || get()?.run?.apiKey.toLowerCase() == runkey) return;
                     const getHypixel = get().hypixel;
-                    const apiKey = await window.ipcRenderer.invoke<RunApiKey>("seraph", RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner);
+                    const apiKey = await window.ipcRenderer.invoke<RunApiKey>(IpcValidInvokeChannels.SERAPH, [RunEndpoints.KEY, "a", getHypixel.apiKey, getHypixel.apiKeyOwner, runkey, getHypixel.apiKeyOwner]);
                     if (runkey.length == 0) return;
                     if (apiKey.status == 200) {
                         get().setErrorMessage({
@@ -407,6 +428,9 @@ const useConfigStore = create<ConfigStore>()(
                             flex: 1,
                         },
                     ),
+                    settings: {
+                        textAlign: "center",
+                    },
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);
@@ -426,14 +450,47 @@ const useConfigStore = create<ConfigStore>()(
                     },
                     preferences: {
                         autoHide: true,
+                        customFile: false,
+                        customUrl: false,
+                    },
+                    appearance: {
+                        displayRank: true,
                     },
                 },
                 setSettings: async (settings) => {
                     set({ settings });
                     usePlayerStore.getState().updatePlayers();
                 },
+                customFile: {
+                    path: "",
+                    readable: false,
+                    data: null,
+                },
+                setCustomFile: (customFile) => {
+                    set({
+                        customFile,
+                    });
+                },
+                keybinds: [],
+                addKeybind: async (focus, keybind) => {
+                    if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
+                        get().keybinds.push({ keybind, focus });
+                    } else {
+                        get().removeKeybind(focus);
+                        get().keybinds.push({ keybind, focus });
+                    }
+                },
+                removeKeybind: (focus: KeyboardFocusType) => {
+                    set({
+                        keybinds: get().keybinds.filter((arr) => arr.focus !== focus),
+                    });
+                },
+                getKeybind: (focus: KeyboardFocusType) => {
+                    return get().keybinds.filter((arr) => arr.focus == focus)[0];
+                },
                 font: {
-                    family: "Times New Roman",
+                    family: "Nunito",
+                    availableFonts: [],
                 },
                 setFont: async (font) => {
                     set({ font });
@@ -443,12 +500,44 @@ const useConfigStore = create<ConfigStore>()(
                     set({ nicks });
                 },
                 setStore: (store) => set(store),
+                appInformation: {
+                    version: "",
+                    update: {
+                        release: "",
+                        updateAvailable: false,
+                        ready: false,
+                        releaseDate: new Date(),
+                    },
+                },
             }),
             {
                 name: "user_settings",
-                version: 4,
-                migrate: (persistedState: any) => {
-                    return { ...persistedState, settings: { hypixel: { guilds: false } , updater: true}, font: { family: "Times New Roman" }, error: {code: 201} };
+                version: 6,
+                migrate: (persistedState: any, version) => {
+                    const updatedState = persistedState;
+                    if (version == 4) {
+                        updatedState.settings.hypixel.guilds = false;
+                        updatedState.settings.run.friends = false;
+                        updatedState.settings.updater = true;
+                        updatedState.font.family = "Nunito";
+                        updatedState.settings.error.code = 201;
+                    } else if (version == 5) {
+                        updatedState.keybinds = [];
+                        updatedState.settings.appearance.displayRank = true;
+                        updatedState.table.settings.textAlign = "left";
+                    } else if (version == 6) {
+                        updatedState.appInformation.version = "";
+                        updatedState.appInformation.update.release = "";
+                        updatedState.appInformation.update.ready = false;
+                        updatedState.appInformation.update.updateAvailable = false;
+                        updatedState.appInformation.update.releaseDate = new Date();
+                    } else if (version == 7) {
+                        updatedState.settings.customFile = false;
+                        updatedState.settings.customUrl = false;
+                        updatedState.customFile.path = "";
+                        updatedState.customFile.readable = false;
+                    }
+                    return updatedState;
                 },
             },
         ),

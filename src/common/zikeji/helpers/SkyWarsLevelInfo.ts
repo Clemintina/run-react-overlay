@@ -7,8 +7,8 @@
  * For the original full copyright and license information, please view the LICENSE-HYPIXEL-PHP.md that was distributed with this source code.
  */
 
-import {Components} from "../types/api";
-import {getSkyWarsPrestigeForLevel, SkyWarsPrestige, SkyWarsPrestiges} from "./SkyWarsPrestige";
+import { Components } from "../types/api";
+import { getSkyWarsPrestigeForLevel, SkyWarsPrestige, SkyWarsPrestiges } from "./SkyWarsPrestige";
 
 /** @internal */
 const skyWarsLevelConstants = {

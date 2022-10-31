@@ -1,11 +1,11 @@
-const alias = require('./webpack.aliases')
+const alias = require("./webpack.aliases");
 
-module.exports={
+module.exports = {
     resolve: {
-        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
+        extensions: [".js", ".ts", ".jsx", ".tsx", ".css"],
         alias: alias,
-        fallback:{
-            zlib: require.resolve('browserify-zlib')
+        fallback: {
+            zlib: require.resolve("browserify-zlib"),
         },
     },
-}
+};

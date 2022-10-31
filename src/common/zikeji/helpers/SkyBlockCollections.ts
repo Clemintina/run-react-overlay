@@ -1,4 +1,4 @@
-import {Components} from "../types/api";
+import { Components } from "../types/api";
 
 /**
  * Interface describing the accumulated information of all members on a profile.

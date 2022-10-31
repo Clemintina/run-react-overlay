@@ -1,18 +1,21 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {Player} from "@common/utils/PlayerUtils";
-import {getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig} from "@common/utils/player/RenderComponent";
+import { Player } from "@common/utils/PlayerUtils";
+import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@common/utils/player/RenderComponent";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface RenderRatioColour {
     player: Player;
     ratio: "wlr" | "bblr" | "kdr" | "fkdr";
+    isTooltip?: boolean;
 }
 
 const RenderRatioColour: React.ElementType = (props: RenderRatioColour) => {
     const player = props.player;
-
     let renderer: JSX.Element;
     let playerValue;
+    const { table } = useConfigStore((state) => ({ table: state.table }));
+
     if (!player.nicked) {
         switch (props.ratio) {
             case "wlr":
@@ -29,7 +32,7 @@ const RenderRatioColour: React.ElementType = (props: RenderRatioColour) => {
                 break;
         }
 
-        if (player.sources.runApi?.data.data.blacklist.tagged) {
+        if (player.sources.runApi?.data.data?.blacklist.tagged && player.loaded) {
             let displayValue = playerValue;
             if (!isFinite(playerValue)) displayValue = ~~Number((((0 - 18) / 0) * 100).toFixed(2));
             if (!Number.isInteger(playerValue)) displayValue = playerValue.toFixed(2);
@@ -41,7 +44,7 @@ const RenderRatioColour: React.ElementType = (props: RenderRatioColour) => {
         renderer = getPlayerTagDividerNicked();
     }
 
-    return <span>{renderer}</span>;
+    return <span style={{ textAlign: table.settings.textAlign, display: props?.isTooltip ? "" : "block" }}>{renderer}</span>;
 };
 
 export default RenderRatioColour;

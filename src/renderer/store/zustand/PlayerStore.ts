@@ -1,9 +1,11 @@
 import create from "zustand";
-import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/zikeji";
-import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
-import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import {Player} from "@common/utils/PlayerUtils";
+import {Components} from "@common/zikeji";
+import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
+import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import {CustomFileJsonType} from "@common/utils/Schemas";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -12,6 +14,11 @@ export type PlayerStore = {
     updatePlayers: () => void;
     clearPlayers: () => void;
     setStore: (store) => void;
+    party: {
+        partyStore: Array<string>;
+        addPartyMember: () => void;
+        removePartyMember: () => void;
+    };
     tagStore: {
         config: object;
         tags: object;
@@ -30,6 +37,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             nicked: false,
             bot: false,
             friended: false,
+            loaded: false,
             hypixelGuild: null,
             hypixelPlayer: null,
             hypixelFriends: null,
@@ -58,11 +66,12 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }
 
         try {
-            const ipcHypixelPlayer = playerData.name.length <= 17 ? await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.USERNAME, playerData.name, apiKey) : await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, playerData.name.replace("-", ""), apiKey);
+            const ipcHypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name]) : await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", "")]);
+
             if (ipcHypixelPlayer?.data?.uuid == null && configStore?.settings?.keathiz) {
-                const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>("keathiz", KeathizEndpoints.DENICK, playerData.name, keathizApiKey);
+                const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.DENICK, playerData.name, keathizApiKey]);
                 if (ipcKeathizDenicker.data?.player?.uuid) {
-                    const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", RequestType.UUID, ipcKeathizDenicker.data.player.uuid);
+                    const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, ipcKeathizDenicker.data.player.uuid]);
                     if (newIpcHypixelPlayer?.data?.uuid != null) {
                         playerData.hypixelPlayer = newIpcHypixelPlayer.data;
                         playerData.denicked = true;
@@ -105,14 +114,31 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     playerData.nicked = false;
                 }
             }
+
+            playerObject.data = playerData;
+            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
+
+            if (exists == -1) {
+                set((state) => ({
+                    players: [...state.players, playerObject.data],
+                }));
+            } else {
+                set((state) => {
+                    const playerArr = [...state.players];
+                    playerArr[exists] = playerObject.data;
+                    return {
+                        players: playerArr,
+                    };
+                });
+            }
         } catch (e) {
-            const mcUtilsRequest = await window.ipcRenderer.invoke<PlayerAPI>("mcutils", RequestType.USERNAME, playerData.name);
+            const mcUtilsRequest = await window.ipcRenderer.invoke<PlayerAPI>(IpcValidInvokeChannels.MCUTILS, [RequestType.USERNAME, playerData.name.replaceAll("-", "")]);
             const mcUtils = mcUtilsRequest.data;
             playerData.nicked = true;
             if (mcUtilsRequest.status === 200) {
                 playerData.nicked = false;
                 playerData.id = mcUtils.player.uuid;
-                const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>("hypixel", apiKey, RequestType.UUID, mcUtils.player.uuid);
+                const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", "")]);
                 playerData.hypixelPlayer = ipcHypixelPlayer.data;
             }
             playerObject.status = mcUtilsRequest.status;
@@ -123,15 +149,64 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         if (!playerData.nicked && playerData.hypixelPlayer != null) {
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
+            playerObject.data = playerData;
+
+            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
+            if (exists != -1) {
+                set((state) => {
+                    const playerArr = [...state.players];
+                    playerArr[exists] = playerObject.data;
+                    return {
+                        players: playerArr,
+                    };
+                });
+            }
+
             if (runApi.status == 200) {
+                playerData.loaded = true;
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
                 if (!playerData.bot) {
-                    const [boomza, keathizApi, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getKeathizData(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
+                    const [boomza, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
                     playerData.sources.boomza = boomza;
-                    playerData.sources.keathiz = keathizApi;
                     playerData.sources.lunar = lunarApi;
                     playerData.hypixelFriends = hypixelFriends;
                     playerData.hypixelGuild = hypixelGuild;
+
+                    const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
+                    if (exists != -1) {
+                        set((state) => {
+                            const playerArr = [...state.players];
+                            playerArr[exists] = playerObject.data;
+                            return {
+                                players: playerArr,
+                            };
+                        });
+                    }
+
+                    const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
+                    playerData.sources.keathiz = keathizApi;
+
+                    if (configStore.settings.preferences.customFile) {
+                        const customFile = configStore.customFile;
+                        if (customFile.data != null) {
+                            if (typeof customFile?.data[0] === "string") {
+                                const datum = customFile.data as string[];
+                                if (datum.includes(playerData.name)) {
+                                    playerData.sources.runApi.data.data.blacklist.tagged = true;
+                                }
+                            } else {
+                                const datum = customFile.data as Array<CustomFileJsonType>;
+                                datum.map((player) => {
+                                    if (player.uuid == playerData.hypixelPlayer?.uuid) {
+                                        playerData.sources.customFile = player;
+                                        if (playerData.sources.runApi != null) {
+                                            playerData.sources.runApi.data.data.blacklist.tagged = player.blacklisted;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
                 }
             } else {
                 if (runApi.status == 403) {
@@ -142,21 +217,17 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                         detail: "This key has been locked for security reasons, please contact support.",
                         referenceId: "RUN_KEY_LOCK",
                     });
+                } else {
+                    const configStore = useConfigStore.getState();
+                    configStore.run.valid = runApi.status == 200;
+                    useConfigStore.getState().setStore(configStore);
                 }
-                const configStore = useConfigStore.getState();
-                configStore.run.valid = false;
-                useConfigStore.getState().setStore(configStore);
             }
         }
 
         playerObject.data = playerData;
         const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-
-        if (exists == -1) {
-            set((state) => ({
-                players: [...state.players, playerObject.data],
-            }));
-        } else {
+        if (exists != -1) {
             set((state) => {
                 const playerArr = [...state.players];
                 playerArr[exists] = playerObject.data;
@@ -183,19 +254,19 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             const config = useConfigStore.getState();
             if (player?.hypixelPlayer?.uuid && !player.nicked) {
                 if (config.settings.keathiz && player.sources?.keathiz == null) {
-                    const responseIPCResponse = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid);
+                    const responseIPCResponse = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid]);
                     if (responseIPCResponse.status == 200) {
                         player.sources.keathiz = responseIPCResponse;
                     }
                 }
                 if (config.settings.lunar && player.sources?.lunar == null) {
-                    const responseIPCResponse = await window.ipcRenderer.invoke<LunarAPIResponse>("lunar", player.hypixelPlayer.uuid);
+                    const responseIPCResponse = await window.ipcRenderer.invoke<LunarAPIResponse>(IpcValidInvokeChannels.LUNAR, [player.hypixelPlayer.uuid]);
                     if (responseIPCResponse.status == 200) {
                         player.sources.lunar = responseIPCResponse;
                     }
                 }
                 if (config.settings.boomza && player.sources?.boomza == null) {
-                    const responseIPCResponse = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
+                    const responseIPCResponse = await window.ipcRenderer.invoke<BoomzaAntisniper>(IpcValidInvokeChannels.BOOMZA, [player.hypixelPlayer.displayname]);
                     if (responseIPCResponse.status == 200) {
                         player.sources.boomza = responseIPCResponse;
                     }
@@ -229,6 +300,11 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }
     },
     setStore: (store) => set(store),
+    party: {
+        partyStore: Array<string>(),
+        addPartyMember: () => {},
+        removePartyMember: () => {},
+    },
     tagStore: {
         config: {},
         tags: {},
@@ -238,7 +314,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 const getBoomza = async (player: Player) => {
     let api: IPCResponse<BoomzaAntisniper>;
     if (player.hypixelPlayer?.displayname && useConfigStore.getState().settings.boomza) {
-        api = await window.ipcRenderer.invoke<BoomzaAntisniper>("boomza", player.hypixelPlayer.displayname);
+        api = await window.ipcRenderer.invoke<BoomzaAntisniper>(IpcValidInvokeChannels.BOOMZA, [player.hypixelPlayer.displayname]);
     } else {
         api = {
             data: { sniper: false, report: 0, error: false, username: player.name },
@@ -252,7 +328,7 @@ const getRunApi = async (player: Player) => {
     let api;
     if (player.hypixelPlayer?.uuid !== undefined) {
         const state = useConfigStore.getState();
-        api = await window.ipcRenderer.invoke<IPCResponse<Blacklist>>("seraph", RunEndpoints.BLACKLIST, player.hypixelPlayer.uuid, state.hypixel.apiKey, state.hypixel.apiKeyOwner, state.run.apiKey, state.hypixel.apiKeyOwner);
+        api = await window.ipcRenderer.invoke<IPCResponse<Blacklist>>(IpcValidInvokeChannels.SERAPH, [RunEndpoints.BLACKLIST, player.hypixelPlayer.uuid, state.hypixel.apiKey, state.hypixel.apiKeyOwner, state.run.apiKey, state.hypixel.apiKeyOwner]);
     } else {
         api = {
             data: {
@@ -290,7 +366,7 @@ const getRunApi = async (player: Player) => {
 const getLunarTags = async (player: Player) => {
     let api: IPCResponse<LunarAPIResponse>;
     if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.lunar) {
-        api = await window.ipcRenderer.invoke<LunarAPIResponse>("lunar", player.hypixelPlayer.uuid);
+        api = await window.ipcRenderer.invoke<LunarAPIResponse>(IpcValidInvokeChannels.LUNAR, [player.hypixelPlayer.uuid]);
     } else {
         api = {
             status: useConfigStore.getState().settings.lunar ? 417 : 400,
@@ -401,7 +477,15 @@ const getKeathizData = async (player: Player) => {
     };
     if (player?.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().keathiz.valid && useConfigStore.getState().settings.keathiz) {
         const state = useConfigStore.getState();
-        if (state != undefined) api = await window.ipcRenderer.invoke<KeathizOverlayRun>("keathiz", KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, state.keathiz.key);
+        if (state != undefined) {
+            let ipcKeathiz;
+            try {
+                ipcKeathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, state.keathiz.key]);
+            } catch (e) {
+                ipcKeathiz = api;
+            }
+            api = ipcKeathiz;
+        }
     }
     return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({ status: 200, data: api.data }));
 };
@@ -417,19 +501,23 @@ const getHypixelFriends = async (player: Player) => {
             status: 400,
         };
     }
-    return new Promise<IPCResponse<{
-        _id: string;
-        uuidSender: string;
-        uuidReceiver: string;
-        started: number;
-    }[]>>((resolve) => resolve(api));
+    return new Promise<
+        IPCResponse<
+            {
+                _id: string;
+                uuidSender: string;
+                uuidReceiver: string;
+                started: number;
+            }[]
+        >
+    >((resolve) => resolve(api));
 };
 
 const getGuildData = async (player: Player) => {
     let api;
     if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.hypixel.guilds) {
         const state = useConfigStore.getState();
-        api = await window.ipcRenderer.invoke<Components.Schemas.Guild>("hypixel", RequestType.GUILD_PLAYER, player.hypixelPlayer.uuid, state.hypixel.apiKey);
+        api = await window.ipcRenderer.invoke<Components.Schemas.Guild>(IpcValidInvokeChannels.HYPIXEL, [RequestType.GUILD_PLAYER, player.hypixelPlayer.uuid, state.hypixel.apiKey]);
     } else {
         api = null;
     }

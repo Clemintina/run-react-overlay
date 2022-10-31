@@ -1,20 +1,20 @@
 import React from "react";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 
-export interface SettingCard {
+export interface TextSettingCard {
     children: React.ReactElement | React.ReactElement[];
     options: {
         shown?: boolean;
     };
 }
 
-export const SettingCard: React.ElementType = (props: SettingCard) => {
+export const TextSettingCard: React.ElementType = (props: TextSettingCard) => {
     const showSetting = props?.options?.shown ?? true;
 
     return (
         <Box style={showSetting ? {} : { display: "none" }}>
             <div className={"text-gray-400 hover:text-white pb-3"}>
-                <div className='grid grid-cols-3 gap-3 text-lg align-middle'>{props.children}</div>
+                <div className='grid grid-cols-2 gap-3'>{props.children}</div>
             </div>
         </Box>
     );

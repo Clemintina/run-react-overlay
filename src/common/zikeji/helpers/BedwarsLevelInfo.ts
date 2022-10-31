@@ -141,7 +141,7 @@ export const getHighLevelPrestigeColour = (data: BedwarsLevelInfo) => {
     if (level >= 1100 && level < 2100) starIcon = "✪";
     if (level >= 2100) starIcon = "❀";
     if (level >= 1000) {
-        for (const {format, bracketColour, prestige} of colourFormat) {
+        for (const { format, bracketColour, prestige } of colourFormat) {
             if (prestige <= level) {
                 const levelSplit: Array<number> = Array.from(level.toString()).map(Number);
                 let html = `<span style="color: #${MinecraftColourAsHex[bracketColour.beginning]}">[</span>`;

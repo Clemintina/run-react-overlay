@@ -1,25 +1,12 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { ToggleButton } from "@components/user/ToggleButton";
-import { AgGridReact } from "ag-grid-react";
-import { ColDef, ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
-import PlayerHead from "@common/utils/player/PlayerHead";
-import PlayerStar from "@common/utils/player/PlayerStar";
-import PlayerName from "@common/utils/player/PlayerName";
-import PlayerTags from "@common/utils/player/PlayerTags";
-import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
-import RenderRatioColour from "@common/utils/player/RenderRatioColour";
-import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
-import PlayerSession from "@common/utils/player/PlayerSession";
-import { Player } from "@common/utils/PlayerUtils";
-import { Box } from "@mui/material";
-
-const tinyColumnSize = 30;
-const smallColumnSize = 60;
-const mediumColumnSize = 60;
-const largeColumnSize = 130;
-const extraLargeColumnSize = 200;
+import {ToggleButton} from "@components/user/ToggleButton";
+import {AgGridReact} from "ag-grid-react";
+import {ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent} from "ag-grid-community";
+import {Player} from "@common/utils/PlayerUtils";
+import {Box} from "@mui/material";
+import {columnDefsBase, defaultColDefBase} from "@renderer/views/App";
 
 const ColumnEditorView = () => {
     const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
@@ -42,96 +29,6 @@ const ColumnEditorView = () => {
         event.api.refreshCells({ force: true });
     };
 
-    const defaultColDefs: ColDef = {
-        resizable: true,
-        sortingOrder: ["desc", "asc"],
-        sortable: true,
-        flex: 1,
-    };
-
-    const columnDefs: ColDef[] = [
-        {
-            field: "id",
-            hide: true,
-            cellRenderer: ({ data }) => data.uuid,
-        },
-        {
-            field: "head",
-            minWidth: tinyColumnSize,
-            sortable: false,
-            cellRenderer: ({ data }) => <PlayerHead player={data} />,
-        },
-        {
-            field: "star",
-            minWidth: smallColumnSize,
-            type: "number",
-            cellRenderer: ({ data }) => <PlayerStar player={data} />,
-        },
-        {
-            field: "name",
-            minWidth: extraLargeColumnSize,
-            type: "string",
-            cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,
-        },
-        {
-            field: "tags",
-            minWidth: largeColumnSize,
-            cellRenderer: ({ data }) => <PlayerTags player={data} />,
-            sortable: false,
-        },
-        {
-            field: "WS",
-            minWidth: smallColumnSize,
-            type: "number",
-            cellRenderer: ({ data }) => <PlayerWinstreak player={data} />,
-        },
-        {
-            field: "FKDR",
-            minWidth: mediumColumnSize,
-            type: "number",
-            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />,
-        },
-        {
-            field: "WLR",
-            minWidth: mediumColumnSize,
-            type: "number",
-            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />,
-        },
-        {
-            field: "BBLR",
-            minWidth: mediumColumnSize,
-            type: "number",
-            cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />,
-        },
-        {
-            field: "wins",
-            minWidth: mediumColumnSize,
-            type: "number",
-            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />,
-        },
-        {
-            field: "losses",
-            minWidth: mediumColumnSize,
-            type: "number",
-            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />,
-        },
-        {
-            field: "final_kills",
-            headerName: "Final Kills",
-            hide: true,
-            minWidth: mediumColumnSize,
-            type: "number",
-            cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
-        },
-        {
-            field: "session",
-            minWidth: smallColumnSize,
-            type: "number",
-            sortable: false,
-            cellRenderer: ({ data }) => <PlayerSession player={data} />,
-        },
-    ];
-
     const gridOptions: GridOptions<Player> = {
         onGridReady(event: GridReadyEvent) {
             event.columnApi.applyColumnState({ state: columnState, applyOrder: true });
@@ -146,8 +43,8 @@ const ColumnEditorView = () => {
         onColumnMoved(event: ColumnMovedEvent) {
             onGridUpdate(event);
         },
-        defaultColDef: defaultColDefs,
-        columnDefs,
+        defaultColDef: defaultColDefBase,
+        columnDefs: columnDefsBase,
         autoSizePadding: 0,
         rowHeight: 25,
         overlayNoRowsTemplate: "Welcome to the Table Editor! In order to continue, Please click a button and I will display a preview here! ",
@@ -158,7 +55,7 @@ const ColumnEditorView = () => {
     return (
         <div>
             <NavigationBar>
-                <Box>
+                <Box className={"pl-2"}>
                     <div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
                         <AgGridReact rowData={playerData} gridOptions={gridOptions} />
                     </div>
@@ -192,8 +89,9 @@ const constantPlayerData = () => {
             nicked: false,
             bot: false,
             friended: false,
+            loaded: true,
             hypixelGuild: {
-                data:  {
+                data: {
                     _id: "61e800b78ea8c991568ca03f",
                     name: "The Hangover",
                     name_lower: "the hangover",
@@ -923,7 +821,8 @@ const constantPlayerData = () => {
                         BEDWARS: 122197351,
                         PROTOTYPE: 26301541,
                     },
-                }, status: 200
+                },
+                status: 200,
             },
             hypixelPlayer: {
                 _id: "5f1d33d2273efab4375d5b63",

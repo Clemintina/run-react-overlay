@@ -1,7 +1,8 @@
-import { Blacklist, IPCResponse, LunarAPIResponse } from "./externalapis/RunApi";
-import { Components } from "@common/zikeji";
-import { BoomzaAntisniper, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
+import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
+import {Components} from "@common/zikeji";
+import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
+import {CustomFileJsonType} from "@common/utils/Schemas";
 
 export type Player = {
     name: string;
@@ -11,6 +12,7 @@ export type Player = {
     bot: boolean | null;
     friended: boolean | null;
     denicked: boolean | null;
+    loaded: boolean;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
     hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
@@ -21,6 +23,7 @@ export type Player = {
         keathiz?: IPCResponse<KeathizOverlayRun> | null;
         lunar?: IPCResponse<LunarAPIResponse> | null;
         playerDb?: IPCResponse<PlayerDB> | null;
+        customFile?: CustomFileJsonType;
     };
 };
 
@@ -38,7 +41,7 @@ export class PlayerUtils {
 
 export class PlayerHypixelUtils {
     public getDateFormatted = (epoch: number | undefined, options?: { day: boolean; month: boolean; year: boolean } | undefined) => {
-        if (epoch === undefined) return "Disabled";
+        if (epoch === undefined || epoch === 0) return "N/A";
         const d = new Date(0);
         d.setUTCMilliseconds(epoch);
 

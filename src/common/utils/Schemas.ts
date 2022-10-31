@@ -17,7 +17,7 @@ export interface HypixelApiKey {
 }
 
 export interface DisplayErrorMessage {
-    code: number;
+    code?: number;
     title: string;
     cause: string;
     detail?: string;
@@ -102,7 +102,10 @@ export interface SettingsConfig {
     run: {
         friends: boolean;
     };
-    preferences: { autoHide: boolean };
+    preferences: { autoHide: boolean; customFile: boolean; customUrl: boolean };
+    appearance: {
+        displayRank: boolean;
+    };
 }
 
 export interface ClientSetting {
@@ -125,6 +128,9 @@ export interface BrowserWindowSettings {
 
 export interface TableState {
     columnState: Array<ColumnState>;
+    settings: {
+        textAlign: "left" | "center" | "right";
+    };
 }
 
 export interface ValidateRun {
@@ -147,4 +153,36 @@ export interface PlayerNickname {
 
 export interface FontConfig {
     family: string;
+    availableFonts: Array<string>;
 }
+
+export type KeyboardFocusType = "none" | "open_overlay" | "clear_players";
+
+export interface KeybindInterface {
+    focus: KeyboardFocusType;
+    keybind: string;
+    enabled?: boolean;
+}
+
+export interface AppInformation {
+    version: string;
+    update: {
+        release: string;
+        updateAvailable: boolean;
+        ready: boolean;
+        releaseDate: number;
+    };
+}
+
+export interface CustomLinkFile {
+    path: string;
+    readable: boolean;
+    data: Array<string> | Array<CustomFileJsonType> | null;
+}
+
+export interface CustomFileIpc {
+    fileType: "text" | "json";
+    contents: Array<string> | Array<CustomFileJsonType> | string;
+}
+
+export type CustomFileJsonType = { uuid: string; blacklisted: boolean; tags: Array<{ tag: string; hex: string; singularTag?: boolean }> };

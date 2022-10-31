@@ -8,7 +8,7 @@ export interface PlayerHead {
 }
 
 const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
-    const { configStore } = useConfigStore((state) => ({ configStore: state }));
+    const { configStore, table } = useConfigStore((state) => ({ configStore: state, table: state.table }));
     let lunarRenderer: JSX.Element = <span />;
 
     let srcUrl = `https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`;
@@ -20,15 +20,13 @@ const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
                     if (player.sources.lunar.data.player.lunarPlus.premium) {
                         lunarRenderer = (
                             <span>
-                                <img width="20px" height="20px" src="https://dl.seraph.si/lunarplus.webp"
-                                     alt="lunar tag" />
+                                <img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
                             </span>
                         );
                     } else {
                         lunarRenderer = (
                             <span>
-                                <img width="20px" height="20px"
-                                     src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />
+                                <img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
                             </span>
                         );
                     }
@@ -40,10 +38,10 @@ const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
     }
 
     return (
-        <span className='inline flex'>
-            <img src={srcUrl} className="text-center" alt="player-head" />
+        <div className='inline flex' style={{ textAlign: table.settings.textAlign }}>
+            <img src={srcUrl} className='text-center' alt='player-head' />
             {lunarRenderer}
-        </span>
+        </div>
     );
 };
 

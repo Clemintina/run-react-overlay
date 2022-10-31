@@ -8,6 +8,7 @@ import { Interweave } from "interweave";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 
 export interface PlayerName {
     player: Player;
@@ -18,6 +19,8 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     const player = props.player;
     const tagStore = useTagStore((state) => state);
     const configStore = useConfigStore((state) => state);
+    const { settings, table } = useConfigStore((state) => ({ settings: state.settings, table: state.table }));
+    const { players } = usePlayerStore((state) => ({ players: state.players }));
 
     const handleDenickEvent = () => {
         const store = configStore;
@@ -25,15 +28,14 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     };
 
     let rankPlayer: JSX.Element;
-    if (player.hypixelPlayer && !player.sources.runApi?.data.data.blacklist.tagged) {
+    if (player.hypixelPlayer && !player.sources.runApi?.data?.data?.blacklist?.tagged) {
         const rank = getPlayerRank(player?.hypixelPlayer, false);
         let playerName = player?.hypixelPlayer?.displayname;
         if (player.denicked) {
             if (configStore.keathiz.showNick) {
                 rankPlayer = (
                     <span>
-                        <Interweave content={`${rank.rankHtml}`} /> <span
-                        style={{ color: `#${rank.colourHex}` }}>{playerName}</span>{" "}
+                        {settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>{" "}
                         <span className={"font-bold"} onClick={handleDenickEvent}>
                             <FontAwesomeIcon icon={faEye} />
                         </span>
@@ -53,18 +55,14 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
         } else {
             rankPlayer = (
                 <span>
-                    <Interweave content={`${rank.rankHtml}`} /> <span
-                    style={{ color: `#${rank.colourHex}` }}>{playerName}</span>
+                    {settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>
                 </span>
             );
         }
     } else if (player.sources.runApi?.data.data.blacklist.tagged) {
         rankPlayer = (
             <span>
-                <span style={{ color: `#${tagStore.run.blacklist.colour}` }}>
-                    {" "}
-                    {""} {player?.hypixelPlayer?.displayname}
-                </span>
+                <span style={{ color: `#${tagStore.run.blacklist.colour}` }}>{player?.hypixelPlayer?.displayname}</span>
             </span>
         );
     } else {
@@ -72,15 +70,9 @@ const PlayerName: React.ElementType = (props: PlayerName) => {
     }
 
     return (
-        <>
-            <StatsisticsTooltip player={player}>
-                <span className={"justify-content-start"}>
-                    <span>
-                        <span>{rankPlayer}</span>
-                    </span>
-                </span>
-            </StatsisticsTooltip>
-        </>
+        <div style={{ textAlign: table.settings.textAlign }}>
+            <StatsisticsTooltip player={player}>{rankPlayer}</StatsisticsTooltip>
+        </div>
     );
 };
 

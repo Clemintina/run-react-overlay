@@ -1,0 +1,268 @@
+{
+	"state": {
+		"hypixel": {
+			"apiKey": "312a2a47-a6f3-401f-bcfe-f32563442ec7",
+			"apiKeyValid": true,
+			"apiKeyOwner": "6e466222-1b80-4458-b210-cb15d20141ca"
+		},
+		"colours": {
+			"backgroundColour": "#242424",
+			"primaryColour": "#808080",
+			"secondaryColour": "#00FFFF"
+		},
+		"version": "1.5.67-STABLE",
+		"logs": {
+			"clientName": "lunar_mlv",
+			"readable": true,
+			"logPath": "/Users/kk/.lunarclient/offline/multiver/logs/latest.log"
+		},
+		"error": {
+			"code": 201,
+			"title": "",
+			"cause": "",
+			"detail": ""
+		},
+		"keathiz": {
+			"key": "",
+			"valid": false,
+			"showNick": true
+		},
+		"run": {
+			"apiKey": "public",
+			"valid": true
+		},
+		"browserWindow": {
+			"width": 600,
+			"height": 800,
+			"opacity": 100
+		},
+		"table": {
+			"columnState": [
+				{
+					"colId": "head",
+					"width": 30,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": null
+				},
+				{
+					"colId": "star",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "name",
+					"width": 150,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "tags",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "WS",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": "desc",
+					"sortIndex": 0,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "FKDR",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "WLR",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "BBLR",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "wins",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "losses",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "session",
+					"width": 45,
+					"hide": false,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "KDR",
+					"width": 200,
+					"hide": true,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "final_kills",
+					"width": 200,
+					"hide": true,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				},
+				{
+					"colId": "guild",
+					"width": 200,
+					"hide": true,
+					"pinned": null,
+					"sort": null,
+					"sortIndex": null,
+					"aggFunc": null,
+					"rowGroup": false,
+					"rowGroupIndex": null,
+					"pivot": false,
+					"pivotIndex": null,
+					"flex": 1
+				}
+			],
+			"settings": {
+				"textAlign": "center"
+			}
+		},
+		"settings": {
+			"lunar": true,
+			"keathiz": false,
+			"updater": true,
+			"astolfo": false,
+			"boomza": true,
+			"hypixel": {
+				"guilds": false
+			},
+			"run": {
+				"friends": false
+			},
+			"preferences": {
+				"autoHide": true
+			},
+			"appearance": {
+				"displayRank": true
+			}
+		},
+		"keybinds": [ ],
+		"font": {
+			"family": "Nunito"
+		},
+		"nicks": [ ]
+	},
+	"version": 6
+}

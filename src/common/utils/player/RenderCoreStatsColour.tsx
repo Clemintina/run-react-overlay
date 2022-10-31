@@ -1,18 +1,22 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {Player} from "@common/utils/PlayerUtils";
-import {getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig} from "@common/utils/player/RenderComponent";
+import { Player } from "@common/utils/PlayerUtils";
+import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@common/utils/player/RenderComponent";
+import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface RenderCoreStatsColour {
     player: Player;
     stat: "wins" | "losses" | "finalKills" | "finalDeaths" | "bedsBroken" | "bedsLost" | "kills" | "deaths" | "gamesPlayed";
     mode?: "overall" | "solos" | "duos" | "threes" | "fours";
+    isTooltip?: boolean;
 }
 
 const RenderCoreStatsColour: React.ElementType = (props: RenderCoreStatsColour) => {
     const player = props.player;
     let renderer: JSX.Element;
     let playerValue;
+    const { table } = useConfigStore((state) => ({ table: state.table }));
+
     if (!player.nicked) {
         let modeObj = "";
         if (props.mode != undefined) {
@@ -59,12 +63,16 @@ const RenderCoreStatsColour: React.ElementType = (props: RenderCoreStatsColour) 
             default:
                 playerValue = player.hypixelPlayer?.stats?.Bedwars?.[modeObj + "games_played_bedwars"] ?? 0;
         }
-        if (!player.sources.runApi?.data.data.blacklist.tagged) renderer = getCoreFromConfig("core.statistics", playerValue);
-        else renderer = getTagsFromConfig("run.blacklist", playerValue);
+        if (player.loaded) {
+            if (!player.sources.runApi?.data.data?.blacklist.tagged) renderer = getCoreFromConfig("core.statistics", playerValue);
+            else renderer = getTagsFromConfig("run.blacklist", playerValue);
+        } else {
+            renderer = getCoreFromConfig("core.statistics", playerValue);
+        }
     } else {
         renderer = getPlayerTagDividerNicked();
     }
-    return <span>{renderer}</span>;
+    return <span style={{ textAlign: table.settings.textAlign, display: props?.isTooltip ? "" : "block" }}>{renderer}</span>;
 };
 
 export default RenderCoreStatsColour;

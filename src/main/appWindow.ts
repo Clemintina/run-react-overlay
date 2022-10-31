@@ -1,27 +1,27 @@
-import { app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell } from "electron";
-import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
+import {app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
+import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
 import path from "path";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import fs from "fs";
-import { exec } from "child_process";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import { getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
-import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { HypixelApi } from "./HypixelApi";
+import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
+import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import { BoomzaAntisniper, KeathizEndpoints } from "@common/utils/externalapis/BoomzaApi";
-import { ProxyStore, ProxyType } from "@common/utils/Schemas";
+import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
+import {AppInformation, CustomFileIpc, ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
-import { handleIPCSend } from "@main/Utils";
+import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
-import { LogFileMessage } from "@common/utils/LogFileReader";
-import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
+import {LogFileMessage} from "@common/utils/LogFileReader";
+import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
 import log from "electron-log";
 import psList from "ps-list";
+import express from "express";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 // Electron Forge automatically creates these entry points
@@ -60,6 +60,13 @@ const electronStoreTags = new Store<RUNElectronStoreTagsType>({
 export type RUNElectronStoreTyped = Join<PathsToStringProps<typeof electronStore.store>, ".">;
 export type RUNElectronStoreTagsTyped = Join<PathsToStringProps<typeof electronStoreTags.store>, ".">;
 electronStore.set("run.overlay.version", app.getVersion());
+
+let update = {
+    release: app.getVersion(),
+    updateAvailable: false,
+    ready: false,
+    releaseDate: new Date().getUTCMilliseconds(),
+};
 
 /**
  * Configures the log reader. See {@link [TailFile](https://www.npmjs.com/package/@logdna/tail-file)} for more information.
@@ -124,31 +131,78 @@ export const createAppWindow = (): BrowserWindow => {
     appWindow.setAlwaysOnTop(true, "screen-saver");
     appWindow.setVisibleOnAllWorkspaces(true);
     mainWindowState.manage(appWindow);
-    let updates = electronStore.get("settings.updater");
-
-    if (!(isDevelopment) && updates) {
-        if (!require("electron-squirrel-startup") && process.platform === "win32") {
-            const autoUpdater = new AppUpdater().getAutoUpdater();
-            log.info("Running updater");
-            autoUpdater.checkForUpdates();
-            setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
-            autoUpdater.on("checking-for-update", async () => {
-                log.info("Checking for updates...");
-            });
-            autoUpdater.on("error", async (error) => log.error(error));
-            autoUpdater.on("update-available", async () => {
-                log.info("Update available");
-            });
-            autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
-                log.info("Updating Overlay to " + releaseName);
-                autoUpdater.quitAndInstall();
-            });
-        }
-    }
+    const updates = electronStore.get("settings.updater");
 
     appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, { userAgent: "SeraphOverlay" });
 
-    appWindow.on("ready-to-show", () => appWindow.show());
+    const expressApplication = express();
+    let isPortOpen = false;
+
+    if (process.platform === "win32" && !isDevelopment) {
+        expressApplication.post("/mc_chat", async (req, res) => {
+            const line = req.query.msg;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const newLine = line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "");
+            appWindow?.webContents.send(
+                "logFileLine",
+                handleIPCSend<LogFileMessage>({
+                    data: { message: newLine },
+                    status: 200,
+                }),
+            );
+            res.status(200).send({ success: true, code: 200 });
+        });
+        const portfinder = require("portfinder");
+        portfinder.setBasePort(5000);
+        portfinder.setHighestPort(5000);
+        portfinder
+            .getPortPromise({ port: 5000, host: "localhost" })
+            .then(() => {
+                isPortOpen = true;
+            })
+            .catch(() => {
+                console.log("Port closed");
+            });
+    }
+
+    appWindow.on("ready-to-show", () => {
+        if (!isDevelopment && updates) {
+            if (!require("electron-squirrel-startup") && process.platform === "win32") {
+                const autoUpdater = new AppUpdater().getAutoUpdater();
+                log.info("Running updater");
+                autoUpdater.checkForUpdates();
+                setInterval(() => autoUpdater.checkForUpdates(), 60 * 20 * 1000);
+                autoUpdater.on("checking-for-update", async () => {
+                    log.info("Checking for updates...");
+                });
+                autoUpdater.on("error", async (error) => log.error(error));
+                autoUpdater.on("update-available", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
+                    log.info("Update available");
+                    update = {
+                        ...update,
+                        updateAvailable: true,
+                        release: releaseName,
+                        releaseDate,
+                    };
+                    appWindow?.webContents.send("updater", JSON.stringify({ data: { version: app.getVersion(), update: { ...update, ready: false } }, status: 200 }));
+                });
+                autoUpdater.on("update-downloaded", async (event, releaseNotes, releaseName, releaseDate, updateURL) => {
+                    log.info("Updating Overlay to " + releaseName);
+                    appWindow?.webContents.send("updater", JSON.stringify({ data: { version: app.getVersion(), update: { ...update, ready: true } }, status: 200 }));
+                    setTimeout(() => {
+                        autoUpdater.quitAndInstall();
+                    }, 5000);
+                });
+            }
+        }
+        appWindow.show();
+        if (isPortOpen && process.platform === "win32") {
+            expressApplication.listen(5000, () => {
+                console.log("Express started");
+            });
+        }
+    });
 
     registerMainIPC();
 
@@ -179,16 +233,11 @@ const registerMainIPC = () => {
  * Register Seraph Inter Process Communication
  */
 const registerSeraphIPC = () => {
-    ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, resource: RequestType, ...args: unknown[]) => {
-        let apiKey: string;
-        switch (resource) {
-            case RequestType.KEY:
-                apiKey = args.length !== 0 ? (args[0] as string) : electronStore.get("hypixel.apiKey");
-                break;
-            default:
-                apiKey = args.length > 1 ? (args[1] as string) : electronStore.get("hypixel.apiKey");
-                break;
-        }
+    ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const resource = args[0] as string;
+        const apiKey = args[1] as string;
+        let playerName: string = "" as string;
+        if (args[2] != undefined) playerName = args[2] as string;
         const hypixelClient = new HypixelApi(apiKey, {
             cache: {
                 get(key) {
@@ -218,19 +267,18 @@ const registerSeraphIPC = () => {
                 return getErrorHandler(e);
             }
         } else if (resource === RequestType.USERNAME) {
-            const [name] = args as [string];
-            const uuid: string | undefined = await mojangCache.get(`mojang:${name}`);
-            if (uuid !== undefined || name.length == 32) {
+            const uuid: string | undefined = await mojangCache.get(`mojang:${playerName}`);
+            if (uuid !== undefined || playerName.length == 32) {
                 try {
-                    return await hypixelClient.getClient().player.uuid(uuid ?? name);
+                    return await hypixelClient.getClient().player.uuid(uuid ?? playerName);
                 } catch (e) {
                     return getErrorHandler(e);
                 }
             } else {
                 try {
-                    const res = await hypixelClient.getClient().player.username(name);
+                    const res = await hypixelClient.getClient().player.username(playerName);
                     if (res?.data?.uuid) {
-                        await mojangCache.set(`mojang:${name}`, res.data.uuid);
+                        await mojangCache.set(`mojang:${playerName}`, res.data.uuid);
                     }
                     return res;
                 } catch (e) {
@@ -238,23 +286,20 @@ const registerSeraphIPC = () => {
                 }
             }
         } else if (resource === RequestType.UUID) {
-            const [uuid] = args as [string];
             try {
-                return await hypixelClient.getClient().player.uuid(uuid);
+                return await hypixelClient.getClient().player.uuid(playerName);
             } catch (e) {
                 return getErrorHandler(e);
             }
         } else if (resource === RequestType.FRIENDS) {
-            const [uuid] = args as [string];
             try {
-                return await hypixelClient.getClient().friends.uuid(uuid);
+                return await hypixelClient.getClient().friends.uuid(playerName);
             } catch (e) {
                 return getErrorHandler(e);
             }
         } else if (resource === RequestType.GUILD_PLAYER) {
-            const [uuid] = args as [string];
             try {
-                return await hypixelClient.getClient().guild.player(uuid);
+                return await hypixelClient.getClient().guild.player(playerName);
             } catch (e) {
                 return getErrorHandler(e);
             }
@@ -262,9 +307,10 @@ const registerSeraphIPC = () => {
         return null;
     });
 
-    ipcMain.handle("mcutils", async (event: IpcMainInvokeEvent, resource: RequestType, player: string) => {
+    ipcMain.handle("mcutils", async (event: IpcMainInvokeEvent, args: string[]) => {
         let url: string;
-        const playerClean = player.replace("-", "");
+        const playerClean = args[0] as string;
+        const resource = args[1] as string;
         switch (resource) {
             case RequestType.USERNAME:
                 url = `https://mc.seraph.si/uuid/${playerClean}`;
@@ -284,7 +330,13 @@ const registerSeraphIPC = () => {
         }
     });
 
-    ipcMain.handle("seraph", async (event: IpcMainInvokeEvent, endpoint: RunEndpoints, uuid: string, hypixelApiKey: string, hypixelApiKeyOwner: string, runApiKey: string, overlayUuid: string) => {
+    ipcMain.handle("seraph", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const endpoint = args[0],
+            uuid = args[1],
+            hypixelApiKey = args[2],
+            hypixelApiKeyOwner = args[3],
+            runApiKey = args[4],
+            overlayUuid = args[5];
         if (endpoint === RunEndpoints.KEY) {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/key`, {
                 headers: {
@@ -332,7 +384,8 @@ const registerSeraphIPC = () => {
         }
     });
 
-    ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, uuid: string) => {
+    ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const uuid = args[0];
         const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`);
         return { status: response.status, data: response.data };
     });
@@ -360,6 +413,7 @@ const registerSeraphIPC = () => {
 /**
  * Register Store Inter Process Communication
  */
+
 const registerElectronStore = () => {
     ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStore.set(data.key, data.data);
@@ -389,25 +443,39 @@ const registerElectronStore = () => {
  * Register Log Inter Process Communication
  */
 const registerLogCommunications = () => {
-    ipcMain.handle("isFileReadable", async (event: IpcMainInvokeEvent, path: string) => {
+    ipcMain.handle("isFileReadable", async (event: IpcMainInvokeEvent, args: string[]) => {
         return {
             data: await fs.promises
-                .access(path, fs.constants.R_OK)
+                .access(args[0], fs.constants.R_OK)
                 .then(() => true)
                 .catch(() => false),
             status: 200,
         };
     });
 
-    ipcMain.handle("selectLogFile", async () => {
+    ipcMain.handle("selectLogFile", async (event, args) => {
         return await dialog.showOpenDialog(appWindow, {
-            defaultPath: app.getPath("appData"),
-            filters: [{ name: "Logs", extensions: ["log"] }],
+            defaultPath: args[1] ?? app.getPath("appData"),
+            filters: args[0],
             properties: ["openFile"],
         });
     });
 
-    ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, path: string) => {
+    ipcMain.handle("readFile", (event, args) => {
+        const data: CustomFileIpc = {
+            fileType: "text",
+            contents: fs.readFileSync(args[0], {
+                encoding: "utf-8",
+            }),
+        };
+        return {
+            data,
+            status: 200,
+        };
+    });
+
+    ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const path = args[0];
         electronStore.set("overlay.logPath", path);
         logFileReadline?.close();
         logFileReadline = null;
@@ -428,11 +496,23 @@ const registerLogCommunications = () => {
 
             logFileReadline.on("line", async (line) => {
                 if (line.includes("[Client thread/INFO]: [CHAT]") || line.includes("[main/INFO]: [CHAT] ")) {
-                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: line }, status: 200 }));
+                    appWindow?.webContents.send(
+                        "logFileLine",
+                        handleIPCSend<LogFileMessage>({
+                            data: { message: line },
+                            status: 200,
+                        }),
+                    );
                 } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
                     const newLine = line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
                     console.log(newLine);
-                    appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({ data: { message: newLine }, status: 200 }));
+                    appWindow?.webContents.send(
+                        "logFileLine",
+                        handleIPCSend<LogFileMessage>({
+                            data: { message: newLine },
+                            status: 200,
+                        }),
+                    );
                 } else {
                     return;
                 }
@@ -440,7 +520,8 @@ const registerLogCommunications = () => {
         }
     });
 
-    ipcMain.handle("getFilePath", async (event: IpcMainInvokeEvent, request: string) => {
+    ipcMain.handle("getFilePath", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const request = args[0];
         let appPath;
         switch (request) {
             case "home":
@@ -476,20 +557,26 @@ const registerMainWindowCommunications = () => {
         appWindow?.showInactive();
     });
 
-    ipcMain.on("opacity", async (event, ...args) => {
-        appWindow.setOpacity(args[0]);
+    ipcMain.on("windowToggle", () => {
+        appWindow?.isVisible() ? appWindow?.minimize() : appWindow?.showInactive();
     });
 
-    ipcMain.on("openExternal", async (event, type: "config_file" | "tag_file", ...args) => {
-        if (type == "config_file") {
+    ipcMain.on("opacity", async (event, args: string[]) => {
+        appWindow.setOpacity(Number.parseInt(args[0]));
+    });
+
+    ipcMain.on("openExternal", async (event, args: string[]) => {
+        const file_type = args[0];
+        if (file_type == "config_file") {
             await shell.openExternal(electronStore.path);
-        } else if (type == "tag_file") {
+        } else if (file_type == "tag_file") {
             await shell.openExternal(electronStoreTags.path);
         }
     });
 
     ipcMain.handle("getAppInfo", async () => {
-        return { version: overlayVersion };
+        appWindow?.webContents.send("updater", handleIPCSend<AppInformation>({ data: { version: app.getVersion(), update: { ...update } }, status: 200 }));
+        return { data: { version: app.getVersion(), update }, status: 200 };
     });
 };
 
@@ -497,7 +584,8 @@ const registerMainWindowCommunications = () => {
  * Register External Inter Process Communications
  */
 const registerExternalApis = () => {
-    ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, username: string) => {
+    ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const username = args[0];
         const response = await axiosClient(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
             headers: {
                 Accept: "application/json",
@@ -515,7 +603,10 @@ const registerExternalApis = () => {
         return { data: json, status: response.status };
     });
 
-    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, endpoint: KeathizEndpoints, uuid: string, apikey: string) => {
+    ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const endpoint = args[0],
+            uuid = args[1],
+            apikey = args[2];
         let params;
         if (endpoint == KeathizEndpoints.OVERLAY_RUN) {
             params = `&uuid=${uuid}`;
@@ -532,7 +623,8 @@ const registerExternalApis = () => {
         return { data: response.data, status: response.status };
     });
 
-    ipcMain.handle("observer", async (event: IpcMainInvokeEvent, uuid: string) => {
+    ipcMain.handle("observer", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const uuid = args[0];
         const apikey = electronStore.get("external.observer.apiKey");
         const response = await axiosClient(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
             headers: {
@@ -542,7 +634,8 @@ const registerExternalApis = () => {
         return { data: response.data, status: response.status };
     });
 
-    ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, uuid: string) => {
+    ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const uuid = args[0];
         const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${uuid}`, {
             headers: {
                 Accept: "application/json",
@@ -571,28 +664,26 @@ const registerOverlayFeatures = () => {
         }, 60000);
     });
 
-    ipcMain.handle("isAdmin", async (event: IpcMainInvokeEvent, ...args) => {
-        let isAdmin = false;
+    ipcMain.handle("isAdmin", async () => {
+        const isAdmin = false;
         return { data: isAdmin, status: 200 };
     });
 
-    ipcMain.handle("autoLog", async (event: IpcMainInvokeEvent, ...args) => {
-        let processNames: string[] = [];
-        let appData = app.getPath("appData").replace(/\\/g, "/");
-        let home = app.getPath("home").replace(/\\/g, "/");
-        let isMacOs = appData.includes("Application Support");
-        let path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";;
-        psList().then(data => {
+    ipcMain.handle("autoLog", async () => {
+        const processNames: string[] = [];
+        const appData = app.getPath("appData").replace(/\\/g, "/");
+        const home = app.getPath("home").replace(/\\/g, "/");
+        const isMacOs = appData.includes("Application Support");
+        let path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
+        psList().then((data) => {
             for (const process of data) {
                 processNames.push(process.name);
             }
             if (processNames.includes("Badlion Client.exe")) {
                 path = isMacOs ? appData + "/minecraft/logs/blclient/minecraft/" : appData + "/.minecraft/logs/blclient/minecraft/";
-            }
-            else if (processNames.includes("Lunar Client.exe")) {
+            } else if (processNames.includes("Lunar Client.exe")) {
                 path = home + "/.lunarclient/offline/multiver/logs/";
-            }
-            else if (processNames.includes("MinecraftLauncher.exe")) {
+            } else if (processNames.includes("MinecraftLauncher.exe")) {
                 path = isMacOs ? appData + "/minecraft/logs/" : appData + "/.minecraft/logs/";
             }
         });
@@ -600,45 +691,62 @@ const registerOverlayFeatures = () => {
         electronStore.set("overlay.logPath", path);
     });
 
-    ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, ...args) => {
-        let appData = app.getPath("appData").replace(/\\/g, "/");
-        let source = `<?xml version="1.0" encoding="UTF-8"?>
-        <Configuration status="WARN" packages="net.minecraft,com.mojang">
-            <Appenders>
-                <Console name="SysOut" target="SYSTEM_OUT">
-                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
-                </Console>
-                <Queue name="ServerGuiConsole">
-                    <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
-                </Queue>
-                <RollingRandomAccessFile name="File" fileName="${appData}/.minecraft/logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-                    <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" charset="UTF-8" />
-                    <Policies>
-                        <TimeBasedTriggeringPolicy />
-                        <OnStartupTriggeringPolicy />
-                    </Policies>
-                </RollingRandomAccessFile>
-            </Appenders>
-            <Loggers>
-                <Root level="info">
-                    <filters>
-                        <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
-                    </filters>
-                    <AppenderRef ref="SysOut"/>
-                    <AppenderRef ref="File"/>
-                    <AppenderRef ref="ServerGuiConsole"/>
-                </Root>
-            </Loggers>
-        </Configuration>`;
-        fs.writeFileSync(appData + "/.minecraft/log4j2.xml", source);
-        exec(`[System.Environment]::SetEnvironmentVariable('_JAVA_OPTIONS','-Dlog4j.configurationFile="${appData}/.minecraft/log4j2.xml"',[System.EnvironmentVariableTarget]::User)`, { shell: "powershell.exe" }, (error, stdout, stderr) => { });
+    ipcMain.handle("openlink", async (event: IpcMainInvokeEvent, args: string[]) => {
+        await shell.openExternal(args[0]);
+    });
+
+    ipcMain.handle("astolfo", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const content = `local char_to_hex = function(c)
+        return string.format("%%%02X", string.byte(c))
+      end
+      
+      local function urlencode(url)
+        if url == nil then
+          return
+        end
+        url = url:gsub("\n", "\r\n")
+        url = string.gsub(url, "([^%w _ %- . ~])", char_to_hex)
+        url = url:gsub(" ", "+")
+        return url
+      end
+      
+      local chat_bridge = {
+        on_receive_packet = function(e)
+          if e.packet_id == 2 then
+            local chat_msg = urlencode(e.message)
+            http.post_async("http://127.0.0.1:5000/mc_chat?msg=" .. chat_msg, {
+                run = function(text)
+                end
+            })
+          end
+        end
+      }
+      
+      
+      module_manager.register("chat_bridge", chat_bridge)`;
+
+        const appData = app.getPath("appData").replace(/\\/g, "/");
+        const path = appData + "/astolfo/scripts/chat_bridge.lua";
+        try {
+            fs.writeFileSync(path, content);
+        } catch (err) {
+            console.error(err);
+        }
     });
 };
 
 const getProxyChannel = () => {
     let proxyStore: ProxyStore = electronStore.get("external.proxy");
     if (proxyStore == undefined) {
-        proxyStore = { enableProxies: true, hasAuth: true, hostname: "p.webshare.io", port: "80", username: "twtmuzmg-rotate", password: "8nhzubu4xg33", type: ProxyType.HTTP };
+        proxyStore = {
+            enableProxies: true,
+            hasAuth: true,
+            hostname: "p.webshare.io",
+            port: "80",
+            username: "twtmuzmg-rotate",
+            password: "8nhzubu4xg33",
+            type: ProxyType.HTTP,
+        };
     }
     return tunnel.httpsOverHttp({
         proxy: {
@@ -663,10 +771,10 @@ const registeredGlobalKeybindsForApp = () => {
             registeredGlobalKeybinds.delete(shortcut);
         }
 
-        for (const shortcut of keybinds) {
+        for (const { keybind } of keybinds) {
             try {
-                globalShortcut.register(shortcut, () => appWindow?.webContents.send("globalShortcutPressed", shortcut));
-                registeredGlobalKeybinds.add(shortcut);
+                globalShortcut.register(keybind, () => appWindow?.webContents.send("globalShortcutPressed", keybind));
+                registeredGlobalKeybinds.add(keybind);
             } catch (err) {
                 console.log(err);
             }

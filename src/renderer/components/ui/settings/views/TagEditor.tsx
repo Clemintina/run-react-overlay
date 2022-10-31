@@ -9,11 +9,9 @@ import { TagEditor } from "@components/user/settings/components/TagEditor";
 import { AccordionDetails, ThemeProvider } from "@mui/material";
 import { UserAccordion } from "@components/user/UserAccordion";
 import produce from "immer";
-import { TagSchema } from "@common/utils/TagSchema";
 
 const TagEditorView = () => {
-    const { tagStore } = useTagStore((state) => ({ tagStore: state }));
-    let localTagStore = tagStore as TagSchema;
+    const { run, boomza, keathiz, hypixel } = useTagStore((state) => ({ run: state.run, boomza: state.boomza, keathiz: state.keathiz, hypixel: state.hypixel }));
     const theme = {};
 
     // TODO make it look nicer and cleaner
@@ -32,8 +30,9 @@ const TagEditorView = () => {
                             <span>
                                 <TagEditor
                                     options={{
-                                        colour: localTagStore.run.annoylist.colour,
-                                        placeholder: localTagStore.run.annoylist.display,
+                                        colour: run.annoylist.colour,
+                                        placeholder: run.annoylist.display,
+                                        label: { text: "Annoy list" },
                                     }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
@@ -53,7 +52,7 @@ const TagEditorView = () => {
                                             }),
                                         );
                                     }}
-                                    colourObject={localTagStore.run.annoylist.colour}
+                                    colourObject={run.annoylist.colour}
                                 />
                             </span>
                         </SettingCard>
@@ -62,8 +61,9 @@ const TagEditorView = () => {
                             <span>
                                 <TagEditor
                                     options={{
-                                        colour: localTagStore.run.blacklist.colour,
-                                        placeholder: localTagStore.run.blacklist.display,
+                                        colour: run.blacklist.colour,
+                                        placeholder: run.blacklist.display,
+                                        label: { text: "Blacklist" },
                                     }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
@@ -83,7 +83,7 @@ const TagEditorView = () => {
                                             }),
                                         );
                                     }}
-                                    colourObject={localTagStore.run.blacklist.colour}
+                                    colourObject={run.blacklist.colour}
                                 />
                             </span>
                         </SettingCard>
@@ -92,8 +92,9 @@ const TagEditorView = () => {
                             <span>
                                 <TagEditor
                                     options={{
-                                        colour: localTagStore.run.encounters.colour[0],
-                                        placeholder: localTagStore.run.encounters.display,
+                                        colour: run.encounters.colour[0],
+                                        placeholder: run.encounters.display,
+                                        label: { text: "Encounters" },
                                     }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
@@ -107,7 +108,7 @@ const TagEditorView = () => {
                             <span>
                                 <ColourPickerArray
                                     setColour={async (newTagArray: TagArray) => {
-                                        const newColourObject = { ...localTagStore.run.encounters };
+                                        const newColourObject = { ...run.encounters };
                                         const newItem = {
                                             colour: newTagArray.colour,
                                             requirement: newTagArray.requirement,
@@ -126,7 +127,7 @@ const TagEditorView = () => {
                                             );
                                         }
                                     }}
-                                    colourObject={localTagStore.run.encounters}
+                                    colourObject={run.encounters}
                                 />
                             </span>
                         </SettingCard>
@@ -135,8 +136,9 @@ const TagEditorView = () => {
                             <span>
                                 <TagEditor
                                     options={{
-                                        colour: localTagStore.run.friends.colour,
-                                        placeholder: localTagStore.run.friends.display,
+                                        colour: run.friends.colour,
+                                        placeholder: run.friends.display,
+                                        label: { text: "Friends" },
                                     }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
@@ -147,7 +149,6 @@ const TagEditorView = () => {
                                     }}
                                 />
                             </span>
-
                             <span>
                                 <ColourPicker
                                     setColour={async (colour: string) => {
@@ -157,7 +158,7 @@ const TagEditorView = () => {
                                             }),
                                         );
                                     }}
-                                    colourObject={localTagStore.run.friends.colour}
+                                    colourObject={run.friends.colour}
                                 />
                             </span>
                         </SettingCard>
@@ -166,8 +167,9 @@ const TagEditorView = () => {
                             <span>
                                 <TagEditor
                                     options={{
-                                        colour: localTagStore.run.safelist.colour,
-                                        placeholder: localTagStore.run.safelist.display,
+                                        colour: run.safelist.colour,
+                                        placeholder: run.safelist.display,
+                                        label: { text: "Safelist" },
                                     }}
                                     onBlur={(event) => {
                                         useTagStore.getState().setStore(
@@ -181,7 +183,7 @@ const TagEditorView = () => {
                             <span>
                                 <ColourPickerArray
                                     setColour={async (newTagArray: TagArray) => {
-                                        const newColourObject = { ...localTagStore.run.safelist };
+                                        const newColourObject = { ...run.safelist };
                                         const newItem = {
                                             colour: newTagArray.colour,
                                             requirement: newTagArray.requirement,
@@ -200,7 +202,7 @@ const TagEditorView = () => {
                                             );
                                         }
                                     }}
-                                    colourObject={localTagStore.run.safelist}
+                                    colourObject={run.safelist}
                                 />
                             </span>
                         </SettingCard>
@@ -212,8 +214,9 @@ const TagEditorView = () => {
                                 <span>
                                     <TagEditor
                                         options={{
-                                            colour: localTagStore.boomza.hacker.colour,
-                                            placeholder: localTagStore.boomza.hacker.display,
+                                            colour: boomza.hacker.colour,
+                                            placeholder: boomza.hacker.display,
+                                            label: { text: "Boomza Hacker" },
                                         }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
@@ -233,7 +236,7 @@ const TagEditorView = () => {
                                                 }),
                                             );
                                         }}
-                                        colourObject={localTagStore.boomza.hacker.colour}
+                                        colourObject={boomza.hacker.colour}
                                     />
                                 </span>
                             </SettingCard>
@@ -242,8 +245,9 @@ const TagEditorView = () => {
                                 <span>
                                     <TagEditor
                                         options={{
-                                            colour: localTagStore.boomza.sniper.colour,
-                                            placeholder: localTagStore.boomza.sniper.display,
+                                            colour: boomza.sniper.colour,
+                                            placeholder: boomza.sniper.display,
+                                            label: { text: "Boomza Sniper" },
                                         }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
@@ -263,7 +267,7 @@ const TagEditorView = () => {
                                                 }),
                                             );
                                         }}
-                                        colourObject={localTagStore.boomza.sniper.colour}
+                                        colourObject={boomza.sniper.colour}
                                     />
                                 </span>
                             </SettingCard>
@@ -276,8 +280,9 @@ const TagEditorView = () => {
                                 <span>
                                     <TagEditor
                                         options={{
-                                            colour: localTagStore.hypixel.party.colour,
-                                            placeholder: localTagStore.hypixel.party.display,
+                                            colour: hypixel.party.colour,
+                                            placeholder: hypixel.party.display,
+                                            label: { text: "Party" },
                                         }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
@@ -297,7 +302,7 @@ const TagEditorView = () => {
                                                 }),
                                             );
                                         }}
-                                        colourObject={localTagStore.hypixel.party.colour}
+                                        colourObject={hypixel.party.colour}
                                     />
                                 </span>
                             </SettingCard>
@@ -310,8 +315,9 @@ const TagEditorView = () => {
                                 <span>
                                     <TagEditor
                                         options={{
-                                            colour: localTagStore.keathiz.no_data.colour,
-                                            placeholder: localTagStore.keathiz.no_data.display,
+                                            colour: keathiz.no_data.colour,
+                                            placeholder: keathiz.no_data.display,
+                                            label: { text: "Keathiz No Data" },
                                         }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
@@ -331,7 +337,7 @@ const TagEditorView = () => {
                                                 }),
                                             );
                                         }}
-                                        colourObject={localTagStore.keathiz.no_data.colour}
+                                        colourObject={keathiz.no_data.colour}
                                     />
                                 </span>
                             </SettingCard>
@@ -340,8 +346,9 @@ const TagEditorView = () => {
                                 <span>
                                     <TagEditor
                                         options={{
-                                            colour: localTagStore.keathiz.queues.queue_total.colour,
-                                            placeholder: localTagStore.keathiz.queues.queue_total.display,
+                                            colour: keathiz.queues.queue_total.colour,
+                                            placeholder: keathiz.queues.queue_total.display,
+                                            label: { text: "Keathiz Queue Total" },
                                         }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
@@ -361,7 +368,7 @@ const TagEditorView = () => {
                                                 }),
                                             );
                                         }}
-                                        colourObject={localTagStore.keathiz.queues.queue_total.colour}
+                                        colourObject={keathiz.queues.queue_total.colour}
                                     />
                                 </span>
                             </SettingCard>
@@ -370,8 +377,9 @@ const TagEditorView = () => {
                                 <span>
                                     <TagEditor
                                         options={{
-                                            colour: localTagStore.keathiz.queues.queue_count.colours[0],
-                                            placeholder: localTagStore.keathiz.queues.queue_count.display,
+                                            colour: keathiz.queues.queue_count.colours[0],
+                                            placeholder: keathiz.queues.queue_count.display,
+                                            label: { text: "Keathiz Queue Count" },
                                         }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
@@ -385,7 +393,7 @@ const TagEditorView = () => {
                                 <span>
                                     <ColourPickerArray
                                         setColour={async (newTagArray: TagArray) => {
-                                            const newColourObject = { ...localTagStore.keathiz.queues.queue_count };
+                                            const newColourObject = { ...keathiz.queues.queue_count };
                                             const newItem = {
                                                 colour: newTagArray.colour,
                                                 requirement: newTagArray.requirement,
@@ -404,7 +412,7 @@ const TagEditorView = () => {
                                                 );
                                             }
                                         }}
-                                        colourObject={localTagStore.keathiz.queues.queue_count}
+                                        colourObject={keathiz.queues.queue_count}
                                     />
                                 </span>
                             </SettingCard>

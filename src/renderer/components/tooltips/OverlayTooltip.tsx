@@ -13,8 +13,7 @@ export interface OverlayTooltip {
 export const OverlayTooltip: React.FC<PropsWithChildren<OverlayTooltip>> = (props: OverlayTooltip) => {
     const player = props.player ?? undefined;
 
-    const CustomToolTip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props}
-                                                                                     classes={{ popper: className }} />)(({ theme }) => ({
+    const CustomToolTip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
         [`& .${tooltipClasses.tooltip}`]: {
             // backgroundColor: colours.backgroundColour,
             backgroundColor: "#120211",
@@ -31,7 +30,7 @@ export const OverlayTooltip: React.FC<PropsWithChildren<OverlayTooltip>> = (prop
     }));
     let renderTooltip;
 
-    if (player != undefined && (player.nicked || player.sources.runApi?.data.data.bot.tagged)) {
+    if (player != undefined && (player.nicked || player.sources.runApi?.data.data?.bot?.tagged)) {
         renderTooltip = props.children;
     } else {
         renderTooltip = (

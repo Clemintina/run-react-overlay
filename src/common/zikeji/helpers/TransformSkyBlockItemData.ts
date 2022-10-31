@@ -19,9 +19,7 @@ export interface SkyBlockProfileTransformedInventories {
 /**
  * This type is a intersection type omitting the default inventory types and including the transformed inventory types.
  */
-export type SkyBlockProfileMemberWithTransformedInventories =
-    Omit<Components.Schemas.SkyBlockProfileMember, keyof SkyBlockProfileTransformedInventories>
-    & SkyBlockProfileTransformedInventories;
+export type SkyBlockProfileMemberWithTransformedInventories = Omit<Components.Schemas.SkyBlockProfileMember, keyof SkyBlockProfileTransformedInventories> & SkyBlockProfileTransformedInventories;
 
 /** @internal */
 const SKYBLOCK_INVENTORIES: (keyof SkyBlockProfileTransformedInventories)[] = ["inv_armor", "candy_inventory_contents", "ender_chest_contents", "fishing_bag", "inv_contents", "potion_bag", "quiver", "talisman_bag", "wardrobe_contents"];

@@ -12,8 +12,7 @@ const PlayerSession: React.ElementType = ({ player }: PlayerSession) => {
     let guildRenderer = <span />;
     if (player.hypixelGuild != null) {
         const guild: Guild = player.hypixelGuild.data;
-        guildRenderer = <span
-            style={{ color: `#${MinecraftColourAsHex[MinecraftFormatting[guild?.tagColor ?? "§7"]]}` }}>{guild.tag}</span>;
+        guildRenderer = <span style={{ color: `#${MinecraftColourAsHex[MinecraftFormatting[guild?.tagColor ?? "§7"]]}` }}>{guild.tag}</span>;
     }
 
     return <span>{guildRenderer}</span>;

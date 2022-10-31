@@ -1,4 +1,4 @@
-import {RateLimitData} from "./RateLimitData";
+import { RateLimitData } from "./RateLimitData";
 
 /**
  * Possible meta options returned on the meta variable.

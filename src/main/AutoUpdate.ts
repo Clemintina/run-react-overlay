@@ -1,4 +1,4 @@
-import {autoUpdater} from "electron";
+import { autoUpdater } from "electron";
 import AutoUpdater = Electron.AutoUpdater;
 
 export default class AppUpdater {
