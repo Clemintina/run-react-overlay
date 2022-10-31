@@ -53,7 +53,7 @@
 		"babel-preset-react": "^6.24.1",
 		"browserify": "^17.0.0",
 		"browserify-fs": "^1.0.0",
-		"cache-manager": "^4.1.0",
+		"cache-manager": "^5.1.1",
 		"destr": "^1.1.1",
 		"dotenv": "^16.0.3",
 		"electron-log": "^4.4.8",
