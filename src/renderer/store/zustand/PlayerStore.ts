@@ -1,11 +1,24 @@
 import create from "zustand";
-import {Player} from "@common/utils/PlayerUtils";
-import {Components} from "@common/zikeji";
-import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
-import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
-import {CustomFileJsonType} from "@common/utils/Schemas";
+import { Player } from "@common/utils/PlayerUtils";
+import { Components } from "@common/zikeji";
+import {
+    Blacklist,
+    IPCResponse,
+    LunarAPIResponse,
+    PlayerAPI,
+    RequestType,
+    RunEndpoints,
+    RunFriendList
+} from "@common/utils/externalapis/RunApi";
+import {
+    BoomzaAntisniper,
+    KeathizDenick,
+    KeathizEndpoints,
+    KeathizOverlayRun
+} from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { CustomFileJsonType } from "@common/utils/Schemas";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -186,17 +199,23 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
                     playerData.sources.keathiz = keathizApi;
 
+                    console.log("Store", configStore.settings.preferences.customFile);
                     if (configStore.settings.preferences.customFile) {
                         const customFile = configStore.customFile;
+                        console.log(customFile.data != null);
                         if (customFile.data != null) {
                             if (typeof customFile?.data[0] === "string") {
                                 const datum = customFile.data as string[];
-                                if (datum.includes(playerData.name)) {
-                                    playerData.sources.runApi.data.data.blacklist.tagged = true;
-                                }
+                                datum.map(async (player) => {
+                                    if (player.toLowerCase() == playerData.name.toLowerCase()) {
+                                        if (playerData.sources.runApi != null) {
+                                            playerData.sources.runApi.data.data.blacklist.tagged = true;
+                                        }
+                                    }
+                                });
                             } else {
                                 const datum = customFile.data as Array<CustomFileJsonType>;
-                                datum.map((player) => {
+                                datum.map(async (player) => {
                                     if (player.uuid == playerData.hypixelPlayer?.uuid) {
                                         playerData.sources.customFile = player;
                                         if (playerData.sources.runApi != null) {

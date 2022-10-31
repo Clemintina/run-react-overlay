@@ -1,22 +1,22 @@
 // eslint-disable-next-line import/named
 import React from "react";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {MinecraftColours, Player} from "@common/utils/PlayerUtils";
+import { MinecraftColours, Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {getTagsFromConfig} from "@common/utils/player/RenderComponent";
-import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {MinecraftColourAsHex} from "@common/zikeji";
+import { getTagsFromConfig } from "@common/utils/player/RenderComponent";
+import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { MinecraftColourAsHex } from "@common/zikeji";
 
 export interface PlayerTags {
-    player: Player;
+  player: Player;
 }
 
 const parseColour = (text: string) => {
-    const splitText = text.split("§");
-    const finalText: [string, string][] = [];
+  const splitText = text.split("§");
+  const finalText: [string, string][] = [];
 
-    for (const parts of splitText) {
+  for (const parts of splitText) {
         finalText.push([parts.split("").slice(1).join(""), MinecraftColourAsHex[`§${parts.split("")[0]}`]]);
     }
     return finalText;

@@ -1,18 +1,21 @@
 import React from "react";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {ToggleButton} from "@components/user/ToggleButton";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {Box, SxProps} from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
-import {CustomFileIpc, CustomLinkFile} from "@common/utils/Schemas";
-import {InputBoxButton} from "@components/user/InputBoxButton";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { CustomFileIpc, CustomLinkFile } from "@common/utils/Schemas";
+import { InputBoxButton } from "@components/user/InputBoxButton";
 import destr from "destr";
 
 const CustomLinks = () => {
-    const { settings, customFile } = useConfigStore((state) => ({ settings: state.settings, customFile: state.customFile }));
+    const { settings, customFile } = useConfigStore((state) => ({
+        settings: state.settings,
+        customFile: state.customFile
+    }));
     const styledProps: SxProps = {
-        width: 0.98,
+        width: 0.98
     };
 
     // TODO make it look nicer and cleaner

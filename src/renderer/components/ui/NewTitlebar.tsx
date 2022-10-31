@@ -1,9 +1,9 @@
 import * as React from "react";
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-import MuiAppBar, {AppBarProps as MuiAppBarProps} from "@mui/material/AppBar";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
@@ -17,16 +17,16 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {Link} from "react-router-dom";
-import {InputTextBox} from "@components/user/InputTextBox";
+import { Link } from "react-router-dom";
+import { InputTextBox } from "@components/user/InputTextBox";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faUserNinja} from "@fortawesome/free-solid-svg-icons";
-import {Alert, useTheme} from "@mui/material";
-import {Home, Sell, ViewColumn} from "@mui/icons-material";
-import {MenuOption} from "@common/utils/Schemas";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckCircle, faUserNinja } from "@fortawesome/free-solid-svg-icons";
+import { Alert, useTheme } from "@mui/material";
+import { Home, Sell, ViewColumn } from "@mui/icons-material";
+import { MenuOption } from "@common/utils/Schemas";
 import BrushIcon from "@mui/icons-material/Brush";
-import {faDiscord} from "@fortawesome/free-brands-svg-icons";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
@@ -34,7 +34,7 @@ import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
-    { menuName: "Appearance", menuLink: "/settings/appearance" },
+  { menuName: "Appearance", menuLink: "/settings/appearance" },
     { menuName: "Essentials", menuLink: "/settings/essentials" },
     { menuName: "Tags", menuLink: "/settings/tags" },
     { menuName: "Nicks", menuLink: "/settings/nicks" },

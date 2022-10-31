@@ -1,24 +1,42 @@
-import {app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
-import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
+import {
+    app,
+    BrowserWindow,
+    dialog,
+    globalShortcut,
+    ipcMain,
+    IpcMainInvokeEvent,
+    Notification,
+    NotificationConstructorOptions,
+    shell
+} from "electron";
+import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
 import path from "path";
-import axios, {AxiosRequestConfig} from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import fs from "fs";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import cacheManager from "cache-manager";
 import Store from "electron-store";
-import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {HypixelApi} from "./HypixelApi";
+import {
+    getDefaultElectronStore,
+    getDefaultElectronStoreObject,
+    Join,
+    PathsToStringProps,
+    RUNElectronStore,
+    RUNElectronStoreTagsType,
+    RUNElectronStoreType
+} from "@renderer/store/ElectronStoreUtils";
+import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { HypixelApi } from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
-import {AppInformation, CustomFileIpc, ProxyStore, ProxyType} from "@common/utils/Schemas";
+import { BoomzaAntisniper, KeathizEndpoints } from "@common/utils/externalapis/BoomzaApi";
+import { AppInformation, CustomFileIpc, ProxyStore, ProxyType } from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
-import {handleIPCSend} from "@main/Utils";
+import { handleIPCSend } from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
-import {LogFileMessage} from "@common/utils/LogFileReader";
-import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
+import { LogFileMessage } from "@common/utils/LogFileReader";
+import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import log from "electron-log";
 import psList from "ps-list";
 import express from "express";

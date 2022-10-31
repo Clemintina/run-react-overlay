@@ -1,17 +1,22 @@
-import {IpcRendererEvent} from "electron";
-import {IpcChannelMap, IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
-import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import { IpcRendererEvent } from "electron";
+import {
+  IpcChannelMap,
+  IPCValidInvokeChannels,
+  IPCValidOnChannels,
+  IPCValidSendChannels
+} from "@common/utils/IPCHandler";
+import { RUNElectronStoreTagsTyped, RUNElectronStoreTyped } from "@main/appWindow";
+import { IPCResponse } from "@common/utils/externalapis/RunApi";
 
 const ipcRendererExtension = new IpcRendererExtension<IpcChannelMap>();
 
 declare global {
-    interface Window {
-        ipcRenderer: SeraphIpcRenderer<IpcChannelMap>;
-        config: {
-            set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
-            get(key: RUNElectronStoreTyped | string);
-        };
+  interface Window {
+    ipcRenderer: SeraphIpcRenderer<IpcChannelMap>;
+    config: {
+      set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
+      get(key: RUNElectronStoreTyped | string);
+    };
         tags: {
             set(key: RUNElectronStoreTagsTyped | string, data: string | number | object | boolean);
             get(key: RUNElectronStoreTagsTyped | string);

@@ -1,5 +1,5 @@
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {KeathizEndpoints} from "./externalapis/BoomzaApi";
+import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { KeathizEndpoints } from "./externalapis/BoomzaApi";
 
 /**
  * Adds intellisense to each IpcRenderer
