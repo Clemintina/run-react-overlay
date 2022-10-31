@@ -178,7 +178,36 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             if (runApi.status == 200) {
                 playerData.loaded = true;
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
-                if (!playerData.bot) {
+
+                if (configStore.settings.preferences.customFile) {
+                    const customFile = configStore.customFile;
+                    if (customFile.data != null) {
+                        if (typeof customFile?.data[0] === "string") {
+                            const datum = customFile.data as string[];
+                            datum.map(async (player) => {
+                                if (player.toLowerCase() == playerData.name.toLowerCase()) {
+                                    if (playerData.sources.runApi != null) {
+                                        playerData.sources.runApi.data.data.blacklist.tagged = true;
+                                        playerData.sources.runApi.data.data.blacklist.reason = "Blacklist File";
+                                    }
+                                }
+                            });
+                        } else {
+                            const datum = customFile.data as Array<CustomFileJsonType>;
+                            datum.map(async (player) => {
+                                if (player.uuid == playerData.hypixelPlayer?.uuid) {
+                                    playerData.sources.customFile = player;
+                                    if (playerData.sources.runApi != null) {
+                                        playerData.sources.runApi.data.data.blacklist.tagged = player.blacklisted;
+                                        playerData.sources.runApi.data.data.blacklist.reason = "Blacklist File";
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+
+                if (!playerData.bot && !playerData.sources.runApi.data.data.blacklist.tagged) {
                     const [boomza, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
                     playerData.sources.boomza = boomza;
                     playerData.sources.lunar = lunarApi;
@@ -191,41 +220,13 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                             const playerArr = [...state.players];
                             playerArr[exists] = playerObject.data;
                             return {
-                                players: playerArr,
+                                players: playerArr
                             };
                         });
                     }
 
                     const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
                     playerData.sources.keathiz = keathizApi;
-
-                    console.log("Store", configStore.settings.preferences.customFile);
-                    if (configStore.settings.preferences.customFile) {
-                        const customFile = configStore.customFile;
-                        console.log(customFile.data != null);
-                        if (customFile.data != null) {
-                            if (typeof customFile?.data[0] === "string") {
-                                const datum = customFile.data as string[];
-                                datum.map(async (player) => {
-                                    if (player.toLowerCase() == playerData.name.toLowerCase()) {
-                                        if (playerData.sources.runApi != null) {
-                                            playerData.sources.runApi.data.data.blacklist.tagged = true;
-                                        }
-                                    }
-                                });
-                            } else {
-                                const datum = customFile.data as Array<CustomFileJsonType>;
-                                datum.map(async (player) => {
-                                    if (player.uuid == playerData.hypixelPlayer?.uuid) {
-                                        playerData.sources.customFile = player;
-                                        if (playerData.sources.runApi != null) {
-                                            playerData.sources.runApi.data.data.blacklist.tagged = player.blacklisted;
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    }
                 }
             } else {
                 if (runApi.status == 403) {

@@ -21,11 +21,11 @@ import { inDev } from "@common/helpers";
 import CustomLinks from "@components/ui/settings/views/CustomLinks";
 
 if (!inDev()) {
-  Sentry.init({
-    dsn: "https://007f83196f744701bdb2854ce0e50fad@o4504048318939136.ingest.sentry.io/4504048320839680",
-    integrations: [new BrowserTracing()],
-    tracesSampleRate: 1.0
-  });
+    Sentry.init({
+        dsn: "https://007f83196f744701bdb2854ce0e50fad@o4504048318939136.ingest.sentry.io/4504048320839680",
+        integrations: [new BrowserTracing()],
+        tracesSampleRate: 1.0
+    });
 }
 
 const logs = useConfigStore.getState().logs;

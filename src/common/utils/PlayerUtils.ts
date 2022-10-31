@@ -13,16 +13,16 @@ export type Player = {
   friended: boolean | null;
   denicked: boolean | null;
   loaded: boolean;
-    hypixelPlayer: Components.Schemas.Player | null;
-    hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
-    hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
-    hypixelFriendsMutuals?: Array<string> | null;
-    sources: {
-        runApi: IPCResponse<Blacklist> | null;
-        boomza?: IPCResponse<BoomzaAntisniper> | null;
-        keathiz?: IPCResponse<KeathizOverlayRun> | null;
-        lunar?: IPCResponse<LunarAPIResponse> | null;
-        playerDb?: IPCResponse<PlayerDB> | null;
+  hypixelPlayer: Components.Schemas.Player | null;
+  hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
+  hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
+  hypixelFriendsMutuals?: Array<string> | null;
+  sources: {
+    runApi: IPCResponse<Blacklist> | null;
+    boomza?: IPCResponse<BoomzaAntisniper> | null;
+    keathiz?: IPCResponse<KeathizOverlayRun> | null;
+    lunar?: IPCResponse<LunarAPIResponse> | null;
+    playerDb?: IPCResponse<PlayerDB> | null;
         customFile?: CustomFileJsonType;
     };
 };

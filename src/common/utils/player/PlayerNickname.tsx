@@ -17,14 +17,15 @@ const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; ha
   const [playerNickname, setPlayerNickname] = useState<PlayerNickname>(users[0]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-    useEffect(() => {}, [playerNickname]);
+  useEffect(() => {
+  }, [playerNickname]);
 
-    return (
-        <SettingCard className={"border-2 border-cyan-500"}>
+  return (
+    <SettingCard className={"border-2 border-cyan-500"}>
             <span className={" "}>
                 <InputTextBox
-                    onBlur={async (event) => {
-                        const userInput = event.currentTarget.value;
+                  onBlur={async (event) => {
+                    const userInput = event.currentTarget.value;
                         if (userInput.length == 0 || userInput.toLowerCase() == playerNickname.name) return;
                         const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, userInput, hypixelApiKey]);
                         setPlayerNickname({

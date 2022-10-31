@@ -9,14 +9,14 @@ import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import { MinecraftColourAsHex } from "@common/zikeji";
 
 export interface PlayerTags {
-  player: Player;
+    player: Player;
 }
 
 const parseColour = (text: string) => {
-  const splitText = text.split("§");
-  const finalText: [string, string][] = [];
+    const splitText = text.split("§");
+    const finalText: [string, string][] = [];
 
-  for (const parts of splitText) {
+    for (const parts of splitText) {
         finalText.push([parts.split("").slice(1).join(""), MinecraftColourAsHex[`§${parts.split("")[0]}`]]);
     }
     return finalText;

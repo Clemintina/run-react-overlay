@@ -22,16 +22,16 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
     error: state.error
   }));
   if (logs.clientName !== null && logs.clientName !== undefined) label = logs.clientName;
-    const [open, setOpen] = React.useState<boolean>(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const [clientLocal, setClientLocal] = useState<string>(logs.clientName);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [clientLocal, setClientLocal] = useState<string>(logs.clientName);
 
-    const handleChange = async (event: SelectChangeEvent) => {
-        const clientSettings: ClientSetting = {
-            clientName: event.target.value,
-            readable: false,
-            logPath: "",
+  const handleChange = async (event: SelectChangeEvent) => {
+    const clientSettings: ClientSetting = {
+      clientName: event.target.value,
+      readable: false,
+      logPath: ""
         };
         setClientLocal(clientSettings.clientName);
 

@@ -21,16 +21,16 @@ const NickView = () => {
   const [playerNickname, setPlayerNickname] = useState({ name: "", nick: "", added: 0, uuid: "" });
   const [clearText, setClearText] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
-    const [nickInput, setNickInput] = useState("");
+  const [nickInput, setNickInput] = useState("");
 
-    useEffect(() => {
-        if (clearText) {
-            setClearText(false);
-        }
-    }, [clearText]);
+  useEffect(() => {
+    if (clearText) {
+      setClearText(false);
+    }
+  }, [clearText]);
 
-    const playerArray: Array<string> = [];
-    const nickArray: Array<string> = [];
+  const playerArray: Array<string> = [];
+  const nickArray: Array<string> = [];
 
     players.map((p: Player) => {
         if (!p.nicked) {

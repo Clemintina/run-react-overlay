@@ -13,21 +13,21 @@ import Tooltip from "@mui/material/Tooltip";
 import { TextSettingCard } from "@components/user/settings/components/TextSettingCard";
 
 const Essentials = () => {
-  const { hypixel, logs, settings, run, keathiz } = useConfigStore((state) => ({
-    hypixel: state.hypixel,
-    logs: state.logs,
-    settings: state.settings,
-    run: state.run,
-        keathiz: state.keathiz,
+    const { hypixel, logs, settings, run, keathiz } = useConfigStore((state) => ({
+        hypixel: state.hypixel,
+        logs: state.logs,
+        settings: state.settings,
+        run: state.run,
+        keathiz: state.keathiz
     }));
     const styledProps: SxProps = {
-        width: 0.86,
+        width: 0.86
     };
 
     // TODO make it look nicer and cleaner
     return (
-        <NavigationBar>
-            <Box className={"pl-2 pt-2"}>
+      <NavigationBar>
+          <Box className={"pl-2 pt-2"}>
                 <TextSettingCard>
                     <span>Hypixel API Key</span>
                     <span />

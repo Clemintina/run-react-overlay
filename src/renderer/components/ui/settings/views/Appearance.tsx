@@ -29,14 +29,17 @@ const Appearance = () => {
     width: 0.86
   };
 
-    const [textAlignment, setTextAlignment] = useState(table.settings.textAlign);
+  const [textAlignment, setTextAlignment] = useState(table.settings.textAlign);
 
-    const handleChange = (event: SelectChangeEvent) => {
-        if (event.target.value == "left" || event.target.value == "right" || event.target.value == "center") {
-            setTextAlignment(event.target.value);
-            useConfigStore.getState().setTableState({ ...useConfigStore.getState().table, settings: { textAlign: event.target.value } });
-        }
-    };
+  const handleChange = (event: SelectChangeEvent) => {
+    if (event.target.value == "left" || event.target.value == "right" || event.target.value == "center") {
+      setTextAlignment(event.target.value);
+      useConfigStore.getState().setTableState({
+        ...useConfigStore.getState().table,
+        settings: { textAlign: event.target.value }
+      });
+    }
+  };
 
     // TODO make it look nicer and cleaner
     return (
