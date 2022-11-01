@@ -190,3 +190,7 @@ export interface CustomFileIpc {
 }
 
 export type CustomFileJsonType = {uuid: string; blacklisted: boolean; tags: Array<{tag: string; hex: string; singularTag?: boolean}>};
+
+export interface GameType {
+    last_server: string;
+}

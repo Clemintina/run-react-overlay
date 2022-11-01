@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, DisplayErrorMessage, FontConfig, GameType, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
@@ -56,6 +56,8 @@ export type ConfigStore = {
     setNicks: (nicks: Array<PlayerNickname>) => void;
     customFile: CustomLinkFile;
     setCustomFile: (customFile: CustomLinkFile) => void;
+    game: GameType,
+    setGame: (game: GameType) => void
 };
 
 const useConfigStore = create<ConfigStore>()(
@@ -515,10 +517,16 @@ const useConfigStore = create<ConfigStore>()(
                         releaseDate: new Date(),
                     },
                 },
+                game: {
+                    last_server: "",
+                },
+                setGame: (game) => {
+                    set({game});
+                },
             }),
             {
                 name: "user_settings",
-                version: 6,
+                version: 7,
                 migrate: (persistedState: any, version) => {
                     const updatedState = persistedState;
                     if (version == 4) {
@@ -542,6 +550,7 @@ const useConfigStore = create<ConfigStore>()(
                         updatedState.settings.customUrl = false;
                         updatedState.customFile.path = "";
                         updatedState.customFile.readable = false;
+                        updatedState.game.last_server = "";
                     }
                     return updatedState;
                 },

@@ -4,6 +4,7 @@ import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import axios from "axios";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
@@ -39,9 +40,10 @@ export class LogFileReader {
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data);
-            if (line.includes("Sending you to")) {
+            if (line.includes("Sending you to") || line.match(/^\s{7}$/) || line.match(/You have \d unclaimed leveling reward/i) || line.match(/You have \d unclaimed achievement reward/i)) {
                 await clearOverlayTable();
-            } else if (line.includes(" ONLINE: ")) {
+            }
+            if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 clearOverlayTable();
                 if (useConfigStore.getState().settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
@@ -58,6 +60,10 @@ export class LogFileReader {
                     if (name.includes(" ")) name = name.split(" ")[name.split(" ").length - 1].trim();
                     addPlayer(name);
                 });
+            }
+            if (line.includes("Sending you to")) {
+                const server_id = line.split("Sending you to")[1].replace("!", "");
+                useConfigStore.getState().setGame({last_server: server_id});
             }
         });
     };
@@ -205,13 +211,29 @@ const removePlayer = async (username: string) => {
     usePlayerStore.getState().removePlayer(username);
 };
 
+type PlayerData = {data: {queue: Array<string>, server: string}}
+
 const clearOverlayTable = async () => {
+    const players = usePlayerStore.getState().players;
+    const uuid_array: Array<string> = [];
+
+    players.map(player => {
+        if (!player.nicked && player.hypixelPlayer != undefined) uuid_array.push(player.hypixelPlayer.uuid);
+    });
     usePlayerStore.getState().clearPlayers();
+
+    const playerData: PlayerData = {
+        data: {
+            queue: uuid_array,
+            server: useConfigStore.getState().game.last_server,
+        },
+    };
+
+    if (uuid_array.length >= 1) await axios.post("https://queues.seraph.si/v1/queue", playerData);
 };
 
 const readLogLine = (data: string) => {
     const response: IPCResponse<LogFileMessage> = destr(data);
-    console.log(response);
     if (typeof response === "object") {
         if (!response.data.message.includes("[CHAT]")) {
             return `[17:46:23] [Client thread/INFO]: [CHAT] ${response.data.message}`.replaceAll("%20", " ");
