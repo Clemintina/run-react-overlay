@@ -29,7 +29,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     players: Array<Player>(),
     friendLists: Array<RunFriendList>(),
     addPlayer: async (username: string) => {
-        console.log(username);
         if (username == undefined || username == "") return;
         const playerData: Player = {
             name: username.toLowerCase(),

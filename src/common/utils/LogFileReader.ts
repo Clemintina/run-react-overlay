@@ -1,10 +1,11 @@
-import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {Player} from "@common/utils/PlayerUtils";
+import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import axios from "axios";
+import { removeMinecraftFormatting } from "@common/zikeji";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
@@ -39,9 +40,10 @@ export class LogFileReader {
 
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = readLogLine(data);
-            if (line.includes("Sending you to") || line.match(/^\s{7}$/) || line.match(/You have \d unclaimed leveling reward/i) || line.match(/You have \d unclaimed achievement reward/i)) {
-                await clearOverlayTable();
+            const line = readLogLine(data, true);
+            const textOnly = line.split("[CHAT] ")[1];
+            if (line.includes("Sending you to") || textOnly.match(/^(§a)?You have (§b)?(\d{1,4}) (§a)?unclaimed leveling reward(s)?!$/gi) || textOnly.match(/^(§a)?You have (§6)?(\d{1,4}) (§a)?unclaimed achievement reward(s)?!$/gi)) {
+                clearOverlayTable();
             }
             if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
@@ -51,7 +53,8 @@ export class LogFileReader {
                     if (player.includes("(") || player.includes("[")) return;
                     addPlayer(player);
                 });
-            } else if (line.includes("Online Players (")) {
+            }
+            if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
                 players.shift();
                 const playerNames = players[0].split(", ");
@@ -63,7 +66,7 @@ export class LogFileReader {
             }
             if (line.includes("Sending you to")) {
                 const server_id = line.split("Sending you to")[1].replace("!", "");
-                useConfigStore.getState().setGame({last_server: server_id});
+                useConfigStore.getState().setGame({ last_server: server_id });
             }
         });
     };
@@ -80,6 +83,22 @@ export class LogFileReader {
                 if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
                     await window.ipcRenderer.invoke(IpcValidInvokeChannels.SERAPH, [RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner]);
                 }
+            }
+            if (line.includes("Protect your bed and destroy the enemy beds.")) {
+                const players = usePlayerStore.getState().players;
+                const uuid_array: Array<string> = [];
+
+                players.map(player => {
+                    if (!player.nicked && player.hypixelPlayer != undefined) uuid_array.push(player.hypixelPlayer.uuid);
+                });
+                const playerData: PlayerData = {
+                    data: {
+                        queue: uuid_array,
+                        server: useConfigStore.getState().game.last_server,
+                    },
+                };
+
+                if (uuid_array.length >= 1) postData(playerData);
             }
         });
     };
@@ -211,7 +230,7 @@ const removePlayer = async (username: string) => {
     usePlayerStore.getState().removePlayer(username);
 };
 
-type PlayerData = {data: {queue: Array<string>, server: string}}
+type PlayerData = { data: { queue: Array<string>, server: string } }
 
 const clearOverlayTable = async () => {
     const players = usePlayerStore.getState().players;
@@ -229,16 +248,23 @@ const clearOverlayTable = async () => {
         },
     };
 
-    if (uuid_array.length >= 1) await axios.post("https://queues.seraph.si/v1/queue", playerData);
+    if (uuid_array.length >= 1) postData(playerData);
 };
 
-const readLogLine = (data: string) => {
+const readLogLine = (data: string, sanitise?: boolean) => {
     const response: IPCResponse<LogFileMessage> = destr(data);
     if (typeof response === "object") {
         if (!response.data.message.includes("[CHAT]")) {
             return `[17:46:23] [Client thread/INFO]: [CHAT] ${response.data.message}`.replaceAll("%20", " ");
         }
+        if (sanitise) {
+            return removeMinecraftFormatting(response.data.message.replaceAll("�", "§"));
+        }
         return response.data.message;
     }
     return "";
+};
+
+const postData = async (playerData: PlayerData) => {
+    await axios.post("https://queues.seraph.si/v1/queue", playerData);
 };
