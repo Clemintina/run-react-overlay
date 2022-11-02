@@ -1,11 +1,11 @@
-import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { Player } from "@common/utils/PlayerUtils";
+import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {Player} from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 import axios from "axios";
-import { removeMinecraftFormatting } from "@common/zikeji";
+import {removeMinecraftFormatting} from "@common/zikeji";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
@@ -42,7 +42,7 @@ export class LogFileReader {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
             const line = readLogLine(data, true);
             const textOnly = line.split("[CHAT] ")[1];
-            if (line.includes("Sending you to") || textOnly.match(/^(§a)?You have (§b)?(\d{1,4}) (§a)?unclaimed leveling reward(s)?!$/gi) || textOnly.match(/^(§a)?You have (§6)?(\d{1,4}) (§a)?unclaimed achievement reward(s)?!$/gi)) {
+            if (line.includes("Sending you to") || textOnly.match(/^\s{37}/) || textOnly.match(/^(§a)?You have (§b)?(\d{1,4}) (§a)?unclaimed leveling reward(s)?!$/gi) || textOnly.match(/^(§a)?You have (§6)?(\d{1,4}) (§a)?unclaimed achievement reward(s)?!$/gi)) {
                 clearOverlayTable();
             }
             if (line.includes(" ONLINE: ")) {
@@ -66,7 +66,7 @@ export class LogFileReader {
             }
             if (line.includes("Sending you to")) {
                 const server_id = line.split("Sending you to")[1].replace("!", "");
-                useConfigStore.getState().setGame({ last_server: server_id });
+                useConfigStore.getState().setGame({last_server: server_id});
             }
         });
     };

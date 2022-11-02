@@ -72,8 +72,6 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             }
             if (runApi?.safelist?.personal) {
                 tagArray.push(getTagsFromConfig("run.personal_safelist", runApi.safelist.timesKilled));
-                tagArray.push(<span style={{ color: `#${run.personal_safelist.colour.toString()}` }}>{run.personal_safelist.display}</span>);
-                tagArray.push(<span className={"pl-1"} />);
             }
             if (settings.run.friends && player.friended) {
                 tagArray.push(getTagsFromConfig("run.friends"));

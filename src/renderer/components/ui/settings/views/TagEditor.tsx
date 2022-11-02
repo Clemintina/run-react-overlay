@@ -206,6 +206,37 @@ const TagEditorView = () => {
                                 />
                             </span>
                         </SettingCard>
+                        <SettingCard>
+                            <span>Personal Safelist</span>
+                            <span>
+                                <TagEditor
+                                    options={{
+                                        colour: run.personal_safelist.colour,
+                                        placeholder: run.personal_safelist.display,
+                                        label: {text: "Personal Safelist"},
+                                    }}
+                                    onBlur={(event) => {
+                                        useTagStore.getState().setStore(
+                                            produce((state: any) => {
+                                                state.run.personal_safelist.display = event.currentTarget.value;
+                                            }),
+                                        );
+                                    }}
+                                />
+                            </span>
+                            <span>
+                                <ColourPicker
+                                    setColour={async (colour: string) => {
+                                        useTagStore.getState().setStore(
+                                            produce((state: any) => {
+                                                state.run.personal_safelist.colour = colour;
+                                            }),
+                                        );
+                                    }}
+                                    colourObject={run.personal_safelist.colour}
+                                />
+                            </span>
+                        </SettingCard>
                     </UserAccordion>
                     <UserAccordion name={"Boomza"}>
                         <AccordionDetails>
