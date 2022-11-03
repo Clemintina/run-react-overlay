@@ -43,6 +43,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             hypixelFriends: null,
             hypixelFriendsMutuals: null,
             denicked: false,
+            last_updated: new Date().getTime(),
             sources: {
                 runApi: null,
             },
@@ -67,7 +68,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
         try {
             const ipcHypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name]) : await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", "")]);
-
             if (ipcHypixelPlayer?.data?.uuid == null && configStore?.settings?.keathiz) {
                 const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.DENICK, playerData.name, keathizApiKey]);
                 if (ipcKeathizDenicker.data?.player?.uuid) {

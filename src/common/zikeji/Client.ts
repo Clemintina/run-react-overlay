@@ -1,17 +1,18 @@
-import { EventEmitter } from "events";
-import { GenericHTTPError } from "./errors/GenericHTTPError";
-import { InvalidKeyError } from "./errors/InvalidKeyError";
-import { FindGuild } from "./methods/findGuild";
-import { Guild } from "./methods/guild";
-import { Player } from "./methods/player";
-import { Resources } from "./methods/resources";
-import { Status } from "./methods/status";
-import type { Components, Paths } from "./types/api";
-import { Queue } from "./util/Queue";
-import { request } from "./util/Request";
-import { getResultObject, ResultObject } from "./util/ResultObject";
-import { IPCResponse } from "@common/utils/externalapis/RunApi";
-import { Friends } from "@common/zikeji/methods/friends";
+import {EventEmitter} from "events";
+import {GenericHTTPError} from "./errors/GenericHTTPError";
+import {InvalidKeyError} from "./errors/InvalidKeyError";
+import {FindGuild} from "./methods/findGuild";
+import {Guild} from "./methods/guild";
+import {Player} from "./methods/player";
+import {Resources} from "./methods/resources";
+import {Status} from "./methods/status";
+import type {Components, Paths} from "./types/api";
+import {Queue} from "./util/Queue";
+import {request} from "./util/Request";
+import {getResultObject, ResultObject} from "./util/ResultObject";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import {Friends} from "@common/zikeji/methods/friends";
+import destr from "destr";
 
 /** @internal */
 export interface ActionableCall<T extends Components.Schemas.ApiSuccess> {
@@ -193,7 +194,7 @@ export class Client {
         this.apiKey = key;
         this.retries = options?.retries ?? 3;
         this.timeout = options?.timeout ?? 10000;
-        this.userAgent = options?.userAgent ?? "@zikeji/hypixel";
+        this.userAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) ${options?.userAgent ?? ""} AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36`;
         this.cache = options?.cache;
     }
 
@@ -281,7 +282,7 @@ export class Client {
      * @category API
      */
     public async key(): Promise<IPCResponse<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>> {
-        return { data: getResultObject(await this.call<Paths.Key.Get.Responses.$200>("key"), ["record"]), status: 200 };
+        return {data: getResultObject(await this.call<Paths.Key.Get.Responses.$200>("key"), ["record"]), status: 200};
     }
 
     /**
@@ -373,12 +374,12 @@ export class Client {
      * // { success: true, guild: '553490650cf26f12ae5bac8f' }
      * ```
      */
-    public async call<T extends Components.Schemas.ApiSuccess>(path: string, parameters: Parameters = {}): Promise<T & { cached?: boolean }> {
+    public async call<T extends Components.Schemas.ApiSuccess>(path: string, parameters: Parameters = {}): Promise<T & {cached?: boolean}> {
         if (!this.cache) {
             return this.executeActionableCall(this.createActionableCall(path, parameters));
         }
         const key = `${path.split("/").join(":")}${Object.values(parameters).length === 0 ? "" : `:${Object.values(parameters).map((v) => v.toLowerCase().replace(/-/g, ""))}`}`;
-        const cachedResponse: (T & { cached?: boolean }) | undefined = await this.cache.get<T>(key);
+        const cachedResponse: (T & {cached?: boolean}) | undefined = await this.cache.get<T>(key);
         if (cachedResponse) {
             cachedResponse.cached = true;
             return cachedResponse;
@@ -415,7 +416,7 @@ export class Client {
             this.queue.free();
         }
         if (typeof response === "object" && !call.noRateLimit) {
-            response.ratelimit = JSON.parse(JSON.stringify(this.rateLimit));
+            response.ratelimit = destr(JSON.stringify(this.rateLimit));
         }
         return response;
     }
@@ -440,7 +441,7 @@ export class Client {
     }
 
     /** @internal */
-    private callMethod<T extends Components.Schemas.ApiSuccess & { cause?: string } & { cloudflareCache?: DefaultMeta["cloudflareCache"] }>(path: string, parameters: Parameters, noRateLimit: boolean, includeApiKey: boolean): Promise<T> {
+    private callMethod<T extends Components.Schemas.ApiSuccess & {cause?: string} & {cloudflareCache?: DefaultMeta["cloudflareCache"]}>(path: string, parameters: Parameters, noRateLimit: boolean, includeApiKey: boolean): Promise<T> {
         const url = new URL(path, "https://api.hypixel.net");
         Object.keys(parameters).forEach((param) => {
             url.searchParams.set(param, parameters[param]);

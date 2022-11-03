@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { IHeaderParams } from "ag-grid-community";
+import React, {useEffect, useState} from "react";
+import {IHeaderParams} from "ag-grid-community";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
-export interface ICustomHeader extends IHeaderParams {}
+export interface ICustomHeader extends IHeaderParams {
+}
 
 export default (props: ICustomHeader) => {
     const [ascSort, setAscSort] = useState("inactive");
     const [descSort, setDescSort] = useState("inactive");
     const [noSort, setNoSort] = useState("inactive");
+    const {textAlign} = useConfigStore((state) => ({textAlign: state.table.settings.textAlign}));
 
     const onSortChanged = () => {
         setAscSort(props.column.isSortAscending() ? "active" : "inactive");
@@ -44,7 +46,7 @@ export default (props: ICustomHeader) => {
     }
 
     return (
-        <div style={{ textAlign: useConfigStore.getState().table.settings.textAlign }}>
+        <div style={{textAlign}} className={"w-full"}>
             <div onClick={(event) => onSortRequested(ascSort == "active" ? "desc" : "asc", event)}>
                 <span>{props.displayName}</span>
                 {sort}

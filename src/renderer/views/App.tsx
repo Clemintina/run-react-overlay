@@ -1,23 +1,11 @@
 // eslint-disable-next-line import/named
-import {
-    ColDef,
-    ColumnApi,
-    ColumnMovedEvent,
-    ColumnResizedEvent,
-    GetRowIdParams,
-    GridColumnsChangedEvent,
-    GridOptions,
-    GridReadyEvent,
-    RowDataUpdatedEvent,
-    RowNode,
-    SortChangedEvent
-} from "ag-grid-community";
+import {ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowNode, SortChangedEvent} from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
-import React, { useEffect } from "react";
-import { Player, PlayerUtils } from "@common/utils/PlayerUtils";
-import { AgGridReact } from "ag-grid-react";
-import { assertDefaultError } from "@common/helpers";
+import React, {useEffect} from "react";
+import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
+import {AgGridReact} from "ag-grid-react";
+import {assertDefaultError} from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import PlayerName from "@common/utils/player/PlayerName";
@@ -28,11 +16,11 @@ import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import PlayerHead from "@common/utils/player/PlayerHead";
 import PlayerSession from "@common/utils/player/PlayerSession";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import PlayerGuild from "@common/utils/player/PlayerGuild";
 import CustomHeader from "@components/ui/table/CustomHeader";
-import { Interweave } from "interweave";
-import { AppInformation } from "@common/utils/Schemas";
+import {Interweave} from "interweave";
+import {AppInformation} from "@common/utils/Schemas";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;
@@ -221,18 +209,22 @@ const AppTable = () => {
         useConfigStore.getState().setVersion();
     }, []);
 
-    const defaultColDef = { ...defaultColDefBase };
+    const defaultColDef = {...defaultColDefBase};
 
     const columnDefs = [...columnDefsBase];
 
+    const frameworkComponents = {
+        agColumnHeader: CustomHeader,
+    };
+
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
-        if (onGridReady) useConfigStore.getState().setTableState({ ...table, columnState });
+        if (onGridReady) useConfigStore.getState().setTableState({...table, columnState});
     };
 
     const onSortingOrderChange = (e: SortChangedEvent<Player>) => {
         const columnState = e.columnApi.getColumnState();
-        useConfigStore.getState().setTableState({ ...table, columnState });
+        useConfigStore.getState().setTableState({...table, columnState});
     };
 
     const gridOptions: GridOptions<Player> = {
@@ -265,11 +257,8 @@ const AppTable = () => {
         suppressCellFocus: true,
         suppressChangeDetection: false,
         overlayNoRowsTemplate: "No Players",
+        components: frameworkComponents,
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
-    };
-
-    const frameworkComponents = {
-        agColumnHeader: CustomHeader,
     };
 
     return (

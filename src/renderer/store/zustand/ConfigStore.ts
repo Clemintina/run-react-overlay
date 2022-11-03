@@ -70,7 +70,7 @@ const useConfigStore = create<ConfigStore>()(
                     apiKeyOwner: "",
                 },
                 setHypixelApiKey: async (hypixelApiKey) => {
-                    if (hypixelApiKey.length === 0 || get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase()) {
+                    if (hypixelApiKey.length === 0 || get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase() && get().hypixel.apiKeyValid) {
                         const oldHypixel = get().hypixel;
                         if (oldHypixel.apiKeyValid) return;
                         set(() => ({
@@ -526,7 +526,7 @@ const useConfigStore = create<ConfigStore>()(
             }),
             {
                 name: "user_settings",
-                version: 7,
+                version: 8,
                 migrate: (persistedState: any, version) => {
                     const updatedState = persistedState;
                     if (version == 4) {
