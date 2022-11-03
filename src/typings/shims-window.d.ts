@@ -1,32 +1,25 @@
-import { IpcRendererEvent } from "electron";
-import {
-  IpcChannelMap,
-  IPCValidInvokeChannels,
-  IPCValidOnChannels,
-  IPCValidSendChannels
-} from "@common/utils/IPCHandler";
-import { RUNElectronStoreTagsTyped, RUNElectronStoreTyped } from "@main/appWindow";
-import { IPCResponse } from "@common/utils/externalapis/RunApi";
-
-const ipcRendererExtension = new IpcRendererExtension<IpcChannelMap>();
+import {IpcRendererEvent} from "electron";
+import {IpcChannelMap, IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
+import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 declare global {
-  interface Window {
-    ipcRenderer: SeraphIpcRenderer<IpcChannelMap>;
-    config: {
-      set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
-      get(key: RUNElectronStoreTyped | string);
-    };
-    tags: {
-      set(key: RUNElectronStoreTagsTyped | string, data: string | number | object | boolean);
-      get(key: RUNElectronStoreTagsTyped | string);
-    };
-  }
+    interface Window {
+        ipcRenderer: SeraphIpcRenderer<IpcChannelMap>;
+        config: {
+            set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
+            get(key: RUNElectronStoreTyped | string);
+        };
+        tags: {
+            set(key: RUNElectronStoreTagsTyped | string, data: string | number | object | boolean);
+            get(key: RUNElectronStoreTagsTyped | string);
+        };
+    }
 
-  interface SeraphIpcRenderer<ChannelMap> extends NodeJS.EventEmitter {
-    invoke(channel: IPCValidInvokeChannels, ...args: string[] | unknown[]): Promise<never>;
+    interface SeraphIpcRenderer<ChannelMap> extends NodeJS.EventEmitter {
+        invoke(channel: IPCValidInvokeChannels, ...args: string[] | unknown[]): Promise<never>;
 
-    invoke<T>(channel: keyof ChannelMap, ...args: ChannelMap[typeof channel][]): Promise<IPCResponse<T>>;
+        invoke<T>(channel: keyof ChannelMap, ...args: ChannelMap[typeof channel][]): Promise<IPCResponse<T>>;
 
         on(channel: IPCValidOnChannels | string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
 

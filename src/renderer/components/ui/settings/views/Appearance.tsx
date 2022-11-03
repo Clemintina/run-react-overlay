@@ -1,29 +1,19 @@
-import React, { useState } from "react";
-import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { ToggleButton } from "@components/user/ToggleButton";
+import React, {useState} from "react";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
+import {ToggleButton} from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {
-  Autocomplete,
-  Box,
-  FormControl,
-  InputLabel,
-  Select,
-  SelectChangeEvent,
-  Slider,
-  SxProps,
-  TextField
-} from "@mui/material";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import {Autocomplete, Box, FormControl, InputLabel, Select, SelectChangeEvent, Slider, SxProps, TextField} from "@mui/material";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
 import MenuItem from "@mui/material/MenuItem";
 
 const Appearance = () => {
-  const localConfigStore = useConfigStore<ConfigStore>((state) => state);
-  const { settings, browserWindow, font, table } = useConfigStore((state) => ({
-    settings: state.settings,
-    browserWindow: state.browserWindow,
-    font: state.font,
-    table: state.table
-  }));
+    const localConfigStore = useConfigStore<ConfigStore>((state) => state);
+    const {settings, browserWindow, font, table} = useConfigStore((state) => ({
+        settings: state.settings,
+        browserWindow: state.browserWindow,
+        font: state.font,
+        table: state.table,
+    }));
   const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
   const styledProps: SxProps = {
     width: 0.86
@@ -83,6 +73,7 @@ const Appearance = () => {
                         <span>Font</span>
                         <span />
                         <Autocomplete
+                            freeSolo
                             disablePortal
                             options={[...font.availableFonts]}
                             onChange={(event) => {

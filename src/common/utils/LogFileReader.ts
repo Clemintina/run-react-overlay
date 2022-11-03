@@ -73,7 +73,7 @@ export class LogFileReader {
 
     public startSeraphHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = readLogLine(data);
+            const line = readLogLine(data, true);
             if (line.includes("FINAL KILL!")) {
                 const lineTemp = line.toString().substring(line.indexOf("[CHAT]"), line.length).replace("[CHAT] ", "");
                 const final_ign = lineTemp.split(" ")[0];
@@ -230,7 +230,7 @@ const removePlayer = async (username: string) => {
     usePlayerStore.getState().removePlayer(username);
 };
 
-type PlayerData = { data: { queue: Array<string>, server: string } }
+type PlayerData = {data: {queue: Array<string>, server: string}}
 
 const clearOverlayTable = async () => {
     const players = usePlayerStore.getState().players;
@@ -267,4 +267,8 @@ const readLogLine = (data: string, sanitise?: boolean) => {
 
 const postData = async (playerData: PlayerData) => {
     await axios.post("https://queues.seraph.si/v1/queue", playerData);
+};
+
+const sanitiseLine = (line: string) => {
+    return removeMinecraftFormatting(line);
 };
