@@ -25,6 +25,7 @@ export type Player = {
         lunar?: IPCResponse<LunarAPIResponse> | null;
         playerDb?: IPCResponse<PlayerDB> | null;
         customFile?: CustomFileJsonType;
+        customApi?: CustomFileJsonType;
     };
 };
 

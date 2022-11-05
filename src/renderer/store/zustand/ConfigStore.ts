@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import {ColumnState} from "ag-grid-community";
 import create from "zustand";
-import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, DisplayErrorMessage, FontConfig, GameType, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
+import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, CustomLinkURL, DisplayErrorMessage, FontConfig, GameType, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
 import {ResultObject} from "@common/zikeji/util/ResultObject";
 import {Paths} from "@common/zikeji";
 import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
@@ -56,6 +56,8 @@ export type ConfigStore = {
     setNicks: (nicks: Array<PlayerNickname>) => void;
     customFile: CustomLinkFile;
     setCustomFile: (customFile: CustomLinkFile) => void;
+    customApi: CustomLinkURL;
+    setCustomApi: (customFile: CustomLinkURL) => void;
     game: GameType,
     setGame: (game: GameType) => void
 };
@@ -479,6 +481,14 @@ const useConfigStore = create<ConfigStore>()(
                         customFile,
                     });
                 },
+                customApi: {
+                    url: "",
+                },
+                setCustomApi: (customApi) => {
+                    set({
+                        customApi,
+                    });
+                },
                 keybinds: [],
                 addKeybind: async (focus, keybind) => {
                     if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
@@ -551,6 +561,8 @@ const useConfigStore = create<ConfigStore>()(
                         updatedState.customFile.path = "";
                         updatedState.customFile.readable = false;
                         updatedState.game.last_server = "";
+                    } else if (version == 8) {
+                        updatedState.customUrl.url = "";
                     }
                     return updatedState;
                 },

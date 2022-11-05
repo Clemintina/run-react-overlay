@@ -631,6 +631,11 @@ const registerExternalApis = () => {
         const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${uuid}`, {headers});
         return {data: response.data, status: response.status};
     });
+
+    ipcMain.handle("customUrl", async (event: IpcMainInvokeEvent, args: string[]) => {
+        const response = await axiosClient.get(args[0], {headers});
+        return {data: response.data, status: response.status};
+    });
 };
 
 const registerOverlayFeatures = () => {

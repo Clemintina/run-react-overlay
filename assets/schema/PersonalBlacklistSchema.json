@@ -1,0 +1,157 @@
+{
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"$id": "https://antisniper.seraph.si/schemas/blacklist.json",
+	"title": "Root Schema",
+	"type": "object",
+	"default": {
+		"data": [ ]
+	},
+	"required": [
+		"data"
+	],
+	"properties": {
+		"data": {
+			"title": "The data Schema",
+			"description": "The main object for storing data",
+			"type": "array",
+			"default": [ ],
+			"items": {
+				"title": "Player Object Schema",
+				"description": "Every player you'd like to customise on the overlay",
+				"type": "object",
+				"default": { },
+				"required": [
+					"uuid",
+					"blacklisted",
+					"tags"
+				],
+				"properties": {
+					"uuid": {
+						"title": "The uuid Schema",
+						"description": "Undashed player uuid",
+						"type": "string",
+						"default": "",
+						"examples": [
+							"8589389e8b6b46c288084eb71ec3479e"
+						]
+					},
+					"blacklisted": {
+						"title": "The blacklisted Schema",
+						"description": "Should the player be shown as blacklisted",
+						"type": "boolean",
+						"default": false,
+						"examples": [
+							true
+						]
+					},
+					"tags": {
+						"title": "The tags array Schema",
+						"description": "The tag(s) shown for this player on the overlay",
+						"type": "array",
+						"default": [ ],
+						"items": {
+							"title": "Tag object Schema",
+							"type": "object",
+							"default": { },
+							"required": [
+								"tag",
+								"hex",
+								"singularTag"
+							],
+							"properties": {
+								"tag": {
+									"title": "The tag Schema",
+									"description": "The custom tag you want to add",
+									"type": "string",
+									"default": "",
+									"examples": [
+										"Custom Tag"
+									]
+								},
+								"hex": {
+									"title": "The hex Schema",
+									"description": "The hex colour of the tag",
+									"type": "string",
+									"default": "",
+									"examples": [
+										"#ffffff"
+									]
+								},
+								"singularTag": {
+									"title": "The singularTag Schema",
+									"description": "Should this tag be the only one shown ( hiding all other tags except blacklisted, bot or Seraph Custom tags )",
+									"type": "boolean",
+									"default": false,
+									"examples": [
+										false
+									]
+								}
+							},
+							"examples": [
+								{
+									"tag": "Custom Tag",
+									"hex": "#ffffff",
+									"singularTag": false
+								}
+							]
+						},
+						"examples": [
+							[
+								{
+									"tag": "Custom Tag",
+									"hex": "#ffffff",
+									"singularTag": false
+								}
+							]
+						]
+					}
+				},
+				"examples": [
+					{
+						"uuid": "8589389e8b6b46c288084eb71ec3479e",
+						"blacklisted": true,
+						"tags": [
+							{
+								"tag": "Custom Tag",
+								"hex": "#ffffff",
+								"singularTag": false
+							}
+						]
+					}
+				]
+			},
+			"examples": [
+				[
+					{
+						"uuid": "8589389e8b6b46c288084eb71ec3479e",
+						"blacklisted": true,
+						"tags": [
+							{
+								"tag": "Custom Tag",
+								"hex": "#ffffff",
+								"singularTag": false
+							}
+						]
+					}
+				]
+			]
+		}
+	},
+	"examples": [
+		{
+			"data": [
+				{
+					"uuid": "8589389e8b6b46c288084eb71ec3479e",
+					"blacklisted": true,
+					"tags": [
+						{
+							"tag": "Custom Tag",
+							"hex": "#ffffff",
+							"singularTag": false
+						}
+					]
+				}
+			]
+		}
+	]
+}

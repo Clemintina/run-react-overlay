@@ -184,6 +184,8 @@ export interface CustomLinkURL {
     url: string;
 }
 
+export type CustomLinkSchema = {data: CustomFileJsonType}
+
 export interface CustomFileIpc {
     fileType: "text" | "json";
     contents: Array<string> | Array<CustomFileJsonType> | string;

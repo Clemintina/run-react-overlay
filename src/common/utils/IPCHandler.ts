@@ -1,5 +1,5 @@
-import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
-import { KeathizEndpoints } from "./externalapis/BoomzaApi";
+import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
+import {KeathizEndpoints} from "./externalapis/BoomzaApi";
 
 /**
  * Adds intellisense to each IpcRenderer
@@ -33,6 +33,7 @@ enum IpcValidInvokeChannels {
     ASTOLFO = "astolfo",
     OPEN_LINK = "openlink",
     READ_FILE = "readFile",
+    CUSTOM_URL = "customUrl"
 }
 
 enum IpcValidSendChannels {
@@ -61,9 +62,10 @@ export interface IpcChannelMap {
     [IpcValidInvokeChannels.ASTOLFO]: [];
     [IpcValidInvokeChannels.IS_ADMIN]: [];
     [IpcValidInvokeChannels.AUTOLOG]: [];
-    [IpcValidInvokeChannels.SELECT_LOG_FILE]: [filters: Array<{ name: string; extensions: Array<string> }>, cwd?: string];
+    [IpcValidInvokeChannels.SELECT_LOG_FILE]: [filters: Array<{name: string; extensions: Array<string>}>, cwd?: string];
     [IpcValidInvokeChannels.GET_APP_INFO]: [];
     [IpcValidInvokeChannels.READ_FILE]: [path: string];
+    [IpcValidInvokeChannels.CUSTOM_URL]: [url: string];
 
     [IpcValidSendChannels.LOG_FILE_SET]: [path: string];
     [IpcValidSendChannels.WINDOW_TOGGLE]: [];
@@ -85,4 +87,4 @@ class IpcRendererExtension<ChannelMap> {
 
 const ipcRendererExtension = new IpcRendererExtension<IpcChannelMap>();
 
-export { ipcRendererExtension, IpcValidInvokeChannels };
+export {ipcRendererExtension, IpcValidInvokeChannels};

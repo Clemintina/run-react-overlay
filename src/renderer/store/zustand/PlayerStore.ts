@@ -48,7 +48,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 runApi: null,
             },
         };
-        const playerObject: IPCResponse<Player> = { status: 400, cause: "none", data: playerData };
+        const playerObject: IPCResponse<Player> = {status: 400, cause: "none", data: playerData};
         const configStore: ConfigStore = useConfigStore.getState();
         const apiKey = configStore.hypixel.apiKey;
         const keathizApiKey = configStore.keathiz.key;
@@ -59,7 +59,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 cause: "No Hypixel API Key",
                 code: 400,
             });
-            return { status: 403, cause: "No API Key", data: null };
+            return {status: 403, cause: "No API Key", data: null};
         }
 
         if (configStore.nicks.filter((nickname) => nickname.nick.toLowerCase() == username.toLowerCase()).length != 0) {
@@ -207,9 +207,28 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                             const playerArr = [...state.players];
                             playerArr[exists] = playerObject.data;
                             return {
-                                players: playerArr
+                                players: playerArr,
                             };
                         });
+                    }
+
+                    const [custom_api] = await Promise.all([getCustomApi(playerData)]);
+                    if (custom_api != undefined) {
+                        const data = custom_api.data;
+                        if (data.blacklisted) {
+                            playerData.sources.runApi.data.data.blacklist.tagged = true;
+                        }
+                        playerData.sources.customApi = data;
+                        const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
+                        if (exists != -1) {
+                            set((state) => {
+                                const playerArr = [...state.players];
+                                playerArr[exists] = playerObject.data;
+                                return {
+                                    players: playerArr,
+                                };
+                            });
+                        }
                     }
 
                     const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
@@ -309,8 +328,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     setStore: (store) => set(store),
     party: {
         partyStore: Array<string>(),
-        addPartyMember: () => {},
-        removePartyMember: () => {},
+        addPartyMember: () => {
+        },
+        removePartyMember: () => {
+        },
     },
     tagStore: {
         config: {},
@@ -324,11 +345,47 @@ const getBoomza = async (player: Player) => {
         api = await window.ipcRenderer.invoke<BoomzaAntisniper>(IpcValidInvokeChannels.BOOMZA, [player.hypixelPlayer.displayname]);
     } else {
         api = {
-            data: { sniper: false, report: 0, error: false, username: player.name },
+            data: {sniper: false, report: 0, error: false, username: player.name},
             status: useConfigStore.getState().settings.boomza ? 417 : 400,
         };
     }
     return new Promise<IPCResponse<BoomzaAntisniper>>((resolve) => resolve(api));
+};
+
+const getCustomApi = async (player: Player) => {
+    let api: IPCResponse<CustomFileJsonType>;
+    if (player.hypixelPlayer?.displayname && useConfigStore.getState().settings.preferences.customUrl) {
+        let url = useConfigStore.getState().customApi.url;
+
+        if (url.includes("{uuid}")) {
+            url.replaceAll("{uuid}", player.hypixelPlayer.uuid);
+        }
+        if (url.includes("{name}")) {
+            url.replaceAll("{name}", player.hypixelPlayer.displayname);
+        }
+        if (url.includes("{hypixelapikey}")) {
+            url.replaceAll("{hypixelapikey}", useConfigStore.getState().hypixel.apiKey);
+        }
+        if (url.includes("{seraphapikey}")) {
+            url.replaceAll("{seraphapikey}", useConfigStore.getState().run.apiKey);
+        }
+        if (url.includes("{blacklisted}")) {
+            const bl = (player.sources.runApi?.data.data.blacklist.tagged ?? false);
+            url.replaceAll("{blacklisted}", String(bl));
+        }
+
+        api = await window.ipcRenderer.invoke<CustomFileJsonType>(IpcValidInvokeChannels.CUSTOM_URL, [url]);
+    } else {
+        api = {
+            data: {
+                uuid: player.hypixelPlayer?.uuid ?? "",
+                blacklisted: false,
+                tags: [],
+            },
+            status: 200,
+        };
+    }
+    return new Promise<IPCResponse<CustomFileJsonType>>((resolve) => resolve(api));
 };
 
 const getRunApi = async (player: Player) => {
@@ -341,23 +398,23 @@ const getRunApi = async (player: Player) => {
             data: {
                 code: 400,
                 data: {
-                    annoylist: { tagged: false },
+                    annoylist: {tagged: false},
                     blacklist: {
                         reason: "",
                         report_type: "",
                         tagged: false,
                         timestamp: 0,
                     },
-                    bot: { kay: false, tagged: false, unidentified: false },
+                    bot: {kay: false, tagged: false, unidentified: false},
                     customTag: null,
-                    migrated: { tagged: false },
+                    migrated: {tagged: false},
                     safelist: {
                         personal: false,
                         security_level: 0,
                         tagged: false,
                         timesKilled: 0,
                     },
-                    statistics: { encounters: 0, threat_level: 0 },
+                    statistics: {encounters: 0, threat_level: 0},
                     username: "",
                     uuid: "",
                 },
@@ -384,10 +441,10 @@ const getLunarTags = async (player: Player) => {
                     uuid: "unknown",
                     online: false,
                     status: "Error connecting to the server",
-                    cosmetics: { activeCosmetics: [], cachedCosmetics: [], count: 0 },
-                    lunarPlus: { clothCloak: false, plusColour: 0, premium: false },
-                    rank: { unknownBooleanB: false, unknownBooleanC: false },
-                    unknown: { unknownBooleanA: false, unknownBooleanB: false, unknownBooleanC: false },
+                    cosmetics: {activeCosmetics: [], cachedCosmetics: [], count: 0},
+                    lunarPlus: {clothCloak: false, plusColour: 0, premium: false},
+                    rank: {unknownBooleanB: false, unknownBooleanC: false},
+                    unknown: {unknownBooleanA: false, unknownBooleanB: false, unknownBooleanC: false},
                 },
                 success: false,
             },
@@ -494,7 +551,7 @@ const getKeathizData = async (player: Player) => {
             api = ipcKeathiz;
         }
     }
-    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({ status: 200, data: api.data }));
+    return new Promise<IPCResponse<KeathizOverlayRun>>((resolve) => resolve({status: 200, data: api.data}));
 };
 
 const getHypixelFriends = async (player: Player) => {
@@ -508,16 +565,12 @@ const getHypixelFriends = async (player: Player) => {
             status: 400,
         };
     }
-    return new Promise<
-        IPCResponse<
-            {
-                _id: string;
-                uuidSender: string;
-                uuidReceiver: string;
-                started: number;
-            }[]
-        >
-    >((resolve) => resolve(api));
+    return new Promise<IPCResponse<{
+        _id: string;
+        uuidSender: string;
+        uuidReceiver: string;
+        started: number;
+    }[]>>((resolve) => resolve(api));
 };
 
 const getGuildData = async (player: Player) => {
