@@ -12,7 +12,7 @@ import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {HypixelApi} from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
 import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
-import {AppInformation, CustomFileIpc, ProxyStore, ProxyType} from "@common/utils/Schemas";
+import {AppInformation, CustomFileIpc, CustomFileJsonType, ProxyStore, ProxyType} from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
 import {handleIPCSend} from "@main/Utils";
 import destr from "destr";
@@ -630,8 +630,8 @@ const registerExternalApis = () => {
     });
 
     ipcMain.handle("customUrl", async (event: IpcMainInvokeEvent, args: string[]) => {
-        const response = await axiosClient.get(args[0], {headers});
-        return {data: response.data, status: response.status};
+        const response = (await axiosClient.get<{data: CustomFileJsonType}>(args[0], {headers}));
+        return {data: response.data.data, status: response.status};
     });
 };
 

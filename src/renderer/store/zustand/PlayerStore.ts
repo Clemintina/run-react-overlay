@@ -12,6 +12,7 @@ export type PlayerStore = {
     addPlayer: (username) => void;
     removePlayer: (username) => void;
     updatePlayers: () => void;
+    updatePlayerState: (player: Player) => void
     clearPlayers: () => void;
     setStore: (store) => void;
     party: {
@@ -117,7 +118,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
             playerObject.data = playerData;
             const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-
             if (exists == -1) {
                 set((state) => ({
                     players: [...state.players, playerObject.data],
@@ -150,23 +150,14 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
             playerObject.data = playerData;
-
-            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-            if (exists != -1) {
-                set((state) => {
-                    const playerArr = [...state.players];
-                    playerArr[exists] = playerObject.data;
-                    return {
-                        players: playerArr,
-                    };
-                });
-            }
+            get().updatePlayerState(playerData);
 
             if (runApi.status == 200) {
                 playerData.loaded = true;
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
 
                 if (!playerData.bot && !playerData.sources.runApi.data.data.blacklist.tagged) {
+                    get().updatePlayerState(playerData);
 
                     if (configStore.settings.preferences.customFile) {
                         const customFile = configStore.customFile;
@@ -204,16 +195,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                                 playerData.sources.runApi.data.data.blacklist.tagged = true;
                             }
                             playerData.sources.customApi = data;
-                            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-                            if (exists != -1) {
-                                set((state) => {
-                                    const playerArr = [...state.players];
-                                    playerArr[exists] = playerObject.data;
-                                    return {
-                                        players: playerArr,
-                                    };
-                                });
-                            }
                         }
                     }
 
@@ -223,16 +204,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     playerData.hypixelFriends = hypixelFriends;
                     playerData.hypixelGuild = hypixelGuild;
 
-                    const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-                    if (exists != -1) {
-                        set((state) => {
-                            const playerArr = [...state.players];
-                            playerArr[exists] = playerObject.data;
-                            return {
-                                players: playerArr,
-                            };
-                        });
-                    }
+                    get().updatePlayerState(playerData);
 
                     const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
                     playerData.sources.keathiz = keathizApi;
@@ -255,16 +227,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }
 
         playerObject.data = playerData;
-        const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-        if (exists != -1) {
-            set((state) => {
-                const playerArr = [...state.players];
-                playerArr[exists] = playerObject.data;
-                return {
-                    players: playerArr,
-                };
-            });
-        }
+        get().updatePlayerState(playerData);
         await get().updatePlayers();
     },
     removePlayer: async (username: string) => {
@@ -328,6 +291,18 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             }
         }
     },
+    updatePlayerState: async (playerObject: Player) => {
+        const exists = get().players.findIndex((player) => player.name == playerObject.name);
+        if (exists != -1) {
+            set((state) => {
+                const playerArr = [...state.players];
+                playerArr[exists] = playerObject;
+                return {
+                    players: playerArr,
+                };
+            });
+        }
+    },
     setStore: (store) => set(store),
     party: {
         partyStore: Array<string>(),
@@ -358,25 +333,22 @@ const getBoomza = async (player: Player) => {
 const getCustomApi = async (player: Player) => {
     let api: IPCResponse<CustomFileJsonType>;
     if (player.hypixelPlayer?.displayname && useConfigStore.getState().settings.preferences.customUrl) {
-        let url = useConfigStore.getState().customApi.url;
+        let url = useConfigStore.getState().customApi.url.toLowerCase() + "&requesttype=seraphoverlay";
 
-        if (url.includes("{uuid}")) {
-            url.replaceAll("{uuid}", player.hypixelPlayer.uuid);
+        if (url.match(/({uuid})/ig)) {
+            url = url.replaceAll(/({uuid})/ig, player.hypixelPlayer.uuid);
         }
-        if (url.includes("{name}")) {
-            url.replaceAll("{name}", player.hypixelPlayer.displayname);
+        if (url.match(/({name})/ig)) {
+            url = url.replaceAll(/({name})/ig, player.hypixelPlayer.displayname);
         }
-        if (url.includes("{hypixelapikey}")) {
-            url.replaceAll("{hypixelapikey}", useConfigStore.getState().hypixel.apiKey);
+        if (url.match(/({hypixelapikey})/ig)) {
+            url = url.replaceAll(/({hypixelapikey})/ig, useConfigStore.getState().hypixel.apiKey);
         }
-        if (url.includes("{seraphapikey}")) {
-            url.replaceAll("{seraphapikey}", useConfigStore.getState().run.apiKey);
-        }
-        if (url.includes("{blacklisted}")) {
-            const bl = (player.sources.runApi?.data.data.blacklist.tagged ?? false);
-            url.replaceAll("{blacklisted}", String(bl));
+        if (url.match(/({seraphapikey})/ig)) {
+            url = url.replaceAll(/({seraphapikey})/ig, useConfigStore.getState().run.apiKey);
         }
 
+        url = url.trim();
         api = await window.ipcRenderer.invoke<CustomFileJsonType>(IpcValidInvokeChannels.CUSTOM_URL, [url]);
     } else {
         api = {

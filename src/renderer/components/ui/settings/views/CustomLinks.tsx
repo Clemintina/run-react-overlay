@@ -127,7 +127,7 @@ const CustomLinks = () => {
                         />
                     </SettingCard>
                     <Box style={settings.preferences.customUrl ? {} : {display: "none"}}>
-                        <InputTextBox initialValue={customApi.url} options={{placeholder: "https://antisniper.seraph.si/api/", label: {text: "Custom URL"}}} onBlur={(event) => useConfigStore.getState().setCustomApi({url: event.currentTarget.value})} />
+                        <InputTextBox initialValue={customApi.url} options={{placeholder: "https://antisniper.seraph.si/api/v4/overlay/blacklist", label: {text: "Custom URL"}}} onBlur={(event) => useConfigStore.getState().setCustomApi({url: event.currentTarget.value})} />
                         <UserAccordion name={"Request Parameters"}>
                             <div className={"grid grid-cols-2"}>
                                 <div className={"font-bold pb-2"}>URL Parameter</div>
@@ -140,8 +140,6 @@ const CustomLinks = () => {
                                 <Typography>Include your Hypixel API Key</Typography>
                                 <Typography>{`{seraphapikey}`}</Typography>
                                 <Typography>Include your Seraph API Key</Typography>
-                                <Typography>{`{blacklisted}`}</Typography>
-                                <Typography>Include Seraph's Blacklist status</Typography>
                             </div>
                         </UserAccordion>
                     </Box>
