@@ -189,7 +189,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
                     if (configStore.settings.preferences.customUrl) {
                         const [custom_api] = await Promise.all([getCustomApi(playerData)]);
-                        if (custom_api != undefined) {
+                        if (custom_api.data != null) {
                             const data = custom_api.data;
                             if (data.blacklisted) {
                                 playerData.sources.runApi.data.data.blacklist.tagged = true;
@@ -533,7 +533,7 @@ const getHypixelFriends = async (player: Player) => {
     let api;
     if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.run.friends) {
         const state = useConfigStore.getState();
-        api = await window.ipcRenderer.invoke("hypixel", RequestType.FRIENDS, player.hypixelPlayer.uuid, state.hypixel.apiKey);
+        api = await window.ipcRenderer.invoke(IpcValidInvokeChannels.HYPIXEL, [RequestType.FRIENDS, player.hypixelPlayer.uuid, state.hypixel.apiKey]);
     } else {
         api = {
             data: [],

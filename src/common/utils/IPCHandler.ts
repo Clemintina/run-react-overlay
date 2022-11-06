@@ -1,5 +1,6 @@
 import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
 import {KeathizEndpoints} from "./externalapis/BoomzaApi";
+import {KeybindInterface} from "@common/utils/Schemas";
 
 /**
  * Adds intellisense to each IpcRenderer
@@ -58,7 +59,7 @@ export interface IpcChannelMap {
     [IpcValidInvokeChannels.GET_FILE_PATH]: [request: string];
     [IpcValidInvokeChannels.NOTIFICATIONS]: [message: string, subtitle: string | undefined];
     [IpcValidInvokeChannels.OPEN_LINK]: [link: string];
-    [IpcValidInvokeChannels.GLOBAL_KEYBINDS]: [];
+    [IpcValidInvokeChannels.GLOBAL_KEYBINDS]: KeybindInterface[];
     [IpcValidInvokeChannels.ASTOLFO]: [];
     [IpcValidInvokeChannels.IS_ADMIN]: [];
     [IpcValidInvokeChannels.AUTOLOG]: [];

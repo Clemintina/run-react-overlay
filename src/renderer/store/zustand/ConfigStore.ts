@@ -242,7 +242,7 @@ const useConfigStore = create<ConfigStore>()(
                             cause: "The Seraph API key provided is invalid or locked!",
                             code: 400,
                         });
-                        await window.ipcRenderer.invoke("notifications", "Your Seraph Key has been locked!");
+                        await window.ipcRenderer.invoke(IpcValidInvokeChannels.NOTIFICATIONS, ["Your Seraph Key has been locked!"]);
                     }
                 },
                 browserWindow: {

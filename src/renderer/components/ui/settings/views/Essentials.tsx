@@ -1,24 +1,25 @@
 import React from "react";
-import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { InputTextBox } from "@components/user/InputTextBox";
-import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
-import { SettingHeader } from "@components/user/settings/components/SettingHeader";
-import { ToggleButton } from "@components/user/ToggleButton";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
+import {InputTextBox} from "@components/user/InputTextBox";
+import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
+import {SettingHeader} from "@components/user/settings/components/SettingHeader";
+import {ToggleButton} from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import { Box, SxProps } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
+import {Box, SxProps} from "@mui/material";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import Tooltip from "@mui/material/Tooltip";
-import { TextSettingCard } from "@components/user/settings/components/TextSettingCard";
+import {TextSettingCard} from "@components/user/settings/components/TextSettingCard";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 const Essentials = () => {
-    const { hypixel, logs, settings, run, keathiz } = useConfigStore((state) => ({
+    const {hypixel, logs, settings, run, keathiz} = useConfigStore((state) => ({
         hypixel: state.hypixel,
         logs: state.logs,
         settings: state.settings,
         run: state.run,
-        keathiz: state.keathiz
+        keathiz: state.keathiz,
     }));
     const styledProps: SxProps = {
         width: 0.86
@@ -191,8 +192,8 @@ const Essentials = () => {
                     <span>
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({ ...settings, astolfo: !settings.astolfo });
-                                await window.ipcRenderer.invoke("astolfo");
+                                useConfigStore.getState().setSettings({...settings, astolfo: !settings.astolfo});
+                                await window.ipcRenderer.invoke(IpcValidInvokeChannels.ASTOLFO);
                             }}
                             options={{ enabled: settings.astolfo }}
                         ></ToggleButton>

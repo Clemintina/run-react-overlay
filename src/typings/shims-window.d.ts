@@ -1,5 +1,5 @@
 import {IpcRendererEvent} from "electron";
-import {IpcChannelMap, IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
+import {IpcChannelMap, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
 import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
 import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
@@ -17,7 +17,7 @@ declare global {
     }
 
     interface SeraphIpcRenderer<ChannelMap> extends NodeJS.EventEmitter {
-        invoke(channel: IPCValidInvokeChannels, ...args: string[] | unknown[]): Promise<never>;
+        invoke(channel: keyof ChannelMap, ...args: ChannelMap[typeof channel][]): Promise<never>;
 
         invoke<T>(channel: keyof ChannelMap, ...args: ChannelMap[typeof channel][]): Promise<IPCResponse<T>>;
 

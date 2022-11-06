@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import { Box } from "@mui/material";
-import { InputTextBox } from "@components/user/InputTextBox";
-import { SettingCard } from "@components/user/settings/components/SettingCard";
-import { KeybindInterface } from "@common/utils/Schemas";
+import {Box} from "@mui/material";
+import {InputTextBox} from "@components/user/InputTextBox";
+import {SettingCard} from "@components/user/settings/components/SettingCard";
+import {KeybindInterface} from "@common/utils/Schemas";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 const KeybindEditorView = () => {
-    const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));
-    const [controlBind, setControlBind] = useState<KeybindInterface>({ keybind: "", focus: "none" });
+    const {keybinds} = useConfigStore((state) => ({keybinds: state.keybinds}));
+    const [controlBind, setControlBind] = useState<KeybindInterface>({keybind: "", focus: "none"});
     const [lastKeyPressed, setLastKeyPressed] = useState<string>("");
 
     // TODO make it look nicer and cleaner
@@ -44,7 +45,7 @@ const KeybindEditorView = () => {
                                 }}
                                 onBlur={async () => {
                                     await useConfigStore.getState().addKeybind(controlBind.focus, controlBind.keybind);
-                                    await window.ipcRenderer.invoke("registerGlobalKeybinds", keybinds);
+                                    await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
                                 }}
                                 onFocus={() => {
                                     useConfigStore.getState().removeKeybind("open_overlay");
@@ -68,7 +69,7 @@ const KeybindEditorView = () => {
                                 }}
                                 onBlur={async () => {
                                     await useConfigStore.getState().addKeybind(controlBind.focus, controlBind.keybind);
-                                    await window.ipcRenderer.invoke("registerGlobalKeybinds", keybinds);
+                                    await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
                                 }}
                                 onFocus={() => {
                                     useConfigStore.getState().removeKeybind("clear_players");

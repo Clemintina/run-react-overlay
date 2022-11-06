@@ -31,6 +31,7 @@ import KeyboardIcon from "@mui/icons-material/Keyboard";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
@@ -228,7 +229,7 @@ const NewTitlebar = ({ children }) => {
                 <Divider />
                 <List className={"nodrag"}>
                     <ListItem disablePadding>
-                        <ListItemButton onClick={() => window.ipcRenderer.invoke("openlink", "https://seraph.si/discord")}>
+                        <ListItemButton onClick={() => window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ["https://seraph.si/discord"])}>
                             <ListItemIcon>
                                 <FontAwesomeIcon icon={faDiscord} />
                             </ListItemIcon>
@@ -236,7 +237,7 @@ const NewTitlebar = ({ children }) => {
                         </ListItemButton>
                     </ListItem>
                     <ListItem disablePadding>
-                        <ListItemButton onClick={() => window.ipcRenderer.invoke("openlink", "https://seraph.si")}>
+                        <ListItemButton onClick={() => window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ["https://seraph.si"])}>
                             <ListItemText className={"text-center"} primary={useConfigStore.getState().version} />
                         </ListItemButton>
                     </ListItem>

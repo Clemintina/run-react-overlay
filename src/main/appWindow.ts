@@ -630,8 +630,12 @@ const registerExternalApis = () => {
     });
 
     ipcMain.handle("customUrl", async (event: IpcMainInvokeEvent, args: string[]) => {
-        const response = (await axiosClient.get<{data: CustomFileJsonType}>(args[0], {headers}));
-        return {data: response.data.data, status: response.status};
+        try {
+            const response = await axiosClient.get<{data: CustomFileJsonType}>(args[0], {headers});
+            return {data: response.data.data, status: response.status};
+        } catch (e) {
+            return {data: null, response: 400};
+        }
     });
 };
 
