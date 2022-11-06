@@ -149,13 +149,10 @@ export const createAppWindow = (): BrowserWindow => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const newLine = line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "");
-            appWindow?.webContents.send(
-                "logFileLine",
-                handleIPCSend<LogFileMessage>({
-                    data: {message: newLine},
-                    status: 200,
-                }),
-            );
+            appWindow?.webContents.send("logFileLine", handleIPCSend<LogFileMessage>({
+                data: {message: newLine},
+                status: 200,
+            }));
             res.status(200).send({success: true, code: 200});
         });
         const portfinder = require("portfinder");

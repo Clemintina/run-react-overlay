@@ -166,35 +166,57 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                 playerData.loaded = true;
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
 
-                if (configStore.settings.preferences.customFile) {
-                    const customFile = configStore.customFile;
-                    if (customFile.data != null) {
-                        if (typeof customFile?.data[0] === "string") {
-                            const datum = customFile.data as string[];
-                            datum.map(async (player) => {
-                                if (player.toLowerCase() == playerData.name.toLowerCase()) {
-                                    if (playerData.sources.runApi != null) {
-                                        playerData.sources.runApi.data.data.blacklist.tagged = true;
-                                        playerData.sources.runApi.data.data.blacklist.reason = "Blacklist File";
+                if (!playerData.bot && !playerData.sources.runApi.data.data.blacklist.tagged) {
+
+                    if (configStore.settings.preferences.customFile) {
+                        const customFile = configStore.customFile;
+                        if (customFile.data != null) {
+                            if (typeof customFile?.data[0] === "string") {
+                                const datum = customFile.data as string[];
+                                datum.map(async (player) => {
+                                    if (player.toLowerCase() == playerData.name.toLowerCase()) {
+                                        if (playerData.sources.runApi != null) {
+                                            playerData.sources.runApi.data.data.blacklist.tagged = true;
+                                            playerData.sources.runApi.data.data.blacklist.reason = "Blacklist File";
+                                        }
                                     }
-                                }
-                            });
-                        } else {
-                            const datum = customFile.data as Array<CustomFileJsonType>;
-                            datum.map(async (player) => {
-                                if (player.uuid == playerData.hypixelPlayer?.uuid) {
-                                    playerData.sources.customFile = player;
-                                    if (playerData.sources.runApi != null) {
-                                        playerData.sources.runApi.data.data.blacklist.tagged = player.blacklisted;
-                                        playerData.sources.runApi.data.data.blacklist.reason = "Blacklist File";
+                                });
+                            } else {
+                                const datum = customFile.data as Array<CustomFileJsonType>;
+                                datum.map(async (player) => {
+                                    if (player.uuid == playerData.hypixelPlayer?.uuid) {
+                                        playerData.sources.customFile = player;
+                                        if (playerData.sources.runApi != null) {
+                                            playerData.sources.runApi.data.data.blacklist.tagged = player.blacklisted;
+                                            playerData.sources.runApi.data.data.blacklist.reason = "Blacklist File";
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
                     }
-                }
 
-                if (!playerData.bot && !playerData.sources.runApi.data.data.blacklist.tagged) {
+                    if (configStore.settings.preferences.customUrl) {
+                        const [custom_api] = await Promise.all([getCustomApi(playerData)]);
+                        if (custom_api != undefined) {
+                            const data = custom_api.data;
+                            if (data.blacklisted) {
+                                playerData.sources.runApi.data.data.blacklist.tagged = true;
+                            }
+                            playerData.sources.customApi = data;
+                            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
+                            if (exists != -1) {
+                                set((state) => {
+                                    const playerArr = [...state.players];
+                                    playerArr[exists] = playerObject.data;
+                                    return {
+                                        players: playerArr,
+                                    };
+                                });
+                            }
+                        }
+                    }
+
                     const [boomza, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
                     playerData.sources.boomza = boomza;
                     playerData.sources.lunar = lunarApi;
@@ -210,25 +232,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                                 players: playerArr,
                             };
                         });
-                    }
-
-                    const [custom_api] = await Promise.all([getCustomApi(playerData)]);
-                    if (custom_api != undefined) {
-                        const data = custom_api.data;
-                        if (data.blacklisted) {
-                            playerData.sources.runApi.data.data.blacklist.tagged = true;
-                        }
-                        playerData.sources.customApi = data;
-                        const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-                        if (exists != -1) {
-                            set((state) => {
-                                const playerArr = [...state.players];
-                                playerArr[exists] = playerObject.data;
-                                return {
-                                    players: playerArr,
-                                };
-                            });
-                        }
                     }
 
                     const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
