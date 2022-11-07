@@ -13,7 +13,7 @@ import {UserAccordion} from "@components/user/UserAccordion";
 import {InputTextBox} from "@components/user/InputTextBox";
 
 const CustomLinks = () => {
-    const {settings, customApi, customFile} = useConfigStore((state) => ({
+    const { settings, customApi, customFile } = useConfigStore((state) => ({
         settings: state.settings,
         customApi: state.customApi,
         customFile: state.customFile,
@@ -26,23 +26,23 @@ const CustomLinks = () => {
     return (
         <div>
             <NavigationBar>
-                <Box className="p-2 space-y-2">
+                <Box className='p-2 space-y-2'>
                     <SettingCard>
                         <span>Custom Blacklist File</span>
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, preferences: {...settings.preferences, customFile: !settings.preferences.customFile}});
+                                useConfigStore.getState().setSettings({ ...settings, preferences: { ...settings.preferences, customFile: !settings.preferences.customFile } });
                             }}
-                            options={{enabled: settings.preferences.customFile}}
+                            options={{ enabled: settings.preferences.customFile }}
                         />
                         <span />
                         <span />
-                        <div style={settings.preferences.customFile ? {} : {display: "none"}} className={"flex inline-block"}>
+                        <div style={settings.preferences.customFile ? {} : { display: "none" }} className={"flex inline-block"}>
                             <Box className={"flex inline-block"}>
                                 <InputBoxButton
                                     onClick={async () => {
-                                        const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke(IpcValidInvokeChannels.SELECT_LOG_FILE, [[{name: "Custom File", extensions: ["txt", "json"]}]]);
+                                        const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke(IpcValidInvokeChannels.SELECT_LOG_FILE, [[{ name: "Custom File", extensions: ["txt", "json"] }]]);
                                         if (path.filePaths[0] !== undefined) {
                                             const customFilePath = path.filePaths[0];
                                             const readable = await window.ipcRenderer.invoke<boolean>(IpcValidInvokeChannels.IS_FILE_READABLE, [customFilePath]);
@@ -78,7 +78,7 @@ const CustomLinks = () => {
                                             }
                                         }
                                     }}
-                                    options={{colour: settings.preferences.customFile ? "success" : "error"}}
+                                    options={{ colour: settings.preferences.customFile ? "success" : "error" }}
                                     text={"Select"}
                                     sx={styledProps}
                                 />
@@ -109,7 +109,7 @@ const CustomLinks = () => {
                                             }
                                         }
                                     }}
-                                    options={{colour: settings.preferences.customFile ? "success" : "error"}}
+                                    options={{ colour: settings.preferences.customFile ? "success" : "error" }}
                                     text={"Reload"}
                                     sx={styledProps}
                                 />
@@ -121,13 +121,13 @@ const CustomLinks = () => {
                         <span />
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, preferences: {...settings.preferences, customUrl: !settings.preferences.customUrl}});
+                                useConfigStore.getState().setSettings({ ...settings, preferences: { ...settings.preferences, customUrl: !settings.preferences.customUrl } });
                             }}
-                            options={{enabled: settings.preferences.customUrl}}
+                            options={{ enabled: settings.preferences.customUrl }}
                         />
                     </SettingCard>
-                    <Box style={settings.preferences.customUrl ? {} : {display: "none"}}>
-                        <InputTextBox initialValue={customApi.url} options={{placeholder: "https://antisniper.seraph.si/api/v4/overlay/blacklist", label: {text: "Custom URL"}}} onBlur={(event) => useConfigStore.getState().setCustomApi({url: event.currentTarget.value})} />
+                    <Box style={settings.preferences.customUrl ? {} : { display: "none" }}>
+                        <InputTextBox initialValue={customApi.url} options={{ placeholder: "https://antisniper.seraph.si/api/v4/overlay/blacklist", label: { text: "Custom URL" } }} onBlur={(event) => useConfigStore.getState().setCustomApi({ url: event.currentTarget.value })} />
                         <UserAccordion name={"Request Parameters"}>
                             <div className={"grid grid-cols-2"}>
                                 <div className={"font-bold pb-2"}>URL Parameter</div>

@@ -69,7 +69,7 @@ const AppleStyledSwitch = styled((props: SwitchProps) => <Switch focusVisibleCla
 }));
 
 export const ToggleButton: FC<ToggleButton> = (props: ToggleButton) => {
-    const CustomToolTip = styled(({className, ...props}: TooltipProps) => <Tooltip {...props} classes={{popper: className}} />)(({theme}) => ({
+    const CustomToolTip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
         [`& .${tooltipClasses.tooltip}`]: {
             backgroundColor: colours.backgroundColour,
             color: colours.primaryColour,

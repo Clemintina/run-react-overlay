@@ -13,6 +13,6 @@ export class RequestedTooManyTimes extends Error {
     }
 
     public getJson() {
-        return {data: this.message, status: this.code};
+        return { data: this.message, status: this.code };
     }
 }

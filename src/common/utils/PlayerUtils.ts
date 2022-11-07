@@ -13,10 +13,10 @@ export type Player = {
     friended: boolean | null;
     denicked: boolean | null;
     loaded: boolean;
-    last_updated: number,
+    last_updated: number;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
-    hypixelFriends: IPCResponse<{_id: string; uuidSender: string; uuidReceiver: string; started: number}[]> | null;
+    hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
     hypixelFriendsMutuals?: Array<string> | null;
     sources: {
         runApi: IPCResponse<Blacklist> | null;
@@ -42,7 +42,7 @@ export class PlayerUtils {
 }
 
 export class PlayerHypixelUtils {
-    public getDateFormatted = (epoch: number | undefined, options?: {day: boolean; month: boolean; year: boolean} | undefined) => {
+    public getDateFormatted = (epoch: number | undefined, options?: { day: boolean; month: boolean; year: boolean } | undefined) => {
         if (epoch === undefined || epoch === 0) return "N/A";
         const d = new Date(0);
         d.setUTCMilliseconds(epoch);
@@ -68,27 +68,27 @@ export class PlayerHypixelUtils {
 }
 
 export interface MinecraftColoursImpl {
-    [colour: string]: {colour: string; hex: string};
+    [colour: string]: { colour: string; hex: string };
 }
 
 export const MinecraftColours: MinecraftColoursImpl = {
-    BLACK: {colour: "§0", hex: "000000"},
-    DARK_BLUE: {colour: "§1", hex: "0000AA"},
-    DARK_GREEN: {colour: "§2", hex: "00AA00"},
-    DARK_AQUA: {colour: "§3", hex: "00AAAA"},
-    DARK_RED: {colour: "§4", hex: "AA0000"},
-    DARK_PURPLE: {colour: "§5", hex: "AA00AA"},
-    GOLD: {colour: "§6", hex: "FFAA00"},
-    GRAY: {colour: "§7", hex: "AAAAAA"},
-    DARK_GRAY: {colour: "§7", hex: "AAAAAA"},
-    GREY: {colour: "§8", hex: "555555"},
-    DARK_GREY: {colour: "§8", hex: "555555"},
-    BLUE: {colour: "§9", hex: "5555FF"},
-    GREEN: {colour: "§a", hex: "55FF55"},
-    AQUA: {colour: "§b", hex: "55FFFF"},
-    CYAN: {colour: "§b", hex: "55FFFF"},
-    RED: {colour: "§c", hex: "FF5555"},
-    LIGHT_PURPLE: {colour: "§d", hex: "FF55FF"},
-    YELLOW: {colour: "§e", hex: "FFFF55"},
-    WHITE: {colour: "§f", hex: "FFFFFF"},
+    BLACK: { colour: "§0", hex: "000000" },
+    DARK_BLUE: { colour: "§1", hex: "0000AA" },
+    DARK_GREEN: { colour: "§2", hex: "00AA00" },
+    DARK_AQUA: { colour: "§3", hex: "00AAAA" },
+    DARK_RED: { colour: "§4", hex: "AA0000" },
+    DARK_PURPLE: { colour: "§5", hex: "AA00AA" },
+    GOLD: { colour: "§6", hex: "FFAA00" },
+    GRAY: { colour: "§7", hex: "AAAAAA" },
+    DARK_GRAY: { colour: "§7", hex: "AAAAAA" },
+    GREY: { colour: "§8", hex: "555555" },
+    DARK_GREY: { colour: "§8", hex: "555555" },
+    BLUE: { colour: "§9", hex: "5555FF" },
+    GREEN: { colour: "§a", hex: "55FF55" },
+    AQUA: { colour: "§b", hex: "55FFFF" },
+    CYAN: { colour: "§b", hex: "55FFFF" },
+    RED: { colour: "§c", hex: "FF5555" },
+    LIGHT_PURPLE: { colour: "§d", hex: "FF55FF" },
+    YELLOW: { colour: "§e", hex: "FFFF55" },
+    WHITE: { colour: "§f", hex: "FFFFFF" },
 };

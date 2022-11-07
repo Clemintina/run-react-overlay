@@ -14,7 +14,7 @@ import {TextSettingCard} from "@components/user/settings/components/TextSettingC
 import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 const Essentials = () => {
-    const {hypixel, logs, settings, run, keathiz} = useConfigStore((state) => ({
+    const { hypixel, logs, settings, run, keathiz } = useConfigStore((state) => ({
         hypixel: state.hypixel,
         logs: state.logs,
         settings: state.settings,
@@ -22,13 +22,13 @@ const Essentials = () => {
         keathiz: state.keathiz,
     }));
     const styledProps: SxProps = {
-        width: 0.86
+        width: 0.86,
     };
 
     // TODO make it look nicer and cleaner
     return (
-      <NavigationBar>
-          <Box className={"pl-2 pt-2"}>
+        <NavigationBar>
+            <Box className={"pl-2 pt-2"}>
                 <TextSettingCard>
                     <span>Hypixel API Key</span>
                     <span />
@@ -192,7 +192,7 @@ const Essentials = () => {
                     <span>
                         <ToggleButton
                             onChange={async () => {
-                                useConfigStore.getState().setSettings({...settings, astolfo: !settings.astolfo});
+                                useConfigStore.getState().setSettings({ ...settings, astolfo: !settings.astolfo });
                                 await window.ipcRenderer.invoke(IpcValidInvokeChannels.ASTOLFO);
                             }}
                             options={{ enabled: settings.astolfo }}

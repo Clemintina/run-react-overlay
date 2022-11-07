@@ -18,8 +18,7 @@ export interface TagEditor {
 export const TagEditor: React.ElementType = (props: TagEditor) => {
     return (
         <span className='bg-transparent'>
-            <InputTextBox initialValue={props?.options?.placeholder} options={{placeholder: props?.options?.placeholder, value: props?.options?.placeholder, label: {text: props?.options?.label?.text ?? ""}}} onBlur={props.onBlur} onKeyDown={props.onKeyDown}
-                          sx={{input: {color: `#${props?.options?.colour ?? "FFFFFF"}`}}} />
+            <InputTextBox initialValue={props?.options?.placeholder} options={{ placeholder: props?.options?.placeholder, value: props?.options?.placeholder, label: { text: props?.options?.label?.text ?? "" } }} onBlur={props.onBlur} onKeyDown={props.onKeyDown} sx={{ input: { color: `#${props?.options?.colour ?? "FFFFFF"}` } }} />
         </span>
     );
 };

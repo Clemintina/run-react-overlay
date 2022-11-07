@@ -8,8 +8,8 @@ import {KeybindInterface} from "@common/utils/Schemas";
 import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 const KeybindEditorView = () => {
-    const {keybinds} = useConfigStore((state) => ({keybinds: state.keybinds}));
-    const [controlBind, setControlBind] = useState<KeybindInterface>({keybind: "", focus: "none"});
+    const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));
+    const [controlBind, setControlBind] = useState<KeybindInterface>({ keybind: "", focus: "none" });
     const [lastKeyPressed, setLastKeyPressed] = useState<string>("");
 
     // TODO make it look nicer and cleaner

@@ -35,15 +35,15 @@ import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
-    {menuName: "Appearance", menuLink: "/settings/appearance"},
-  { menuName: "Essentials", menuLink: "/settings/essentials" },
-  { menuName: "Tags", menuLink: "/settings/tags" },
-  { menuName: "Nicks", menuLink: "/settings/nicks" },
-  { menuName: "Custom", menuLink: "/settings/customlinks" },
-  {
-      menuName: "Table Editor",
-      menuLink: "/settings/columneditor"
-  }
+    { menuName: "Appearance", menuLink: "/settings/appearance" },
+    { menuName: "Essentials", menuLink: "/settings/essentials" },
+    { menuName: "Tags", menuLink: "/settings/tags" },
+    { menuName: "Nicks", menuLink: "/settings/nicks" },
+    { menuName: "Custom", menuLink: "/settings/customlinks" },
+    {
+        menuName: "Table Editor",
+        menuLink: "/settings/columneditor",
+    },
 );
 
 menuOptions.sort((a, b) => a.menuName.localeCompare(b.menuName));

@@ -1,6 +1,6 @@
 import create from "zustand";
-import { persist } from "../../../../node_modules/zustand/middleware";
-import { TagSchema, TagStoreSchema } from "@common/utils/TagSchema";
+import {persist} from "../../../../node_modules/zustand/middleware";
+import {TagSchema, TagStoreSchema} from "@common/utils/TagSchema";
 
 const useTagStore = create<TagStoreSchema>()(
     persist(
@@ -69,7 +69,7 @@ const useTagStore = create<TagStoreSchema>()(
                 },
                 personal_safelist: {
                     display: "(✓)",
-                    colour: "FF5555"
+                    colour: "FF5555",
                 },
                 name_change: {
                     display: "NC",

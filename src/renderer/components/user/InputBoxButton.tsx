@@ -13,16 +13,16 @@ export type InputBoxButton = {
         variant?: "text" | "outlined" | "contained";
     };
     sx?: SxProps<Theme>;
-}
+};
 
 export const InputBoxButton: FC<InputBoxButton> = (props: InputBoxButton) => {
-    const {colours, opacity} = useConfigStore((state) => ({
+    const { colours, opacity } = useConfigStore((state) => ({
         colours: state.colours,
         opacity: state.browserWindow.opacity,
     }));
 
     return (
-        <span className=" w-full h-full">
+        <span className=' w-full h-full'>
             <Button
                 variant={props?.options?.variant ?? "outlined"}
                 sx={props?.sx}

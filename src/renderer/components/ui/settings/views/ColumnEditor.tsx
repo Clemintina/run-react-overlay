@@ -9,7 +9,7 @@ import {Box} from "@mui/material";
 import {columnDefsBase, defaultColDefBase} from "@renderer/views/App";
 
 const ColumnEditorView = () => {
-    const {columnState} = useConfigStore((state) => ({columnState: state.table.columnState}));
+    const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
     const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
     const toggleColumn = (columnId: string) => {

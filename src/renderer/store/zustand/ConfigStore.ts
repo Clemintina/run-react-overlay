@@ -32,7 +32,7 @@ export type ConfigStore = {
         valid: boolean;
         showNick: boolean;
     };
-    setKeathizData: (data: {key: string; valid: boolean; showNick: boolean;}) => void
+    setKeathizData: (data: { key: string; valid: boolean; showNick: boolean }) => void;
     setKeathizApiKey: (keathizkey: string) => void;
     run: {
         apiKey: string;
@@ -58,8 +58,8 @@ export type ConfigStore = {
     setCustomFile: (customFile: CustomLinkFile) => void;
     customApi: CustomLinkURL;
     setCustomApi: (customFile: CustomLinkURL) => void;
-    game: GameType,
-    setGame: (game: GameType) => void
+    game: GameType;
+    setGame: (game: GameType) => void;
 };
 
 const useConfigStore = create<ConfigStore>()(
@@ -72,7 +72,7 @@ const useConfigStore = create<ConfigStore>()(
                     apiKeyOwner: "",
                 },
                 setHypixelApiKey: async (hypixelApiKey) => {
-                    if (hypixelApiKey.length === 0 || get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase() && get().hypixel.apiKeyValid) {
+                    if (hypixelApiKey.length === 0 || (get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase() && get().hypixel.apiKeyValid)) {
                         const oldHypixel = get().hypixel;
                         if (oldHypixel.apiKeyValid) return;
                         set(() => ({
@@ -126,7 +126,7 @@ const useConfigStore = create<ConfigStore>()(
                 setVersion: async () => {
                     const appInfo = await window.ipcRenderer.invoke<AppInformation>(IpcValidInvokeChannels.GET_APP_INFO);
                     const version = appInfo.data.version;
-                    set(() => ({version}));
+                    set(() => ({ version }));
                     const googleFontArray = await axios.get("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBwIX97bVWr3-6AIUvGkcNnmFgirefZ6Sw");
                     if (googleFontArray.status == 200) {
                         const fontsAvailable: Array<string> = [];
@@ -251,7 +251,7 @@ const useConfigStore = create<ConfigStore>()(
                     opacity: 100,
                 },
                 setBrowserWindow: (browserWindow) => {
-                    set({browserWindow});
+                    set({ browserWindow });
                 },
                 table: {
                     columnState: Array<ColumnState>(
@@ -444,7 +444,7 @@ const useConfigStore = create<ConfigStore>()(
                 },
                 setTableState: async (table) => {
                     await window.config.set("overlay.table.columnState", table);
-                    set({table});
+                    set({ table });
                 },
                 settings: {
                     lunar: true,
@@ -468,7 +468,7 @@ const useConfigStore = create<ConfigStore>()(
                     },
                 },
                 setSettings: async (settings) => {
-                    set({settings});
+                    set({ settings });
                     usePlayerStore.getState().updatePlayers();
                 },
                 customFile: {
@@ -492,10 +492,10 @@ const useConfigStore = create<ConfigStore>()(
                 keybinds: [],
                 addKeybind: async (focus, keybind) => {
                     if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
-                        get().keybinds.push({keybind, focus});
+                        get().keybinds.push({ keybind, focus });
                     } else {
                         get().removeKeybind(focus);
-                        get().keybinds.push({keybind, focus});
+                        get().keybinds.push({ keybind, focus });
                     }
                 },
                 removeKeybind: (focus: KeyboardFocusType) => {
@@ -511,11 +511,11 @@ const useConfigStore = create<ConfigStore>()(
                     availableFonts: [],
                 },
                 setFont: async (font) => {
-                    set({font});
+                    set({ font });
                 },
                 nicks: Array<PlayerNickname>(),
                 setNicks: (nicks) => {
-                    set({nicks});
+                    set({ nicks });
                 },
                 setStore: (store) => set(store),
                 appInformation: {
@@ -531,7 +531,7 @@ const useConfigStore = create<ConfigStore>()(
                     last_server: "",
                 },
                 setGame: (game) => {
-                    set({game});
+                    set({ game });
                 },
             }),
             {

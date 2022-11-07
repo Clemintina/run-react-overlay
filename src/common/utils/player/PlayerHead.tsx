@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/named
-import React from "react";
-import { Player } from "@common/utils/PlayerUtils";
+import React, {FC} from "react";
+import {Player} from "@common/utils/PlayerUtils";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface PlayerHead {
     player: Player;
 }
 
-const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
+const PlayerHead: FC<PlayerHead> = ({ player }: PlayerHead) => {
     const { configStore, table } = useConfigStore((state) => ({ configStore: state, table: state.table }));
     let lunarRenderer: JSX.Element = <span />;
 
@@ -16,8 +16,8 @@ const PlayerHead: React.ElementType = ({ player }: PlayerHead) => {
     if (!player?.nicked) {
         if (configStore.settings.lunar) {
             if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
-                if (player.sources.lunar.data.player.online) {
-                    if (player.sources.lunar.data.player.lunarPlus.premium) {
+                if (player.sources?.lunar?.data?.player?.online) {
+                    if (player.sources?.lunar?.data?.player?.lunarPlus?.premium) {
                         lunarRenderer = (
                             <span>
                                 <img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />

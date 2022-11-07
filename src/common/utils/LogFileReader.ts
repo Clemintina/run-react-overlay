@@ -66,7 +66,7 @@ export class LogFileReader {
             }
             if (line.includes("Sending you to")) {
                 const server_id = line.split("Sending you to")[1].replace("!", "");
-                useConfigStore.getState().setGame({last_server: server_id});
+                useConfigStore.getState().setGame({ last_server: server_id });
             }
         });
     };
@@ -88,7 +88,7 @@ export class LogFileReader {
                 const players = usePlayerStore.getState().players;
                 const uuid_array: Array<string> = [];
 
-                players.map(player => {
+                players.map((player) => {
                     if (!player.nicked && player.hypixelPlayer != undefined) uuid_array.push(player.hypixelPlayer.uuid);
                 });
                 const playerData: PlayerData = {
@@ -230,13 +230,13 @@ const removePlayer = async (username: string) => {
     usePlayerStore.getState().removePlayer(username);
 };
 
-type PlayerData = {data: {queue: Array<string>, server: string}}
+type PlayerData = { data: { queue: Array<string>; server: string } };
 
 const clearOverlayTable = async () => {
     const players = usePlayerStore.getState().players;
     const uuid_array: Array<string> = [];
 
-    players.map(player => {
+    players.map((player) => {
         if (!player.nicked && player.hypixelPlayer != undefined) uuid_array.push(player.hypixelPlayer.uuid);
     });
     usePlayerStore.getState().clearPlayers();

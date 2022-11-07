@@ -8,28 +8,28 @@ import MenuItem from "@mui/material/MenuItem";
 
 const Appearance = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
-    const {settings, browserWindow, font, table} = useConfigStore((state) => ({
+    const { settings, browserWindow, font, table } = useConfigStore((state) => ({
         settings: state.settings,
         browserWindow: state.browserWindow,
         font: state.font,
         table: state.table,
     }));
-  const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
-  const styledProps: SxProps = {
-    width: 0.86
-  };
+    const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
+    const styledProps: SxProps = {
+        width: 0.86,
+    };
 
-  const [textAlignment, setTextAlignment] = useState(table.settings.textAlign);
+    const [textAlignment, setTextAlignment] = useState(table.settings.textAlign);
 
-  const handleChange = (event: SelectChangeEvent) => {
-    if (event.target.value == "left" || event.target.value == "right" || event.target.value == "center") {
-      setTextAlignment(event.target.value);
-      useConfigStore.getState().setTableState({
-        ...useConfigStore.getState().table,
-        settings: { textAlign: event.target.value }
-      });
-    }
-  };
+    const handleChange = (event: SelectChangeEvent) => {
+        if (event.target.value == "left" || event.target.value == "right" || event.target.value == "center") {
+            setTextAlignment(event.target.value);
+            useConfigStore.getState().setTableState({
+                ...useConfigStore.getState().table,
+                settings: { textAlign: event.target.value },
+            });
+        }
+    };
 
     // TODO make it look nicer and cleaner
     return (

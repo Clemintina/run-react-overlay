@@ -12,7 +12,7 @@ export type PlayerStore = {
     addPlayer: (username) => void;
     removePlayer: (username) => void;
     updatePlayers: () => void;
-    updatePlayerState: (player: Player) => void
+    updatePlayerState: (player: Player) => void;
     clearPlayers: () => void;
     setStore: (store) => void;
     party: {
@@ -81,6 +81,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             }
             if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
                 const data: unknown = ipcHypixelPlayer.data;
+                console.log(data);
                 let cause, code;
                 if (typeof data === "string") {
                     cause = data;
@@ -89,7 +90,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     cause = "Player is not valid on Hypixel!";
                     code = 200;
                 }
-                if (ipcHypixelPlayer.status == 403) {
+                if (ipcHypixelPlayer.status == 403 && cause != "Too many invalid API keys") {
                     useConfigStore.getState().setErrorMessage({
                         code: 403,
                         title: "Invalid Hypixel Key",
@@ -104,7 +105,16 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                             apiKeyValid: false,
                         },
                     });
+                } else if (cause == "Too many invalid API keys") {
+                    useConfigStore.getState().setErrorMessage({
+                        code: 403,
+                        title: "Too many invalid API keys",
+                        cause: "Too many invalid API keys",
+                        detail: "Too many invalid API keys. This is an unknown error.",
+                        referenceId: "HYPIXEL_KEY_INVALID_KEYS",
+                    });
                 }
+
                 playerObject.status = code;
                 playerData.nicked = true;
                 playerObject.cause = cause;
@@ -335,17 +345,17 @@ const getCustomApi = async (player: Player) => {
     if (player.hypixelPlayer?.displayname && useConfigStore.getState().settings.preferences.customUrl) {
         let url = useConfigStore.getState().customApi.url.toLowerCase() + "&requesttype=seraphoverlay";
 
-        if (url.match(/({uuid})/ig)) {
-            url = url.replaceAll(/({uuid})/ig, player.hypixelPlayer.uuid);
+        if (url.match(/({uuid})/gi)) {
+            url = url.replaceAll(/({uuid})/gi, player.hypixelPlayer.uuid);
         }
-        if (url.match(/({name})/ig)) {
-            url = url.replaceAll(/({name})/ig, player.hypixelPlayer.displayname);
+        if (url.match(/({name})/gi)) {
+            url = url.replaceAll(/({name})/gi, player.hypixelPlayer.displayname);
         }
-        if (url.match(/({hypixelapikey})/ig)) {
-            url = url.replaceAll(/({hypixelapikey})/ig, useConfigStore.getState().hypixel.apiKey);
+        if (url.match(/({hypixelapikey})/gi)) {
+            url = url.replaceAll(/({hypixelapikey})/gi, useConfigStore.getState().hypixel.apiKey);
         }
-        if (url.match(/({seraphapikey})/ig)) {
-            url = url.replaceAll(/({seraphapikey})/ig, useConfigStore.getState().run.apiKey);
+        if (url.match(/({seraphapikey})/gi)) {
+            url = url.replaceAll(/({seraphapikey})/gi, useConfigStore.getState().run.apiKey);
         }
 
         url = url.trim();

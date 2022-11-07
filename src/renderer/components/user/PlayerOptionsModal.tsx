@@ -11,10 +11,10 @@ import useConfigStore from "@renderer/store/zustand/ConfigStore";
 export type PlayerOptionsModal = {
     children: React.ReactElement | React.ReactElement[];
     data: Player;
-}
+};
 
 export const PlayerOptionsModal: FC<PlayerOptionsModal> = (props: PlayerOptionsModal) => {
-    const {colours} = useConfigStore((state) => ({colours: state.colours}));
+    const { colours } = useConfigStore((state) => ({ colours: state.colours }));
 
     const [open, setOpen] = React.useState(false);
     const [reportType, setReportType] = React.useState("");

@@ -1,8 +1,8 @@
-import React, { PropsWithChildren } from "react";
-import { Player, PlayerUtils } from "@common/utils/PlayerUtils";
-import { getPlayerRank } from "@common/zikeji";
-import { OverlayTooltip } from "@components/tooltips/OverlayTooltip";
-import { Interweave } from "interweave";
+import React, {PropsWithChildren} from "react";
+import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
+import {getPlayerRank} from "@common/zikeji";
+import {OverlayTooltip} from "@components/tooltips/OverlayTooltip";
+import {Interweave} from "interweave";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 
@@ -34,24 +34,22 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                     <div>
                         {player.hypixelPlayer !== null && (
                             <div className={"statistics-tooltip text-center"}>
-                                <span className={"statistics-tooltip-inline"}
-                                      style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
+                                <span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
                                     {player.hypixelPlayer.displayname}
                                 </span>
-                              <div style={player?.denicked ? { display: "" } : { display: "none" }}>
-                                <span>{player.name}</span>
-                              </div>
-                              <div>
+                                <div style={player?.denicked ? { display: "" } : { display: "none" }}>
+                                    <span>{player.name}</span>
+                                </div>
+                                <div>
                                     <span className={"statistics-tooltip-inline"}>
-                                        Games Played: <RenderCoreStatsColour player={player} stats={"gamesPlayed"}
-                                                                             isTooltip={true} />
+                                        Games Played: <RenderCoreStatsColour player={player} stats={"gamesPlayed"} isTooltip={true} />
                                     </span>
-                              </div>
-                              <div>
+                                </div>
+                                <div>
                                     <span className={"statistics-tooltip-inline"}>
                                         Wins: <RenderCoreStatsColour player={player} stat={"wins"} isTooltip={true} />
                                     </span>
-                              </div>
+                                </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"}>
                                         Losses: <RenderCoreStatsColour player={player} stat={"losses"} isTooltip={true} />

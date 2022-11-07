@@ -198,7 +198,7 @@ window.ipcRenderer.on("updater", async (event, args) => {
 const AppTable = () => {
     const { columnState, table } = useConfigStore((state) => ({
         columnState: state.table.columnState,
-        table: state.table
+        table: state.table,
     }));
     const { players } = usePlayerStore((state) => ({ players: state.players }));
 
@@ -209,7 +209,7 @@ const AppTable = () => {
         useConfigStore.getState().setVersion();
     }, []);
 
-    const defaultColDef = {...defaultColDefBase};
+    const defaultColDef = { ...defaultColDefBase };
 
     const columnDefs = [...columnDefsBase];
 
@@ -219,12 +219,12 @@ const AppTable = () => {
 
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
-        if (onGridReady) useConfigStore.getState().setTableState({...table, columnState});
+        if (onGridReady) useConfigStore.getState().setTableState({ ...table, columnState });
     };
 
     const onSortingOrderChange = (e: SortChangedEvent<Player>) => {
         const columnState = e.columnApi.getColumnState();
-        useConfigStore.getState().setTableState({...table, columnState});
+        useConfigStore.getState().setTableState({ ...table, columnState });
     };
 
     const gridOptions: GridOptions<Player> = {
