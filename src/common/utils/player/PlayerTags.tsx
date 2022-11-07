@@ -76,12 +76,12 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
             if (!singularTag) {
                 if (player?.sources?.boomza?.status === 200) {
                     const boomza = destr(player.sources.boomza.data);
-                    if (boomza.sniper) {
-                        tagArray.push(<span style={{ color: `#${boomzaTag.sniper.colour.toString()}` }}>{boomzaTag.sniper.display}</span>);
+                    if (boomza?.sniper) {
+                        tagArray.push(<span style={{color: `#${boomzaTag.sniper.colour.toString()}`}}>{boomzaTag.sniper.display}</span>);
                         tagArray.push(<span className={"pl-1"} />);
                     }
-                    if (boomza.report) {
-                        tagArray.push(<span style={{ color: `#${boomzaTag.hacker.colour.toString()}` }}>{boomzaTag.hacker.display}</span>);
+                    if (boomza?.report) {
+                        tagArray.push(<span style={{color: `#${boomzaTag.hacker.colour.toString()}`}}>{boomzaTag.hacker.display}</span>);
                         tagArray.push(<span className={"pl-1"} />);
                     }
                 }
