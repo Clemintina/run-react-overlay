@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/named
-import Tooltip, {tooltipClasses, TooltipProps} from "@mui/material/Tooltip";
-import React, {FC} from "react";
+import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
+import React, { FC } from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
-import {styled, Switch, SwitchProps, Typography} from "@mui/material";
+import { styled, Switch, SwitchProps, Typography } from "@mui/material";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface ToggleButton {

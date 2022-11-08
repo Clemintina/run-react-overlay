@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {IHeaderParams} from "ag-grid-community";
+import React, { useEffect, useState } from "react";
+import { IHeaderParams } from "ag-grid-community";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
-export interface ICustomHeader extends IHeaderParams {}
+export interface ICustomHeader extends IHeaderParams {
+}
 
 export default (props: ICustomHeader) => {
     const [ascSort, setAscSort] = useState("inactive");

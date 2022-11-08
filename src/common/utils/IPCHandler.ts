@@ -1,6 +1,6 @@
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {KeathizEndpoints} from "./externalapis/BoomzaApi";
-import {KeybindInterface} from "@common/utils/Schemas";
+import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { KeathizEndpoints } from "./externalapis/BoomzaApi";
+import { KeybindInterface } from "@common/utils/Schemas";
 
 /**
  * Adds intellisense to each IpcRenderer

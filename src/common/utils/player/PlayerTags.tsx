@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
 import React from "react";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {MinecraftColours, Player} from "@common/utils/PlayerUtils";
+import { MinecraftColours, Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {getTagsFromConfig} from "@common/utils/player/RenderComponent";
-import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {MinecraftColourAsHex} from "@common/zikeji";
+import { getTagsFromConfig } from "@common/utils/player/RenderComponent";
+import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { MinecraftColourAsHex } from "@common/zikeji";
 
 export interface PlayerTags {
     player: Player;
@@ -24,8 +24,8 @@ const parseColour = (text: string) => {
 
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
-    const {run} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
-    const {settings, hypixel, runConfig, table} = useConfigStore((state) => ({
+    const { run } = useTagStore((state) => ({ run: state.run, boomzaTag: state.boomza }));
+    const { settings, hypixel, runConfig, table } = useConfigStore((state) => ({
         settings: state.settings,
         hypixel: state.hypixel,
         runConfig: state.run,

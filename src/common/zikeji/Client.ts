@@ -1,17 +1,17 @@
-import {EventEmitter} from "events";
-import {GenericHTTPError} from "./errors/GenericHTTPError";
-import {InvalidKeyError} from "./errors/InvalidKeyError";
-import {FindGuild} from "./methods/findGuild";
-import {Guild} from "./methods/guild";
-import {Player} from "./methods/player";
-import {Resources} from "./methods/resources";
-import {Status} from "./methods/status";
-import type {Components, Paths} from "./types/api";
-import {Queue} from "./util/Queue";
-import {request} from "./util/Request";
-import {getResultObject, ResultObject} from "./util/ResultObject";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
-import {Friends} from "@common/zikeji/methods/friends";
+import { EventEmitter } from "events";
+import { GenericHTTPError } from "./errors/GenericHTTPError";
+import { InvalidKeyError } from "./errors/InvalidKeyError";
+import { FindGuild } from "./methods/findGuild";
+import { Guild } from "./methods/guild";
+import { Player } from "./methods/player";
+import { Resources } from "./methods/resources";
+import { Status } from "./methods/status";
+import type { Components, Paths } from "./types/api";
+import { Queue } from "./util/Queue";
+import { request } from "./util/Request";
+import { getResultObject, ResultObject } from "./util/ResultObject";
+import { IPCResponse } from "@common/utils/externalapis/RunApi";
+import { Friends } from "@common/zikeji/methods/friends";
 import destr from "destr";
 
 /** @internal */

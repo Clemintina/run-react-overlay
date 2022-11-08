@@ -1,8 +1,8 @@
-import React, {FC, useEffect, useState} from "react";
+import React, { FC, useEffect, useState } from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
-import {Box, SxProps, TextField} from "@mui/material";
-import {jsx} from "@emotion/react";
+import { Box, SxProps, TextField } from "@mui/material";
+import { jsx } from "@emotion/react";
 import JSX = jsx.JSX;
 
 export interface InputTextBox {

@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
-import React, {FC} from "react";
-import {Player} from "@common/utils/PlayerUtils";
+import React, { FC } from "react";
+import { Player } from "@common/utils/PlayerUtils";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
 export interface PlayerHead {

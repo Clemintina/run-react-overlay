@@ -1,12 +1,12 @@
-import {PlayerNickname} from "@common/utils/Schemas";
+import { PlayerNickname } from "@common/utils/Schemas";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {RequestType} from "@common/utils/externalapis/RunApi";
-import {InputBoxButton} from "@components/user/InputBoxButton";
-import React, {useEffect, useState} from "react";
-import {Components} from "@common/zikeji";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { InputTextBox } from "@components/user/InputTextBox";
+import { RequestType } from "@common/utils/externalapis/RunApi";
+import { InputBoxButton } from "@components/user/InputBoxButton";
+import React, { useEffect, useState } from "react";
+import { Components } from "@common/zikeji";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 const PlayerNicknameView = (props: { key: string; playerNick: PlayerNickname; handleAdd: (player) => void; handleRemove: (player) => void }) => {
     const { nicksLocal, hypixelApiKey } = useConfigStore((state) => ({

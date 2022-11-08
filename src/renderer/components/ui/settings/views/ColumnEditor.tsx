@@ -1,12 +1,12 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {ToggleButton} from "@components/user/ToggleButton";
-import {AgGridReact} from "ag-grid-react";
-import {ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent} from "ag-grid-community";
-import {Player} from "@common/utils/PlayerUtils";
-import {Box} from "@mui/material";
-import {columnDefsBase, defaultColDefBase} from "@renderer/views/App";
+import { ToggleButton } from "@components/user/ToggleButton";
+import { AgGridReact } from "ag-grid-react";
+import { ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
+import { Player } from "@common/utils/PlayerUtils";
+import { Box } from "@mui/material";
+import { columnDefsBase, defaultColDefBase } from "@renderer/views/App";
 
 const ColumnEditorView = () => {
     const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));

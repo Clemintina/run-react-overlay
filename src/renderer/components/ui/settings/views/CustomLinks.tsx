@@ -1,16 +1,16 @@
 import React from "react";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {ToggleButton} from "@components/user/ToggleButton";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {Box, SxProps} from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
-import {CustomFileIpc, CustomLinkFile} from "@common/utils/Schemas";
-import {InputBoxButton} from "@components/user/InputBoxButton";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { CustomFileIpc, CustomLinkFile } from "@common/utils/Schemas";
+import { InputBoxButton } from "@components/user/InputBoxButton";
 import destr from "destr";
 import Typography from "@mui/material/Typography";
-import {UserAccordion} from "@components/user/UserAccordion";
-import {InputTextBox} from "@components/user/InputTextBox";
+import { UserAccordion } from "@components/user/UserAccordion";
+import { InputTextBox } from "@components/user/InputTextBox";
 
 const CustomLinks = () => {
     const { settings, customApi, customFile } = useConfigStore((state) => ({
