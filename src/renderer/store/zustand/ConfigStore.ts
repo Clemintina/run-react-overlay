@@ -509,6 +509,7 @@ const useConfigStore = create<ConfigStore>()(
                 font: {
                     family: "Nunito",
                     availableFonts: [],
+                    isGoogleFont: false,
                 },
                 setFont: async (font) => {
                     set({ font });
@@ -563,6 +564,7 @@ const useConfigStore = create<ConfigStore>()(
                         updatedState.game.last_server = "";
                     } else if (version == 8) {
                         updatedState.customUrl.url = "";
+                        updatedState.font.isGoogleFont = true;
                     }
                     return updatedState;
                 },

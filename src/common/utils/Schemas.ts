@@ -102,7 +102,7 @@ export interface SettingsConfig {
     run: {
         friends: boolean;
     };
-    preferences: { autoHide: boolean; customFile: boolean; customUrl: boolean };
+    preferences: {autoHide: boolean; customFile: boolean; customUrl: boolean};
     appearance: {
         displayRank: boolean;
     };
@@ -154,6 +154,7 @@ export interface PlayerNickname {
 export interface FontConfig {
     family: string;
     availableFonts: Array<string>;
+    isGoogleFont: boolean;
 }
 
 export type KeyboardFocusType = "none" | "open_overlay" | "clear_players";
@@ -184,14 +185,14 @@ export interface CustomLinkURL {
     url: string;
 }
 
-export type CustomLinkSchema = { data: CustomFileJsonType };
+export type CustomLinkSchema = {data: CustomFileJsonType};
 
 export interface CustomFileIpc {
     fileType: "text" | "json";
     contents: Array<string> | Array<CustomFileJsonType> | string;
 }
 
-export type CustomFileJsonType = { uuid: string; blacklisted: boolean; tags: Array<{ tag: string; hex: string; singularTag?: boolean }> };
+export type CustomFileJsonType = {uuid: string; blacklisted: boolean; tags: Array<{tag: string; hex: string; singularTag?: boolean}>};
 
 export interface GameType {
     last_server: string;
