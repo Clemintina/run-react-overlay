@@ -24,8 +24,8 @@ const parseColour = (text: string) => {
 
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
-    const { run, boomzaTag } = useTagStore((state) => ({ run: state.run, boomzaTag: state.boomza }));
-    const { settings, hypixel, runConfig, table } = useConfigStore((state) => ({
+    const {run} = useTagStore((state) => ({run: state.run, boomzaTag: state.boomza}));
+    const {settings, hypixel, runConfig, table} = useConfigStore((state) => ({
         settings: state.settings,
         hypixel: state.hypixel,
         runConfig: state.run,
@@ -39,9 +39,9 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
         const customData = player?.sources?.customFile;
         const customUrl = player?.sources?.customApi;
         if (runApi?.blacklist?.tagged) {
-            tagArray.push(<span style={{ color: `#${run.blacklist.colour.toString()}` }}>{run.blacklist.display}</span>);
+            tagArray.push(getTagsFromConfig("run.blacklist"));
         } else if (runApi?.bot?.tagged) {
-            tagArray.push(<span style={{ color: `#${run.bot.colour.toString()}` }}>{run.bot.display}</span>);
+            tagArray.push(getTagsFromConfig("run.bot"));
         } else if (runApi?.customTag) {
             parseColour(runApi.customTag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
         } else {
@@ -77,12 +77,10 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
                 if (player?.sources?.boomza?.status === 200) {
                     const boomza = destr(player.sources.boomza.data);
                     if (boomza?.sniper) {
-                        tagArray.push(<span style={{color: `#${boomzaTag.sniper.colour.toString()}`}}>{boomzaTag.sniper.display}</span>);
-                        tagArray.push(<span className={"pl-1"} />);
+                        tagArray.push(getTagsFromConfig("boomza.sniper"));
                     }
                     if (boomza?.report) {
-                        tagArray.push(<span style={{color: `#${boomzaTag.hacker.colour.toString()}`}}>{boomzaTag.hacker.display}</span>);
-                        tagArray.push(<span className={"pl-1"} />);
+                        tagArray.push(getTagsFromConfig("boomza.hacker"));
                     }
                 }
                 if (runApi?.safelist?.tagged) {
