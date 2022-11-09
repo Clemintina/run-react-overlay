@@ -1,11 +1,11 @@
 import create from "zustand";
-import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/zikeji";
-import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
-import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
-import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
-import { CustomFileJsonType } from "@common/utils/Schemas";
+import {Player} from "@common/utils/PlayerUtils";
+import {Components} from "@common/zikeji";
+import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
+import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import {CustomFileJsonType} from "@common/utils/Schemas";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -163,7 +163,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             get().updatePlayerState(playerData);
 
             if (runApi.status == 200) {
-                playerData.loaded = true;
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
 
                 if (!playerData.bot && !playerData.sources.runApi.data.data.blacklist.tagged) {
@@ -236,6 +235,13 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             }
         }
 
+        if (!playerData.nicked) {
+            if (playerData.name == playerData.hypixelPlayer!.uuid) {
+                playerData.name = playerData.hypixelPlayer!.displayname.toLowerCase();
+            }
+        }
+
+        playerData.loaded = true;
         playerObject.data = playerData;
         get().updatePlayerState(playerData);
         await get().updatePlayers();

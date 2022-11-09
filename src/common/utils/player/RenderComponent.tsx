@@ -1,19 +1,19 @@
-import { MetricsObject, TagArray, TagObject } from "@common/utils/Schemas";
+import {MetricsObject, TagArray, TagObject} from "@common/utils/Schemas";
 import jsonLogic from "json-logic-js";
 import React from "react";
 import useTagStore from "@renderer/store/zustand/TagStore";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 
-export const getTagsFromConfig = (tagDisplayPath, value?: number) => {
-    const tag: TagObject = tagDisplayPath.split(".").reduce((o, i) => o[i], useTagStore.getState());
+export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
+    const tag: TagObject = tagDisplayPath.split(".").reduce((o, i) => o[i], useTagStore.getState()) as unknown as TagObject;
     const tagDisplayIcon: string | undefined = tag?.display ?? "?";
     const tagArray: string | Array<TagArray> | undefined = tag?.colour ?? "FF5555";
 
     if (tagDisplayPath == "run.blacklist") {
         return (
             <Tooltip title={<span className={"normal-case"}>{"This player is blacklisted, leave the queue."}</span>} arrow>
-                <span style={{ color: `#${tagArray}` }}>{value != undefined ? value : tagDisplayIcon}</span>
+                <span style={{color: `#${tagArray}`}}>{value != undefined ? value : tagDisplayIcon}</span>
             </Tooltip>
         );
     } else if (Array.isArray(tagArray) && value != undefined) {
