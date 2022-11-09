@@ -1,5 +1,5 @@
 import React from "react";
-import {InputTextBox} from "@components/user/InputTextBox";
+import { InputTextBox } from "@components/user/InputTextBox";
 
 export interface TagEditor {
     onKeyDown?: (input: React.KeyboardEvent<HTMLInputElement>) => void;

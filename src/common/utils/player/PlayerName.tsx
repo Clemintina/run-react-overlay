@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/named
-import React, {FC} from "react";
-import {StatsisticsTooltip} from "@components/tooltips/StatisticsTooltip";
-import {getPlayerRank} from "@common/zikeji";
+import React, { FC } from "react";
+import { StatsisticsTooltip } from "@components/tooltips/StatisticsTooltip";
+import { getPlayerRank } from "@common/zikeji";
 import useTagStore from "@renderer/store/zustand/TagStore";
-import {Player} from "@common/utils/PlayerUtils";
-import {Interweave} from "interweave";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import { Player } from "@common/utils/PlayerUtils";
+import { Interweave } from "interweave";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 

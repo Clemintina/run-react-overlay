@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import React, { FC } from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";

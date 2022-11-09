@@ -1,8 +1,8 @@
-import React, {PropsWithChildren} from "react";
-import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
-import {getPlayerRank} from "@common/zikeji";
-import {OverlayTooltip} from "@components/tooltips/OverlayTooltip";
-import {Interweave} from "interweave";
+import React, { PropsWithChildren } from "react";
+import { Player, PlayerUtils } from "@common/utils/PlayerUtils";
+import { getPlayerRank } from "@common/zikeji";
+import { OverlayTooltip } from "@components/tooltips/OverlayTooltip";
+import { Interweave } from "interweave";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 

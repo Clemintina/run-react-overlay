@@ -1,11 +1,12 @@
 // eslint-disable-next-line import/named
 import React from "react";
-import {MinecraftColours, Player} from "@common/utils/PlayerUtils";
+import useTagStore from "@renderer/store/zustand/TagStore";
+import { MinecraftColours, Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {getTagsFromConfig} from "@common/utils/player/RenderComponent";
-import {KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {MinecraftColourAsHex} from "@common/zikeji";
+import { getTagsFromConfig } from "@common/utils/player/RenderComponent";
+import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { MinecraftColourAsHex } from "@common/zikeji";
 
 export interface PlayerTags {
     player: Player;
@@ -23,7 +24,7 @@ const parseColour = (text: string) => {
 
 const PlayerTags: React.ElementType = (props: PlayerTags) => {
     const player = props.player;
-    const {settings, hypixel, runConfig, table} = useConfigStore((state) => ({
+    const { settings, hypixel, runConfig, table } = useConfigStore((state) => ({
         settings: state.settings,
         hypixel: state.hypixel,
         runConfig: state.run,
@@ -104,17 +105,17 @@ const PlayerTags: React.ElementType = (props: PlayerTags) => {
     } else {
         if (player.loaded) {
             if (!runConfig.valid) {
-                tagArray.push(<span style={{color: "red"}}>Seraph Key Locked</span>);
+                tagArray.push(<span style={{ color: "red" }}>Seraph Key Locked</span>);
             } else if (hypixel.apiKeyValid) {
-                tagArray.push(<span style={{color: "red"}}>NICKED</span>);
+                tagArray.push(<span style={{ color: "red" }}>NICKED</span>);
             } else {
-                tagArray.push(<span style={{color: "red"}}>Invalid Hypixel API Key</span>);
+                tagArray.push(<span style={{ color: "red" }}>Invalid Hypixel API Key</span>);
             }
         }
     }
 
     return (
-        <div style={{textAlign: table.settings.textAlign}}>
+        <div style={{ textAlign: table.settings.textAlign }}>
             {tagArray.map((value, index) => (
                 <span key={index}>{value}</span>
             ))}
@@ -126,33 +127,33 @@ const RenderKeathizTags = (props: PlayerTags) => {
     const keathizTagArray: Array<JSX.Element> = [];
     const player = props.player;
     if (player?.sources?.keathiz == null && player.loaded) {
-        keathizTagArray.push(<span style={{color: `#${MinecraftColours.DARK_RED.hex}`}}>ERROR</span>);
+        keathizTagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>ERROR</span>);
     } else {
         if (player?.sources?.keathiz?.status == 200 && player?.sources?.keathiz?.data) {
             const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
             if (keathizTags?.player?.exits?.last_10_min ?? 0 >= 1) {
-                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`E10`}</span>);
+                keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`E10`}</span>);
             }
             if (keathizTags?.player?.queues?.total ?? 0 == 0) {
-                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>ND</span>);
+                keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>ND</span>);
             }
             if (keathizTags?.player?.queues?.last_3_min ?? 0 >= 2) {
                 const count = keathizTags?.player.queues.last_3_min;
-                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q3-${count}`}</span>);
+                keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q3-${count}`}</span>);
             }
             if (keathizTags?.player?.queues?.last_10_min ?? 0 >= 2) {
                 const count = keathizTags?.player.queues.last_10_min;
-                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q10-${count}`}</span>);
+                keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q10-${count}`}</span>);
             }
             if (keathizTags?.player?.queues?.last_30_min ?? 0 >= 5) {
                 const count = keathizTags?.player?.queues?.last_30_min;
-                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q30-${count}`}</span>);
+                keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q30-${count}`}</span>);
             }
             if (keathizTags?.player?.queues?.last_24_hours ?? 0 >= 50) {
-                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Q24`}</span>);
+                keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q24`}</span>);
             }
             if (keathizTags?.player?.queues?.consecutive_queue_checks?.weighted["1_min_requeue"] ?? 0 >= 50) {
-                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`Z`}</span>);
+                keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Z`}</span>);
             }
             if (
                 keathizTags?.player?.queues?.consecutive_queue_checks?.last_30_queues["1_min_requeue"] ??
@@ -164,10 +165,10 @@ const RenderKeathizTags = (props: PlayerTags) => {
                 keathizTags?.player?.queues?.consecutive_queue_checks?.last_10_queues["3_min_requeue"] ??
                 0 >= 8
             ) {
-                keathizTagArray.push(<span style={{color: `#${MinecraftColours.GOLD.hex}`}}>{`C`}</span>);
+                keathizTagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`C`}</span>);
             }
         } else {
-            if (useConfigStore.getState().settings.keathiz) keathizTagArray.push(<span style={{color: `#${MinecraftColours.DARK_RED.hex}`}}>{`FAILED`}</span>);
+            if (useConfigStore.getState().settings.keathiz) keathizTagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>{`FAILED`}</span>);
         }
     }
 

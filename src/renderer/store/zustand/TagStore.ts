@@ -1,6 +1,6 @@
 import create from "zustand";
-import {persist} from "../../../../node_modules/zustand/middleware";
-import {TagSchema, TagStoreSchema} from "@common/utils/TagSchema";
+import { persist } from "../../../../node_modules/zustand/middleware";
+import { TagSchema, TagStoreSchema } from "@common/utils/TagSchema";
 
 const useTagStore = create<TagStoreSchema>()(
     persist(

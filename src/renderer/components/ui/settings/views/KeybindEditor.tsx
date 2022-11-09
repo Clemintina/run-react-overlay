@@ -1,11 +1,11 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {Box} from "@mui/material";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {KeybindInterface} from "@common/utils/Schemas";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { Box } from "@mui/material";
+import { InputTextBox } from "@components/user/InputTextBox";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { KeybindInterface } from "@common/utils/Schemas";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 const KeybindEditorView = () => {
     const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));

@@ -1,11 +1,11 @@
-import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {Player} from "@common/utils/PlayerUtils";
+import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import axios from "axios";
-import {removeMinecraftFormatting} from "@common/zikeji";
+import { removeMinecraftFormatting } from "@common/zikeji";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {

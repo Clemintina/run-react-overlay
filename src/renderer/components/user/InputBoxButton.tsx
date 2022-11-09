@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/named
-import {SxProps, Theme} from "@mui/material";
-import React, {FC} from "react";
+import { SxProps, Theme } from "@mui/material";
+import React, { FC } from "react";
 import Button from "@mui/material/Button";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {hexToRgbA} from "@components/ui/settings/ColourRenderer";
+import { hexToRgbA } from "@components/ui/settings/ColourRenderer";
 
 export type InputBoxButton = {
     onClick?: (input) => void;
