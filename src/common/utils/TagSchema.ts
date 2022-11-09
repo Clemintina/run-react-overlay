@@ -49,7 +49,7 @@ export interface Run {
 
 export interface Boomza {
     sniper: TagColour;
-    hacker: TagColour;
+    cheater: TagColour;
 }
 
 export interface Hypixel {

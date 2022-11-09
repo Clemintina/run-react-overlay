@@ -85,7 +85,7 @@ const useTagStore = create<TagStoreSchema>()(
                     display: "S",
                     colour: "FF0000",
                 },
-                hacker: {
+                cheater: {
                     display: "H",
                     colour: "FF0000",
                 },
@@ -400,7 +400,7 @@ const useTagStore = create<TagStoreSchema>()(
                 queues: {
                     queue_count: {
                         display: "Q-",
-                        colours: [{ requirement: 10, colour: "FFD700", operator: "<=" }],
+                        colours: [{requirement: 10, colour: "FFD700", operator: "<="}],
                     },
                     queue_total: {
                         display: "QT-",
@@ -409,11 +409,11 @@ const useTagStore = create<TagStoreSchema>()(
                     consecutive_queue: {
                         last_1000: {
                             display: "Q-",
-                            colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }],
+                            colours: [{requirement: 2, colour: "FFD700", operator: "<="}],
                         },
-                        last_30: { display: "Q-", colours: [{ requirement: 3, colour: "FFD700", operator: "<=" }] },
-                        last_10: { display: "Q-", colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }] },
-                        weighted: { display: "Q-", colours: [{ requirement: 50, colour: "FFD700", operator: "<=" }] },
+                        last_30: {display: "Q-", colours: [{requirement: 3, colour: "FFD700", operator: "<="}]},
+                        last_10: {display: "Q-", colours: [{requirement: 2, colour: "FFD700", operator: "<="}]},
+                        weighted: {display: "Q-", colours: [{requirement: 50, colour: "FFD700", operator: "<="}]},
                     },
                 },
                 exits: {
@@ -436,7 +436,7 @@ const useTagStore = create<TagStoreSchema>()(
         }),
         {
             name: "tags",
-            version: 3,
+            version: 4,
             migrate: (persistedStateCore, version) => {
                 const persistedState = persistedStateCore as TagStoreSchema;
                 if (version === 1 || version === 0) {
@@ -454,7 +454,7 @@ const useTagStore = create<TagStoreSchema>()(
                         queues: {
                             queue_count: {
                                 display: "Q-",
-                                colours: [{ requirement: 10, colour: "FFD700", operator: "<=" }],
+                                colours: [{requirement: 10, colour: "FFD700", operator: "<="}],
                             },
                             queue_total: {
                                 display: "QT-",
@@ -463,13 +463,13 @@ const useTagStore = create<TagStoreSchema>()(
                             consecutive_queue: {
                                 last_1000: {
                                     display: "Q-",
-                                    colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }],
+                                    colours: [{requirement: 2, colour: "FFD700", operator: "<="}],
                                 },
-                                last_30: { display: "Q-", colours: [{ requirement: 3, colour: "FFD700", operator: "<=" }] },
-                                last_10: { display: "Q-", colours: [{ requirement: 2, colour: "FFD700", operator: "<=" }] },
+                                last_30: {display: "Q-", colours: [{requirement: 3, colour: "FFD700", operator: "<="}]},
+                                last_10: {display: "Q-", colours: [{requirement: 2, colour: "FFD700", operator: "<="}]},
                                 weighted: {
                                     display: "Q-",
-                                    colours: [{ requirement: 50, colour: "FFD700", operator: "<=" }],
+                                    colours: [{requirement: 50, colour: "FFD700", operator: "<="}],
                                 },
                             },
                         },
@@ -481,6 +481,9 @@ const useTagStore = create<TagStoreSchema>()(
                         },
                     };
                     return persistedState;
+                } else if (version == 3) {
+                    persistedState.boomza.cheater.colour = "FF0000";
+                    persistedState.boomza.cheater.display = "H";
                 }
                 return persistedState;
             },

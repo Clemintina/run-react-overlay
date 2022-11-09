@@ -241,13 +241,13 @@ const TagEditorView = () => {
                     <UserAccordion name={"Boomza"}>
                         <AccordionDetails>
                             <SettingCard>
-                                <span>Hacker</span>
+                                <span>Cheater</span>
                                 <span>
                                     <TagEditor
                                         options={{
-                                            colour: boomza.hacker.colour,
-                                            placeholder: boomza.hacker.display,
-                                            label: { text: "Boomza Hacker" },
+                                            colour: boomza.cheater.colour,
+                                            placeholder: boomza.cheater.display,
+                                            label: {text: "Boomza Cheater"},
                                         }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
@@ -263,11 +263,11 @@ const TagEditorView = () => {
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
-                                                    state.boomza.hacker.colour = colour;
+                                                    state.boomza.cheater.colour = colour;
                                                 }),
                                             );
                                         }}
-                                        colourObject={boomza.hacker.colour}
+                                        colourObject={boomza.cheater.colour}
                                     />
                                 </span>
                             </SettingCard>
