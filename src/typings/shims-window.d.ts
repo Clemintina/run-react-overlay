@@ -1,7 +1,7 @@
-import { IpcRendererEvent } from "electron";
-import { IpcChannelMap, IPCValidOnChannels, IPCValidSendChannels } from "@common/utils/IPCHandler";
-import { RUNElectronStoreTagsTyped, RUNElectronStoreTyped } from "@main/appWindow";
-import { IPCResponse } from "@common/utils/externalapis/RunApi";
+import {IpcRendererEvent} from "electron";
+import {IpcChannelMap, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
+import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
+import {IPCResponse} from "@common/utils/externalapis/RunApi";
 
 declare global {
     interface Window {
