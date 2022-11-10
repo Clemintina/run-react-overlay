@@ -40,10 +40,10 @@ const Appearance = () => {
                         <span>Auto Hide</span>
                         <span />
                         <ToggleButton
-                            onChange={async () => {
-                                useConfigStore.getState().setSettings({ ...settings, preferences: { ...settings.preferences, autoHide: !settings.preferences.autoHide } });
-                            }}
-                            options={{ enabled: settings.preferences.autoHide }}
+                          onChange={ async () => {
+                              useConfigStore.getState ().setSettings ( { ...settings, preferences: { ...settings.preferences, autoHide: ! settings.preferences.autoHide } } );
+                          } }
+                          options={ { enabled: settings.preferences.autoHide } }
                         />
                     </SettingCard>
                     <SettingCard>

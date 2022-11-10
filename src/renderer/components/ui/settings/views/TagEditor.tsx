@@ -245,9 +245,9 @@ const TagEditorView = () => {
                                 <span>
                                     <TagEditor
                                         options={{
-                                            colour: boomza.cheater.colour,
-                                            placeholder: boomza.cheater.display,
-                                            label: {text: "Boomza Cheater"},
+                                          colour: boomza.cheater.colour,
+                                          placeholder: boomza.cheater.display,
+                                          label: { text: "Boomza Cheater" }
                                         }}
                                         onBlur={(event) => {
                                             useTagStore.getState().setStore(
