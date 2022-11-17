@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/named
 import { ColumnState } from "ag-grid-community";
 import create from "zustand";
-import { AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, CustomLinkURL, DisplayErrorMessage, FontConfig, GameType, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
+import { AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, CustomLinkURL, DisplayErrorMessage, FontConfig, GameType, HypixelSettings, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
 import { ResultObject } from "@common/zikeji/util/ResultObject";
 import { Paths } from "@common/zikeji";
 import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
@@ -13,11 +13,8 @@ import axios from "axios";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 export type ConfigStore = {
-    hypixel: {
-        apiKey: string;
-        apiKeyValid: boolean;
-        apiKeyOwner: string;
-    };
+    hypixel: HypixelSettings;
+    setHypixelState: (hypixel: HypixelSettings) => void;
     setHypixelApiKey: (arg0: string) => void;
     colours: ColourSettings;
     setColours: (colour: ColourSettings) => void;
@@ -70,6 +67,10 @@ const useConfigStore = create<ConfigStore>()(
                     apiKey: "",
                     apiKeyValid: false,
                     apiKeyOwner: "",
+                    proxy: false,
+                },
+                setHypixelState: (hypixel) => {
+                    set({ hypixel });
                 },
                 setHypixelApiKey: async (hypixelApiKey) => {
                     if (hypixelApiKey.length === 0 || (get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase() && get().hypixel.apiKeyValid)) {
@@ -95,6 +96,7 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKey: hypixelApiKey,
                                 apiKeyValid: true,
                                 apiKeyOwner: apiResponse.data.owner,
+                                proxy: get().hypixel.proxy,
                             },
                         }));
                     } else {
@@ -108,6 +110,7 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKey: get().hypixel.apiKey,
                                 apiKeyValid: false,
                                 apiKeyOwner: apiResponse.data.owner,
+                                proxy: get().hypixel.proxy,
                             },
                         }));
                     }
@@ -537,7 +540,7 @@ const useConfigStore = create<ConfigStore>()(
             }),
             {
                 name: "user_settings",
-                version: 8,
+                version: 9,
                 migrate: (persistedState: any, version) => {
                     const updatedState = persistedState;
                     if (version == 4) {
@@ -565,6 +568,8 @@ const useConfigStore = create<ConfigStore>()(
                     } else if (version == 8) {
                         updatedState.customUrl.url = "";
                         updatedState.font.isGoogleFont = true;
+                    } else if (version == 9) {
+                        updatedState.hypixel.proxy = false;
                     }
                     return updatedState;
                 },

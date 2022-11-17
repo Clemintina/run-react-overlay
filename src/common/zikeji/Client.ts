@@ -13,6 +13,7 @@ import { getResultObject, ResultObject } from "./util/ResultObject";
 import { IPCResponse } from "@common/utils/externalapis/RunApi";
 import { Friends } from "@common/zikeji/methods/friends";
 import destr from "destr";
+import { Agent } from "https";
 
 /** @internal */
 export interface ActionableCall<T extends Components.Schemas.ApiSuccess> {
@@ -76,6 +77,7 @@ export interface RequestOptions {
     userAgent: string;
     noRateLimit: boolean;
     getRateLimitHeaders: Client["getRateLimitHeaders"];
+    proxy?: Agent;
 }
 
 /** @hidden */
@@ -114,6 +116,7 @@ export interface ClientOptions {
      * Functions you want to use for caching results. Optional.
      */
     cache?: BasicCache;
+    proxy?: Agent;
 }
 
 interface ClientEvents {
@@ -175,6 +178,8 @@ export class Client {
     /** @internal */
     private readonly cache?: ClientOptions["cache"];
 
+    private readonly proxy?: ClientOptions["proxy"];
+
     /** @internal */
     protected rateLimit: RateLimitData = {
         remaining: -1,
@@ -194,7 +199,7 @@ export class Client {
         this.apiKey = key;
         this.retries = options?.retries ?? 3;
         this.timeout = options?.timeout ?? 10000;
-        this.userAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) ${options?.userAgent ?? ""} AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36`;
+        this.userAgent = options?.userAgent ?? "@zikeji/hypixel";
         this.cache = options?.cache;
     }
 
@@ -457,6 +462,7 @@ export class Client {
             timeout: this.timeout,
             noRateLimit,
             getRateLimitHeaders: this.getRateLimitHeaders.bind(this),
+            proxy: this.proxy,
         });
     }
 

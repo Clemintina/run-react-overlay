@@ -159,8 +159,8 @@ export class LogFileReader {
                     // Party List (Leader)
                     const playerRank = line.match(/Party Leader: (\S.*)/);
                     if (playerRank?.length === 2) {
-                        let players = line.match(/(?<=: )(.*?)(?= \?)/);
-                        if (players != null) {
+                        let players: string[] | null = line.match(/(?<=: )(.*?)(?= \?)/);
+                        if (players) {
                             players = players[0].split(" ");
                             addPlayer(players[players.length - 1]);
                         }

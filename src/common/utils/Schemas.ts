@@ -114,6 +114,13 @@ export interface ClientSetting {
     readable: boolean;
 }
 
+export interface HypixelSettings {
+    apiKey: string;
+    apiKeyValid: boolean;
+    apiKeyOwner: string;
+    proxy: boolean;
+}
+
 export interface ColourSettings {
     backgroundColour: string;
     primaryColour: string;

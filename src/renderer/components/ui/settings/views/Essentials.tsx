@@ -116,6 +116,27 @@ const Essentials = () => {
                     <span>APIs</span>
                     <span />
                 </SettingHeader>
+
+                <SettingCard>
+                    <span>Proxy Hypixel</span>
+                    <span />
+                    <ToggleButton
+                        text={""}
+                        onChange={async () => {
+                            useConfigStore.getState().setHypixelState({
+                                ...hypixel,
+                                proxy: !hypixel.proxy,
+                            });
+                        }}
+                        options={{ enabled: hypixel.proxy }}
+                    >
+                        <span className={"pl-2"}>
+                            <Tooltip title="This API is proxied to protect your IP.">
+                                <FontAwesomeIcon icon={faMapLocation} />
+                            </Tooltip>
+                        </span>
+                    </ToggleButton>
+                </SettingCard>
                 <SettingCard>
                     <span>Boomza (BWStats)</span>
                     <span />
