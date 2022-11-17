@@ -35,15 +35,15 @@ const Appearance = () => {
     return (
         <div>
             <NavigationBar>
-                <Box className="p-2 space-y-2">
+                <Box className='p-2 space-y-2'>
                     <SettingCard>
                         <span>Auto Hide</span>
                         <span />
                         <ToggleButton
-                          onChange={ async () => {
-                              useConfigStore.getState ().setSettings ( { ...settings, preferences: { ...settings.preferences, autoHide: ! settings.preferences.autoHide } } );
-                          } }
-                          options={ { enabled: settings.preferences.autoHide } }
+                            onChange={async () => {
+                                useConfigStore.getState().setSettings({ ...settings, preferences: { ...settings.preferences, autoHide: !settings.preferences.autoHide } });
+                            }}
+                            options={{ enabled: settings.preferences.autoHide }}
                         />
                     </SettingCard>
                     <SettingCard>

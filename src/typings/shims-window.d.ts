@@ -1,7 +1,7 @@
-import {IpcRendererEvent} from "electron";
-import {IpcChannelMap, IPCValidOnChannels, IPCValidSendChannels} from "@common/utils/IPCHandler";
-import {RUNElectronStoreTagsTyped, RUNElectronStoreTyped} from "@main/appWindow";
-import {IPCResponse} from "@common/utils/externalapis/RunApi";
+import { IpcRendererEvent } from "electron";
+import { IpcChannelJoinedMap, IpcChannelMap, IPCValidInvokeChannels, IpcValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels } from "@common/utils/IPCHandler";
+import { RUNElectronStoreTagsTyped, RUNElectronStoreTyped } from "@main/appWindow";
+import { IPCResponse } from "@common/utils/externalapis/RunApi";
 
 declare global {
     interface Window {
@@ -17,9 +17,11 @@ declare global {
     }
 
     interface SeraphIpcRenderer<ChannelMap> extends NodeJS.EventEmitter {
-        invoke(channel: keyof ChannelMap, ...args: ChannelMap[typeof channel][]): Promise<never>;
+        invoke(channel: keyof ChannelMap,  ...args: string[] | unknown[]): Promise<never>;
 
-        invoke<T>(channel: keyof ChannelMap, ...args: ChannelMap[typeof channel][]): Promise<IPCResponse<T>>;
+        invoke<T>(channel: keyof ChannelMap, ...args: Array<ChannelMap[typeof channel]>): Promise<IPCResponse<T>>;
+
+        invoke<T, X extends keyof ChannelMap>(channel: X, ...args: Array<IpcChannelMap[ X]>): Promise<IPCResponse<T>>;
 
         on(channel: IPCValidOnChannels | string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
 

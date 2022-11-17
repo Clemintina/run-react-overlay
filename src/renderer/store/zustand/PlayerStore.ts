@@ -1,11 +1,11 @@
 import create from "zustand";
-import {Player} from "@common/utils/PlayerUtils";
-import {Components} from "@common/zikeji";
-import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
-import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
-import {CustomFileJsonType} from "@common/utils/Schemas";
+import { Player } from "@common/utils/PlayerUtils";
+import { Components } from "@common/zikeji";
+import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
+import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { CustomFileJsonType } from "@common/utils/Schemas";
 
 export type PlayerStore = {
     players: Array<Player>;
@@ -322,10 +322,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
     setStore: (store) => set(store),
     party: {
         partyStore: Array<string>(),
-        addPartyMember: () => {
-        },
-        removePartyMember: () => {
-        },
+        addPartyMember: () => {},
+        removePartyMember: () => {},
     },
     tagStore: {
         config: {},
@@ -556,12 +554,16 @@ const getHypixelFriends = async (player: Player) => {
             status: 400,
         };
     }
-    return new Promise<IPCResponse<{
-        _id: string;
-        uuidSender: string;
-        uuidReceiver: string;
-        started: number;
-    }[]>>((resolve) => resolve(api));
+    return new Promise<
+        IPCResponse<
+            {
+                _id: string;
+                uuidSender: string;
+                uuidReceiver: string;
+                started: number;
+            }[]
+        >
+    >((resolve) => resolve(api));
 };
 
 const getGuildData = async (player: Player) => {

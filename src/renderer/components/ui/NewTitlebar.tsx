@@ -134,10 +134,10 @@ const NewTitlebar = ({ children }) => {
             <CssBaseline />
             <AppBar position={"fixed"} open={open} className={"drag"} sx={{ opacity: 100, backgroundColor: hexToRgbA(colours.backgroundColour, browserWindow.opacity / 100) }}>
                 <Toolbar>
-                    <IconButton color={ "inherit" } onClick={ handleDrawerOpen } edge="start" className={ "nodrag" } sx={ { mr: 2, ...(open && { display: "none" }) } }>
+                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge='start' className={"nodrag"} sx={{ mr: 2, ...(open && { display: "none" }) }}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant={ "h6" } noWrap component={ "div" } className={ "text-bold" }>
+                    <Typography variant={"h6"} noWrap component={"div"} className={"text-bold"}>
                         Seraph
                     </Typography>
                     <Typography sx={{ marginLeft: "auto" }}>
