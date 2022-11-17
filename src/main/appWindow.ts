@@ -18,13 +18,13 @@ import { handleIPCSend } from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
 import { LogFileMessage } from "@common/utils/LogFileReader";
-import { ClientOptions, GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
+import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
 import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTimes";
-import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 import { Agent } from "https";
+import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -245,6 +245,7 @@ const registerSeraphIPC = () => {
         const resource = args[0] as string;
         const apiKey = args[1] as string;
         let playerName: string = "" as string;
+        console.log(args[3]);
         let proxyHypxiel: { proxy: Agent } | {} =
             args[3] != undefined
                 ? {

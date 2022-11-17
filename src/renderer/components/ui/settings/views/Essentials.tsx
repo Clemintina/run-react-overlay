@@ -131,7 +131,7 @@ const Essentials = () => {
                         options={{ enabled: hypixel.proxy }}
                     >
                         <span className={"pl-2"}>
-                            <Tooltip title="This API is proxied to protect your IP.">
+                            <Tooltip title={"Only use this if your API Key keeps getting \"Too Many Invalid Api Keys\" as this is slower than direct. "}>
                                 <FontAwesomeIcon icon={faMapLocation} />
                             </Tooltip>
                         </span>

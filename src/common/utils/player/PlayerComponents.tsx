@@ -385,7 +385,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
                                 tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`E10`}</span>);
                             }
                             if (keathizTags?.player?.queues?.total ?? 0 == 0) {
-                                tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>ND</span>);
+                                tagArray.push(getTagsFromConfig("keathiz.queues.queue_total"));
                             }
                             if (keathizTags?.player?.queues?.last_3_min ?? 0 >= 2) {
                                 const count = keathizTags?.player.queues.last_3_min;
@@ -403,7 +403,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
                                 tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q24`}</span>);
                             }
                             if (keathizTags?.player?.queues?.consecutive_queue_checks?.weighted["1_min_requeue"] ?? 0 >= 50) {
-                                tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Z`}</span>);
+                                tagArray.push(getTagsFromConfig("keathiz.one_minute_requeue"));
                             }
                             if (
                                 keathizTags?.player?.queues?.consecutive_queue_checks?.last_30_queues["1_min_requeue"] ??
@@ -415,7 +415,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
                                 keathizTags?.player?.queues?.consecutive_queue_checks?.last_10_queues["3_min_requeue"] ??
                                 0 >= 8
                             ) {
-                                tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`C`}</span>);
+                                tagArray.push(getTagsFromConfig("keathiz.consecutive"));
                             }
                         } else {
                             if (useConfigStore.getState().settings.keathiz) tagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>{`FAILED`}</span>);

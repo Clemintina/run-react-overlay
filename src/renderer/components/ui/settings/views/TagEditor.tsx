@@ -447,6 +447,68 @@ const TagEditorView = () => {
                                     />
                                 </span>
                             </SettingCard>
+                            <SettingCard>
+                                <span>Consecutive</span>
+                                <span>
+                                    <TagEditor
+                                        options={{
+                                            colour: keathiz.consecutive.colour,
+                                            placeholder: keathiz.consecutive.display,
+                                            label: { text: "Keathiz Consecutive Tag ( C )" },
+                                        }}
+                                        onBlur={(event) => {
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.keathiz.no_data.display = event.currentTarget.value;
+                                                }),
+                                            );
+                                        }}
+                                    />
+                                </span>
+                                <span>
+                                    <ColourPicker
+                                        setColour={async (colour: string) => {
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.keathiz.consecutive.colour = colour;
+                                                }),
+                                            );
+                                        }}
+                                        colourObject={keathiz.consecutive.colour}
+                                    />
+                                </span>
+                            </SettingCard>
+                            <SettingCard>
+                                <span>One Minute Requeue</span>
+                                <span>
+                                    <TagEditor
+                                        options={{
+                                            colour: keathiz.one_minute_requeue.colour,
+                                            placeholder: keathiz.one_minute_requeue.display,
+                                            label: { text: "Keathiz One Minute Queue ( Z )" },
+                                        }}
+                                        onBlur={(event) => {
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.keathiz.no_data.display = event.currentTarget.value;
+                                                }),
+                                            );
+                                        }}
+                                    />
+                                </span>
+                                <span>
+                                    <ColourPicker
+                                        setColour={async (colour: string) => {
+                                            useTagStore.getState().setStore(
+                                                produce((state: any) => {
+                                                    state.keathiz.one_minute_requeue.colour = colour;
+                                                }),
+                                            );
+                                        }}
+                                        colourObject={keathiz.one_minute_requeue.colour}
+                                    />
+                                </span>
+                            </SettingCard>
                         </AccordionDetails>
                     </UserAccordion>
                 </div>

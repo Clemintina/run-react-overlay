@@ -84,7 +84,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             }
             if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
                 const data: unknown = ipcHypixelPlayer.data;
-                console.log(data);
                 let cause, code;
                 if (typeof data === "string") {
                     cause = data;

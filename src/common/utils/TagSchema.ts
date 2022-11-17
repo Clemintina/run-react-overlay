@@ -61,6 +61,8 @@ export interface Keathiz {
     exits: {
         exits_total: TagColour;
     };
+    one_minute_requeue: TagColour,
+    consecutive: TagColour,
     queues: {
         queue_count: TagArray;
         queue_total: TagColour;
