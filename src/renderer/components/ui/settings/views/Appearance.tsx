@@ -1,14 +1,19 @@
-import React, {useState} from "react";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {ToggleButton} from "@components/user/ToggleButton";
+import React, { useState } from "react";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {Autocomplete, Box, FormControl, InputLabel, Select, SelectChangeEvent, Slider, SxProps, TextField} from "@mui/material";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
+import { Autocomplete, Box, Button, FormControl, FormGroup, InputLabel, Select, SelectChangeEvent, Slider, SxProps, TextField } from "@mui/material";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
 import MenuItem from "@mui/material/MenuItem";
 
 const Appearance = () => {
     const localConfigStore = useConfigStore<ConfigStore>((state) => state);
-    const { settings, browserWindow, font, table } = useConfigStore((state) => ({ settings: state.settings, browserWindow: state.browserWindow, font: state.font, table: state.table }));
+    const { settings, browserWindow, font, table } = useConfigStore((state) => ({
+        settings: state.settings,
+        browserWindow: state.browserWindow,
+        font: state.font,
+        table: state.table,
+    }));
     const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
     const styledProps: SxProps = {
         width: 0.86,
@@ -19,7 +24,10 @@ const Appearance = () => {
     const handleChange = (event: SelectChangeEvent) => {
         if (event.target.value == "left" || event.target.value == "right" || event.target.value == "center") {
             setTextAlignment(event.target.value);
-            useConfigStore.getState().setTableState({ ...useConfigStore.getState().table, settings: { textAlign: event.target.value } });
+            useConfigStore.getState().setTableState({
+                ...useConfigStore.getState().table,
+                settings: { textAlign: event.target.value },
+            });
         }
     };
 
@@ -65,28 +73,51 @@ const Appearance = () => {
                         <span>Font</span>
                         <span />
                         <Autocomplete
+                            freeSolo
                             disablePortal
-                            options={[...font.availableFonts]}
+                            options={font.isGoogleFont ? [...font.availableFonts] : []}
                             onChange={(event) => {
-                                if (event.currentTarget.innerHTML.length != 0 && font.availableFonts.includes(event.currentTarget.innerHTML)) useConfigStore.getState().setFont({ ...font, family: event.currentTarget.innerHTML });
+                                if (event.currentTarget.innerHTML == null || event.currentTarget.innerHTML.length == 0) return;
+                                if (font.availableFonts.includes(event.currentTarget.innerHTML) && font.isGoogleFont) {
+                                    useConfigStore.getState().setFont({ ...font, family: event.currentTarget.innerHTML });
+                                } else {
+                                    useConfigStore.getState().setFont({ ...font, family: event.currentTarget.innerHTML });
+                                }
                             }}
                             renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label={"Font"}
-                                    variant={"outlined"}
-                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                                        if (event.key === "Enter") {
-                                            if (font.availableFonts.includes(event.currentTarget.value)) useConfigStore.getState().setFont({ ...font, family: event.currentTarget.value });
-                                        }
-                                    }}
-                                    onBlur={(event) => {
-                                        if (event.currentTarget.value.length != 0 && font.availableFonts.includes(event.currentTarget.value)) useConfigStore.getState().setFont({ ...font, family: event.currentTarget.value });
-                                    }}
-                                    sx={styledProps}
-                                    placeholder={font.family}
-                                    helperText={"Font you want to use."}
-                                />
+                                <>
+                                    <FormGroup>
+                                        <TextField
+                                            {...params}
+                                            label={"Font"}
+                                            variant={"outlined"}
+                                            onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                                                if (event.key === "Enter") {
+                                                    if (font.availableFonts.includes(event.currentTarget.value)) useConfigStore.getState().setFont({ ...font, family: event.currentTarget.value });
+                                                }
+                                            }}
+                                            onBlur={(event) => {
+                                                if (event.currentTarget.value == null || event.currentTarget.value.length == 0) return;
+                                                if (font.availableFonts.includes(event.currentTarget.value) && font.isGoogleFont) {
+                                                    useConfigStore.getState().setFont({ ...font, family: event.currentTarget.value });
+                                                } else {
+                                                    useConfigStore.getState().setFont({ ...font, family: event.currentTarget.value });
+                                                }
+                                            }}
+                                            sx={styledProps}
+                                            placeholder={font.family}
+                                            helperText={(font.isGoogleFont ? "Google" : "System") + " Font you want to use."}
+                                        />
+                                        <Button
+                                            sx={styledProps}
+                                            onClick={() => {
+                                                useConfigStore.getState().setFont({ ...font, isGoogleFont: !font.isGoogleFont });
+                                            }}
+                                        >
+                                            {!font.isGoogleFont ? "Use Google Fonts" : "Use System Fonts"}
+                                        </Button>
+                                    </FormGroup>
+                                </>
                             )}
                         />
                     </SettingCard>

@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import PlayerNicknameView from "@common/utils/player/PlayerNickname";
-import {PlayerNickname} from "@common/utils/Schemas";
-import {Components} from "@common/zikeji";
-import {RequestType} from "@common/utils/externalapis/RunApi";
-import {InputBoxButton} from "@components/user/InputBoxButton";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {Autocomplete, Box, TextField} from "@mui/material";
+import { PlayerNickname } from "@common/utils/Schemas";
+import { Components } from "@common/zikeji";
+import { RequestType } from "@common/utils/externalapis/RunApi";
+import { InputBoxButton } from "@components/user/InputBoxButton";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { Autocomplete, Box, TextField } from "@mui/material";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
-import {Player} from "@common/utils/PlayerUtils";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { Player } from "@common/utils/PlayerUtils";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { PlayerNicknameViewComponent } from "@common/utils/player/PlayerComponents";
 
 const NickView = () => {
     const { nicks, hypixelApiKey } = useConfigStore((state) => ({
@@ -193,7 +193,7 @@ const NickView = () => {
                     <div>
                         {nicks.map((playerNick) => (
                             <div key={playerNick.nick} className={"pt-2"}>
-                                <PlayerNicknameView key={playerNick.nick} playerNick={playerNick} handleAdd={addPlayer} handleRemove={removePlayer} />
+                                <PlayerNicknameViewComponent key={playerNick.nick} playerNick={playerNick} handleAdd={addPlayer} handleRemove={removePlayer} />
                             </div>
                         ))}
                     </div>

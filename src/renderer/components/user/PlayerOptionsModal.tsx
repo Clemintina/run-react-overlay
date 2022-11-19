@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 // eslint-disable-next-line import/named
 import { Box, InputLabel, Modal } from "@mui/material";
 import { InputBoxButton } from "@components/user/InputBoxButton";
@@ -8,12 +8,12 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 
-export interface PlayerOptionsModal {
+export type PlayerOptionsModal = {
     children: React.ReactElement | React.ReactElement[];
     data: Player;
-}
+};
 
-export const PlayerOptionsModal: React.ElementType = (props: PlayerOptionsModal) => {
+export const PlayerOptionsModal: FC<PlayerOptionsModal> = (props: PlayerOptionsModal) => {
     const { colours } = useConfigStore((state) => ({ colours: state.colours }));
 
     const [open, setOpen] = React.useState(false);

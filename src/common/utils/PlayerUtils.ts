@@ -1,8 +1,8 @@
-import {Blacklist, IPCResponse, LunarAPIResponse} from "./externalapis/RunApi";
-import {Components} from "@common/zikeji";
-import {BoomzaAntisniper, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {PlayerDB} from "@common/utils/externalapis/PlayerDB";
-import {CustomFileJsonType} from "@common/utils/Schemas";
+import { Blacklist, IPCResponse, LunarAPIResponse } from "./externalapis/RunApi";
+import { Components } from "@common/zikeji";
+import { BoomzaAntisniper, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
+import { CustomFileJsonType } from "@common/utils/Schemas";
 
 export type Player = {
     name: string;
@@ -13,6 +13,7 @@ export type Player = {
     friended: boolean | null;
     denicked: boolean | null;
     loaded: boolean;
+    last_updated: number;
     hypixelPlayer: Components.Schemas.Player | null;
     hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
     hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
@@ -24,6 +25,7 @@ export type Player = {
         lunar?: IPCResponse<LunarAPIResponse> | null;
         playerDb?: IPCResponse<PlayerDB> | null;
         customFile?: CustomFileJsonType;
+        customApi?: CustomFileJsonType;
     };
 };
 

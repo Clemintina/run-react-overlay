@@ -1,16 +1,17 @@
 import React from "react";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {InputTextBox} from "@components/user/InputTextBox";
-import {LogSelectorModal} from "@components/user/settings/LogSelectorModal";
-import {SettingHeader} from "@components/user/settings/components/SettingHeader";
-import {ToggleButton} from "@components/user/ToggleButton";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { InputTextBox } from "@components/user/InputTextBox";
+import { LogSelectorModal } from "@components/user/settings/LogSelectorModal";
+import { SettingHeader } from "@components/user/settings/components/SettingHeader";
+import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {Box, SxProps} from "@mui/material";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
+import { Box, SxProps } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import Tooltip from "@mui/material/Tooltip";
-import {TextSettingCard} from "@components/user/settings/components/TextSettingCard";
+import { TextSettingCard } from "@components/user/settings/components/TextSettingCard";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 const Essentials = () => {
     const { hypixel, logs, settings, run, keathiz } = useConfigStore((state) => ({
@@ -115,6 +116,27 @@ const Essentials = () => {
                     <span>APIs</span>
                     <span />
                 </SettingHeader>
+
+                <SettingCard>
+                    <span>Proxy Hypixel</span>
+                    <span />
+                    <ToggleButton
+                        text={""}
+                        onChange={async () => {
+                            useConfigStore.getState().setHypixelState({
+                                ...hypixel,
+                                proxy: !hypixel.proxy,
+                            });
+                        }}
+                        options={{ enabled: hypixel.proxy }}
+                    >
+                        <span className={"pl-2"}>
+                            <Tooltip title={"Only use this if your API Key keeps getting \"Too Many Invalid Api Keys\" as this is slower than direct. "}>
+                                <FontAwesomeIcon icon={faMapLocation} />
+                            </Tooltip>
+                        </span>
+                    </ToggleButton>
+                </SettingCard>
                 <SettingCard>
                     <span>Boomza (BWStats)</span>
                     <span />
@@ -192,7 +214,7 @@ const Essentials = () => {
                         <ToggleButton
                             onChange={async () => {
                                 useConfigStore.getState().setSettings({ ...settings, astolfo: !settings.astolfo });
-                                await window.ipcRenderer.invoke("astolfo");
+                                await window.ipcRenderer.invoke(IpcValidInvokeChannels.ASTOLFO);
                             }}
                             options={{ enabled: settings.astolfo }}
                         ></ToggleButton>

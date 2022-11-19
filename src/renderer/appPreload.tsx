@@ -1,7 +1,7 @@
 import "@misc/window/windowPreload";
 import { contextBridge, ipcRenderer } from "electron";
-import { IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels } from "@common/utils/IPCHandler";
 import { RUNElectronStoreTyped } from "@main/appWindow";
+import { IPCValidInvokeChannels, IPCValidOnChannels, IPCValidSendChannels } from "@common/utils/IPCHandler";
 
 /**
  * Allows access to the **ipcRenderer**

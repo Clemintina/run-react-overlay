@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
-import {ColumnState} from "ag-grid-community";
-import {Player} from "./PlayerUtils";
+import { ColumnState } from "ag-grid-community";
+import { Player } from "./PlayerUtils";
 
 export interface PlayerHandler {
     status: number;
@@ -114,6 +114,13 @@ export interface ClientSetting {
     readable: boolean;
 }
 
+export interface HypixelSettings {
+    apiKey: string;
+    apiKeyValid: boolean;
+    apiKeyOwner: string;
+    proxy: boolean;
+}
+
 export interface ColourSettings {
     backgroundColour: string;
     primaryColour: string;
@@ -154,6 +161,7 @@ export interface PlayerNickname {
 export interface FontConfig {
     family: string;
     availableFonts: Array<string>;
+    isGoogleFont: boolean;
 }
 
 export type KeyboardFocusType = "none" | "open_overlay" | "clear_players";
@@ -180,9 +188,19 @@ export interface CustomLinkFile {
     data: Array<string> | Array<CustomFileJsonType> | null;
 }
 
+export interface CustomLinkURL {
+    url: string;
+}
+
+export type CustomLinkSchema = { data: CustomFileJsonType };
+
 export interface CustomFileIpc {
     fileType: "text" | "json";
     contents: Array<string> | Array<CustomFileJsonType> | string;
 }
 
 export type CustomFileJsonType = { uuid: string; blacklisted: boolean; tags: Array<{ tag: string; hex: string; singularTag?: boolean }> };
+
+export interface GameType {
+    last_server: string;
+}

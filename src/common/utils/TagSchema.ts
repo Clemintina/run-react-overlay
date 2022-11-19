@@ -49,7 +49,7 @@ export interface Run {
 
 export interface Boomza {
     sniper: TagColour;
-    hacker: TagColour;
+    cheater: TagColour;
 }
 
 export interface Hypixel {
@@ -61,6 +61,8 @@ export interface Keathiz {
     exits: {
         exits_total: TagColour;
     };
+    one_minute_requeue: TagColour,
+    consecutive: TagColour,
     queues: {
         queue_count: TagArray;
         queue_total: TagColour;

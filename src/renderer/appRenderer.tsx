@@ -1,10 +1,10 @@
 import React from "react";
-import {createRoot} from "react-dom/client";
-import {HashRouter, Route, Routes} from "react-router-dom";
+import { createRoot } from "react-dom/client";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import App from "@renderer/views/App";
-import {LogFileReader} from "@common/utils/LogFileReader";
+import { LogFileReader } from "@common/utils/LogFileReader";
 import "@assets/index.css";
-import {alpha, Box, createTheme, hexToRgb, ThemeOptions, ThemeProvider} from "@mui/material";
+import { alpha, Box, createTheme, hexToRgb, ThemeOptions, ThemeProvider } from "@mui/material";
 import Essentials from "@components/ui/settings/views/Essentials";
 import TagEditor from "@components/ui/settings/views/TagEditor";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
@@ -14,10 +14,10 @@ import NewTitlebar from "@components/ui/NewTitlebar";
 import ColumnEditorView from "@components/ui/settings/views/ColumnEditor";
 import Appearance from "@components/ui/settings/views/Appearance";
 import KeybindEditorView from "@components/ui/settings/views/KeybindEditor";
-import {KeybindHandlerUtils} from "@common/utils/KeybindHandler";
+import { KeybindHandlerUtils } from "@common/utils/KeybindHandler";
 import * as Sentry from "@sentry/react";
-import {BrowserTracing} from "@sentry/tracing";
-import {inDev} from "@common/helpers";
+import { BrowserTracing } from "@sentry/tracing";
+import { inDev } from "@common/helpers";
 import CustomLinks from "@components/ui/settings/views/CustomLinks";
 
 if (!inDev()) {

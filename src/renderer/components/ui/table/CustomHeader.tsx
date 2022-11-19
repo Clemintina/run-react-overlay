@@ -10,6 +10,7 @@ export default (props: ICustomHeader) => {
     const [ascSort, setAscSort] = useState("inactive");
     const [descSort, setDescSort] = useState("inactive");
     const [noSort, setNoSort] = useState("inactive");
+    const { textAlign } = useConfigStore((state) => ({ textAlign: state.table.settings.textAlign }));
 
     const onSortChanged = () => {
         setAscSort(props.column.isSortAscending() ? "active" : "inactive");
@@ -44,7 +45,7 @@ export default (props: ICustomHeader) => {
     }
 
     return (
-        <div style={{ textAlign: useConfigStore.getState().table.settings.textAlign }}>
+        <div style={{ textAlign }} className={"w-full"}>
             <div onClick={(event) => onSortRequested(ascSort == "active" ? "desc" : "asc", event)}>
                 <span>{props.displayName}</span>
                 {sort}

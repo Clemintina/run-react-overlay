@@ -1,16 +1,23 @@
 import React from "react";
-import {SettingCard} from "@components/user/settings/components/SettingCard";
-import {ToggleButton} from "@components/user/ToggleButton";
+import { SettingCard } from "@components/user/settings/components/SettingCard";
+import { ToggleButton } from "@components/user/ToggleButton";
 import NavigationBar from "@components/ui/settings/views/NavigationBar";
-import {Box, SxProps} from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
-import {CustomFileIpc, CustomLinkFile} from "@common/utils/Schemas";
-import {InputBoxButton} from "@components/user/InputBoxButton";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { CustomFileIpc, CustomLinkFile } from "@common/utils/Schemas";
+import { InputBoxButton } from "@components/user/InputBoxButton";
 import destr from "destr";
+import Typography from "@mui/material/Typography";
+import { UserAccordion } from "@components/user/UserAccordion";
+import { InputTextBox } from "@components/user/InputTextBox";
 
 const CustomLinks = () => {
-    const { settings, customFile } = useConfigStore((state) => ({ settings: state.settings, customFile: state.customFile }));
+    const { settings, customApi, customFile } = useConfigStore((state) => ({
+        settings: state.settings,
+        customApi: state.customApi,
+        customFile: state.customFile,
+    }));
     const styledProps: SxProps = {
         width: 0.98,
     };
@@ -106,16 +113,36 @@ const CustomLinks = () => {
                                     text={"Reload"}
                                     sx={styledProps}
                                 />
-                                {/*<ColourPicker className={'pl-2'} setColour={async (colour: string) => {
-                                    useTagStore.getState().setStore(
-                                        produce((state: any) => {
-                                            state.run.friends.colour = colour;
-                                        }),
-                                    );
-                                }} />*/}
                             </Box>
                         </div>
                     </SettingCard>
+                    <SettingCard>
+                        <span>Custom Blacklist API</span>
+                        <span />
+                        <ToggleButton
+                            onChange={async () => {
+                                useConfigStore.getState().setSettings({ ...settings, preferences: { ...settings.preferences, customUrl: !settings.preferences.customUrl } });
+                            }}
+                            options={{ enabled: settings.preferences.customUrl }}
+                        />
+                    </SettingCard>
+                    <Box style={settings.preferences.customUrl ? {} : { display: "none" }}>
+                        <InputTextBox initialValue={customApi.url} options={{ placeholder: "https://antisniper.seraph.si/api/v4/overlay/blacklist", label: { text: "Custom URL" } }} onBlur={(event) => useConfigStore.getState().setCustomApi({ url: event.currentTarget.value })} />
+                        <UserAccordion name={"Request Parameters"}>
+                            <div className={"grid grid-cols-2"}>
+                                <div className={"font-bold pb-2"}>URL Parameter</div>
+                                <div className={"font-bold pb-2"}>Overlay Equivalent</div>
+                                <Typography>{`{uuid}`}</Typography>
+                                <Typography>Player Uuid</Typography>
+                                <Typography>{`{name}`}</Typography>
+                                <Typography>Player Name</Typography>
+                                <Typography>{`{hypixelapikey}`}</Typography>
+                                <Typography>Include your Hypixel API Key</Typography>
+                                <Typography>{`{seraphapikey}`}</Typography>
+                                <Typography>Include your Seraph API Key</Typography>
+                            </div>
+                        </UserAccordion>
+                    </Box>
                 </Box>
             </NavigationBar>
         </div>

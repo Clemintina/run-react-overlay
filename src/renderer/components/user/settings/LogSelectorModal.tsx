@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/named
-import {Box, Fade, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography} from "@mui/material";
-import React, {useState} from "react";
-import {InputBoxButton} from "@components/user/InputBoxButton";
+import { Box, Fade, FormHelperText, InputLabel, Modal, SelectChangeEvent, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { InputBoxButton } from "@components/user/InputBoxButton";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {ClientSetting} from "@common/utils/Schemas";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { ClientSetting } from "@common/utils/Schemas";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 export interface LogSelectorModal {
     children: React.ReactElement | React.ReactElement[];
@@ -16,7 +16,11 @@ export interface LogSelectorModal {
 let label = "Select Log File";
 
 export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => {
-    const { logs, colours, error } = useConfigStore((state) => ({ logs: state.logs, colours: state.colours, error: state.error }));
+    const { logs, colours, error } = useConfigStore((state) => ({
+        logs: state.logs,
+        colours: state.colours,
+        error: state.error,
+    }));
     if (logs.clientName !== null && logs.clientName !== undefined) label = logs.clientName;
     const [open, setOpen] = React.useState<boolean>(false);
     const handleOpen = () => setOpen(true);

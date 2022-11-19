@@ -37,6 +37,9 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                                 <span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
                                     {player.hypixelPlayer.displayname}
                                 </span>
+                                <div style={player?.denicked ? { display: "" } : { display: "none" }}>
+                                    <span>{player.name}</span>
+                                </div>
                                 <div>
                                     <span className={"statistics-tooltip-inline"}>
                                         Games Played: <RenderCoreStatsColour player={player} stats={"gamesPlayed"} isTooltip={true} />

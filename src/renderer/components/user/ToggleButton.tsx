@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
-import React from "react";
+import React, { FC } from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import { styled, Switch, SwitchProps, Typography } from "@mui/material";
@@ -68,7 +68,7 @@ const AppleStyledSwitch = styled((props: SwitchProps) => <Switch focusVisibleCla
     },
 }));
 
-export const ToggleButton: React.ElementType = (props: ToggleButton) => {
+export const ToggleButton: FC<ToggleButton> = (props: ToggleButton) => {
     const CustomToolTip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
         [`& .${tooltipClasses.tooltip}`]: {
             backgroundColor: colours.backgroundColour,

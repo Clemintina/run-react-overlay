@@ -1,17 +1,18 @@
 import create from "zustand";
-import {Player} from "@common/utils/PlayerUtils";
-import {Components} from "@common/zikeji";
-import {Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList} from "@common/utils/externalapis/RunApi";
-import {BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, {ConfigStore} from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
-import {CustomFileJsonType} from "@common/utils/Schemas";
+import { Player } from "@common/utils/PlayerUtils";
+import { Components } from "@common/zikeji";
+import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
+import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { CustomFileJsonType } from "@common/utils/Schemas";
 
 export type PlayerStore = {
     players: Array<Player>;
     addPlayer: (username) => void;
     removePlayer: (username) => void;
     updatePlayers: () => void;
+    updatePlayerState: (player: Player) => void;
     clearPlayers: () => void;
     setStore: (store) => void;
     party: {
@@ -43,6 +44,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             hypixelFriends: null,
             hypixelFriendsMutuals: null,
             denicked: false,
+            last_updated: new Date().getTime(),
             sources: {
                 runApi: null,
             },
@@ -66,8 +68,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
         }
 
         try {
-            const ipcHypixelPlayer = playerData.name.length <= 16 ? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name]) : await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", "")]);
-
+            const ipcHypixelPlayer =
+                playerData.name.length <= 16
+                    ? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name, useConfigStore.getState().hypixel.proxy ? "sdad" : undefined])
+                    : await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", ""), useConfigStore.getState().hypixel.proxy ? "dsadas" : undefined]);
             if (ipcHypixelPlayer?.data?.uuid == null && configStore?.settings?.keathiz) {
                 const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.DENICK, playerData.name, keathizApiKey]);
                 if (ipcKeathizDenicker.data?.player?.uuid) {
@@ -88,7 +92,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     cause = "Player is not valid on Hypixel!";
                     code = 200;
                 }
-                if (ipcHypixelPlayer.status == 403) {
+                if (ipcHypixelPlayer.status == 403 && cause != "Too many invalid API keys") {
                     useConfigStore.getState().setErrorMessage({
                         code: 403,
                         title: "Invalid Hypixel Key",
@@ -103,7 +107,16 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                             apiKeyValid: false,
                         },
                     });
+                } else if (cause == "Too many invalid API keys") {
+                    useConfigStore.getState().setErrorMessage({
+                        code: 403,
+                        title: "Too many invalid API keys",
+                        cause: "Too many invalid API keys",
+                        detail: "Too many invalid API keys. This is an unknown error.",
+                        referenceId: "HYPIXEL_KEY_INVALID_KEYS",
+                    });
                 }
+
                 playerObject.status = code;
                 playerData.nicked = true;
                 playerObject.cause = cause;
@@ -117,7 +130,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
             playerObject.data = playerData;
             const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-
             if (exists == -1) {
                 set((state) => ({
                     players: [...state.players, playerObject.data],
@@ -150,63 +162,63 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             const [runApi] = await Promise.all([getRunApi(playerData)]);
             playerData.sources.runApi = runApi;
             playerObject.data = playerData;
-
-            const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-            if (exists != -1) {
-                set((state) => {
-                    const playerArr = [...state.players];
-                    playerArr[exists] = playerObject.data;
-                    return {
-                        players: playerArr,
-                    };
-                });
-            }
+            get().updatePlayerState(playerData);
 
             if (runApi.status == 200) {
-                playerData.loaded = true;
                 playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
-                if (!playerData.bot) {
-                    const [boomza, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
-                    playerData.sources.boomza = boomza;
-                    playerData.sources.lunar = lunarApi;
-                    playerData.hypixelFriends = hypixelFriends;
-                    playerData.hypixelGuild = hypixelGuild;
 
-                    const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-                    if (exists != -1) {
-                        set((state) => {
-                            const playerArr = [...state.players];
-                            playerArr[exists] = playerObject.data;
-                            return {
-                                players: playerArr,
-                            };
-                        });
-                    }
-
-                    const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
-                    playerData.sources.keathiz = keathizApi;
+                if (!playerData.bot && !playerData.sources.runApi.data.data.blacklist.tagged) {
+                    get().updatePlayerState(playerData);
 
                     if (configStore.settings.preferences.customFile) {
                         const customFile = configStore.customFile;
                         if (customFile.data != null) {
                             if (typeof customFile?.data[0] === "string") {
                                 const datum = customFile.data as string[];
-                                if (datum.includes(playerData.name)) {
-                                    playerData.sources.runApi.data.data.blacklist.tagged = true;
-                                }
+                                datum.map(async (player) => {
+                                    if (player.toLowerCase() == playerData.name.toLowerCase()) {
+                                        if (playerData.sources.runApi != null) {
+                                            playerData.sources.runApi.data.data.blacklist.tagged = true;
+                                            playerData.sources.runApi.data.data.blacklist.reason = "Blacklist File";
+                                        }
+                                    }
+                                });
                             } else {
                                 const datum = customFile.data as Array<CustomFileJsonType>;
-                                datum.map((player) => {
+                                datum.map(async (player) => {
                                     if (player.uuid == playerData.hypixelPlayer?.uuid) {
                                         playerData.sources.customFile = player;
                                         if (playerData.sources.runApi != null) {
                                             playerData.sources.runApi.data.data.blacklist.tagged = player.blacklisted;
+                                            playerData.sources.runApi.data.data.blacklist.reason = "Blacklist File";
                                         }
                                     }
                                 });
                             }
                         }
                     }
+
+                    if (configStore.settings.preferences.customUrl) {
+                        const [custom_api] = await Promise.all([getCustomApi(playerData)]);
+                        if (custom_api.data != null) {
+                            const data = custom_api.data;
+                            if (data.blacklisted) {
+                                playerData.sources.runApi.data.data.blacklist.tagged = true;
+                            }
+                            playerData.sources.customApi = data;
+                        }
+                    }
+
+                    const [boomza, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
+                    playerData.sources.boomza = boomza;
+                    playerData.sources.lunar = lunarApi;
+                    playerData.hypixelFriends = hypixelFriends;
+                    playerData.hypixelGuild = hypixelGuild;
+
+                    get().updatePlayerState(playerData);
+
+                    const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
+                    playerData.sources.keathiz = keathizApi;
                 }
             } else {
                 if (runApi.status == 403) {
@@ -225,17 +237,15 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
             }
         }
 
-        playerObject.data = playerData;
-        const exists = get().players.findIndex((player) => player.name == playerObject.data.name);
-        if (exists != -1) {
-            set((state) => {
-                const playerArr = [...state.players];
-                playerArr[exists] = playerObject.data;
-                return {
-                    players: playerArr,
-                };
-            });
+        if (!playerData.nicked) {
+            if (playerData.name == playerData.hypixelPlayer!.uuid) {
+                playerData.name = playerData.hypixelPlayer!.displayname.toLowerCase();
+            }
         }
+
+        playerData.loaded = true;
+        playerObject.data = playerData;
+        get().updatePlayerState(playerData);
         await get().updatePlayers();
     },
     removePlayer: async (username: string) => {
@@ -272,18 +282,18 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     }
                 }
                 if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
-                    const p1Friends = player.hypixelFriends.data;
+                    const p1Friends = player?.hypixelFriends?.data;
                     if (p1Friends !== undefined) {
                         for (const friendUuid of p1Friends) {
                             for (const statePlayers of storedPlayers) {
-                                if (statePlayers.hypixelPlayer !== null && statePlayers.hypixelPlayer !== undefined) {
-                                    if (friendUuid.uuidReceiver === player.hypixelPlayer.uuid) {
-                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidSender.includes(statePlayers.hypixelPlayer.uuid)) {
+                                if (statePlayers?.hypixelPlayer !== null && statePlayers?.hypixelPlayer !== undefined) {
+                                    if (friendUuid?.uuidReceiver === player?.hypixelPlayer?.uuid) {
+                                        if (statePlayers?.hypixelPlayer?.uuid !== undefined && friendUuid?.uuidSender?.includes(statePlayers?.hypixelPlayer?.uuid ?? "")) {
                                             player.friended = true;
                                             statePlayers.friended = true;
                                         }
                                     } else {
-                                        if (statePlayers.hypixelPlayer.uuid !== undefined && friendUuid?.uuidReceiver.includes(statePlayers.hypixelPlayer.uuid)) {
+                                        if (statePlayers?.hypixelPlayer?.uuid !== undefined && friendUuid?.uuidReceiver?.includes(statePlayers?.hypixelPlayer?.uuid ?? "")) {
                                             player.friended = true;
                                             statePlayers.friended = true;
                                         }
@@ -297,6 +307,18 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
                     }
                 }
             }
+        }
+    },
+    updatePlayerState: async (playerObject: Player) => {
+        const exists = get().players.findIndex((player) => player.name == playerObject.name);
+        if (exists != -1) {
+            set((state) => {
+                const playerArr = [...state.players];
+                playerArr[exists] = playerObject;
+                return {
+                    players: playerArr,
+                };
+            });
         }
     },
     setStore: (store) => set(store),
@@ -322,6 +344,39 @@ const getBoomza = async (player: Player) => {
         };
     }
     return new Promise<IPCResponse<BoomzaAntisniper>>((resolve) => resolve(api));
+};
+
+const getCustomApi = async (player: Player) => {
+    let api: IPCResponse<CustomFileJsonType>;
+    if (player.hypixelPlayer?.displayname && useConfigStore.getState().settings.preferences.customUrl) {
+        let url = useConfigStore.getState().customApi.url.toLowerCase() + "&requesttype=seraphoverlay";
+
+        if (url.match(/({uuid})/gi)) {
+            url = url.replaceAll(/({uuid})/gi, player.hypixelPlayer.uuid);
+        }
+        if (url.match(/({name})/gi)) {
+            url = url.replaceAll(/({name})/gi, player.hypixelPlayer.displayname);
+        }
+        if (url.match(/({hypixelapikey})/gi)) {
+            url = url.replaceAll(/({hypixelapikey})/gi, useConfigStore.getState().hypixel.apiKey);
+        }
+        if (url.match(/({seraphapikey})/gi)) {
+            url = url.replaceAll(/({seraphapikey})/gi, useConfigStore.getState().run.apiKey);
+        }
+
+        url = url.trim();
+        api = await window.ipcRenderer.invoke<CustomFileJsonType>(IpcValidInvokeChannels.CUSTOM_URL, [url]);
+    } else {
+        api = {
+            data: {
+                uuid: player.hypixelPlayer?.uuid ?? "",
+                blacklisted: false,
+                tags: [],
+            },
+            status: 200,
+        };
+    }
+    return new Promise<IPCResponse<CustomFileJsonType>>((resolve) => resolve(api));
 };
 
 const getRunApi = async (player: Player) => {
@@ -494,7 +549,7 @@ const getHypixelFriends = async (player: Player) => {
     let api;
     if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.run.friends) {
         const state = useConfigStore.getState();
-        api = await window.ipcRenderer.invoke("hypixel", RequestType.FRIENDS, player.hypixelPlayer.uuid, state.hypixel.apiKey);
+        api = await window.ipcRenderer.invoke(IpcValidInvokeChannels.HYPIXEL, [RequestType.FRIENDS, player.hypixelPlayer.uuid, state.hypixel.apiKey]);
     } else {
         api = {
             data: [],

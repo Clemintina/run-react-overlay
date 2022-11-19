@@ -1,26 +1,20 @@
 // eslint-disable-next-line import/named
-import {ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowNode, SortChangedEvent} from "ag-grid-community";
+import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowNode, SortChangedEvent } from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
-import React, {useEffect} from "react";
-import {Player, PlayerUtils} from "@common/utils/PlayerUtils";
-import {AgGridReact} from "ag-grid-react";
-import {assertDefaultError} from "@common/helpers";
+import React, { useEffect } from "react";
+import { Player, PlayerUtils } from "@common/utils/PlayerUtils";
+import { AgGridReact } from "ag-grid-react";
+import { assertDefaultError } from "@common/helpers";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import PlayerName from "@common/utils/player/PlayerName";
-import PlayerStar from "@common/utils/player/PlayerStar";
-import PlayerTags from "@common/utils/player/PlayerTags";
-import PlayerWinstreak from "@common/utils/player/PlayerWinstreak";
 import RenderRatioColour from "@common/utils/player/RenderRatioColour";
 import RenderCoreStatsColour from "@common/utils/player/RenderCoreStatsColour";
-import PlayerHead from "@common/utils/player/PlayerHead";
-import PlayerSession from "@common/utils/player/PlayerSession";
-import {Box} from "@mui/material";
-import PlayerGuild from "@common/utils/player/PlayerGuild";
+import { Box } from "@mui/material";
 import CustomHeader from "@components/ui/table/CustomHeader";
-import {Interweave} from "interweave";
-import {AppInformation} from "@common/utils/Schemas";
+import { Interweave } from "interweave";
+import { AppInformation } from "@common/utils/Schemas";
+import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@common/utils/player/PlayerComponents";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;
@@ -34,35 +28,35 @@ export const defaultColDefBase: ColDef<Player> = {
     headerComponent: "agColumnHeader",
 };
 
-export const columnDefsBase: ColDef[] = [
+export const columnDefsBase: ColDef<Player>[] = [
     {
         field: "head",
         sortable: false,
-        cellRenderer: ({ data }) => <PlayerHead player={data} />,
+        cellRenderer: ({ data }) => <PlayerHeadComponent player={data} />,
     },
     {
         field: "star",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
-        cellRenderer: ({ data }) => <PlayerStar player={data} />,
+        cellRenderer: ({ data }) => <PlayerStarComponent player={data} />,
     },
     {
         field: "name",
         type: "string",
         minWidth: 150,
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
-        cellRenderer: ({ data }) => <PlayerName player={data} isOverlayStats={false} />,
+        cellRenderer: ({ data }) => <PlayerNameComponent player={data} />,
     },
     {
         field: "tags",
-        cellRenderer: ({ data }) => <PlayerTags player={data} />,
+        cellRenderer: ({ data }) => <PlayerTagsComponent player={data} />,
         sortable: false,
     },
     {
         field: "WS",
         type: "number",
         comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
-        cellRenderer: ({ data }) => <PlayerWinstreak player={data} />,
+        cellRenderer: ({ data }) => <PlayerWinstreakComponent player={data} />,
     },
     {
         field: "FKDR",
@@ -113,14 +107,14 @@ export const columnDefsBase: ColDef[] = [
         field: "session",
         type: "number",
         sortable: false,
-        cellRenderer: ({ data }) => <PlayerSession player={data} />,
+        cellRenderer: ({ data }) => <PlayerSessionComponent player={data} />,
     },
     {
         field: "guild",
         type: "string",
         sortable: false,
         hide: true,
-        cellRenderer: ({ data }) => <PlayerGuild player={data} />,
+        cellRenderer: ({ data }) => <PlayerGuildComponent player={data} />,
     },
     {
         field: "first_login",
@@ -194,9 +188,11 @@ window.ipcRenderer.on("updater", async (event, args) => {
     }
 });
 
-// a2db40d5-d629-4042-9d1a-6963b2a7e000
-const AppTable = () => {
-    const { columnState, table } = useConfigStore((state) => ({ columnState: state.table.columnState, table: state.table }));
+export default () => {
+    const { columnState, table } = useConfigStore((state) => ({
+        columnState: state.table.columnState,
+        table: state.table,
+    }));
     const { players } = usePlayerStore((state) => ({ players: state.players }));
 
     let onGridReady = false;
@@ -209,6 +205,10 @@ const AppTable = () => {
     const defaultColDef = { ...defaultColDefBase };
 
     const columnDefs = [...columnDefsBase];
+
+    const frameworkComponents = {
+        agColumnHeader: CustomHeader,
+    };
 
     const onSaveGridColumnState = (e: ColumnApi) => {
         const columnState = e.getColumnState();
@@ -250,11 +250,8 @@ const AppTable = () => {
         suppressCellFocus: true,
         suppressChangeDetection: false,
         overlayNoRowsTemplate: "No Players",
+        components: frameworkComponents,
         getRowId: (params: GetRowIdParams<Player>) => params.data.name,
-    };
-
-    const frameworkComponents = {
-        agColumnHeader: CustomHeader,
     };
 
     return (
@@ -267,5 +264,3 @@ const AppTable = () => {
         </Box>
     );
 };
-
-export default AppTable;

@@ -1,5 +1,8 @@
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {KeathizEndpoints} from "./externalapis/BoomzaApi";
+import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { KeathizEndpoints } from "./externalapis/BoomzaApi";
+import { KeybindInterface } from "@common/utils/Schemas";
+import { Components } from "@common/zikeji";
+import Player = Components.Schemas.Player;
 
 /**
  * Adds intellisense to each IpcRenderer
@@ -13,7 +16,7 @@ export type IPCValidOnChannels = typeof IPCValidOnArray[number];
 const IPCValidSendArray = ["logFileSet", "windowToggle", "windowMinimise", "windowMaximise", "windowClose", "openExternal"] as const;
 export type IPCValidSendChannels = typeof IPCValidSendArray[number];
 
-enum IpcValidInvokeChannels {
+export enum IpcValidInvokeChannels {
     HYPIXEL = "hypixel",
     GLOBAL_KEYBINDS = "registerGlobalKeybinds",
     SERAPH = "seraph",
@@ -33,9 +36,10 @@ enum IpcValidInvokeChannels {
     ASTOLFO = "astolfo",
     OPEN_LINK = "openlink",
     READ_FILE = "readFile",
+    CUSTOM_URL = "customUrl",
 }
 
-enum IpcValidSendChannels {
+export enum IpcValidSendChannels {
     LOG_FILE_SET = "logFileSet",
     WINDOW_TOGGLE = "windowToggle",
     WINDOW_MINIMISE = "windowMinimise",
@@ -44,8 +48,8 @@ enum IpcValidSendChannels {
     OPEN_EXTERNAL = "openExternal",
 }
 
-export interface IpcChannelMap {
-    [IpcValidInvokeChannels.HYPIXEL]: [resource: RequestType, apiKey: string, name?: string | null];
+export type IpcChannelMap = {
+    [IpcValidInvokeChannels.HYPIXEL]: [resource: RequestType, apiKey: string, name?: string | null, proxy?: string | undefined];
     [IpcValidInvokeChannels.MCUTILS]: [resource: RequestType, name: string];
     [IpcValidInvokeChannels.SERAPH]: [endpoint: RunEndpoints, uuid: string, hypixelApiKey: string, hypixelApiKeyOwner: string, runApiKey: string, overlayUuid: string];
     [IpcValidInvokeChannels.IS_FILE_READABLE]: [path: string];
@@ -57,13 +61,14 @@ export interface IpcChannelMap {
     [IpcValidInvokeChannels.GET_FILE_PATH]: [request: string];
     [IpcValidInvokeChannels.NOTIFICATIONS]: [message: string, subtitle: string | undefined];
     [IpcValidInvokeChannels.OPEN_LINK]: [link: string];
-    [IpcValidInvokeChannels.GLOBAL_KEYBINDS]: [];
+    [IpcValidInvokeChannels.GLOBAL_KEYBINDS]: KeybindInterface[];
     [IpcValidInvokeChannels.ASTOLFO]: [];
     [IpcValidInvokeChannels.IS_ADMIN]: [];
     [IpcValidInvokeChannels.AUTOLOG]: [];
     [IpcValidInvokeChannels.SELECT_LOG_FILE]: [filters: Array<{ name: string; extensions: Array<string> }>, cwd?: string];
     [IpcValidInvokeChannels.GET_APP_INFO]: [];
     [IpcValidInvokeChannels.READ_FILE]: [path: string];
+    [IpcValidInvokeChannels.CUSTOM_URL]: [url: string];
 
     [IpcValidSendChannels.LOG_FILE_SET]: [path: string];
     [IpcValidSendChannels.WINDOW_TOGGLE]: [];
@@ -71,18 +76,6 @@ export interface IpcChannelMap {
     [IpcValidSendChannels.WINDOW_MAXIMISE]: [];
     [IpcValidSendChannels.WINDOW_CLOSE]: [];
     [IpcValidSendChannels.OPEN_EXTERNAL]: [filePath: "config_file" | "tag_file"];
-}
+};
 
-class IpcRendererExtension<ChannelMap> {
-    public async send(channel: keyof ChannelMap, ...args: ChannelMap[typeof channel][]): Promise<void> {
-        window.ipcRenderer.send(channel.toString(), ...args);
-    }
-
-    public async on(channel: keyof ChannelMap, fn: (event, ...args: string[] | unknown[]) => void) {
-        window.ipcRenderer.on(channel.toString(), fn);
-    }
-}
-
-const ipcRendererExtension = new IpcRendererExtension<IpcChannelMap>();
-
-export { ipcRendererExtension, IpcValidInvokeChannels };
+// await window.ipcRenderer.invoke<Player>( IpcValidInvokeChannels.HYPIXEL, [ RequestType.KEY,'' ] );

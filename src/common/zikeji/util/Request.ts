@@ -1,7 +1,8 @@
 import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import type { DefaultMeta, RequestOptions } from "../Client";
 import { Components } from "../types/api";
-import axios from "axios";
+import axios, { AxiosRequestConfig, CreateAxiosDefaults } from "axios";
+import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTimes";
 
 /** @internal */
 const CACHE_CONTROL_REGEX = /s-maxage=(\d+)/;
@@ -9,7 +10,7 @@ const CACHE_CONTROL_REGEX = /s-maxage=(\d+)/;
 /** @internal */
 export const request = async <T extends Components.Schemas.ApiSuccess & { cause?: string } & { cloudflareCache?: DefaultMeta["cloudflareCache"] }>(options: RequestOptions): Promise<T> => {
     let axiosError: Error;
-    const axiosClient = axios.create({
+    const axiosConfig: CreateAxiosDefaults = {
         headers: {
             "Content-Type": "application/json",
             "User-Agent": options.userAgent,
@@ -18,7 +19,13 @@ export const request = async <T extends Components.Schemas.ApiSuccess & { cause?
         timeout: options.timeout,
         timeoutErrorMessage: JSON.stringify({ status: 408, data: { success: false } }),
         validateStatus: () => true,
-    });
+    };
+
+    if (options.proxy) {
+        axiosConfig.httpsAgent = options.proxy;
+    }
+
+    const axiosClient = axios.create(axiosConfig);
     const axiosResponse = await axiosClient.get(options.url);
 
     if (!options.noRateLimit) {
@@ -35,9 +42,17 @@ export const request = async <T extends Components.Schemas.ApiSuccess & { cause?
 
     if (axiosResponse.status !== 200) {
         if (axiosResponse.status === 429) {
-            axiosError = new RateLimitError(`Hit key throttle.`);
+            if (axiosResponse.data.cause === "You have already looked up this name recently") {
+                axiosError = new RequestedTooManyTimes(`This player has been requested too many times!`);
+            } else {
+                axiosError = new RateLimitError(`Hit key throttle.`);
+            }
         } else if (axiosResponse.status === 403) {
-            axiosError = new InvalidKeyError("Invalid Hypixel API Key");
+            if (axiosResponse.data.cause == "Too many invalid API keys") {
+                axiosError = new GenericHTTPError(axiosResponse.status, axiosResponse.data.cause);
+            } else {
+                axiosError = new InvalidKeyError("Invalid Hypixel API Key");
+            }
         } else if (responseObject?.cause) {
             axiosError = new GenericHTTPError(axiosResponse.status, responseObject.cause);
         } else {

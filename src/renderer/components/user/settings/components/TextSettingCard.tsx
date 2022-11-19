@@ -1,5 +1,5 @@
 import React from "react";
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 
 export interface TextSettingCard {
     children: React.ReactElement | React.ReactElement[];

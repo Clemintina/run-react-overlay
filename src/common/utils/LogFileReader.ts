@@ -1,9 +1,11 @@
-import {IPCResponse, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {Player} from "@common/utils/PlayerUtils";
+import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import axios from "axios";
+import { removeMinecraftFormatting } from "@common/zikeji";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export interface LogFileMessage {
@@ -38,10 +40,12 @@ export class LogFileReader {
 
     public startListHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = readLogLine(data);
-            if (line.includes("Sending you to")) {
-                await clearOverlayTable();
-            } else if (line.includes(" ONLINE: ")) {
+            const line = readLogLine(data, true);
+            const textOnly = line.split("[CHAT] ")[1];
+            if (line.includes("Sending you to") || textOnly.match(/^\s{37}/) || textOnly.match(/^(§a)?You have (§b)?(\d{1,4}) (§a)?unclaimed leveling reward(s)?!$/gi) || textOnly.match(/^(§a)?You have (§6)?(\d{1,4}) (§a)?unclaimed achievement reward(s)?!$/gi)) {
+                clearOverlayTable();
+            }
+            if (line.includes(" ONLINE: ")) {
                 const players = line.split(" [CHAT] ONLINE: ")[1].split(", ");
                 clearOverlayTable();
                 if (useConfigStore.getState().settings.preferences.autoHide) window.ipcRenderer.send("windowMaximise");
@@ -49,7 +53,8 @@ export class LogFileReader {
                     if (player.includes("(") || player.includes("[")) return;
                     addPlayer(player);
                 });
-            } else if (line.includes("Online Players (")) {
+            }
+            if (line.includes("Online Players (")) {
                 const players = line.split("Online Players (")[1].split(")");
                 players.shift();
                 const playerNames = players[0].split(", ");
@@ -59,12 +64,16 @@ export class LogFileReader {
                     addPlayer(name);
                 });
             }
+            if (line.includes("Sending you to")) {
+                const server_id = line.split("Sending you to")[1].replace("!", "");
+                useConfigStore.getState().setGame({ last_server: server_id });
+            }
         });
     };
 
     public startSeraphHandler = async () => {
         await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
-            const line = readLogLine(data);
+            const line = readLogLine(data, true);
             if (line.includes("FINAL KILL!")) {
                 const lineTemp = line.toString().substring(line.indexOf("[CHAT]"), line.length).replace("[CHAT] ", "");
                 const final_ign = lineTemp.split(" ")[0];
@@ -74,6 +83,22 @@ export class LogFileReader {
                 if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
                     await window.ipcRenderer.invoke(IpcValidInvokeChannels.SERAPH, [RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner]);
                 }
+            }
+            if (line.includes("Protect your bed and destroy the enemy beds.")) {
+                const players = usePlayerStore.getState().players;
+                const uuid_array: Array<string> = [];
+
+                players.map((player) => {
+                    if (!player.nicked && player.hypixelPlayer != undefined) uuid_array.push(player.hypixelPlayer.uuid);
+                });
+                const playerData: PlayerData = {
+                    data: {
+                        queue: uuid_array,
+                        server: useConfigStore.getState().game.last_server,
+                    },
+                };
+
+                if (uuid_array.length >= 1) postData(playerData);
             }
         });
     };
@@ -134,8 +159,8 @@ export class LogFileReader {
                     // Party List (Leader)
                     const playerRank = line.match(/Party Leader: (\S.*)/);
                     if (playerRank?.length === 2) {
-                        let players = line.match(/(?<=: )(.*?)(?= \?)/);
-                        if (players != null) {
+                        let players: string[] | null = line.match(/(?<=: )(.*?)(?= \?)/);
+                        if (players) {
                             players = players[0].split(" ");
                             addPlayer(players[players.length - 1]);
                         }
@@ -205,17 +230,45 @@ const removePlayer = async (username: string) => {
     usePlayerStore.getState().removePlayer(username);
 };
 
+type PlayerData = { data: { queue: Array<string>; server: string } };
+
 const clearOverlayTable = async () => {
+    const players = usePlayerStore.getState().players;
+    const uuid_array: Array<string> = [];
+
+    players.map((player) => {
+        if (!player.nicked && player.hypixelPlayer != undefined) uuid_array.push(player.hypixelPlayer.uuid);
+    });
     usePlayerStore.getState().clearPlayers();
+
+    const playerData: PlayerData = {
+        data: {
+            queue: uuid_array,
+            server: useConfigStore.getState().game.last_server,
+        },
+    };
+
+    if (uuid_array.length >= 1) postData(playerData);
 };
 
-const readLogLine = (data: string) => {
+const readLogLine = (data: string, sanitise?: boolean) => {
     const response: IPCResponse<LogFileMessage> = destr(data);
     if (typeof response === "object") {
         if (!response.data.message.includes("[CHAT]")) {
             return `[17:46:23] [Client thread/INFO]: [CHAT] ${response.data.message}`.replaceAll("%20", " ");
         }
+        if (sanitise) {
+            return removeMinecraftFormatting(response.data.message.replaceAll("�", "§"));
+        }
         return response.data.message;
     }
     return "";
+};
+
+const postData = async (playerData: PlayerData) => {
+    await axios.post("https://queues.seraph.si/v1/queue", playerData);
+};
+
+const sanitiseLine = (line: string) => {
+    return removeMinecraftFormatting(line);
 };

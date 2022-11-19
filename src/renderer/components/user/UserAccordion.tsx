@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import "@assets/scss/titlebar.scss";
 import "@assets/scss/settings.scss";
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
@@ -9,7 +9,7 @@ export interface UserAccordion {
     children: JSX.Element | JSX.Element[];
 }
 
-export const UserAccordion = (props: UserAccordion) => {
+export const UserAccordion: FC<UserAccordion> = (props: UserAccordion) => {
     return (
         <div>
             <Accordion>

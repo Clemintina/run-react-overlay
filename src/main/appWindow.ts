@@ -1,27 +1,29 @@
-import {app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell} from "electron";
-import {registerTitlebarIpc} from "@misc/window/titlebarIPC";
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell } from "electron";
+import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
 import path from "path";
-import axios, {AxiosRequestConfig} from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import fs from "fs";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
-import cacheManager from "cache-manager";
+import { caching, MemoryCache } from "cache-manager";
 import Store from "electron-store";
-import {getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType} from "@renderer/store/ElectronStoreUtils";
-import {RequestType, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {HypixelApi} from "./HypixelApi";
+import { getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
+import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { HypixelApi } from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
-import {BoomzaAntisniper, KeathizEndpoints} from "@common/utils/externalapis/BoomzaApi";
-import {AppInformation, CustomFileIpc, ProxyStore, ProxyType} from "@common/utils/Schemas";
+import { BoomzaAntisniper, KeathizEndpoints } from "@common/utils/externalapis/BoomzaApi";
+import { AppInformation, CustomFileIpc, CustomFileJsonType, ProxyStore, ProxyType } from "@common/utils/Schemas";
 import * as tunnel from "tunnel";
-import {handleIPCSend} from "@main/Utils";
+import { handleIPCSend } from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
-import {LogFileMessage} from "@common/utils/LogFileReader";
-import {GenericHTTPError, InvalidKeyError, RateLimitError} from "@common/zikeji";
+import { LogFileMessage } from "@common/utils/LogFileReader";
+import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
+import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTimes";
+import { Agent } from "https";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 // Electron Forge automatically creates these entry points
@@ -29,12 +31,17 @@ declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 /** Overlay Variables */
 const overlayVersion = app.getVersion();
+const headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "User-Agent": `seraph-overlay-${overlayVersion}`,
+};
 const registeredGlobalKeybinds = new Set<string>();
+const startTimestamp = new Date();
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
-const playerCache = cacheManager.caching({ ttl: 60 * 5, store: "memory" });
-const mojangCache = cacheManager.caching({ ttl: 60000, store: "memory" });
+let playerCache: MemoryCache;
 /**
  * Checks if the app is running in Production or Development
  */
@@ -166,7 +173,7 @@ export const createAppWindow = (): BrowserWindow => {
             });
     }
 
-    appWindow.on("ready-to-show", () => {
+    appWindow.on("ready-to-show", async () => {
         if (!isDevelopment && updates) {
             if (!require("electron-squirrel-startup") && process.platform === "win32") {
                 const autoUpdater = new AppUpdater().getAutoUpdater();
@@ -202,6 +209,7 @@ export const createAppWindow = (): BrowserWindow => {
                 console.log("Express started");
             });
         }
+        playerCache = await caching("memory", { ttl: 120 * 5 });
     });
 
     registerMainIPC();
@@ -237,23 +245,17 @@ const registerSeraphIPC = () => {
         const resource = args[0] as string;
         const apiKey = args[1] as string;
         let playerName: string = "" as string;
-        if (args[2] != undefined) playerName = args[2] as string;
+        console.log(args[3]);
+        let proxyHypxiel: { proxy: Agent } | {} =
+            args[3] != undefined
+                ? {
+                    proxy: getProxyChannel(),
+                }
+                : {};
+        if (args[2] != undefined) playerName = args[2].toLowerCase() as string;
         const hypixelClient = new HypixelApi(apiKey, {
-            cache: {
-                get(key) {
-                    return playerCache.get(`hypixel:${key}`);
-                },
-                set(key: `hypixel:${string}`, value: never) {
-                    let ttl = 300;
-                    if (key.startsWith("player:")) {
-                        ttl = 600;
-                    } else if (key.startsWith("key")) {
-                        ttl = 30;
-                    }
-                    return playerCache.set(`hypixel:${key}`, value, { ttl });
-                },
-            },
-            userAgent: "Run-Bedwars-React-Overlay-" + overlayVersion,
+            ...proxyHypxiel,
+            cache: playerCache,
             retries: 4,
             timeout: 7200,
         });
@@ -267,8 +269,8 @@ const registerSeraphIPC = () => {
                 return getErrorHandler(e);
             }
         } else if (resource === RequestType.USERNAME) {
-            const uuid: string | undefined = await mojangCache.get(`mojang:${playerName}`);
-            if (uuid !== undefined || playerName.length == 32) {
+            const uuid: string | undefined = await playerCache.get(`mojang:${playerName}`);
+            if (playerName.length == 32 || uuid?.length == 32) {
                 try {
                     return await hypixelClient.getClient().player.uuid(uuid ?? playerName);
                 } catch (e) {
@@ -276,13 +278,40 @@ const registerSeraphIPC = () => {
                 }
             } else {
                 try {
-                    const res = await hypixelClient.getClient().player.username(playerName);
+                    const res = await hypixelClient.getClient().player.username(uuid ?? playerName);
                     if (res?.data?.uuid) {
-                        await mojangCache.set(`mojang:${playerName}`, res.data.uuid);
+                        await playerCache.set(`mojang:${playerName}`, res.data.uuid);
                     }
                     return res;
                 } catch (e) {
-                    return getErrorHandler(e);
+                    if (e instanceof RequestedTooManyTimes) {
+                        try {
+                            const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${playerName}`, {
+                                headers: {
+                                    Accept: "application/json",
+                                },
+                            });
+                            if (response.data.code != "player.found") {
+                                return { data: null, status: response.status };
+                            }
+                            try {
+                                const res = await hypixelClient.getClient().player.uuid(response.data.data.player.raw_id);
+                                if (res.data.displayname.toLowerCase() != playerName) {
+                                    return { data: null, status: 400 };
+                                }
+                                if (res?.data?.uuid) {
+                                    await playerCache.set(`mojang:${playerName}`, res.data.uuid);
+                                }
+                                return res;
+                            } catch (e) {
+                                return getErrorHandler(e);
+                            }
+                        } catch (e) {
+                            return { data: null, status: 400 };
+                        }
+                    } else {
+                        return getErrorHandler(e);
+                    }
                 }
             }
         } else if (resource === RequestType.UUID) {
@@ -323,7 +352,7 @@ const registerSeraphIPC = () => {
                 break;
         }
         try {
-            const response = await axiosClient(url);
+            const response = await axiosClient(url, { headers });
             return { data: response.data, status: response.status };
         } catch (e) {
             return { data: null, status: 400 };
@@ -340,9 +369,7 @@ const registerSeraphIPC = () => {
         if (endpoint === RunEndpoints.KEY) {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/key`, {
                 headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+                    ...headers,
                     "Run-API-Version": overlayVersion,
                     "RUN-API-Key": runApiKey,
                     "run-api-uuid": overlayUuid,
@@ -350,29 +377,15 @@ const registerSeraphIPC = () => {
             });
             return { data: response.data, status: response.status };
         } else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
-            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
-                },
-            });
+            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, { headers });
             return { data: response.data.data, status: response.status };
         } else if (endpoint == RunEndpoints.DENICKER) {
-            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}/${uuid}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
-                },
-            });
+            const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}/${uuid}`, { headers });
             return { data: response.data, status: response.status };
         } else {
             const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
                 headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+                    ...headers,
                     "API-Key": hypixelApiKey,
                     "API-Key-Owner": hypixelApiKeyOwner,
                     "Run-API-Key": runApiKey,
@@ -386,7 +399,7 @@ const registerSeraphIPC = () => {
 
     ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, args: string[]) => {
         const uuid = args[0];
-        const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`);
+        const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`, { headers });
         return { status: response.status, data: response.data };
     });
 
@@ -397,9 +410,7 @@ const registerSeraphIPC = () => {
 
         await axiosClient.post("https://antisniper.seraph.si/api/v4/contact", destr(args[0]), {
             headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "User-Agent": "Run-Bedwars-Overlay-" + overlayVersion,
+                ...headers,
                 "API-Key": hypixelApiKey,
                 "API-Key-Owner": hypixelApiKeyOwner,
                 "Run-API-Key": runApiKey,
@@ -413,7 +424,6 @@ const registerSeraphIPC = () => {
 /**
  * Register Store Inter Process Communication
  */
-
 const registerElectronStore = () => {
     ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
         electronStore.set(data.key, data.data);
@@ -474,7 +484,7 @@ const registerLogCommunications = () => {
         };
     });
 
-    ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, args: string[]) => {
+    ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, ...args) => {
         const path = args[0];
         electronStore.set("overlay.logPath", path);
         logFileReadline?.close();
@@ -505,7 +515,6 @@ const registerLogCommunications = () => {
                     );
                 } else if (line.includes("[Astolfo HTTP Bridge]: [CHAT]")) {
                     const newLine = line.replaceAll(/\u00A7[0-9A-FK-OR]/gi, ""); // clean
-                    console.log(newLine);
                     appWindow?.webContents.send(
                         "logFileLine",
                         handleIPCSend<LogFileMessage>({
@@ -587,13 +596,11 @@ const registerExternalApis = () => {
     ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, args: string[]) => {
         const username = args[0];
         const response = await axiosClient(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
-            headers: {
-                Accept: "application/json",
-            },
+            headers,
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
-        const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
+        const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
         let json: BoomzaAntisniper;
         try {
             json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
@@ -614,9 +621,7 @@ const registerExternalApis = () => {
             params = `&nick=${uuid}`;
         }
         const response = await axiosClient(`https://api.antisniper.net/${endpoint}?key=${apikey}${params}`, {
-            headers: {
-                Accept: "application/json",
-            },
+            headers,
             httpsAgent: getProxyChannel(),
             proxy: false,
         });
@@ -626,22 +631,23 @@ const registerExternalApis = () => {
     ipcMain.handle("observer", async (event: IpcMainInvokeEvent, args: string[]) => {
         const uuid = args[0];
         const apikey = electronStore.get("external.observer.apiKey");
-        const response = await axiosClient(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
-            headers: {
-                Accept: "application/json",
-            },
-        });
+        const response = await axiosClient(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, { headers });
         return { data: response.data, status: response.status };
     });
 
     ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, args: string[]) => {
         const uuid = args[0];
-        const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${uuid}`, {
-            headers: {
-                Accept: "application/json",
-            },
-        });
+        const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${uuid}`, { headers });
         return { data: response.data, status: response.status };
+    });
+
+    ipcMain.handle("customUrl", async (event: IpcMainInvokeEvent, args: string[]) => {
+        try {
+            const response = await axiosClient.get<{ data: CustomFileJsonType }>(args[0], { headers });
+            return { data: response.data.data, status: response.status };
+        } catch (e) {
+            return { data: null, response: 400 };
+        }
     });
 };
 
@@ -748,6 +754,7 @@ const getProxyChannel = () => {
             type: ProxyType.HTTP,
         };
     }
+    console.log("using proxy");
     return tunnel.httpsOverHttp({
         proxy: {
             host: proxyStore.hostname,

@@ -1,23 +1,20 @@
 // eslint-disable-next-line import/named
-import {ColumnState} from "ag-grid-community";
+import { ColumnState } from "ag-grid-community";
 import create from "zustand";
-import {AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, DisplayErrorMessage, FontConfig, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState} from "@common/utils/Schemas";
-import {ResultObject} from "@common/zikeji/util/ResultObject";
-import {Paths} from "@common/zikeji";
-import {RequestType, RunApiKey, RunEndpoints} from "@common/utils/externalapis/RunApi";
-import {awaitTimeout} from "@common/helpers";
-import {KeathizEndpoints, KeathizOverlayRun} from "@common/utils/externalapis/BoomzaApi";
-import {devtools, persist} from "../../../../node_modules/zustand/middleware";
+import { AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, CustomLinkURL, DisplayErrorMessage, FontConfig, GameType, HypixelSettings, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
+import { ResultObject } from "@common/zikeji/util/ResultObject";
+import { Paths } from "@common/zikeji";
+import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
+import { awaitTimeout } from "@common/helpers";
+import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
+import { devtools, persist } from "../../../../node_modules/zustand/middleware";
 import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import axios from "axios";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 export type ConfigStore = {
-    hypixel: {
-        apiKey: string;
-        apiKeyValid: boolean;
-        apiKeyOwner: string;
-    };
+    hypixel: HypixelSettings;
+    setHypixelState: (hypixel: HypixelSettings) => void;
     setHypixelApiKey: (arg0: string) => void;
     colours: ColourSettings;
     setColours: (colour: ColourSettings) => void;
@@ -32,6 +29,7 @@ export type ConfigStore = {
         valid: boolean;
         showNick: boolean;
     };
+    setKeathizData: (data: { key: string; valid: boolean; showNick: boolean }) => void;
     setKeathizApiKey: (keathizkey: string) => void;
     run: {
         apiKey: string;
@@ -55,6 +53,10 @@ export type ConfigStore = {
     setNicks: (nicks: Array<PlayerNickname>) => void;
     customFile: CustomLinkFile;
     setCustomFile: (customFile: CustomLinkFile) => void;
+    customApi: CustomLinkURL;
+    setCustomApi: (customFile: CustomLinkURL) => void;
+    game: GameType;
+    setGame: (game: GameType) => void;
 };
 
 const useConfigStore = create<ConfigStore>()(
@@ -65,9 +67,13 @@ const useConfigStore = create<ConfigStore>()(
                     apiKey: "",
                     apiKeyValid: false,
                     apiKeyOwner: "",
+                    proxy: false,
+                },
+                setHypixelState: (hypixel) => {
+                    set({ hypixel });
                 },
                 setHypixelApiKey: async (hypixelApiKey) => {
-                    if (hypixelApiKey.length === 0 || get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase()) {
+                    if (hypixelApiKey.length === 0 || (get().hypixel.apiKey.toLowerCase() == hypixelApiKey.toLowerCase() && get().hypixel.apiKeyValid)) {
                         const oldHypixel = get().hypixel;
                         if (oldHypixel.apiKeyValid) return;
                         set(() => ({
@@ -90,6 +96,7 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKey: hypixelApiKey,
                                 apiKeyValid: true,
                                 apiKeyOwner: apiResponse.data.owner,
+                                proxy: get().hypixel.proxy,
                             },
                         }));
                     } else {
@@ -103,6 +110,7 @@ const useConfigStore = create<ConfigStore>()(
                                 apiKey: get().hypixel.apiKey,
                                 apiKeyValid: false,
                                 apiKeyOwner: apiResponse.data.owner,
+                                proxy: get().hypixel.proxy,
                             },
                         }));
                     }
@@ -177,6 +185,11 @@ const useConfigStore = create<ConfigStore>()(
                     valid: false,
                     showNick: true,
                 },
+                setKeathizData: (keathizstore) => {
+                    set({
+                        keathiz: keathizstore,
+                    });
+                },
                 setKeathizApiKey: async (keathizApiKey) => {
                     const apiKey = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, "308d0104f67b4bfb841058be9cadadb5", keathizApiKey]);
                     if (keathizApiKey.length == 0) return;
@@ -232,7 +245,7 @@ const useConfigStore = create<ConfigStore>()(
                             cause: "The Seraph API key provided is invalid or locked!",
                             code: 400,
                         });
-                        await window.ipcRenderer.invoke("notifications", "Your Seraph Key has been locked!");
+                        await window.ipcRenderer.invoke(IpcValidInvokeChannels.NOTIFICATIONS, ["Your Seraph Key has been locked!"]);
                     }
                 },
                 browserWindow: {
@@ -471,6 +484,14 @@ const useConfigStore = create<ConfigStore>()(
                         customFile,
                     });
                 },
+                customApi: {
+                    url: "",
+                },
+                setCustomApi: (customApi) => {
+                    set({
+                        customApi,
+                    });
+                },
                 keybinds: [],
                 addKeybind: async (focus, keybind) => {
                     if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
@@ -491,6 +512,7 @@ const useConfigStore = create<ConfigStore>()(
                 font: {
                     family: "Nunito",
                     availableFonts: [],
+                    isGoogleFont: true,
                 },
                 setFont: async (font) => {
                     set({ font });
@@ -509,10 +531,16 @@ const useConfigStore = create<ConfigStore>()(
                         releaseDate: new Date(),
                     },
                 },
+                game: {
+                    last_server: "",
+                },
+                setGame: (game) => {
+                    set({ game });
+                },
             }),
             {
                 name: "user_settings",
-                version: 6,
+                version: 9,
                 migrate: (persistedState: any, version) => {
                     const updatedState = persistedState;
                     if (version == 4) {
@@ -536,6 +564,12 @@ const useConfigStore = create<ConfigStore>()(
                         updatedState.settings.customUrl = false;
                         updatedState.customFile.path = "";
                         updatedState.customFile.readable = false;
+                        updatedState.game.last_server = "";
+                    } else if (version == 8) {
+                        updatedState.customUrl.url = "";
+                        updatedState.font.isGoogleFont = true;
+                    } else if (version == 9) {
+                        updatedState.hypixel.proxy = false;
                     }
                     return updatedState;
                 },
