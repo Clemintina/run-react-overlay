@@ -23,11 +23,11 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
             if (value >= requirement) {
                 return (
                     <span>
-                      <Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1]}</span>} arrow>
-                                <span>
-                                    <span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
-                                </span>
-                            </Tooltip>
+                        <Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1]}</span>} arrow>
+                            <span>
+                                <span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
+                            </span>
+                        </Tooltip>
                     </span>
                 );
             }

@@ -245,16 +245,15 @@ const registerSeraphIPC = () => {
         const resource = args[0] as string;
         const apiKey = args[1] as string;
         let playerName: string = "" as string;
-        console.log(args[3]);
-        let proxyHypxiel: { proxy: Agent } | {} =
-            args[3] != undefined
+        let proxyHypixel: { proxy: Agent } | {} =
+            args[3] != undefined && args[3]?.length > 2
                 ? {
                     proxy: getProxyChannel(),
                 }
                 : {};
         if (args[2] != undefined) playerName = args[2].toLowerCase() as string;
         const hypixelClient = new HypixelApi(apiKey, {
-            ...proxyHypxiel,
+            ...proxyHypixel,
             cache: playerCache,
             retries: 4,
             timeout: 7200,

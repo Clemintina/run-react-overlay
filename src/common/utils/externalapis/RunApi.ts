@@ -91,7 +91,7 @@ export interface LunarCosmetic {
     url: string;
 }
 
-export interface LunarAPIResponse {
+export type LunarAPIResponse = {
     success: boolean;
     code: number;
     player: {
@@ -115,7 +115,7 @@ export interface LunarAPIResponse {
         };
     };
     msTime: number;
-}
+};
 
 export interface IPCResponse<T> {
     status: number;
