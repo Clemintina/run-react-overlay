@@ -20,7 +20,7 @@ const KeybindEditorView = () => {
                     <SettingCard className={"border-2 border-cyan-500"}>
                         <span className={" "}>Toggle visibility</span>
                         <span className={" "}>
-                            <InputTextBox
+							<InputTextBox
                                 onKeyPressed={(event) => {
                                     let inputKey: string;
                                     if (event.altKey) {
@@ -57,12 +57,12 @@ const KeybindEditorView = () => {
                                     value: useConfigStore.getState().getKeybind("open_overlay")?.keybind,
                                 }}
                             />
-                        </span>
+						</span>
                     </SettingCard>
                     <SettingCard className={"border-2 border-cyan-500"}>
                         <span className={" "}>Clear players</span>
                         <span className={" "}>
-                            <InputTextBox
+							<InputTextBox
                                 onKeyDown={(event) => {
                                     const keybind = controlBind.keybind.length != 0 ? controlBind.keybind + "+" + event.key : event.key;
                                     setControlBind({ ...controlBind, keybind, focus: "clear_players" });
@@ -80,7 +80,7 @@ const KeybindEditorView = () => {
                                     value: useConfigStore.getState().getKeybind("clear_players")?.keybind,
                                 }}
                             />
-                        </span>
+						</span>
                     </SettingCard>
                 </Box>
             </NavigationBar>

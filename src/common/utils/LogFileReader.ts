@@ -8,9 +8,9 @@ import axios from "axios";
 import { removeMinecraftFormatting } from "@common/zikeji";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
-export interface LogFileMessage {
+export type LogFileMessage = {
     message: string;
-}
+};
 
 export class LogFileReader {
     public startListening = async () => {

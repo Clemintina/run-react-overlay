@@ -13,11 +13,19 @@ export const request = async <T extends Components.Schemas.ApiSuccess & { cause?
     const axiosConfig: AxiosRequestConfig = {
         headers: {
             "Content-Type": "application/json",
+            Accept: "application/json",
         },
         timeout: options.timeout,
         timeoutErrorMessage: JSON.stringify({ status: 408, data: { success: false } }),
         validateStatus: () => true,
     };
+
+    if (options.key) {
+        axiosConfig.headers = {
+            ...axiosConfig.headers,
+            "API-Key": options.key,
+        };
+    }
 
     if (options.proxy) {
         axiosConfig.httpsAgent = options.proxy;

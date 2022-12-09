@@ -1,9 +1,9 @@
-export interface NameHistory {
+export type NameHistory = {
     name: string;
     changedToAt?: number;
-}
+};
 
-export interface PlayerDB {
+export type PlayerDB = {
     code: string;
     message: string;
     data: {
@@ -18,4 +18,4 @@ export interface PlayerDB {
         };
     };
     success: boolean;
-}
+};

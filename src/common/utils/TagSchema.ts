@@ -11,31 +11,31 @@ export type TagStoreSchema = {
     setStore: (produce) => void;
 } & TagSchema;
 
-export interface Colour {
+export type Colour = {
     requirement: number;
     operator: string;
     colour: string;
-}
+};
 
-export interface TagColour {
+export type TagColour = {
     display: string;
     colour: string | Colour[];
-}
+};
 
-export interface TagArray {
+export type TagArray = {
     display?: string;
     colours: Colour[];
-}
+};
 
-export interface Core {
+export type Core = {
     fkdr: TagArray;
     bblr: TagArray;
     wlr: TagArray;
     winstreak: TagArray;
     kdr: TagArray;
-}
+};
 
-export interface Run {
+export type Run = {
     annoylist: TagColour;
     friends: TagColour;
     blacklist: TagColour;
@@ -45,18 +45,18 @@ export interface Run {
     personal_safelist: TagColour;
     name_change: TagColour;
     bot: TagColour;
-}
+};
 
-export interface Boomza {
+export type Boomza = {
     sniper: TagColour;
     cheater: TagColour;
-}
+};
 
-export interface Hypixel {
+export type Hypixel = {
     party: TagColour;
-}
+};
 
-export interface Keathiz {
+export type Keathiz = {
     no_data: TagColour;
     exits: {
         exits_total: TagColour;
@@ -73,4 +73,4 @@ export interface Keathiz {
             weighted: TagArray;
         };
     };
-}
+};

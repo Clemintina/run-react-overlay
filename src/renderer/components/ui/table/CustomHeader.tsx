@@ -32,14 +32,14 @@ export default (props: ICustomHeader) => {
         if (ascSort == "inactive") {
             sort = (
                 <span onClick={(event) => onSortRequested("desc", event)} onTouchEnd={(event) => onSortRequested("desc", event)} className={`customSortUpLabel ${descSort}`}>
-                    <ArrowDropUpIcon />
-                </span>
+					<ArrowDropUpIcon />
+				</span>
             );
         } else if (descSort == "inactive") {
             sort = (
                 <span onClick={(event) => onSortRequested("asc", event)} onTouchEnd={(event) => onSortRequested("asc", event)} className={`customSortDownLabel ${ascSort}`}>
-                    <ArrowDropDownIcon />
-                </span>
+					<ArrowDropDownIcon />
+				</span>
             );
         }
     }

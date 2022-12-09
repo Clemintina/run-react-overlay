@@ -68,7 +68,7 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                             <FeedbackForm options={{ text: feedbackType, formHelper: "Please write as descriptively as possible" }} onChange={(event) => setFeedbackTypeMessage(event.target.value)} />
                         </FormControl>
                         <span>
-                            <InputBoxButton
+							<InputBoxButton
                                 onClick={async () => {
                                     const body = {
                                         overlay: {
@@ -88,10 +88,10 @@ export const ContactStaff: React.ElementType = (props: ContactStaff) => {
                                 }}
                                 text={"Submit"}
                             />
-                            <span style={feedbackResponse ? {} : { display: "none" }} className='pl-2 text-green-500'>
-                                ✓
-                            </span>
-                        </span>
+							<span style={feedbackResponse ? {} : { display: "none" }} className="pl-2 text-green-500">
+								✓
+							</span>
+						</span>
                     </Typography>
                 </Box>
             </Modal>

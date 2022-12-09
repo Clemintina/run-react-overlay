@@ -22,27 +22,21 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
         for (const { colour, requirement } of arr) {
             if (value >= requirement) {
                 return (
-                    <span>
-                        <Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1]}</span>} arrow>
-                            <span>
-                                <span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
-                            </span>
-                        </Tooltip>
-                    </span>
+                    <Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1]}</span>} arrow>
+						<span>
+							<span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
+						</span>
+                    </Tooltip>
                 );
             }
         }
     } else {
         return (
-            <span>
-                <IconButton size={"small"}>
-                    <Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("-", " ")}</span>} arrow>
-                        <span>
-                            <span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>
-                        </span>
-                    </Tooltip>
-                </IconButton>
-            </span>
+            <Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("-", " ")}</span>} arrow>
+				<span>
+					<span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>
+				</span>
+            </Tooltip>
         );
     }
     return <span style={{ color: "red" }}>{tagDisplayIcon}</span>;
@@ -64,9 +58,9 @@ export const getCoreFromConfig = (tagDisplayPath, value: number) => {
                 if (jsonLogic.apply({ [operator]: [value, requirement] })) {
                     return (
                         <span>
-                            <span style={{ color: `#${colour}` }}>{displayValue}</span>
-                            <span className={"pl-1"} />
-                        </span>
+							<span style={{ color: `#${colour}` }}>{displayValue}</span>
+							<span className={"pl-1"} />
+						</span>
                     );
                 }
             }

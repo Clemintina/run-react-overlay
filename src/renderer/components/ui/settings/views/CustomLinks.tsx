@@ -26,7 +26,7 @@ const CustomLinks = () => {
     return (
         <div>
             <NavigationBar>
-                <Box className='p-2 space-y-2'>
+                <Box className="p-2 space-y-2">
                     <SettingCard>
                         <span>Custom Blacklist File</span>
                         <span />

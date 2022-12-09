@@ -28,7 +28,7 @@ const TagEditorView = () => {
                         <SettingCard>
                             <span>Annoy List</span>
                             <span>
-                                <TagEditor
+								<TagEditor
                                     options={{
                                         colour: run.annoylist.colour,
                                         placeholder: run.annoylist.display,
@@ -42,9 +42,9 @@ const TagEditorView = () => {
                                         );
                                     }}
                                 />
-                            </span>
+							</span>
                             <span>
-                                <ColourPicker
+								<ColourPicker
                                     setColour={async (colour: string) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -54,12 +54,12 @@ const TagEditorView = () => {
                                     }}
                                     colourObject={run.annoylist.colour}
                                 />
-                            </span>
+							</span>
                         </SettingCard>
                         <SettingCard>
                             <span>Blacklisted</span>
                             <span>
-                                <TagEditor
+								<TagEditor
                                     options={{
                                         colour: run.blacklist.colour,
                                         placeholder: run.blacklist.display,
@@ -73,9 +73,9 @@ const TagEditorView = () => {
                                         );
                                     }}
                                 />
-                            </span>
+							</span>
                             <span>
-                                <ColourPicker
+								<ColourPicker
                                     setColour={async (colour: string) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -85,12 +85,12 @@ const TagEditorView = () => {
                                     }}
                                     colourObject={run.blacklist.colour}
                                 />
-                            </span>
+							</span>
                         </SettingCard>
                         <SettingCard>
                             <span>Encounters</span>
                             <span>
-                                <TagEditor
+								<TagEditor
                                     options={{
                                         colour: run.encounters.colour[0],
                                         placeholder: run.encounters.display,
@@ -104,9 +104,9 @@ const TagEditorView = () => {
                                         );
                                     }}
                                 />
-                            </span>
+							</span>
                             <span>
-                                <ColourPickerArray
+								<ColourPickerArray
                                     setColour={async (newTagArray: TagArray) => {
                                         const newColourObject = { ...run.encounters };
                                         const newItem = {
@@ -129,12 +129,12 @@ const TagEditorView = () => {
                                     }}
                                     colourObject={run.encounters}
                                 />
-                            </span>
+							</span>
                         </SettingCard>
                         <SettingCard>
                             <span>Friends</span>
                             <span>
-                                <TagEditor
+								<TagEditor
                                     options={{
                                         colour: run.friends.colour,
                                         placeholder: run.friends.display,
@@ -148,9 +148,9 @@ const TagEditorView = () => {
                                         );
                                     }}
                                 />
-                            </span>
+							</span>
                             <span>
-                                <ColourPicker
+								<ColourPicker
                                     setColour={async (colour: string) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -160,12 +160,12 @@ const TagEditorView = () => {
                                     }}
                                     colourObject={run.friends.colour}
                                 />
-                            </span>
+							</span>
                         </SettingCard>
                         <SettingCard>
                             <span>Safelist</span>
                             <span>
-                                <TagEditor
+								<TagEditor
                                     options={{
                                         colour: run.safelist.colour,
                                         placeholder: run.safelist.display,
@@ -179,9 +179,9 @@ const TagEditorView = () => {
                                         );
                                     }}
                                 />
-                            </span>
+							</span>
                             <span>
-                                <ColourPickerArray
+								<ColourPickerArray
                                     setColour={async (newTagArray: TagArray) => {
                                         const newColourObject = { ...run.safelist };
                                         const newItem = {
@@ -204,12 +204,12 @@ const TagEditorView = () => {
                                     }}
                                     colourObject={run.safelist}
                                 />
-                            </span>
+							</span>
                         </SettingCard>
                         <SettingCard>
                             <span>Personal Safelist</span>
                             <span>
-                                <TagEditor
+								<TagEditor
                                     options={{
                                         colour: run.personal_safelist.colour,
                                         placeholder: run.personal_safelist.display,
@@ -223,9 +223,9 @@ const TagEditorView = () => {
                                         );
                                     }}
                                 />
-                            </span>
+							</span>
                             <span>
-                                <ColourPicker
+								<ColourPicker
                                     setColour={async (colour: string) => {
                                         useTagStore.getState().setStore(
                                             produce((state: any) => {
@@ -235,7 +235,7 @@ const TagEditorView = () => {
                                     }}
                                     colourObject={run.personal_safelist.colour}
                                 />
-                            </span>
+							</span>
                         </SettingCard>
                     </UserAccordion>
                     <UserAccordion name={"Boomza"}>
@@ -243,7 +243,7 @@ const TagEditorView = () => {
                             <SettingCard>
                                 <span>Cheater</span>
                                 <span>
-                                    <TagEditor
+									<TagEditor
                                         options={{
                                             colour: boomza.cheater.colour,
                                             placeholder: boomza.cheater.display,
@@ -257,9 +257,9 @@ const TagEditorView = () => {
                                             );
                                         }}
                                     />
-                                </span>
+								</span>
                                 <span>
-                                    <ColourPicker
+									<ColourPicker
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -269,12 +269,12 @@ const TagEditorView = () => {
                                         }}
                                         colourObject={boomza.cheater.colour}
                                     />
-                                </span>
+								</span>
                             </SettingCard>
                             <SettingCard>
                                 <span>Sniper</span>
                                 <span>
-                                    <TagEditor
+									<TagEditor
                                         options={{
                                             colour: boomza.sniper.colour,
                                             placeholder: boomza.sniper.display,
@@ -288,9 +288,9 @@ const TagEditorView = () => {
                                             );
                                         }}
                                     />
-                                </span>
+								</span>
                                 <span>
-                                    <ColourPicker
+									<ColourPicker
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -300,7 +300,7 @@ const TagEditorView = () => {
                                         }}
                                         colourObject={boomza.sniper.colour}
                                     />
-                                </span>
+								</span>
                             </SettingCard>
                         </AccordionDetails>
                     </UserAccordion>
@@ -309,7 +309,7 @@ const TagEditorView = () => {
                             <SettingCard>
                                 <span>Party</span>
                                 <span>
-                                    <TagEditor
+									<TagEditor
                                         options={{
                                             colour: hypixel.party.colour,
                                             placeholder: hypixel.party.display,
@@ -323,9 +323,9 @@ const TagEditorView = () => {
                                             );
                                         }}
                                     />
-                                </span>
+								</span>
                                 <span>
-                                    <ColourPicker
+									<ColourPicker
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -335,7 +335,7 @@ const TagEditorView = () => {
                                         }}
                                         colourObject={hypixel.party.colour}
                                     />
-                                </span>
+								</span>
                             </SettingCard>
                         </AccordionDetails>
                     </UserAccordion>
@@ -344,7 +344,7 @@ const TagEditorView = () => {
                             <SettingCard>
                                 <span>No Data</span>
                                 <span>
-                                    <TagEditor
+									<TagEditor
                                         options={{
                                             colour: keathiz.no_data.colour,
                                             placeholder: keathiz.no_data.display,
@@ -358,9 +358,9 @@ const TagEditorView = () => {
                                             );
                                         }}
                                     />
-                                </span>
+								</span>
                                 <span>
-                                    <ColourPicker
+									<ColourPicker
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -370,12 +370,12 @@ const TagEditorView = () => {
                                         }}
                                         colourObject={keathiz.no_data.colour}
                                     />
-                                </span>
+								</span>
                             </SettingCard>
                             <SettingCard>
                                 <span>Queue Total</span>
                                 <span>
-                                    <TagEditor
+									<TagEditor
                                         options={{
                                             colour: keathiz.queues.queue_total.colour,
                                             placeholder: keathiz.queues.queue_total.display,
@@ -389,9 +389,9 @@ const TagEditorView = () => {
                                             );
                                         }}
                                     />
-                                </span>
+								</span>
                                 <span>
-                                    <ColourPicker
+									<ColourPicker
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -401,12 +401,12 @@ const TagEditorView = () => {
                                         }}
                                         colourObject={keathiz.queues.queue_total.colour}
                                     />
-                                </span>
+								</span>
                             </SettingCard>
                             <SettingCard>
                                 <span>Queue Count</span>
                                 <span>
-                                    <TagEditor
+									<TagEditor
                                         options={{
                                             colour: keathiz.queues.queue_count.colours[0],
                                             placeholder: keathiz.queues.queue_count.display,
@@ -420,9 +420,9 @@ const TagEditorView = () => {
                                             );
                                         }}
                                     />
-                                </span>
+								</span>
                                 <span>
-                                    <ColourPickerArray
+									<ColourPickerArray
                                         setColour={async (newTagArray: TagArray) => {
                                             const newColourObject = { ...keathiz.queues.queue_count };
                                             const newItem = {
@@ -445,12 +445,12 @@ const TagEditorView = () => {
                                         }}
                                         colourObject={keathiz.queues.queue_count}
                                     />
-                                </span>
+								</span>
                             </SettingCard>
                             <SettingCard>
                                 <span>Consecutive</span>
                                 <span>
-                                    <TagEditor
+									<TagEditor
                                         options={{
                                             colour: keathiz.consecutive.colour,
                                             placeholder: keathiz.consecutive.display,
@@ -464,9 +464,9 @@ const TagEditorView = () => {
                                             );
                                         }}
                                     />
-                                </span>
+								</span>
                                 <span>
-                                    <ColourPicker
+									<ColourPicker
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -476,12 +476,12 @@ const TagEditorView = () => {
                                         }}
                                         colourObject={keathiz.consecutive.colour}
                                     />
-                                </span>
+								</span>
                             </SettingCard>
                             <SettingCard>
                                 <span>One Minute Requeue</span>
                                 <span>
-                                    <TagEditor
+									<TagEditor
                                         options={{
                                             colour: keathiz.one_minute_requeue.colour,
                                             placeholder: keathiz.one_minute_requeue.display,
@@ -495,9 +495,9 @@ const TagEditorView = () => {
                                             );
                                         }}
                                     />
-                                </span>
+								</span>
                                 <span>
-                                    <ColourPicker
+									<ColourPicker
                                         setColour={async (colour: string) => {
                                             useTagStore.getState().setStore(
                                                 produce((state: any) => {
@@ -507,7 +507,7 @@ const TagEditorView = () => {
                                         }}
                                         colourObject={keathiz.one_minute_requeue.colour}
                                     />
-                                </span>
+								</span>
                             </SettingCard>
                         </AccordionDetails>
                     </UserAccordion>

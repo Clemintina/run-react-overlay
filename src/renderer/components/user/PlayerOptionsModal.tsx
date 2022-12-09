@@ -40,20 +40,20 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = (props: PlayerOptionsM
             <InputBoxButton onClick={handleOpen} text={"..."} sx={{ height: 20, width: 10, padding: 2 }} />
             <Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
                 <Box sx={style}>
-                    <div className='p-8'>
-                        <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 lg:gap-2'>
-                            <span>
-                                <FormControl fullWidth>
-                                    <InputLabel>Report Type</InputLabel>
-                                    <Select value={reportType} label='Client' onChange={(event) => setReportType(event.target.value)}>
-                                        <MenuItem value={"cheating_blatant"}>Blatant Cheating</MenuItem>
-                                        <MenuItem value={"cheating_closet"}>Closet Cheating</MenuItem>
-                                        <MenuItem value={"sniping"}>Sniping</MenuItem>
-                                        <MenuItem value={"bot"}>Botting</MenuItem>
-                                        <MenuItem value={"sniping_potential"}>Potential Sniper</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </span>
+                    <div className="p-8">
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 lg:gap-2">
+							<span>
+								<FormControl fullWidth>
+									<InputLabel>Report Type</InputLabel>
+									<Select value={reportType} label="Client" onChange={(event) => setReportType(event.target.value)}>
+										<MenuItem value={"cheating_blatant"}>Blatant Cheating</MenuItem>
+										<MenuItem value={"cheating_closet"}>Closet Cheating</MenuItem>
+										<MenuItem value={"sniping"}>Sniping</MenuItem>
+										<MenuItem value={"bot"}>Botting</MenuItem>
+										<MenuItem value={"sniping_potential"}>Potential Sniper</MenuItem>
+									</Select>
+								</FormControl>
+							</span>
                             <InputBoxButton text={"Report this player"} />
                         </div>
                     </div>

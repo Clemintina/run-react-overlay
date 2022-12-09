@@ -22,8 +22,8 @@ export const InputBoxButton: FC<InputBoxButton> = (props: InputBoxButton) => {
     }));
 
     return (
-        <span className=' w-full h-full'>
-            <Button
+        <span className=" w-full h-full">
+			<Button
                 variant={props?.options?.variant ?? "outlined"}
                 sx={props?.sx}
                 onClick={props?.onClick}
@@ -33,8 +33,8 @@ export const InputBoxButton: FC<InputBoxButton> = (props: InputBoxButton) => {
                 }}
                 color={props?.options?.colour ?? "primary"}
             >
-                {props.text}
-            </Button>
-        </span>
+				{props.text}
+			</Button>
+		</span>
     );
 };

@@ -46,14 +46,14 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
                     if (player.sources?.lunar?.data?.player?.lunarPlus?.premium) {
                         lunarRenderer = (
                             <span>
-                                <img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
-                            </span>
+								<img width="20px" height="20px" src="https://dl.seraph.si/lunarplus.webp" alt="lunar tag" />
+							</span>
                         );
                     } else {
                         lunarRenderer = (
                             <span>
-                                <img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
-                            </span>
+								<img width="20px" height="20px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />
+							</span>
                         );
                     }
                 }
@@ -64,8 +64,8 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
     }
 
     return (
-        <div className='inline flex' style={{ textAlign: table.settings.textAlign }}>
-            <img src={srcUrl} className='text-center' alt='player-head' />
+        <div className="inline flex" style={{ textAlign: table.settings.textAlign }}>
+            <img src={srcUrl} className="text-center" alt="player-head" />
             {lunarRenderer}
         </div>
     );
@@ -160,8 +160,8 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
         <div style={{ textAlign: table.settings.textAlign }}>
             {values.map(([session_timer, hex], index) => (
                 <span key={index} style={{ color: `#${hex}` }}>
-                    {session_timer}
-                </span>
+					{session_timer}
+				</span>
             ))}
         </div>
     );
@@ -184,35 +184,35 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
             if (keathiz.showNick) {
                 rankPlayer = (
                     <span>
-                        {settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>{" "}
+						{settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>{" "}
                         <span className={"font-bold"} onClick={handleDenickEvent}>
-                            <FontAwesomeIcon icon={faEye} />
-                        </span>
-                    </span>
+							<FontAwesomeIcon icon={faEye} />
+						</span>
+					</span>
                 );
             } else {
                 playerName = player.name;
                 rankPlayer = (
                     <span>
-                        <span style={{ color: `#${run.blacklist.colour}` }}>{playerName}</span>{" "}
+						<span style={{ color: `#${run.blacklist.colour}` }}>{playerName}</span>{" "}
                         <span className={"font-bold"} onClick={handleDenickEvent}>
-                            <FontAwesomeIcon icon={faEyeSlash} />
-                        </span>
-                    </span>
+							<FontAwesomeIcon icon={faEyeSlash} />
+						</span>
+					</span>
                 );
             }
         } else {
             rankPlayer = (
                 <span>
-                    {settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>
-                </span>
+					{settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>
+				</span>
             );
         }
     } else if (player.sources.runApi?.data.data.blacklist.tagged) {
         rankPlayer = (
             <span>
-                <span style={{ color: `#${run.blacklist.colour}` }}>{player?.hypixelPlayer?.displayname}</span>
-            </span>
+				<span style={{ color: `#${run.blacklist.colour}` }}>{player?.hypixelPlayer?.displayname}</span>
+			</span>
         );
     } else {
         rankPlayer = <span style={{ color: `#${run.blacklist.colour}` }}>{player.name}</span>;
@@ -234,8 +234,8 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 
     return (
         <SettingCard className={"border-2 border-cyan-500"}>
-            <span className={""}>
-                <InputTextBox
+			<span className={""}>
+				<InputTextBox
                     onBlur={async (event) => {
                         const userInput = event.currentTarget.value;
                         if (userInput.length == 0) return;
@@ -255,9 +255,9 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
                     }}
                     options={{ placeholder: "Username", value: playerNickname.name, label: { text: "Username" } }}
                 />
-            </span>
+			</span>
             <span className={" "}>
-                <InputTextBox
+				<InputTextBox
                     onBlur={async (event) => {
                         const userInput = event.currentTarget.value;
                         if (userInput.length == 0) return;
@@ -275,16 +275,16 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
                     }}
                     options={{ placeholder: "Nickname", value: playerNickname.nick, label: { text: "Nickname" } }}
                 />
-            </span>
+			</span>
             <span className={""}>
-                <InputBoxButton
+				<InputBoxButton
                     text={"Remove"}
                     onClick={() => {
                         handleRemove(playerNickname);
                     }}
                     options={{ colour: "error" }}
                 />
-            </span>
+			</span>
         </SettingCard>
     );
 };
@@ -450,8 +450,10 @@ const parseColour = (text: string) => {
     const splitText = text.split("§");
     const finalText: [string, string][] = [];
 
-    for (const parts of splitText) {
-        finalText.push([parts.split("").slice(1).join(""), MinecraftColourAsHex[`§${parts.split("")[0]}`]]);
+    for (const letter of splitText) {
+        if (letter != undefined) {
+            finalText.push([letter.slice(1), MinecraftColourAsHex[`§${letter[0]}`]]);
+        }
     }
     return finalText;
 };

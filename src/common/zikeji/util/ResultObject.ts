@@ -21,7 +21,7 @@ export type ResultObject<T extends Components.Schemas.ApiSuccess, K extends (key
 export const getResultObject = <T extends Components.Schemas.ApiSuccess, K extends (keyof T)[]>(response: T & DefaultMeta, keys: K): ResultObject<T, K> => {
     const clonedResponse: typeof response = destr(JSON.stringify(response));
     if (!keys.every((key) => key in clonedResponse)) {
-        throw new TypeError(`One or more key in "${keys.join('"," ')}" was not in the response.`);
+        throw new TypeError(`One or more key in "${keys.join("\",\" ")}" was not in the response.`);
     }
     const obj: ResultObject<T, K> = {} as ResultObject<T, K>;
     const { ratelimit, cached, cloudflareCache } = clonedResponse;

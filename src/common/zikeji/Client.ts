@@ -78,6 +78,7 @@ export interface RequestOptions {
     noRateLimit: boolean;
     getRateLimitHeaders: Client["getRateLimitHeaders"];
     proxy?: Agent;
+    key?: string;
 }
 
 /** @hidden */
@@ -463,6 +464,7 @@ export class Client {
             noRateLimit,
             getRateLimitHeaders: this.getRateLimitHeaders.bind(this),
             proxy: this.proxy,
+            key: this.apiKey,
         });
     }
 

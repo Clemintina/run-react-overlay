@@ -1,11 +1,11 @@
-export interface BoomzaAntisniper {
+export type BoomzaAntisniper = {
     sniper: boolean;
     report: number;
     error: boolean;
     username: string;
-}
+};
 
-export interface KeathizOverlayRun {
+export type KeathizOverlayRun = {
     success: boolean;
     player: {
         ign_lower: string;
@@ -86,9 +86,9 @@ export interface KeathizOverlayRun {
             status: string;
         };
     };
-}
+};
 
-export interface KeathizDenick {
+export type KeathizDenick = {
     success: boolean;
     player: {
         uuid: string;
@@ -99,7 +99,7 @@ export interface KeathizDenick {
         ign: string;
         nick: string;
     };
-}
+};
 
 export enum KeathizEndpoints {
     OVERLAY_RUN = "overlay/run",

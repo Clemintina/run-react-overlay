@@ -106,7 +106,7 @@ export const LogSelectorModal: React.ElementType = (props: LogSelectorModal) => 
                         <Typography sx={{ mt: 2 }}>
                             <FormControl fullWidth color={logs.readable ? "success" : "error"}>
                                 <InputLabel>Client</InputLabel>
-                                <Select value={clientLocal} label='Client' onChange={handleChange}>
+                                <Select value={clientLocal} label="Client" onChange={handleChange}>
                                     <MenuItem value={"vanilla"}>Vanilla / Forge</MenuItem>
                                     <MenuItem value={"badlion"}>Badlion</MenuItem>
                                     <MenuItem value={"lunar_mlv"}>Lunar</MenuItem>

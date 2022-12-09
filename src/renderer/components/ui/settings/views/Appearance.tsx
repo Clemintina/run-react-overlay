@@ -35,7 +35,7 @@ const Appearance = () => {
     return (
         <div>
             <NavigationBar>
-                <Box className='p-2 space-y-2'>
+                <Box className="p-2 space-y-2">
                     <SettingCard>
                         <span>Auto Hide</span>
                         <span />
@@ -50,7 +50,7 @@ const Appearance = () => {
                         <span>Opacity</span>
                         <span />
                         <span>
-                            <Slider
+							<Slider
                                 value={opacityValue}
                                 onChange={(event, value) => {
                                     const opacityValue: number = typeof value == "number" ? value : value[0];
@@ -67,7 +67,7 @@ const Appearance = () => {
                                     return value;
                                 }}
                             />
-                        </span>
+						</span>
                     </SettingCard>
                     <SettingCard>
                         <span>Font</span>
@@ -125,7 +125,7 @@ const Appearance = () => {
                         <span>Show Rank</span>
                         <span />
                         <span>
-                            <ToggleButton
+							<ToggleButton
                                 onChange={async () => {
                                     useConfigStore.getState().setSettings({
                                         ...settings,
@@ -134,21 +134,21 @@ const Appearance = () => {
                                 }}
                                 options={{ enabled: settings.appearance.displayRank }}
                             />
-                        </span>
+						</span>
                     </SettingCard>
                     <SettingCard>
                         <span>Text Alignment</span>
                         <span />
                         <span>
-                            <FormControl sx={styledProps}>
-                                <InputLabel id={"text-align-label"}>Text Alignment</InputLabel>
-                                <Select labelId={"text-align-label"} value={textAlignment} label={"Text Alignment"} onChange={handleChange}>
-                                    <MenuItem value={"left"}>Left</MenuItem>
-                                    <MenuItem value={"center"}>Center</MenuItem>
-                                    <MenuItem value={"right"}>Right</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </span>
+							<FormControl sx={styledProps}>
+								<InputLabel id={"text-align-label"}>Text Alignment</InputLabel>
+								<Select labelId={"text-align-label"} value={textAlignment} label={"Text Alignment"} onChange={handleChange}>
+									<MenuItem value={"left"}>Left</MenuItem>
+									<MenuItem value={"center"}>Center</MenuItem>
+									<MenuItem value={"right"}>Right</MenuItem>
+								</Select>
+							</FormControl>
+						</span>
                     </SettingCard>
                 </Box>
             </NavigationBar>

@@ -1,4 +1,4 @@
-export interface Blacklist {
+export type Blacklist = {
     success: boolean;
     code: number;
     data: {
@@ -23,9 +23,9 @@ export interface Blacklist {
         annoylist: { tagged: boolean };
     };
     msTime: number;
-}
+};
 
-export interface RunApiKey {
+export type RunApiKey = {
     success: boolean;
     code: number;
     key: {
@@ -35,9 +35,9 @@ export interface RunApiKey {
         isDev: boolean;
     };
     msTime: number;
-}
+};
 
-export interface PlayerAPI {
+export type PlayerAPI = {
     success: boolean;
     code: number;
     player: {
@@ -46,14 +46,14 @@ export interface PlayerAPI {
         timeUpdated: number;
     };
     msTime: number;
-}
+};
 
-export interface RunFriendList {
+export type RunFriendList = {
     uuids: Array<string>;
     mutuals: Array<string>;
-}
+};
 
-export interface DenickerAPI {
+export type DenickerAPI = {
     success: boolean;
     code: number;
     data: {
@@ -64,7 +64,7 @@ export interface DenickerAPI {
         invalid?: boolean;
     };
     msTime: number;
-}
+};
 
 export enum RunEndpoints {
     BLACKLIST = "blacklist",
@@ -85,11 +85,11 @@ export enum RequestType {
     UNKNOWN = "unknown",
 }
 
-export interface LunarCosmetic {
+export type LunarCosmetic = {
     id: number;
     name: string;
     url: string;
-}
+};
 
 export type LunarAPIResponse = {
     success: boolean;
@@ -117,8 +117,8 @@ export type LunarAPIResponse = {
     msTime: number;
 };
 
-export interface IPCResponse<T> {
+export type IPCResponse<T> = {
     status: number;
     cause?: string;
     data: T;
-}
+};

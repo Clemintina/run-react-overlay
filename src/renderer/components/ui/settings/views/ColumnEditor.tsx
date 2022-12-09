@@ -56,7 +56,7 @@ const ColumnEditorView = () => {
         <div>
             <NavigationBar>
                 <Box className={"pl-2"}>
-                    <div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
+                    <div className="ag-theme-alpine-dark" style={{ height: "15vh" }}>
                         <AgGridReact rowData={playerData} gridOptions={gridOptions} />
                     </div>
                     <div className={"grid grid-cols-6 justify-center"}>
@@ -64,8 +64,8 @@ const ColumnEditorView = () => {
                             <div key={column.colId}>
                                 <span className={"capitalize"}>{column.colId.replace("_", " ")}</span>
                                 <span className={""}>
-                                    <ToggleButton onClick={() => toggleColumn(column.colId)} options={{ enabled: !column.hide }}></ToggleButton>
-                                </span>
+									<ToggleButton onClick={() => toggleColumn(column.colId)} options={{ enabled: !column.hide }}></ToggleButton>
+								</span>
                             </div>
                         ))}
                     </div>

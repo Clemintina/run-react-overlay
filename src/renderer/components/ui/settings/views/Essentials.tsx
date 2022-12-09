@@ -56,7 +56,7 @@ const Essentials = () => {
                     <span>Seraph API Key</span>
                     <span />
                     <span>
-                        <InputTextBox
+						<InputTextBox
                             onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
                                 if (event.key === "Enter") {
                                     useConfigStore.getState().setRunApiKey(text.replaceAll(" ", ""));
@@ -75,13 +75,13 @@ const Essentials = () => {
                             helperText={!run.valid ? "Enter a valid Seraph API Key" : ""}
                             initialValue={run.apiKey}
                         />
-                    </span>
+					</span>
                 </TextSettingCard>
                 <SettingCard options={{ shown: settings.keathiz }}>
                     <span>Antisniper API Key</span>
                     <span />
                     <span>
-                        <InputTextBox
+						<InputTextBox
                             onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
                                 if (event.key === "Enter") {
                                     useConfigStore.getState().setKeathizApiKey(text.replaceAll(" ", ""));
@@ -100,16 +100,16 @@ const Essentials = () => {
                             helperText={!keathiz.valid ? "Enter a valid Antisniper API Key" : ""}
                             initialValue={keathiz.key}
                         />
-                    </span>
+					</span>
                 </SettingCard>
                 <SettingCard>
                     <span>Overlay Logs</span>
                     <span />
                     <span>
-                        <span className={"inline-flex flex"}>
-                            <LogSelectorModal />
-                        </span>
-                    </span>
+						<span className={"inline-flex flex"}>
+							<LogSelectorModal />
+						</span>
+					</span>
                 </SettingCard>
                 <SettingHeader>
                     <span />
@@ -130,11 +130,11 @@ const Essentials = () => {
                         }}
                         options={{ enabled: hypixel.proxy }}
                     >
-                        <span className={"pl-2"}>
-                            <Tooltip title={"Only use this if your API Key keeps getting \"Too Many Invalid Api Keys\" as this is slower than direct. "}>
-                                <FontAwesomeIcon icon={faMapLocation} />
-                            </Tooltip>
-                        </span>
+						<span className={"pl-2"}>
+							<Tooltip title={"Only use this if your API Key keeps getting \"Too Many Invalid Api Keys\" as this is slower than direct. "}>
+								<FontAwesomeIcon icon={faMapLocation} />
+							</Tooltip>
+						</span>
                     </ToggleButton>
                 </SettingCard>
                 <SettingCard>
@@ -147,11 +147,11 @@ const Essentials = () => {
                         }}
                         options={{ enabled: settings.boomza }}
                     >
-                        <span className={"pl-2"}>
-                            <Tooltip title='This API is proxied to protect your IP.'>
-                                <FontAwesomeIcon icon={faMapLocation} />
-                            </Tooltip>
-                        </span>
+						<span className={"pl-2"}>
+							<Tooltip title="This API is proxied to protect your IP.">
+								<FontAwesomeIcon icon={faMapLocation} />
+							</Tooltip>
+						</span>
                     </ToggleButton>
                 </SettingCard>
                 <SettingCard>
@@ -188,19 +188,19 @@ const Essentials = () => {
                     <span>Keathiz/Antisniper</span>
                     <span />
                     <span>
-                        <ToggleButton
+						<ToggleButton
                             onChange={async () => {
                                 useConfigStore.getState().setSettings({ ...settings, keathiz: !settings.keathiz });
                             }}
                             options={{ enabled: settings.keathiz }}
                         >
-                            <span className={"pl-2"}>
-                                <Tooltip title='This API is proxied to protect your IP.'>
-                                    <FontAwesomeIcon icon={faMapLocation} />
-                                </Tooltip>
-                            </span>
-                        </ToggleButton>
-                    </span>
+							<span className={"pl-2"}>
+								<Tooltip title="This API is proxied to protect your IP.">
+									<FontAwesomeIcon icon={faMapLocation} />
+								</Tooltip>
+							</span>
+						</ToggleButton>
+					</span>
                 </SettingCard>
                 <SettingHeader>
                     <span />
@@ -211,27 +211,27 @@ const Essentials = () => {
                     <span>Astolfo Chat Bridge</span>
                     <span />
                     <span>
-                        <ToggleButton
+						<ToggleButton
                             onChange={async () => {
                                 useConfigStore.getState().setSettings({ ...settings, astolfo: !settings.astolfo });
                                 await window.ipcRenderer.invoke(IpcValidInvokeChannels.ASTOLFO);
                             }}
                             options={{ enabled: settings.astolfo }}
                         ></ToggleButton>
-                    </span>
+					</span>
                 </SettingCard>
                 <SettingCard>
                     <span>Automatic Updates</span>
                     <span />
                     <span>
-                        <ToggleButton
+						<ToggleButton
                             onChange={async () => {
                                 await window.config.set("settings.updater", !(await window.config.get("settings.updater")));
                                 useConfigStore.getState().setSettings({ ...settings, updater: !settings.updater });
                             }}
                             options={{ enabled: settings.updater }}
                         ></ToggleButton>
-                    </span>
+					</span>
                 </SettingCard>
             </Box>
         </NavigationBar>

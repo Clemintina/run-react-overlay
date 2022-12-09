@@ -4,7 +4,7 @@
 	"trailingComma": "all",
 	"jsxSingleQuote": true,
 	"printWidth": 400,
-	"useTabs": false,
+	"useTabs": true,
 	"bracketSpacing": true,
 	"proseWrap": "always",
 	"tabWidth": 4

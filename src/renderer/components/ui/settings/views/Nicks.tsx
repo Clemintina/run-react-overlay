@@ -80,7 +80,7 @@ const NickView = () => {
     return (
         <div>
             <NavigationBar>
-                <div className='h-full w-full p-2 text-center'>
+                <div className="h-full w-full p-2 text-center">
                     <div>
                         <SettingCard className={"border-2 border-cyan-500"}>
                             <Box>

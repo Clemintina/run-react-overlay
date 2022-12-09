@@ -2,29 +2,21 @@
 import { ColumnState } from "ag-grid-community";
 import { Player } from "./PlayerUtils";
 
-export interface PlayerHandler {
+export type PlayerHandler = {
     status: number;
     cause: string;
     data?: Player;
-}
+};
 
-export interface HypixelApiKey {
-    key: string;
-    owner: string;
-    limit: number;
-    queriesInPastMin: number;
-    totalQueries: number;
-}
-
-export interface DisplayErrorMessage {
+export type DisplayErrorMessage = {
     code?: number;
     title: string;
     cause: string;
     detail?: string;
     referenceId?: string | number;
-}
+};
 
-export interface ProxyStore {
+export type ProxyStore = {
     enableProxies: boolean;
     hasAuth: boolean;
     type: ProxyType;
@@ -32,40 +24,40 @@ export interface ProxyStore {
     port: string;
     username: string;
     password: string;
-}
+};
 
 export enum ProxyType {
     SOCKS5 = "SOCKS5",
     HTTP = "HTTP",
 }
 
-export interface TagArray {
+export type TagArray = {
     requirement: number;
     colour: string;
     operator?: string;
-}
+};
 
-export interface TagObject {
+export type TagObject = {
     display: string;
     colour: Array<TagArray> | string;
-}
+};
 
-export interface TagModifier {
+export type TagModifier = {
     display: string;
     changedObjectId: number;
-}
+};
 
-export interface MetricsObject {
+export type MetricsObject = {
     colours: Array<MetricsArray>;
-}
+};
 
-export interface MetricsArray {
+export type MetricsArray = {
     requirement: number;
     colour: string;
     operator: string;
-}
+};
 
-export interface ConfigStore {
+export type ConfigStore = {
     hypixel: {
         apiKey: string;
         apiKeyValid: boolean;
@@ -88,9 +80,9 @@ export interface ConfigStore {
     error: DisplayErrorMessage;
     settings: SettingsConfig;
     menuOptions: Array<MenuOption>;
-}
+};
 
-export interface SettingsConfig {
+export type SettingsConfig = {
     lunar: boolean;
     keathiz: boolean;
     boomza: boolean;
@@ -106,73 +98,68 @@ export interface SettingsConfig {
     appearance: {
         displayRank: boolean;
     };
-}
+};
 
-export interface ClientSetting {
+export type ClientSetting = {
     clientName: string;
     logPath: string;
     readable: boolean;
-}
+};
 
-export interface HypixelSettings {
+export type HypixelSettings = {
     apiKey: string;
     apiKeyValid: boolean;
     apiKeyOwner: string;
     proxy: boolean;
-}
+};
 
-export interface ColourSettings {
+export type ColourSettings = {
     backgroundColour: string;
     primaryColour: string;
     secondaryColour: string;
-}
+};
 
-export interface BrowserWindowSettings {
+export type BrowserWindowSettings = {
     width: number;
     height: number;
     opacity: number;
-}
+};
 
-export interface TableState {
+export type TableState = {
     columnState: Array<ColumnState>;
     settings: {
         textAlign: "left" | "center" | "right";
     };
-}
+};
 
-export interface ValidateRun {
-    runApiKey: string;
-    state: ConfigStore;
-}
-
-export interface MenuOption {
+export type MenuOption = {
     menuName: string;
     menuLink: string;
     menuDescription?: string;
-}
+};
 
-export interface PlayerNickname {
+export type PlayerNickname = {
     uuid: string;
     name: string;
     nick: string;
     added: number;
-}
+};
 
-export interface FontConfig {
+export type FontConfig = {
     family: string;
     availableFonts: Array<string>;
     isGoogleFont: boolean;
-}
+};
 
 export type KeyboardFocusType = "none" | "open_overlay" | "clear_players";
 
-export interface KeybindInterface {
+export type KeybindInterface = {
     focus: KeyboardFocusType;
     keybind: string;
     enabled?: boolean;
-}
+};
 
-export interface AppInformation {
+export type AppInformation = {
     version: string;
     update: {
         release: string;
@@ -180,27 +167,27 @@ export interface AppInformation {
         ready: boolean;
         releaseDate: number;
     };
-}
+};
 
-export interface CustomLinkFile {
+export type CustomLinkFile = {
     path: string;
     readable: boolean;
     data: Array<string> | Array<CustomFileJsonType> | null;
-}
+};
 
-export interface CustomLinkURL {
+export type CustomLinkURL = {
     url: string;
-}
+};
 
 export type CustomLinkSchema = { data: CustomFileJsonType };
 
-export interface CustomFileIpc {
+export type CustomFileIpc = {
     fileType: "text" | "json";
     contents: Array<string> | Array<CustomFileJsonType> | string;
-}
+};
 
 export type CustomFileJsonType = { uuid: string; blacklisted: boolean; tags: Array<{ tag: string; hex: string; singularTag?: boolean }> };
 
-export interface GameType {
+export type GameType = {
     last_server: string;
-}
+};

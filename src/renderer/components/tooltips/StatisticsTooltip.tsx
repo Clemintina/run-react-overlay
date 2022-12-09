@@ -34,90 +34,90 @@ export const StatsisticsTooltip: React.FC<PropsWithChildren<StatisticsTooltip>> 
                     <div>
                         {player.hypixelPlayer !== null && (
                             <div className={"statistics-tooltip text-center"}>
-                                <span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
-                                    {player.hypixelPlayer.displayname}
-                                </span>
+								<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
+									{player.hypixelPlayer.displayname}
+								</span>
                                 <div style={player?.denicked ? { display: "" } : { display: "none" }}>
                                     <span>{player.name}</span>
                                 </div>
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Games Played: <RenderCoreStatsColour player={player} stats={"gamesPlayed"} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										Games Played: <RenderCoreStatsColour player={player} stats={"gamesPlayed"} isTooltip={true} />
+									</span>
                                 </div>
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Wins: <RenderCoreStatsColour player={player} stat={"wins"} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										Wins: <RenderCoreStatsColour player={player} stat={"wins"} isTooltip={true} />
+									</span>
                                 </div>
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Losses: <RenderCoreStatsColour player={player} stat={"losses"} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										Losses: <RenderCoreStatsColour player={player} stat={"losses"} isTooltip={true} />
+									</span>
                                 </div>
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        WLR: <RenderRatioColour player={player} ratio={"wlr"} isTooltip={true} />
-                                    </span>
-                                </div>
-                                <br />
-                                <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Final Kills: <RenderCoreStatsColour player={player} stat={"finalKills"} isTooltip={true} />
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Final Deaths: <RenderCoreStatsColour player={player} stat={"finalDeaths"} isTooltip={true} />
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        FKDR: <RenderRatioColour player={player} ratio={"fkdr"} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										WLR: <RenderRatioColour player={player} ratio={"wlr"} isTooltip={true} />
+									</span>
                                 </div>
                                 <br />
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Beds Broken: <RenderCoreStatsColour player={player} stat={"bedsBroken"} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										Final Kills: <RenderCoreStatsColour player={player} stat={"finalKills"} isTooltip={true} />
+									</span>
                                 </div>
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Beds Lost: <RenderCoreStatsColour player={player} stat={"bedsLost"} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										Final Deaths: <RenderCoreStatsColour player={player} stat={"finalDeaths"} isTooltip={true} />
+									</span>
                                 </div>
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        BBLR: <RenderRatioColour player={player} ratio={"bblr"} isTooltip={true} />
-                                    </span>
-                                </div>
-                                <br />
-                                <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Kills: <RenderCoreStatsColour player={player} stat={"kills"} isTooltip={true} />
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Deaths: <RenderCoreStatsColour player={player} stat={"deaths"} isTooltip={true} />
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        KDR: <RenderRatioColour player={player} ratio={"kdr"} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										FKDR: <RenderRatioColour player={player} ratio={"fkdr"} isTooltip={true} />
+									</span>
                                 </div>
                                 <br />
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        First Login: <Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.firstLogin)} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										Beds Broken: <RenderCoreStatsColour player={player} stat={"bedsBroken"} isTooltip={true} />
+									</span>
                                 </div>
                                 <div>
-                                    <span className={"statistics-tooltip-inline"}>
-                                        Last Login: <Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.lastLogin)} isTooltip={true} />
-                                    </span>
+									<span className={"statistics-tooltip-inline"}>
+										Beds Lost: <RenderCoreStatsColour player={player} stat={"bedsLost"} isTooltip={true} />
+									</span>
+                                </div>
+                                <div>
+									<span className={"statistics-tooltip-inline"}>
+										BBLR: <RenderRatioColour player={player} ratio={"bblr"} isTooltip={true} />
+									</span>
+                                </div>
+                                <br />
+                                <div>
+									<span className={"statistics-tooltip-inline"}>
+										Kills: <RenderCoreStatsColour player={player} stat={"kills"} isTooltip={true} />
+									</span>
+                                </div>
+                                <div>
+									<span className={"statistics-tooltip-inline"}>
+										Deaths: <RenderCoreStatsColour player={player} stat={"deaths"} isTooltip={true} />
+									</span>
+                                </div>
+                                <div>
+									<span className={"statistics-tooltip-inline"}>
+										KDR: <RenderRatioColour player={player} ratio={"kdr"} isTooltip={true} />
+									</span>
+                                </div>
+                                <br />
+                                <div>
+									<span className={"statistics-tooltip-inline"}>
+										First Login: <Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.firstLogin)} isTooltip={true} />
+									</span>
+                                </div>
+                                <div>
+									<span className={"statistics-tooltip-inline"}>
+										Last Login: <Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(player.hypixelPlayer.lastLogin)} isTooltip={true} />
+									</span>
                                 </div>
                                 {blacklistedReason}
                             </div>

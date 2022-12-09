@@ -134,7 +134,7 @@ const NewTitlebar = ({ children }) => {
             <CssBaseline />
             <AppBar position={"fixed"} open={open} className={"drag"} sx={{ opacity: 100, backgroundColor: hexToRgbA(colours.backgroundColour, browserWindow.opacity / 100) }}>
                 <Toolbar>
-                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge='start' className={"nodrag"} sx={{ mr: 2, ...(open && { display: "none" }) }}>
+                    <IconButton color={"inherit"} onClick={handleDrawerOpen} edge="start" className={"nodrag"} sx={{ mr: 2, ...(open && { display: "none" }) }}>
                         <MenuIcon />
                     </IconButton>
                     <Typography variant={"h6"} noWrap component={"div"} className={"text-bold"}>
@@ -142,8 +142,8 @@ const NewTitlebar = ({ children }) => {
                     </Typography>
                     <Typography sx={{ marginLeft: "auto" }}>
                         <div className={"flex items-center space-x-3 p-1 nodrag"}>
-                            <span className={"flex"}>
-                                <InputTextBox
+							<span className={"flex"}>
+								<InputTextBox
                                     options={{ placeholder: "", resetOnEnter: true, label: { text: "Usernames" } }}
                                     onKeyDown={(event, textFieldState) => {
                                         if (event.key === "Enter") {
@@ -157,7 +157,7 @@ const NewTitlebar = ({ children }) => {
                                         }
                                     }}
                                 />
-                            </span>
+							</span>
                             <div>
                                 <IconButton
                                     className={"hover:text-cyan-500"}
@@ -249,20 +249,20 @@ const NewTitlebar = ({ children }) => {
                 {errorMessageCode === 200 ? (
                     <Alert color={"success"} sx={{ opacity: 100 }}>
                         <Typography sx={{ opacity: 100 }}>
-                            <span className={"p-1"}>
-                                <span className={"errorMessage"}> {error.cause}</span>
-                            </span>
+							<span className={"p-1"}>
+								<span className={"errorMessage"}> {error.cause}</span>
+							</span>
                         </Typography>
                     </Alert>
                 ) : errorMessageCode === 400 ? (
                     <Alert color={"error"} sx={{ opacity: 100 }}>
                         <Typography sx={{ opacity: 100 }}>
-                            <span className={"font-medium"}>
-                                Code: <span className={"errorMessage"}> {error.code}</span>
-                            </span>
+							<span className={"font-medium"}>
+								Code: <span className={"errorMessage"}> {error.code}</span>
+							</span>
                             <span className={"p-1"}>
-                                Cause: <span className={"errorMessage"}> {error.cause}</span>
-                            </span>
+								Cause: <span className={"errorMessage"}> {error.cause}</span>
+							</span>
                         </Typography>
                     </Alert>
                 ) : (

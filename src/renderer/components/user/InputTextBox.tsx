@@ -53,10 +53,10 @@ export const InputTextBox: FC<InputTextBox> = (props: InputTextBox) => {
     }, [props?.options?.value]);
 
     return (
-        <Box className='w-full'>
+        <Box className="w-full">
             <span>{props?.icon}</span>
             <TextField
-                type='text'
+                type="text"
                 onKeyDown={(event) => {
                     if (props.onKeyDown != undefined) {
                         props?.onKeyDown(event, getTextField);
