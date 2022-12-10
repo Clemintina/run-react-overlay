@@ -296,9 +296,8 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
         runConfig: state.run,
         table: state.table,
     }));
-
     let tagArray: Array<JSX.Element> = [];
-    if (runConfig.valid && player.sources.runApi != null) {
+    if (runConfig.valid && player.sources.runApi != null && player?.hypixelPlayer) {
         let singularTag = false;
         const runApi = player.sources.runApi?.data?.data;
         const customData = player?.sources?.customFile;
