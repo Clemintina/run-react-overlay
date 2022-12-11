@@ -4,41 +4,41 @@ import { RUNElectronStoreTagsTyped, RUNElectronStoreTyped } from "@main/appWindo
 import { IPCResponse } from "@common/utils/externalapis/RunApi";
 
 declare global {
-    interface Window {
-        ipcRenderer: SeraphIpcRenderer<IpcChannelMap>;
-        config: {
-            set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
-            get(key: RUNElectronStoreTyped | string);
-        };
-        tags: {
-            set(key: RUNElectronStoreTagsTyped | string, data: string | number | object | boolean);
-            get(key: RUNElectronStoreTagsTyped | string);
-        };
-    }
+	interface Window {
+		ipcRenderer: SeraphIpcRenderer<IpcChannelMap>;
+		config: {
+			set(key: RUNElectronStoreTyped | string, data: string | number | object | boolean);
+			get(key: RUNElectronStoreTyped | string);
+		};
+		tags: {
+			set(key: RUNElectronStoreTagsTyped | string, data: string | number | object | boolean);
+			get(key: RUNElectronStoreTagsTyped | string);
+		};
+	}
 
-    interface SeraphIpcRenderer<ChannelMap> extends NodeJS.EventEmitter {
-        invoke(channel: keyof ChannelMap, ...args: string[] | unknown[]): Promise<never>;
+	interface SeraphIpcRenderer<ChannelMap> extends NodeJS.EventEmitter {
+		invoke(channel: keyof ChannelMap, ...args: string[] | unknown[]): Promise<never>;
 
-        invoke<T>(channel: keyof ChannelMap, ...args: Array<ChannelMap[typeof channel]>): Promise<IPCResponse<T>>;
+		invoke<T>(channel: keyof ChannelMap, ...args: Array<ChannelMap[typeof channel]>): Promise<IPCResponse<T>>;
 
-        invoke<T, X extends keyof ChannelMap>(channel: X, ...args: Array<IpcChannelMap[X]>): Promise<IPCResponse<T>>;
+		invoke<T, X extends keyof ChannelMap>(channel: X, ...args: Array<IpcChannelMap[X]>): Promise<IPCResponse<T>>;
 
-        on(channel: IPCValidOnChannels | string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
+		on(channel: IPCValidOnChannels | string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
 
-        once(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
+		once(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): this;
 
-        postMessage(channel: string, message: any, transfer?: MessagePort[]): void;
+		postMessage(channel: string, message: any, transfer?: MessagePort[]): void;
 
-        removeAllListeners(channel: string): this;
+		removeAllListeners(channel: string): this;
 
-        removeListener(channel: string, listener: (...args: any[]) => void): this;
+		removeListener(channel: string, listener: (...args: any[]) => void): this;
 
-        send(channel: IPCValidSendChannels | string, ...args: string[] | unknown[]): void;
+		send(channel: IPCValidSendChannels | string, ...args: string[] | unknown[]): void;
 
-        sendSync(channel: string, ...args: any[]): any;
+		sendSync(channel: string, ...args: any[]): any;
 
-        sendTo(webContentsId: number, channel: string, ...args: any[]): void;
+		sendTo(webContentsId: number, channel: string, ...args: any[]): void;
 
-        sendToHost(channel: string, ...args: any[]): void;
-    }
+		sendToHost(channel: string, ...args: any[]): void;
+	}
 }

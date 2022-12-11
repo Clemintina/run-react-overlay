@@ -1,76 +1,83 @@
 export type TagSchema = {
-    run: Run;
-    core: Core;
-    hypixel: Hypixel;
-    boomza: Boomza;
-    keathiz: Keathiz;
+  run: Run;
+  core: Core;
+  hypixel: Hypixel;
+  boomza: Boomza;
+  keathiz: Keathiz;
 };
 
 export type TagStoreSchema = {
-    setTagStore: (newTagStore: TagSchema) => void;
-    setStore: (produce) => void;
+  setTagStore: (newTagStore: TagSchema) => void;
+  setStore: (produce) => void;
 } & TagSchema;
 
-export interface Colour {
-    requirement: number;
-    operator: string;
-    colour: string;
-}
+export type Colour = {
+  requirement: number;
+  operator: string;
+  colour: string;
+};
 
-export interface TagColour {
-    display: string;
-    colour: string | Colour[];
-}
+type TagBaseComponent = {
+  display?: string;
+};
 
-export interface TagArray {
-    display?: string;
-    colours: Colour[];
-}
+export type TagColour = {
+  colour: string;
+} & TagBaseComponent;
 
-export interface Core {
-    fkdr: TagArray;
-    bblr: TagArray;
-    wlr: TagArray;
-    winstreak: TagArray;
-    kdr: TagArray;
-}
+export type TagArray = {
+  colour: Colour[];
+} & TagBaseComponent;
 
-export interface Run {
-    annoylist: TagColour;
-    friends: TagColour;
-    blacklist: TagColour;
-    migration: TagColour;
-    encounters: TagColour;
-    safelist: TagColour;
-    personal_safelist: TagColour;
-    name_change: TagColour;
-    bot: TagColour;
-}
+export type TagModifier = {
+  display: string;
+  changedObjectId: number;
+};
 
-export interface Boomza {
-    sniper: TagColour;
-    cheater: TagColour;
-}
+export type Core = {
+  fkdr: TagArray;
+  bblr: TagArray;
+  wlr: TagArray;
+  winstreak: TagArray;
+  kdr: TagArray;
+};
 
-export interface Hypixel {
-    party: TagColour;
-}
+export type Run = {
+  annoylist: TagColour;
+  friends: TagColour;
+  blacklist: TagColour;
+  migration: TagColour;
+  encounters: TagArray;
+  safelist: TagArray;
+  personal_safelist: TagColour;
+  name_change: TagColour;
+  bot: TagColour;
+};
 
-export interface Keathiz {
-    no_data: TagColour;
-    exits: {
-        exits_total: TagColour;
+export type Boomza = {
+  sniper: TagColour;
+  cheater: TagColour;
+};
+
+export type Hypixel = {
+  party: TagColour;
+};
+
+export type Keathiz = {
+  no_data: TagColour;
+  exits: {
+    exits_total: TagColour;
+  };
+  one_minute_requeue: TagColour;
+  consecutive: TagColour;
+  queues: {
+    queue_count: TagArray;
+    queue_total: TagColour;
+    consecutive_queue: {
+      last_1000: TagArray;
+      last_30: TagArray;
+      last_10: TagArray;
+      weighted: TagArray;
     };
-    one_minute_requeue: TagColour,
-    consecutive: TagColour,
-    queues: {
-        queue_count: TagArray;
-        queue_total: TagColour;
-        consecutive_queue: {
-            last_1000: TagArray;
-            last_30: TagArray;
-            last_10: TagArray;
-            weighted: TagArray;
-        };
-    };
-}
+  };
+};
