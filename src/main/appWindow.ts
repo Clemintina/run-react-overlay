@@ -252,7 +252,7 @@ const registerSeraphIPC = () => {
 		let proxyHypixel: { proxy: Agent } | {} =
 			args[3] != undefined && args[3]?.length > 2
 				? {
-					proxy: getProxyChannel(),
+					proxy: getProxyChannel()
 				}
 				: {};
 		if (args[2] != undefined) playerName = args[2].toLowerCase() as string;
@@ -369,32 +369,34 @@ const registerSeraphIPC = () => {
 			hypixelApiKeyOwner = args[3],
 			runApiKey = args[4],
 			overlayUuid = args[5];
+
+		const seraphHeaders = {
+			...headers,
+			"Run-API-Version": overlayVersion,
+			//"seraph-api-key": runApiKey,
+			"run-api-key": runApiKey,
+			"run-api-uuid": overlayUuid
+		};
+
 		if (endpoint === RunEndpoints.KEY) {
-			const response = await axiosClient(`https://antisniper.seraph.si/api/v3/key`, {
+			const response = await axiosClient(`https://antisniper.seraph.si/api/v4/key`, {
 				headers: {
 					...headers,
-					"Run-API-Version": overlayVersion,
-					"RUN-API-Key": runApiKey,
-					"run-api-uuid": overlayUuid,
-				},
+					...seraphHeaders
+				}
 			});
 			return { data: response.data, status: response.status };
 		} else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
 			const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, { headers });
 			return { data: response.data.data, status: response.status };
-		} else if (endpoint == RunEndpoints.DENICKER) {
-			const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}/${uuid}`, { headers });
-			return { data: response.data, status: response.status };
 		} else {
-			const response = await axiosClient(`https://antisniper.seraph.si/api/v3/${endpoint}?uuid=${uuid}`, {
+			const response = await axiosClient(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
 				headers: {
 					...headers,
+					...seraphHeaders,
 					"API-Key": hypixelApiKey,
-					"API-Key-Owner": hypixelApiKeyOwner,
-					"Run-API-Key": runApiKey,
-					"Run-API-Version": overlayVersion,
-					"RUN-API-UUID": overlayUuid,
-				},
+					"API-Key-Owner": hypixelApiKeyOwner
+				}
 			});
 			return { data: response.data, status: response.status };
 		}
@@ -601,7 +603,7 @@ const registerExternalApis = () => {
 		const response = await axiosClient(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
 			headers,
 			httpsAgent: getProxyChannel(),
-			proxy: false,
+			proxy: false
 		});
 		const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
 		let json: BoomzaAntisniper;

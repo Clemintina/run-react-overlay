@@ -5,15 +5,15 @@ import { NBTInventory } from "@common/zikeji";
  * Interface used in the {@link SkyBlockProfileMemberWithTransformedInventories} intersection to describe the intellisense for the inventory after being transformed.
  */
 export interface SkyBlockProfileTransformedInventories {
-    inv_armor: NBTInventory;
-    candy_inventory_contents?: NBTInventory;
-    ender_chest_contents?: NBTInventory;
-    fishing_bag?: NBTInventory;
-    inv_contents?: NBTInventory;
-    potion_bag?: NBTInventory;
-    quiver?: NBTInventory;
-    talisman_bag?: NBTInventory;
-    wardrobe_contents?: NBTInventory;
+  inv_armor: NBTInventory;
+  candy_inventory_contents?: NBTInventory;
+  ender_chest_contents?: NBTInventory;
+  fishing_bag?: NBTInventory;
+  inv_contents?: NBTInventory;
+  potion_bag?: NBTInventory;
+  quiver?: NBTInventory;
+  talisman_bag?: NBTInventory;
+  wardrobe_contents?: NBTInventory;
 }
 
 /**
