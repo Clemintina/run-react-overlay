@@ -163,9 +163,13 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 			playerData.sources.runApi = runApi;
 			playerObject.data = playerData;
 			get().updatePlayerState(playerData);
-
+			if (runApi.status != 200) {
+				console.log(runApi);
+			}
 			if (runApi.status == 200) {
 				playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
+
+				console.log(playerData.sources.runApi.data.data.blacklist.tagged);
 
 				if (!playerData.bot && !playerData.sources.runApi.data.data.blacklist.tagged) {
 					get().updatePlayerState(playerData);
@@ -327,7 +331,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 		addPartyMember: () => {
 		},
 		removePartyMember: () => {
-		},
+		}
 	},
 	tagStore: {
 		config: {},
@@ -555,7 +559,7 @@ const getHypixelFriends = async (player: Player) => {
 	} else {
 		api = {
 			data: [],
-			status: 400,
+			status: 400
 		};
 	}
 	return new Promise<IPCResponse<{

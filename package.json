@@ -5,12 +5,12 @@
 	"author": {
 		"name": "Kay"
 	},
-	"maintainers": [
+	"contributors": [
 		{
 			"name": "Arman"
 		}
 	],
-	"version": "1.5.78-STABLE",
+	"version": "1.5.81-STABLE",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
