@@ -32,16 +32,16 @@ export const ApiOptions = () => {
 	const { hypixel, settings, keathiz } = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		settings: state.settings,
-		keathiz: state.keathiz
+		keathiz: state.keathiz,
 	}));
 	const styledProps: SxProps = {
-		width: 0.86
+		width: 0.86,
 	};
 
 	// TODO make it look nicer and cleaner
 	return (
 		<NavigationBar>
-			<Box className="p-2 space-y-2">
+			<Box className='p-2 space-y-2'>
 				<SettingCard>
 					<span>Proxy Hypixel</span>
 					<span />
@@ -50,13 +50,13 @@ export const ApiOptions = () => {
 						onChange={async () => {
 							useConfigStore.getState().setHypixelState({
 								...hypixel,
-								proxy: !hypixel.proxy
+								proxy: !hypixel.proxy,
 							});
 						}}
 						options={{ enabled: hypixel.proxy }}
 					>
 						<span className={"pl-2"}>
-							<Tooltip title={"Only use this if your API Key keeps getting \"Too Many Invalid Api Keys\" as this is slower than direct. "}>
+							<Tooltip title={'Only use this if your API Key keeps getting "Too Many Invalid Api Keys" as this is slower than direct. '}>
 								<FontAwesomeIcon icon={faMapLocation} />
 							</Tooltip>
 						</span>
@@ -73,7 +73,7 @@ export const ApiOptions = () => {
 						options={{ enabled: settings.boomza }}
 					>
 						<span className={"pl-2"}>
-							<Tooltip title="This API is proxied to protect your IP.">
+							<Tooltip title='This API is proxied to protect your IP.'>
 								<FontAwesomeIcon icon={faMapLocation} />
 							</Tooltip>
 						</span>
@@ -120,7 +120,7 @@ export const ApiOptions = () => {
 							options={{ enabled: settings.keathiz }}
 						>
 							<span className={"pl-2"}>
-								<Tooltip title="This API is proxied to protect your IP.">
+								<Tooltip title='This API is proxied to protect your IP.'>
 									<FontAwesomeIcon icon={faMapLocation} />
 								</Tooltip>
 							</span>
@@ -141,7 +141,7 @@ export const ApiOptions = () => {
 							placeholder: keathiz.valid ? keathiz.key : "Antisniper API Key",
 							label: { text: "Antisniper API Key" },
 							colour: keathiz.valid ? "success" : "error",
-							focused: true
+							focused: true,
 						}}
 						sx={styledProps}
 						helperText={!keathiz.valid ? "Enter a valid Antisniper API Key" : ""}
@@ -159,11 +159,11 @@ export const Appearance = () => {
 		settings: state.settings,
 		browserWindow: state.browserWindow,
 		font: state.font,
-		table: state.table
+		table: state.table,
 	}));
 	const [opacityValue, setOpacityValue] = useState(localConfigStore.browserWindow.opacity ?? 20);
 	const styledProps: SxProps = {
-		width: 0.86
+		width: 0.86,
 	};
 
 	const [textAlignment, setTextAlignment] = useState(table.settings.textAlign);
@@ -173,7 +173,7 @@ export const Appearance = () => {
 			setTextAlignment(event.target.value);
 			useConfigStore.getState().setTableState({
 				...useConfigStore.getState().table,
-				settings: { textAlign: event.target.value }
+				settings: { textAlign: event.target.value },
 			});
 		}
 	};
@@ -181,7 +181,7 @@ export const Appearance = () => {
 	// TODO make it look nicer and cleaner
 	return (
 		<NavigationBar>
-			<Box className="p-2 space-y-2">
+			<Box className='p-2 space-y-2'>
 				<SettingCard>
 					<span>Auto Hide</span>
 					<span />
@@ -275,7 +275,7 @@ export const Appearance = () => {
 							onChange={async () => {
 								useConfigStore.getState().setSettings({
 									...settings,
-									appearance: { displayRank: !settings.appearance.displayRank }
+									appearance: { displayRank: !settings.appearance.displayRank },
 								});
 							}}
 							options={{ enabled: settings.appearance.displayRank }}
@@ -347,7 +347,7 @@ export const KeybindEditorView = () => {
 							options={{
 								liveUpdate: true,
 								placeholder: "Open Overlay",
-								value: useConfigStore.getState().getKeybind("open_overlay")?.keybind
+								value: useConfigStore.getState().getKeybind("open_overlay")?.keybind,
 							}}
 						/>
 					</span>
@@ -370,7 +370,7 @@ export const KeybindEditorView = () => {
 							}}
 							options={{
 								placeholder: "Clear Players",
-								value: useConfigStore.getState().getKeybind("clear_players")?.keybind
+								value: useConfigStore.getState().getKeybind("clear_players")?.keybind,
 							}}
 						/>
 					</span>
@@ -383,7 +383,7 @@ export const KeybindEditorView = () => {
 export const NickView = () => {
 	const { nicks, hypixelApiKey } = useConfigStore((state) => ({
 		nicks: state.nicks,
-		hypixelApiKey: state.hypixel.apiKey
+		hypixelApiKey: state.hypixel.apiKey,
 	}));
 	const { players } = usePlayerStore((state) => ({ players: state.players }));
 	const [playerNickname, setPlayerNickname] = useState({ name: "", nick: "", added: 0, uuid: "" });
@@ -441,13 +441,13 @@ export const NickView = () => {
 	};
 
 	const commonSx = {
-		minHeight: 20
+		minHeight: 20,
 	};
 
 	// TODO make it look nicer and cleaner
 	return (
 		<NavigationBar>
-			<div className="h-full w-full p-2 text-center">
+			<div className='h-full w-full p-2 text-center'>
 				<div>
 					<SettingCard className={"border-2 border-cyan-500"}>
 						<Box>
@@ -494,7 +494,7 @@ export const NickView = () => {
 											setPlayerNickname({
 												...playerNickname,
 												uuid: hypixelRequest?.data?.uuid ?? userInput,
-												name: hypixelRequest?.data?.displayname ?? userInput
+												name: hypixelRequest?.data?.displayname ?? userInput,
 											});
 											const user = nicks.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
 											if (user) {
@@ -544,14 +544,14 @@ export const NickView = () => {
 								text={"Add"}
 								sx={{
 									width: "50%",
-									height: "100%"
+									height: "100%",
 								}}
 								onClick={() => {
 									addPlayer(playerNickname);
 									clearPlayer();
 								}}
 								options={{
-									colour: "success"
+									colour: "success",
 								}}
 							/>
 						</div>
@@ -590,13 +590,13 @@ export const TagEditorView = () => {
 								options={{
 									colour: run.annoylist.colour,
 									placeholder: run.annoylist.display,
-									label: { text: "Annoy list" }
+									label: { text: "Annoy list" },
 								}}
 								onBlur={(event) => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.annoylist.display = event.currentTarget.value;
-										})
+										}),
 									);
 								}}
 							/>
@@ -607,7 +607,7 @@ export const TagEditorView = () => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.annoylist.colour = colour;
-										})
+										}),
 									);
 								}}
 								colourObject={run.annoylist.colour}
@@ -621,13 +621,13 @@ export const TagEditorView = () => {
 								options={{
 									colour: run.blacklist.colour,
 									placeholder: run.blacklist.display,
-									label: { text: "Blacklist" }
+									label: { text: "Blacklist" },
 								}}
 								onBlur={(event) => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.blacklist.display = event.currentTarget.value;
-										})
+										}),
 									);
 								}}
 							/>
@@ -638,7 +638,7 @@ export const TagEditorView = () => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.blacklist.colour = colour;
-										})
+										}),
 									);
 								}}
 								colourObject={run.blacklist.colour}
@@ -652,13 +652,13 @@ export const TagEditorView = () => {
 								options={{
 									colour: run.encounters.colour[0],
 									placeholder: run.encounters.display,
-									label: { text: "Encounters" }
+									label: { text: "Encounters" },
 								}}
 								onBlur={(event) => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.encounters.display = event.currentTarget.value;
-										})
+										}),
 									);
 								}}
 							/>
@@ -670,7 +670,7 @@ export const TagEditorView = () => {
 									const newItem = {
 										colour: newTagArray.colour,
 										requirement: newTagArray.requirement,
-										operator: "<="
+										operator: "<=",
 									};
 									if (Array.isArray(newColourObject.colour)) {
 										const newColourArray: Array<Colour> = [...newColourObject.colour];
@@ -681,7 +681,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.run.encounters.colour = newColourArray;
-											})
+											}),
 										);
 									}
 								}}
@@ -696,13 +696,13 @@ export const TagEditorView = () => {
 								options={{
 									colour: run.friends.colour,
 									placeholder: run.friends.display,
-									label: { text: "Friends" }
+									label: { text: "Friends" },
 								}}
 								onBlur={(event) => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.friends.display = event.currentTarget.value;
-										})
+										}),
 									);
 								}}
 							/>
@@ -713,7 +713,7 @@ export const TagEditorView = () => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.friends.colour = colour;
-										})
+										}),
 									);
 								}}
 								colourObject={run.friends.colour}
@@ -727,13 +727,13 @@ export const TagEditorView = () => {
 								options={{
 									colour: run.safelist.colour,
 									placeholder: run.safelist.display,
-									label: { text: "Safelist" }
+									label: { text: "Safelist" },
 								}}
 								onBlur={(event) => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.safelist.display = event.currentTarget.value;
-										})
+										}),
 									);
 								}}
 							/>
@@ -745,7 +745,7 @@ export const TagEditorView = () => {
 									const newItem = {
 										colour: newTagArray.colour,
 										requirement: newTagArray.requirement,
-										operator: "<="
+										operator: "<=",
 									};
 									if (Array.isArray(newColourObject.colour)) {
 										const newColourArray: Array<Colour> = [...newColourObject.colour];
@@ -756,7 +756,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.run.safelist.colour = newColourArray;
-											})
+											}),
 										);
 									}
 								}}
@@ -771,13 +771,13 @@ export const TagEditorView = () => {
 								options={{
 									colour: run.personal_safelist.colour,
 									placeholder: run.personal_safelist.display,
-									label: { text: "Personal Safelist" }
+									label: { text: "Personal Safelist" },
 								}}
 								onBlur={(event) => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.personal_safelist.display = event.currentTarget.value;
-										})
+										}),
 									);
 								}}
 							/>
@@ -788,7 +788,7 @@ export const TagEditorView = () => {
 									useTagStore.getState().setStore(
 										produce((state: any) => {
 											state.run.personal_safelist.colour = colour;
-										})
+										}),
 									);
 								}}
 								colourObject={run.personal_safelist.colour}
@@ -805,13 +805,13 @@ export const TagEditorView = () => {
 									options={{
 										colour: boomza.cheater.colour,
 										placeholder: boomza.cheater.display,
-										label: { text: "Boomza Cheater" }
+										label: { text: "Boomza Cheater" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.boomza.hacker.display = event.currentTarget.value;
-											})
+											}),
 										);
 									}}
 								/>
@@ -822,7 +822,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.boomza.cheater.colour = colour;
-											})
+											}),
 										);
 									}}
 									colourObject={boomza.cheater.colour}
@@ -836,13 +836,13 @@ export const TagEditorView = () => {
 									options={{
 										colour: boomza.sniper.colour,
 										placeholder: boomza.sniper.display,
-										label: { text: "Boomza Sniper" }
+										label: { text: "Boomza Sniper" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.boomza.sniper.display = event.currentTarget.value;
-											})
+											}),
 										);
 									}}
 								/>
@@ -853,7 +853,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.boomza.sniper.colour = colour;
-											})
+											}),
 										);
 									}}
 									colourObject={boomza.sniper.colour}
@@ -871,13 +871,13 @@ export const TagEditorView = () => {
 									options={{
 										colour: hypixel.party.colour,
 										placeholder: hypixel.party.display,
-										label: { text: "Party" }
+										label: { text: "Party" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.hypixel.party.display = event.currentTarget.value;
-											})
+											}),
 										);
 									}}
 								/>
@@ -888,7 +888,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.hypixel.party.colour = colour;
-											})
+											}),
 										);
 									}}
 									colourObject={hypixel.party.colour}
@@ -906,13 +906,13 @@ export const TagEditorView = () => {
 									options={{
 										colour: keathiz.no_data.colour,
 										placeholder: keathiz.no_data.display,
-										label: { text: "Keathiz No Data" }
+										label: { text: "Keathiz No Data" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.no_data.display = event.currentTarget.value;
-											})
+											}),
 										);
 									}}
 								/>
@@ -923,7 +923,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.no_data.colour = colour;
-											})
+											}),
 										);
 									}}
 									colourObject={keathiz.no_data.colour}
@@ -937,13 +937,13 @@ export const TagEditorView = () => {
 									options={{
 										colour: keathiz.queues.queue_total.colour,
 										placeholder: keathiz.queues.queue_total.display,
-										label: { text: "Keathiz Queue Total" }
+										label: { text: "Keathiz Queue Total" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.queues.queue_total.display = event.currentTarget.value;
-											})
+											}),
 										);
 									}}
 								/>
@@ -954,7 +954,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.queues.queue_total.colour = colour;
-											})
+											}),
 										);
 									}}
 									colourObject={keathiz.queues.queue_total.colour}
@@ -968,13 +968,13 @@ export const TagEditorView = () => {
 									options={{
 										colour: keathiz.queues.queue_count.colour[0],
 										placeholder: keathiz.queues.queue_count.display,
-										label: { text: "Keathiz Queue Count" }
+										label: { text: "Keathiz Queue Count" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.queues.queue_count.display = event.currentTarget.value;
-											})
+											}),
 										);
 									}}
 								/>
@@ -986,7 +986,7 @@ export const TagEditorView = () => {
 										const newItem = {
 											colour: newTagArray.colour,
 											requirement: newTagArray.requirement,
-											operator: "<="
+											operator: "<=",
 										};
 										if (Array.isArray(newColourObject.colour)) {
 											const newColourArray: Array<Colour> = [...newColourObject.colour];
@@ -997,7 +997,7 @@ export const TagEditorView = () => {
 											useTagStore.getState().setStore(
 												produce((state: any) => {
 													state.keathiz.queues.queue_count.colour = newColourArray;
-												})
+												}),
 											);
 										}
 									}}
@@ -1012,13 +1012,13 @@ export const TagEditorView = () => {
 									options={{
 										colour: keathiz.consecutive.colour,
 										placeholder: keathiz.consecutive.display,
-										label: { text: "Keathiz Consecutive Tag ( C )" }
+										label: { text: "Keathiz Consecutive Tag ( C )" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.no_data.display = event.currentTarget.value;
-											})
+											}),
 										);
 									}}
 								/>
@@ -1029,7 +1029,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.consecutive.colour = colour;
-											})
+											}),
 										);
 									}}
 									colourObject={keathiz.consecutive.colour}
@@ -1043,13 +1043,13 @@ export const TagEditorView = () => {
 									options={{
 										colour: keathiz.one_minute_requeue.colour,
 										placeholder: keathiz.one_minute_requeue.display,
-										label: { text: "Keathiz One Minute Queue ( Z )" }
+										label: { text: "Keathiz One Minute Queue ( Z )" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.no_data.display = event.currentTarget.value;
-											})
+											}),
 										);
 									}}
 								/>
@@ -1060,7 +1060,7 @@ export const TagEditorView = () => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
 												state.keathiz.one_minute_requeue.colour = colour;
-											})
+											}),
 										);
 									}}
 									colourObject={keathiz.one_minute_requeue.colour}
@@ -1078,17 +1078,17 @@ export const CustomLinks = () => {
 	const { settings, customApi, customFile } = useConfigStore((state) => ({
 		settings: state.settings,
 		customApi: state.customApi,
-		customFile: state.customFile
+		customFile: state.customFile,
 	}));
 	const styledProps: SxProps = {
-		width: 0.98
+		width: 0.98,
 	};
 
 	// TODO make it look nicer and cleaner
 	return (
 		<div>
 			<NavigationBar>
-				<Box className="p-2 space-y-2">
+				<Box className='p-2 space-y-2'>
 					<SettingCard>
 						<span>Custom Blacklist File</span>
 						<span />
@@ -1116,7 +1116,7 @@ export const CustomLinks = () => {
 														const customLinkFile: CustomLinkFile = {
 															readable: true,
 															path: customFilePath,
-															data
+															data,
 														};
 														useConfigStore.getState().setCustomFile(customLinkFile);
 													} else {
@@ -1124,7 +1124,7 @@ export const CustomLinks = () => {
 														const customLinkFile: CustomLinkFile = {
 															readable: true,
 															path: customFilePath,
-															data
+															data,
 														};
 														useConfigStore.getState().setCustomFile(customLinkFile);
 													}
@@ -1135,7 +1135,7 @@ export const CustomLinks = () => {
 												useConfigStore.getState().setErrorMessage({
 													code: 400,
 													title: "Bad Custom file",
-													cause: "The file set is unreadable."
+													cause: "The file set is unreadable.",
 												});
 											}
 										}
@@ -1154,7 +1154,7 @@ export const CustomLinks = () => {
 													const customLinkFile: CustomLinkFile = {
 														readable: true,
 														path: customFile.path,
-														data
+														data,
 													};
 													useConfigStore.getState().setCustomFile(customLinkFile);
 												} else {
@@ -1162,7 +1162,7 @@ export const CustomLinks = () => {
 													const customLinkFile: CustomLinkFile = {
 														readable: true,
 														path: customFile.path,
-														data
+														data,
 													};
 													useConfigStore.getState().setCustomFile(customLinkFile);
 												}
@@ -1251,14 +1251,14 @@ export const ColumnEditorView = () => {
 		autoSizePadding: 0,
 		rowHeight: 25,
 		overlayNoRowsTemplate: "Welcome to the Table Editor! In order to continue, Please click a button and I will display a preview here! ",
-		getRowId: (params: GetRowIdParams<Player>) => params.data.name
+		getRowId: (params: GetRowIdParams<Player>) => params.data.name,
 	};
 
 	// TODO make it look nicer and cleaner
 	return (
 		<NavigationBar>
 			<Box className={"pl-2"}>
-				<div className="ag-theme-alpine-dark" style={{ height: "15vh" }}>
+				<div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
 					<AgGridReact rowData={playerData} gridOptions={gridOptions} />
 				</div>
 				<div className={"grid grid-cols-6 justify-center"}>
@@ -1282,10 +1282,10 @@ export const Essentials = () => {
 		logs: state.logs,
 		settings: state.settings,
 		run: state.run,
-		keathiz: state.keathiz
+		keathiz: state.keathiz,
 	}));
 	const styledProps: SxProps = {
-		width: 0.86
+		width: 0.86,
 	};
 
 	// TODO make it look nicer and cleaner
@@ -1308,19 +1308,19 @@ export const Essentials = () => {
 							placeholder: hypixel.apiKeyValid ? hypixel.apiKey : "Hypixel API Key",
 							label: { text: "Hypixel API Key" },
 							colour: hypixel.apiKeyValid ? "success" : "error",
-							focused: true
+							focused: true,
 						}}
 						sx={styledProps}
 						helperText={!hypixel.apiKeyValid ? "Enter a valid Hypixel API Key" : ""}
 						initialValue={hypixel.apiKey}
 						inputProps={{
 							endAdornment: (
-								<InputAdornment position="end">
+								<InputAdornment position='end'>
 									<Button onClick={() => useConfigStore.getState().setHypixelApiKey(hypixel.apiKey)}>
 										<RefreshRounded />
 									</Button>
 								</InputAdornment>
-							)
+							),
 						}}
 					/>
 				</TextSettingCard>
@@ -1341,19 +1341,19 @@ export const Essentials = () => {
 								placeholder: run.valid ? run.apiKey : "Seraph API Key",
 								label: { text: "Seraph API Key" },
 								colour: run.valid ? "success" : "error",
-								focused: true
+								focused: true,
 							}}
 							sx={styledProps}
 							helperText={!run.valid ? "Enter a valid Seraph API Key" : ""}
 							initialValue={run.apiKey}
 							inputProps={{
 								endAdornment: (
-									<InputAdornment position="end">
+									<InputAdornment position='end'>
 										<Button onClick={() => useConfigStore.getState().validateRunKey()}>
 											<RefreshRounded />
 										</Button>
 									</InputAdornment>
-								)
+								),
 							}}
 						/>
 					</div>
@@ -1421,14 +1421,14 @@ export const ColourRenderer: FC<PropsWithChildren> = ({ children }) => {
 	const { colours, opacity, font } = useConfigStore((state) => ({
 		colours: state.colours,
 		opacity: state.browserWindow.opacity,
-		font: state.font
+		font: state.font,
 	}));
 	const useExistingTheme = useTheme();
 	const theme = createTheme({
 		...useExistingTheme,
 		typography: {
-			fontFamily: `"${font.family}"`
-		}
+			fontFamily: `"${font.family}"`,
+		},
 	});
 
 	return (

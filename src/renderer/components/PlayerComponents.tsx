@@ -45,13 +45,13 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 					if (player.sources?.lunar?.data?.player?.lunarPlus?.premium) {
 						lunarRenderer = (
 							<span>
-								<img width="20px" height="20px" src="https://dl.seraph.si/lunarplus.webp" alt="lunar tag" />
+								<img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
 							</span>
 						);
 					} else {
 						lunarRenderer = (
 							<span>
-								<img width="20px" height="20px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />
+								<img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
 							</span>
 						);
 					}
@@ -63,8 +63,8 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	}
 
 	return (
-		<div className="inline flex" style={{ textAlign: table.settings.textAlign }}>
-			<img src={srcUrl} className="text-center" alt="player-head" />
+		<div className='inline flex' style={{ textAlign: table.settings.textAlign }}>
+			<img src={srcUrl} className='text-center' alt='player-head' />
 			{lunarRenderer}
 		</div>
 	);
@@ -226,7 +226,7 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playerNick, handleAdd, handleRemove }) => {
 	const { nicksLocal, hypixelApiKey } = useConfigStore((state) => ({
 		nicksLocal: state.nicks,
-		hypixelApiKey: state.hypixel.apiKey
+		hypixelApiKey: state.hypixel.apiKey,
 	}));
 	const [playerNickname, setPlayerNickname] = useState<PlayerNickname>(nicksLocal.filter((player) => player.nick.toLowerCase() == playerNick.nick.toLowerCase())[0]);
 
@@ -245,7 +245,7 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 								uuid: hypixelRequest?.data?.uuid,
 								name: hypixelRequest?.data?.displayname,
 								nick: playerNickname.nick,
-								added: Date.now()
+								added: Date.now(),
 							};
 							useConfigStore.getState().setNicks([...users, newState]);
 							setPlayerNickname(newState);
@@ -292,7 +292,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 		settings: state.settings,
 		hypixel: state.hypixel,
 		runConfig: state.run,
-		table: state.table
+		table: state.table,
 	}));
 
 	let tagArray: Array<JSX.Element> = [];

@@ -252,8 +252,8 @@ const registerSeraphIPC = () => {
 		let proxyHypixel: { proxy: Agent } | {} =
 			args[3] != undefined && args[3]?.length > 2
 				? {
-					proxy: getProxyChannel()
-				}
+						proxy: getProxyChannel(),
+				  }
 				: {};
 		if (args[2] != undefined) playerName = args[2].toLowerCase() as string;
 		const hypixelClient = new HypixelApi(apiKey, {
@@ -375,15 +375,15 @@ const registerSeraphIPC = () => {
 			"Run-API-Version": overlayVersion,
 			//"seraph-api-key": runApiKey,
 			"run-api-key": runApiKey,
-			"run-api-uuid": overlayUuid
+			"run-api-uuid": overlayUuid,
 		};
 
 		if (endpoint === RunEndpoints.KEY) {
 			const response = await axiosClient(`https://antisniper.seraph.si/api/v4/key`, {
 				headers: {
 					...headers,
-					...seraphHeaders
-				}
+					...seraphHeaders,
+				},
 			});
 			return { data: response.data, status: response.status };
 		} else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
@@ -395,8 +395,8 @@ const registerSeraphIPC = () => {
 					...headers,
 					...seraphHeaders,
 					"API-Key": hypixelApiKey,
-					"API-Key-Owner": hypixelApiKeyOwner
-				}
+					"API-Key-Owner": hypixelApiKeyOwner,
+				},
 			});
 			return { data: response.data, status: response.status };
 		}
@@ -603,9 +603,9 @@ const registerExternalApis = () => {
 		const response = await axiosClient(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
 			headers,
 			httpsAgent: getProxyChannel(),
-			proxy: false
+			proxy: false,
 		});
-		const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
+		const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
 		let json: BoomzaAntisniper;
 		try {
 			json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };

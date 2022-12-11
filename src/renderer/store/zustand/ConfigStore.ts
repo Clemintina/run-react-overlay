@@ -68,7 +68,7 @@ const useConfigStore = create<ConfigStore>()(
 					apiKey: "",
 					apiKeyValid: false,
 					apiKeyOwner: "",
-					proxy: false
+					proxy: false,
 				},
 				setHypixelState: (hypixel) => {
 					set({ hypixel });
@@ -80,8 +80,8 @@ const useConfigStore = create<ConfigStore>()(
 						set(() => ({
 							hypixel: {
 								...oldHypixel,
-								apiKeyValid: false
-							}
+								apiKeyValid: false,
+							},
 						}));
 						return;
 					}
@@ -90,40 +90,40 @@ const useConfigStore = create<ConfigStore>()(
 						get().setErrorMessage({
 							title: "Hypixel Key Set",
 							cause: "Successfully set your Hypixel API key!",
-							code: 200
+							code: 200,
 						});
 						set(() => ({
 							hypixel: {
 								apiKey: hypixelApiKey,
 								apiKeyValid: true,
 								apiKeyOwner: apiResponse.data.owner,
-								proxy: get().hypixel.proxy
-							}
+								proxy: get().hypixel.proxy,
+							},
 						}));
 					} else {
 						get().setErrorMessage({
 							title: "Invalid Hypixel Key",
 							cause: "The Hypixel API key provided is not valid! Generate one with /api new.",
-							code: 400
+							code: 400,
 						});
 						set(() => ({
 							hypixel: {
 								apiKey: get().hypixel.apiKey,
 								apiKeyValid: false,
 								apiKeyOwner: apiResponse.data.owner,
-								proxy: get().hypixel.proxy
-							}
+								proxy: get().hypixel.proxy,
+							},
 						}));
 					}
 				},
 				colours: {
 					backgroundColour: "#242424",
 					primaryColour: "#808080",
-					secondaryColour: "#00FFFF"
+					secondaryColour: "#00FFFF",
 				},
 				setColours: (colourObject) => {
 					set(() => ({
-						colours: colourObject
+						colours: colourObject,
 					}));
 				},
 				version: "",
@@ -140,36 +140,36 @@ const useConfigStore = create<ConfigStore>()(
 						set({
 							font: {
 								...get().font,
-								availableFonts: fontsAvailable
-							}
+								availableFonts: fontsAvailable,
+							},
 						});
 					}
 				},
 				logs: {
 					logPath: "",
 					readable: false,
-					clientName: "Unknown"
+					clientName: "Unknown",
 				},
 				setLogs: async (client) => {
 					await window.config.set("overlay.logPath", client.logPath);
 					await window.config.set("overlay.clientName", client.clientName);
 					await window.config.set("overlay.readable", client.readable);
 					set({
-						logs: client
+						logs: client,
 					});
 				},
 				error: {
 					code: 201,
 					title: "",
 					cause: "",
-					detail: ""
+					detail: "",
 				},
 				setErrorMessage: async (structuredError) => {
 					set({
 						error: {
 							...structuredError,
-							code: structuredError?.code ?? 200
-						}
+							code: structuredError?.code ?? 200,
+						},
 					});
 					await awaitTimeout(5 * 1000);
 					set({
@@ -177,18 +177,18 @@ const useConfigStore = create<ConfigStore>()(
 							code: 201,
 							title: "",
 							cause: "",
-							detail: ""
-						}
+							detail: "",
+						},
 					});
 				},
 				keathiz: {
 					key: "",
 					valid: false,
-					showNick: true
+					showNick: true,
 				},
 				setKeathizData: (keathizstore) => {
 					set({
-						keathiz: keathizstore
+						keathiz: keathizstore,
 					});
 				},
 				setKeathizApiKey: async (keathizApiKey) => {
@@ -199,8 +199,8 @@ const useConfigStore = create<ConfigStore>()(
 							keathiz: {
 								key: keathizApiKey,
 								valid: true,
-								showNick: useConfigStore.getState().keathiz.showNick
-							}
+								showNick: useConfigStore.getState().keathiz.showNick,
+							},
 						});
 						for (const player of usePlayerStore.getState().players) {
 							if (player.hypixelPlayer?.uuid && !player.nicked) {
@@ -215,13 +215,13 @@ const useConfigStore = create<ConfigStore>()(
 						get().setErrorMessage({
 							title: "Invalid Antisniper Key",
 							cause: "The Antisniper API key provided is not valid!",
-							code: 400
+							code: 400,
 						});
 					}
 				},
 				run: {
 					apiKey: "public",
-					valid: true
+					valid: true,
 				},
 				validateRunKey: async () => {
 					get().setRunApiKey(get().run.apiKey, "SYSTEM");
@@ -234,19 +234,19 @@ const useConfigStore = create<ConfigStore>()(
 						get().setErrorMessage({
 							title: "Seraph Key Set",
 							cause: "Successfully set your Seraph API key!",
-							code: 200
+							code: 200,
 						});
 						set({
 							run: {
 								apiKey: runkey,
-								valid: true
-							}
+								valid: true,
+							},
 						});
 					} else {
 						get().setErrorMessage({
 							title: "Invalid Seraph Key",
 							cause: "The Seraph API key provided is invalid or locked!",
-							code: 400
+							code: 400,
 						});
 						await window.ipcRenderer.invoke(IpcValidInvokeChannels.NOTIFICATIONS, ["Your Seraph Key has been locked!"]);
 					}
@@ -254,7 +254,7 @@ const useConfigStore = create<ConfigStore>()(
 				browserWindow: {
 					width: 600,
 					height: 800,
-					opacity: 100
+					opacity: 100,
 				},
 				setBrowserWindow: (browserWindow) => {
 					set({ browserWindow });
@@ -273,7 +273,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: null
+							flex: null,
 						},
 						{
 							colId: "head",
@@ -287,7 +287,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "star",
@@ -301,7 +301,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "name",
@@ -315,7 +315,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "tags",
@@ -329,7 +329,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "WS",
@@ -343,7 +343,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "FKDR",
@@ -357,7 +357,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "WLR",
@@ -371,7 +371,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "BBLR",
@@ -385,7 +385,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "wins",
@@ -399,7 +399,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "losses",
@@ -413,7 +413,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "session",
@@ -427,7 +427,7 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
+							flex: 1,
 						},
 						{
 							colId: "extra",
@@ -441,12 +441,12 @@ const useConfigStore = create<ConfigStore>()(
 							rowGroupIndex: null,
 							pivot: false,
 							pivotIndex: null,
-							flex: 1
-						}
+							flex: 1,
+						},
 					),
 					settings: {
-						textAlign: "center"
-					}
+						textAlign: "center",
+					},
 				},
 				setTableState: async (table) => {
 					await window.config.set("overlay.table.columnState", table);
@@ -459,19 +459,19 @@ const useConfigStore = create<ConfigStore>()(
 					astolfo: false,
 					boomza: true,
 					hypixel: {
-						guilds: false
+						guilds: false,
 					},
 					run: {
-						friends: false
+						friends: false,
 					},
 					preferences: {
 						autoHide: true,
 						customFile: false,
-						customUrl: false
+						customUrl: false,
 					},
 					appearance: {
-						displayRank: true
-					}
+						displayRank: true,
+					},
 				},
 				setSettings: async (settings) => {
 					set({ settings });
@@ -480,19 +480,19 @@ const useConfigStore = create<ConfigStore>()(
 				customFile: {
 					path: "",
 					readable: false,
-					data: null
+					data: null,
 				},
 				setCustomFile: (customFile) => {
 					set({
-						customFile
+						customFile,
 					});
 				},
 				customApi: {
-					url: ""
+					url: "",
 				},
 				setCustomApi: (customApi) => {
 					set({
-						customApi
+						customApi,
 					});
 				},
 				keybinds: [],
@@ -506,7 +506,7 @@ const useConfigStore = create<ConfigStore>()(
 				},
 				removeKeybind: (focus: KeyboardFocusType) => {
 					set({
-						keybinds: get().keybinds.filter((arr) => arr.focus !== focus)
+						keybinds: get().keybinds.filter((arr) => arr.focus !== focus),
 					});
 				},
 				getKeybind: (focus: KeyboardFocusType) => {
@@ -515,7 +515,7 @@ const useConfigStore = create<ConfigStore>()(
 				font: {
 					family: "Nunito",
 					availableFonts: [],
-					isGoogleFont: true
+					isGoogleFont: true,
 				},
 				setFont: async (font) => {
 					set({ font });
@@ -531,15 +531,15 @@ const useConfigStore = create<ConfigStore>()(
 						release: "",
 						updateAvailable: false,
 						ready: false,
-						releaseDate: new Date()
-					}
+						releaseDate: new Date(),
+					},
 				},
 				game: {
-					last_server: ""
+					last_server: "",
 				},
 				setGame: (game) => {
 					set({ game });
-				}
+				},
 			}),
 			{
 				name: "user_settings",
@@ -575,10 +575,10 @@ const useConfigStore = create<ConfigStore>()(
 						updatedState.hypixel.proxy = false;
 					}
 					return updatedState;
-				}
-			}
-		)
-	)
+				},
+			},
+		),
+	),
 );
 
 export default useConfigStore;
