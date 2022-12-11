@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import App from "@renderer/views/core/App";
+import Homepage from "@renderer/views/Homepage";
 import { LogFileReader } from "@common/utils/LogFileReader";
 import "@assets/index.css";
 import { alpha, Box, createTheme, hexToRgb, ThemeOptions, ThemeProvider } from "@mui/material";
@@ -10,8 +10,8 @@ import { KeybindHandlerUtils } from "@common/utils/KeybindHandler";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 import { inDev } from "@common/helpers";
-import { ApiOptions, Appearance, CustomLinks, KeybindEditorView, NickView, TagEditorView, ColumnEditorView, Essentials, ColourRenderer } from "@renderer/views/settings/SettingsComponents";
-import NewTitlebar from "@renderer/views/core/NewTitlebar";
+import { ApiOptions, Appearance, CustomLinks, KeybindEditorView, NickView, TagEditorView, ColumnEditorView, Essentials, ColourRenderer } from "@components/SettingsComponents";
+import { Titlebar } from "@components/TitlebarComponents";
 
 if (!inDev()) {
   Sentry.init({
@@ -81,9 +81,9 @@ createRoot(document.getElementById("app")!).render(
     <Box className={"mainBody text-gray-400"} id={"main-body"}>
       <ColourRenderer>
         <HashRouter basename={"/"}>
-          <NewTitlebar>
+          <Titlebar>
             <Routes>
-              <Route path={"/"} element={<App />} />
+              <Route path={"/"} element={<Homepage />} />
               <Route path={"/settings"} element={<Essentials />} />
               <Route path={"/settings/apis"} element={<ApiOptions />} />
               <Route path={"/settings/essentials"} element={<Essentials />} />
@@ -94,7 +94,7 @@ createRoot(document.getElementById("app")!).render(
               <Route path={"/settings/appearance"} element={<Appearance />} />
               <Route path={"/settings/customlinks"} element={<CustomLinks />} />
             </Routes>
-          </NewTitlebar>
+          </Titlebar>
         </HashRouter>
       </ColourRenderer>
     </Box>

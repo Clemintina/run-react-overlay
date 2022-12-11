@@ -12,10 +12,10 @@ import { PlayerNickname } from "@common/utils/Schemas";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { RequestType } from "@common/utils/externalapis/RunApi";
 import destr from "destr";
-import { InputBoxButton, InputTextBox } from "@components/user/BaseComponents";
-import { SettingCard } from "@components/user/AppComponents";
-import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/user/TagComponents";
-import { StatsisticsTooltip } from "@components/user/TooltipComponents";
+import { InputBoxButton, InputTextBox } from "@components/BaseComponents";
+import { SettingCard } from "@components/AppComponents";
+import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/TagComponents";
+import { StatsisticsTooltip } from "@components/TooltipComponents";
 
 export type PlayerCommonProperties = {
 	player: Player;
@@ -169,7 +169,6 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	const { run } = useTagStore((state) => ({ run: state.run }));
 	const { settings, table, keathiz } = useConfigStore((state) => ({ settings: state.settings, table: state.table, keathiz: state.keathiz }));
-	const { players } = usePlayerStore((state) => ({ players: state.players }));
 
 	const handleDenickEvent = () => {
 		useConfigStore.getState().setKeathizData({ ...keathiz, showNick: !keathiz.showNick });

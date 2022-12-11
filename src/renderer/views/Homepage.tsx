@@ -11,9 +11,9 @@ import useConfigStore from "@renderer/store/zustand/ConfigStore";
 import { Box } from "@mui/material";
 import { Interweave } from "interweave";
 import { AppInformation } from "@common/utils/Schemas";
-import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/user/PlayerComponents";
-import { RenderCoreStatsColour, RenderRatioColour } from "@components/user/TagComponents";
-import { CustomHeader } from "@components/user/AppComponents";
+import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
+import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
+import { CustomHeader } from "@components/AppComponents";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;

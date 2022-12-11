@@ -16,17 +16,17 @@ import produce from "immer";
 import destr from "destr";
 import Typography from "@mui/material/Typography";
 import { ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
-import { columnDefsBase, defaultColDefBase } from "@renderer/views/core/App";
+import { columnDefsBase, defaultColDefBase } from "@renderer/views/Homepage";
 import { AgGridReact } from "ag-grid-react";
 import { Link } from "react-router-dom";
 import { NavigateNext, RefreshRounded } from "@mui/icons-material";
 import GoogleFontLoader from "react-google-font-loader";
 import { hexToRgbA } from "@common/helpers";
-import { constantPlayerData } from "@renderer/views/settings/SettingViewUtils";
-import { ColourPicker, ColourPickerArray, LogSelectorModal, SettingCard, SettingHeader, TagEditor, TextSettingCard } from "@components/user/AppComponents";
-import { InputBoxButton, InputTextBox, ToggleButton, UserAccordion } from "@components/user/BaseComponents";
-import { Colour, TagArray, TagColour } from "@common/utils/TagSchema";
-import { PlayerNicknameViewComponent } from "@components/user/PlayerComponents";
+import { constantPlayerData } from "@common/utils/SettingViewUtils";
+import { ColourPicker, ColourPickerArray, LogSelectorModal, SettingCard, SettingHeader, TagEditor, TextSettingCard } from "@components/AppComponents";
+import { InputBoxButton, InputTextBox, ToggleButton, UserAccordion } from "@components/BaseComponents";
+import { Colour } from "@common/utils/TagSchema";
+import { PlayerNicknameViewComponent } from "@components/PlayerComponents";
 
 export const ApiOptions = () => {
 	const { hypixel, settings, keathiz } = useConfigStore((state) => ({

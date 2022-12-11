@@ -3,7 +3,7 @@ import React, { FC, PropsWithChildren } from "react";
 import { styled } from "@mui/material";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { getPlayerRank } from "@common/zikeji";
-import { RenderCoreStatsColour, RenderRatioColour } from "@components/user/TagComponents";
+import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { Interweave } from "interweave";
 
 export type OverlayTooltip = {

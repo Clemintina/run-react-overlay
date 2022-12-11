@@ -6,7 +6,7 @@ import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { InputBoxButton, InputTextBox } from "@components/user/BaseComponents";
+import { InputBoxButton, InputTextBox } from "@components/BaseComponents";
 import { HexColorPicker } from "react-colorful";
 import { hexToRgbA } from "@common/helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

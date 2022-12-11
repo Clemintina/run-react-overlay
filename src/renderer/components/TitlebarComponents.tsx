@@ -32,7 +32,7 @@ import MinimizeIcon from "@mui/icons-material/Minimize";
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { hexToRgbA } from "@common/helpers";
-import { InputTextBox } from "@components/user/BaseComponents";
+import { InputTextBox } from "@components/BaseComponents";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
@@ -117,7 +117,7 @@ const getIconType = (menuObject: MenuOption) => {
   }
 };
 
-const NewTitlebar = ({ children }) => {
+export const Titlebar = ( { children }) => {
   const [open, setOpen] = React.useState(false);
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -277,5 +277,3 @@ const NewTitlebar = ({ children }) => {
     </Box>
   );
 };
-
-export default NewTitlebar;

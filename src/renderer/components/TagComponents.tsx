@@ -128,7 +128,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 
 	if (tagDisplayPath == "run.blacklist") {
 		return (
-			<Tooltip title={<span className={"normal-case"}>{"This player is blacklisted, leave the queue."}</span>} arrow>
+			<Tooltip title={<span className={"normal-case"}>{`This player is blacklisted. It is advised to requeue!`}</span>} arrow>
 				<span style={{ color: `#${tagArray}` }}>{value != undefined ? value : tagDisplayIcon}</span>
 			</Tooltip>
 		);
