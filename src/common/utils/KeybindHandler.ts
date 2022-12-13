@@ -1,6 +1,6 @@
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useConfigStore from "@renderer/store/ConfigStore";
 import { KeyboardFocusType } from "@common/utils/Schemas";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import usePlayerStore from "@renderer/store/PlayerStore";
 
 export class KeybindHandlerUtils {
 	public startHandlingApp = async () => {

@@ -1,13 +1,11 @@
 import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { KeathizEndpoints } from "./externalapis/BoomzaApi";
 import { KeybindInterface } from "@common/utils/Schemas";
-import { Components } from "@common/zikeji";
-import Player = Components.Schemas.Player;
 
 /**
  * Adds intellisense to each IpcRenderer
  */
-const IPCValidInvokeArray = ["hypixel", "registerGlobalKeybinds", "seraph", "isAdmin", "autoLog", "mcutils", "selectLogFile", "isFileReadable", "boomza", "keathiz", "observer", "lunar", "playerdb", "tagsGet", "getWholeStore", "getFilePath", "notifications", "getAppInfo", "astolfo", "openlink"] as const;
+const IPCValidInvokeArray = ["hypixel", "registerGlobalKeybinds", "seraph", "isAdmin", "autoLog", "mcutils", "selectLogFile", "isFileReadable", "boomza", "keathiz", "observer", "lunar", "playerdb", "getFilePath", "notifications", "getAppInfo", "astolfo", "openlink"] as const;
 export type IPCValidInvokeChannels = typeof IPCValidInvokeArray[number];
 
 const IPCValidOnArray = ["logFileLine", "globalShortcutPressed", "updater"] as const;
@@ -77,5 +75,3 @@ export type IpcChannelMap = {
 	[IpcValidSendChannels.WINDOW_CLOSE]: [];
 	[IpcValidSendChannels.OPEN_EXTERNAL]: [filePath: "config_file" | "tag_file"];
 };
-
-// await window.ipcRenderer.invoke<Player>( IpcValidInvokeChannels.HYPIXEL, [ RequestType.KEY,'' ] );

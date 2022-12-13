@@ -7,8 +7,8 @@ import { Paths } from "@common/zikeji";
 import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { awaitTimeout } from "@common/helpers";
 import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import { devtools, persist } from "../../../../node_modules/zustand/middleware";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
+import { devtools, persist } from "zustand/middleware";
+import usePlayerStore from "@renderer/store/PlayerStore";
 import axios from "axios";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 

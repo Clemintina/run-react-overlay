@@ -7,7 +7,7 @@ import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import { caching, MemoryCache } from "cache-manager";
 import Store from "electron-store";
-import { getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
+import { getDefaultElectronStore, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
 import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { HypixelApi } from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
@@ -23,8 +23,7 @@ import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
 import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTimes";
-import * as https from "https";
-import { Agent } from "https";
+import { Agent } from "node:https";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 
 // Electron Forge automatically creates these entry points
@@ -58,16 +57,10 @@ const electronStore = new Store<RUNElectronStoreType>({
 	schema: electronStoreSchema.properties,
 	defaults: getDefaultElectronStore,
 });
-const electronStoreTags = new Store<RUNElectronStoreTagsType>({
-	defaults: getDefaultElectronStoreObject,
-	name: "tags",
-});
 /**
  * Generates typings from the **existing** config.json file
  */
 export type RUNElectronStoreTyped = Join<PathsToStringProps<typeof electronStore.store>, ".">;
-export type RUNElectronStoreTagsTyped = Join<PathsToStringProps<typeof electronStoreTags.store>, ".">;
-electronStore.set("run.overlay.version", app.getVersion());
 
 let update = {
 	release: app.getVersion(),
@@ -97,7 +90,7 @@ const axiosConfig: AxiosRequestConfig = {
 	validateStatus: () => true,
 };
 const axiosClient = axios.create(axiosConfig);
-axiosClient.defaults.httpsAgent = new https.Agent({
+axiosClient.defaults.httpsAgent = new Agent({
 	maxVersion: "TLSv1.3",
 	minVersion: "TLSv1.2",
 });
@@ -111,8 +104,6 @@ export const createAppWindow = (): BrowserWindow => {
 		defaultWidth: 800,
 		defaultHeight: 600,
 	});
-	electronStore.set("run.overlay.browserWindow.width", mainWindowState.width);
-	electronStore.set("run.overlay.browserWindow.height", mainWindowState.height);
 	const options: BrowserWindowConstructorOptions = {
 		x: mainWindowState.x,
 		y: mainWindowState.y,
@@ -233,7 +224,6 @@ export const createAppWindow = (): BrowserWindow => {
 const registerMainIPC = () => {
 	registerTitlebarIpc(appWindow);
 	registerSeraphIPC();
-	registerElectronStore();
 	registerExternalApis();
 	registerLogCommunications();
 	registerMainWindowCommunications();
@@ -265,9 +255,7 @@ const registerSeraphIPC = () => {
 		const client = hypixelClient.getClient();
 		if (resource === RequestType.KEY) {
 			try {
-				const key = await client.key();
-				if (key.data?.key != undefined) electronStore.set("hypixel.apiKey", key.data.key);
-				return key;
+				return await client.key();
 			} catch (e) {
 				return getErrorHandler(e);
 			}
@@ -407,51 +395,6 @@ const registerSeraphIPC = () => {
 		const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`, { headers });
 		return { status: response.status, data: response.data };
 	});
-
-	ipcMain.on("ContactStaff", async (event, ...args) => {
-		const hypixelApiKey: string = await electronStore.get("hypixel.apiKey");
-		const hypixelApiKeyOwner: string = await electronStore.get("hypixel.apiKeyOwner");
-		const runApiKey: string = await electronStore.get("run.apiKey");
-
-		await axiosClient.post("https://antisniper.seraph.si/api/v4/contact", destr(args[0]), {
-			headers: {
-				...headers,
-				"API-Key": hypixelApiKey,
-				"API-Key-Owner": hypixelApiKeyOwner,
-				"Run-API-Key": runApiKey,
-				"Run-API-Version": overlayVersion,
-				"RUN-API-UUID": hypixelApiKeyOwner,
-			},
-		});
-	});
-};
-
-/**
- * Register Store Inter Process Communication
- */
-const registerElectronStore = () => {
-	ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
-		electronStore.set(data.key, data.data);
-	});
-
-	ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
-		return electronStore.get(data.key);
-	});
-
-	ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
-		electronStoreTags.set(data.key, data.data);
-	});
-
-	ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
-		if (data.key == "*") {
-			return electronStore;
-		}
-		return electronStore.get(data.key);
-	});
-
-	ipcMain.handle("getWholeStore", async () => {
-		return { data: { tags: electronStoreTags.store, config: electronStore.store }, status: 200 };
-	});
 };
 
 /**
@@ -491,7 +434,6 @@ const registerLogCommunications = () => {
 
 	ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, ...args) => {
 		const path = args[0];
-		electronStore.set("overlay.logPath", path);
 		logFileReadline?.close();
 		logFileReadline = null;
 
@@ -579,15 +521,6 @@ const registerMainWindowCommunications = () => {
 		appWindow.setOpacity(Number.parseInt(args[0]));
 	});
 
-	ipcMain.on("openExternal", async (event, args: string[]) => {
-		const file_type = args[0];
-		if (file_type == "config_file") {
-			await shell.openExternal(electronStore.path);
-		} else if (file_type == "tag_file") {
-			await shell.openExternal(electronStoreTags.path);
-		}
-	});
-
 	ipcMain.handle("getAppInfo", async () => {
 		appWindow?.webContents.send("updater", handleIPCSend<AppInformation>({ data: { version: app.getVersion(), update: { ...update } }, status: 200 }));
 		return { data: { version: app.getVersion(), update }, status: 200 };
@@ -635,7 +568,7 @@ const registerExternalApis = () => {
 
 	ipcMain.handle("observer", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const uuid = args[0];
-		const apikey = electronStore.get("external.observer.apiKey");
+		const apikey = args[1];
 		const response = await axiosClient(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, { headers });
 		return { data: response.data, status: response.status };
 	});
@@ -699,7 +632,6 @@ const registerOverlayFeatures = () => {
 			}
 		});
 		path += "latest.log";
-		electronStore.set("overlay.logPath", path);
 	});
 
 	ipcMain.handle("openlink", async (event: IpcMainInvokeEvent, args: string[]) => {
@@ -747,19 +679,15 @@ const registerOverlayFeatures = () => {
 };
 
 const getProxyChannel = () => {
-	let proxyStore: ProxyStore = electronStore.get("external.proxy");
-	if (proxyStore == undefined) {
-		proxyStore = {
-			enableProxies: true,
-			hasAuth: true,
-			hostname: "p.webshare.io",
-			port: "80",
-			username: "twtmuzmg-rotate",
-			password: "8nhzubu4xg33",
-			type: ProxyType.HTTP,
-		};
-	}
-	console.log("using proxy");
+	let proxyStore: ProxyStore =  {
+		enableProxies: true,
+		hasAuth: true,
+		hostname: "p.webshare.io",
+		port: "80",
+		username: "twtmuzmg-rotate",
+		password: "8nhzubu4xg33",
+		type: ProxyType.HTTP,
+	};
 	return tunnel.httpsOverHttp({
 		proxy: {
 			host: proxyStore.hostname,

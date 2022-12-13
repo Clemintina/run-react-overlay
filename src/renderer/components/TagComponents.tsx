@@ -1,7 +1,7 @@
 import { Player } from "@common/utils/PlayerUtils";
 import React, { FC } from "react";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import useTagStore from "@renderer/store/zustand/TagStore";
+import useConfigStore from "@renderer/store/ConfigStore";
+import useTagStore from "@renderer/store/TagStore";
 import Tooltip from "@mui/material/Tooltip";
 import { TagArray, TagColour } from "@common/utils/TagSchema";
 import jsonLogic from "json-logic-js";

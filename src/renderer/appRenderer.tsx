@@ -5,7 +5,7 @@ import Homepage from "@renderer/views/Homepage";
 import { LogFileReader } from "@common/utils/LogFileReader";
 import "@assets/index.css";
 import { alpha, Box, createTheme, hexToRgb, ThemeOptions, ThemeProvider } from "@mui/material";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useConfigStore from "@renderer/store/ConfigStore";
 import { KeybindHandlerUtils } from "@common/utils/KeybindHandler";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";

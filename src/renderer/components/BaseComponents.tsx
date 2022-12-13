@@ -1,6 +1,6 @@
 import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, FilledInputProps, InputLabel, InputLabelProps, InputProps, Modal, Snackbar, styled, Switch, SwitchProps, SxProps, TextField, Theme, Typography } from "@mui/material";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useConfigStore from "@renderer/store/ConfigStore";
 import Button from "@mui/material/Button";
 import { hexToRgbA } from "@common/helpers";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";

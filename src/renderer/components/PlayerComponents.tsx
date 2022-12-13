@@ -1,10 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
 import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting } from "@common/zikeji";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useConfigStore from "@renderer/store/ConfigStore";
 import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useTagStore from "@renderer/store/zustand/TagStore";
+import useTagStore from "@renderer/store/TagStore";
 import { Interweave } from "interweave";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { MinecraftColours, Player } from "@common/utils/PlayerUtils";

@@ -1,5 +1,5 @@
 import React, { FC, PropsWithChildren, useEffect, useState } from "react";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useConfigStore from "@renderer/store/ConfigStore";
 import { Box, Fade, FormControlLabel, FormHelperText, FormLabel, Input, InputLabel, Modal, Radio, RadioGroup, SelectChangeEvent, Typography } from "@mui/material";
 import { ClientSetting } from "@common/utils/Schemas";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";

@@ -3,7 +3,7 @@ import { Player } from "@common/utils/PlayerUtils";
 import { Components } from "@common/zikeji";
 import { Blacklist, IPCResponse, LunarAPIResponse, PlayerAPI, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
 import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, { ConfigStore } from "@renderer/store/zustand/ConfigStore";
+import useConfigStore, { ConfigStore } from "@renderer/store/ConfigStore";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { CustomFileJsonType } from "@common/utils/Schemas";
 
