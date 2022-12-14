@@ -11,7 +11,7 @@ import { PlayerNickname } from "@common/utils/Schemas";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { RequestType } from "@common/utils/externalapis/RunApi";
 import destr from "destr";
-import { InputBoxButton, InputTextBox } from "@components/BaseComponents";
+import { InputBoxButton, InputTextBox, PlayerOptionsModal } from "@components/BaseComponents";
 import { SettingCard } from "@components/AppComponents";
 import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/TagComponents";
 import { StatsisticsTooltip } from "@components/TooltipComponents";

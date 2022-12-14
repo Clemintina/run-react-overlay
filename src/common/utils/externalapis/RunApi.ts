@@ -66,6 +66,13 @@ export type DenickerAPI = {
 	msTime: number;
 };
 
+export type SniperBody = {
+	uuid: string;
+	reason: string;
+	apikey: string;
+	report_type: string;
+};
+
 export enum RunEndpoints {
 	BLACKLIST = "blacklist",
 	VERSION = "overlay",

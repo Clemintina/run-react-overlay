@@ -14,6 +14,7 @@ import { AppInformation } from "@common/utils/Schemas";
 import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
 import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { CustomHeader } from "@components/AppComponents";
+import { PlayerOptionsModal } from "@components/BaseComponents";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;
@@ -129,6 +130,14 @@ export const columnDefsBase: ColDef<Player>[] = [
 			);
 		},
 	},
+	{
+		field:'report',
+		headerName:'Report',
+		sortable: false,
+		cellRenderer:({data})=>{
+			return <PlayerOptionsModal data={data}/>
+		}
+	}
 ];
 
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {

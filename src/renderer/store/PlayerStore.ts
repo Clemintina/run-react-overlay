@@ -168,9 +168,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 			}
 			if (runApi.status == 200) {
 				playerData.bot = runApi?.data?.data?.bot?.tagged ?? false;
-
-				console.log(playerData.sources.runApi.data.data.blacklist.tagged);
-
 				if (!playerData.bot && !playerData.sources.runApi.data.data.blacklist.tagged) {
 					get().updatePlayerState(playerData);
 
