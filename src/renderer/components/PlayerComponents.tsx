@@ -230,8 +230,8 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 	const [playerNickname, setPlayerNickname] = useState<PlayerNickname>(nicksLocal.filter((player) => player.nick.toLowerCase() == playerNick.nick.toLowerCase())[0]);
 
 	return (
-		<SettingCard className={"border-2 border-cyan-500"}>
-			<span className={""}>
+		<SettingCard>
+			<span>
 				<InputTextBox
 					onBlur={async (event) => {
 						const userInput = event.currentTarget.value;
@@ -244,7 +244,7 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 								uuid: hypixelRequest?.data?.uuid,
 								name: hypixelRequest?.data?.displayname,
 								nick: playerNickname.nick,
-								added: Date.now(),
+								added: Date.now()
 							};
 							useConfigStore.getState().setNicks([...users, newState]);
 							setPlayerNickname(newState);
@@ -253,7 +253,7 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 					options={{ placeholder: "Username", value: playerNickname.name, label: { text: "Username" } }}
 				/>
 			</span>
-			<span className={" "}>
+			<span>
 				<InputTextBox
 					onBlur={async (event) => {
 						const userInput = event.currentTarget.value;
@@ -273,7 +273,7 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 					options={{ placeholder: "Nickname", value: playerNickname.nick, label: { text: "Nickname" } }}
 				/>
 			</span>
-			<span className={""}>
+			<span>
 				<InputBoxButton
 					text={"Remove"}
 					onClick={() => {

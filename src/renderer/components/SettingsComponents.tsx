@@ -449,7 +449,7 @@ export const NickView = () => {
 		<NavigationBar>
 			<div className='h-full w-full p-2 text-center'>
 				<div>
-					<SettingCard className={"border-2 border-cyan-500"}>
+					<SettingCard>
 						<Box>
 							{/* <InputTextBox
                                     onBlur={async (event) => {

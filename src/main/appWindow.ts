@@ -34,8 +34,8 @@ const overlayVersion = app.getVersion();
 const headers = {
 	"Content-Type": "application/json",
 	Accept: "application/json",
-	"User-Agent": `application/seraph-overlay-${overlayVersion} Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36`,
-};
+	"User-Agent": `application/seraph-overlay-${overlayVersion} Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36`
+} as const;
 const registeredGlobalKeybinds = new Set<string>();
 const startTimestamp = new Date();
 /**
