@@ -810,7 +810,7 @@ export const TagEditorView = () => {
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.boomza.hacker.display = event.currentTarget.value;
+												state.boomza.cheater.display = event.currentTarget.value;
 											}),
 										);
 									}}
