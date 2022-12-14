@@ -679,7 +679,7 @@ const registerOverlayFeatures = () => {
 };
 
 const getProxyChannel = () => {
-	let proxyStore: ProxyStore =  {
+	let proxyStore: ProxyStore = {
 		enableProxies: true,
 		hasAuth: true,
 		hostname: "p.webshare.io",

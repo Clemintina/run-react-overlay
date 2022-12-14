@@ -131,13 +131,13 @@ export const columnDefsBase: ColDef<Player>[] = [
 		},
 	},
 	{
-		field:'report',
-		headerName:'Report',
+		field: "report",
+		headerName: "Report",
 		sortable: false,
-		cellRenderer:({data})=>{
-			return <PlayerOptionsModal data={data}/>
-		}
-	}
+		cellRenderer: ({ data }) => {
+			return <PlayerOptionsModal data={data} />;
+		},
+	},
 ];
 
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
