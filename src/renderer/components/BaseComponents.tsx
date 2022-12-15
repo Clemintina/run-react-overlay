@@ -383,6 +383,7 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, children }) =
 														validateStatus: () => true,
 														headers: {
 															"run-api-key": run.apiKey,
+															"Accept-Encoding": "gzip,deflate,compress",
 														},
 													});
 													if (response.status != 200) {

@@ -14,6 +14,7 @@ export const request = async <T extends Components.Schemas.ApiSuccess & { cause?
 		headers: {
 			"Content-Type": "application/json",
 			Accept: "application/json",
+			"Accept-Encoding": "gzip,deflate,compress"
 		},
 		timeout: options.timeout,
 		timeoutErrorMessage: JSON.stringify({ status: 408, data: { success: false } }),

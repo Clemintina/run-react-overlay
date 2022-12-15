@@ -62,12 +62,10 @@ module.exports = {
     }
   ],
   // Forge Plugins
-  plugins: [[
-    // The Webpack plugin allows you to use standard Webpack tooling to compile both your main process code
-    // and your renderer process code, with built in support for Hot Module Reloading in the renderer
-    // process and support for multiple renderers.
-    "@electron-forge/plugin-webpack",
-    {
+  plugins: [
+      {
+        name :"@electron-forge/plugin-webpack",
+        config: {
       // fix content-security-policy error when image or video src isn't same origin
       devContentSecurityPolicy: "",
       // Ports
@@ -102,6 +100,6 @@ module.exports = {
         liveReload: false
       }
     }
-  ]
+  },
   ]
 };

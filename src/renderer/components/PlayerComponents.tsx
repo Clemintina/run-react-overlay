@@ -244,7 +244,7 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 								uuid: hypixelRequest?.data?.uuid,
 								name: hypixelRequest?.data?.displayname,
 								nick: playerNickname.nick,
-								added: Date.now()
+								added: Date.now(),
 							};
 							useConfigStore.getState().setNicks([...users, newState]);
 							setPlayerNickname(newState);

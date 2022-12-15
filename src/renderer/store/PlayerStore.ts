@@ -6,15 +6,16 @@ import { BoomzaAntisniper, KeathizDenick, KeathizEndpoints, KeathizOverlayRun } 
 import useConfigStore, { ConfigStore } from "@renderer/store/ConfigStore";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { CustomFileJsonType } from "@common/utils/Schemas";
+import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
 
 export type PlayerStore = {
 	players: Array<Player>;
-	addPlayer: (username:string) => void;
-	removePlayer: (username:string) => void;
+	addPlayer: (username: string) => void;
+	removePlayer: (username: string) => void;
 	updatePlayers: () => void;
 	updatePlayerState: (player: Player) => void;
 	clearPlayers: () => void;
-	setStore: (store:PlayerStore) => void;
+	setStore: (store: PlayerStore) => void;
 	party: {
 		partyStore: Array<string>;
 		addPartyMember: () => void;
@@ -72,16 +73,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				playerData.name.length <= 16
 					? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name, useConfigStore.getState().hypixel.proxy ? "sdad" : undefined])
 					: await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", ""), useConfigStore.getState().hypixel.proxy ? "dsadas" : undefined]);
-			if (ipcHypixelPlayer?.data?.uuid == null && configStore?.settings?.keathiz) {
-				const ipcKeathizDenicker = await window.ipcRenderer.invoke<KeathizDenick>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.DENICK, playerData.name, keathizApiKey]);
-				if (ipcKeathizDenicker.data?.player?.uuid) {
-					const newIpcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, ipcKeathizDenicker.data.player.uuid]);
-					if (newIpcHypixelPlayer?.data?.uuid != null) {
-						playerData.hypixelPlayer = newIpcHypixelPlayer.data;
-						playerData.denicked = true;
-					}
-				}
-			}
 			if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
 				const data: unknown = ipcHypixelPlayer.data;
 				let cause, code;
@@ -144,18 +135,20 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				});
 			}
 		} catch (e) {
-			const mcUtilsRequest = await window.ipcRenderer.invoke<PlayerAPI>(IpcValidInvokeChannels.MCUTILS, [RequestType.USERNAME, playerData.name.replaceAll("-", "")]);
+			const mcUtilsRequest = await window.ipcRenderer.invoke<PlayerDB>(IpcValidInvokeChannels.PLAYER_DB, [RequestType.USERNAME, playerData.name.replaceAll("-", "")]);
 			const mcUtils = mcUtilsRequest.data;
 			playerData.nicked = true;
 			if (mcUtilsRequest.status === 200) {
 				playerData.nicked = false;
-				playerData.id = mcUtils.player.uuid;
-				const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", "")]);
+				playerData.id = mcUtils.data.player.id;
+				playerData.name = mcUtils.data.player.username;
+				const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, mcUtils.data.player.id]);
 				playerData.hypixelPlayer = ipcHypixelPlayer.data;
+			} else {
+				playerObject.status = mcUtilsRequest.status;
+				playerData.nicked = true;
+				playerObject.cause = "try catch";
 			}
-			playerObject.status = mcUtilsRequest.status;
-			playerData.nicked = true;
-			playerObject.cause = "try catch";
 		}
 
 		if (!playerData.nicked && playerData.hypixelPlayer != null) {
@@ -381,7 +374,7 @@ const getCustomApi = async (player: Player) => {
 };
 
 const getRunApi = async (player: Player) => {
-	let api: IPCResponse<Blacklist>
+	let api: IPCResponse<Blacklist>;
 	if (player.hypixelPlayer?.uuid !== undefined) {
 		const state = useConfigStore.getState();
 		api = await window.ipcRenderer.invoke<Blacklist>(IpcValidInvokeChannels.SERAPH, [RunEndpoints.BLACKLIST, player.hypixelPlayer.uuid, state.hypixel.apiKey, state.hypixel.apiKeyOwner, state.run.apiKey, state.hypixel.apiKeyOwner]);
@@ -416,7 +409,7 @@ const getRunApi = async (player: Player) => {
 			status: 400,
 		};
 	}
-	return api
+	return api;
 };
 
 const getLunarTags = async (player: Player) => {
@@ -442,7 +435,7 @@ const getLunarTags = async (player: Player) => {
 			},
 		};
 	}
-	return api
+	return api;
 };
 
 const getKeathizData = async (player: Player) => {
@@ -543,11 +536,11 @@ const getKeathizData = async (player: Player) => {
 			api = ipcKeathiz;
 		}
 	}
-	return api
+	return api;
 };
 
 const getHypixelFriends = async (player: Player) => {
-	let api: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number; }[]>;
+	let api: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]>;
 	if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.run.friends) {
 		const state = useConfigStore.getState();
 		api = await window.ipcRenderer.invoke(IpcValidInvokeChannels.HYPIXEL, [RequestType.FRIENDS, player.hypixelPlayer.uuid, state.hypixel.apiKey]);
@@ -557,7 +550,7 @@ const getHypixelFriends = async (player: Player) => {
 			status: 400,
 		};
 	}
-	return api
+	return api;
 };
 
 const getGuildData = async (player: Player) => {
@@ -568,7 +561,7 @@ const getGuildData = async (player: Player) => {
 	} else {
 		api = null;
 	}
-	return api
+	return api;
 };
 
 export default usePlayerStore;

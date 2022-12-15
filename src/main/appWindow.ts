@@ -23,8 +23,9 @@ import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
 import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTimes";
-import { Agent } from "node:https";
+import { Agent } from "https";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+import got, { ExtendOptions } from "got";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -34,7 +35,7 @@ const overlayVersion = app.getVersion();
 const headers = {
 	"Content-Type": "application/json",
 	Accept: "application/json",
-	"User-Agent": `application/seraph-overlay-${overlayVersion} Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36`
+	"User-Agent": `application/seraph-overlay-${overlayVersion} Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36`,
 } as const;
 const registeredGlobalKeybinds = new Set<string>();
 const startTimestamp = new Date();
@@ -83,6 +84,7 @@ const axiosConfig: AxiosRequestConfig = {
 	headers: {
 		...headers,
 		"Run-API-Version": overlayVersion,
+		"Accept-Encoding": "gzip,deflate,compress",
 	},
 	timeout: 20000,
 	timeoutErrorMessage: "Connection Timed Out!",
@@ -94,6 +96,23 @@ axiosClient.defaults.httpsAgent = new Agent({
 	maxVersion: "TLSv1.3",
 	minVersion: "TLSv1.2",
 });
+
+const gotCacheMap = new Map();
+export const gotOptions: ExtendOptions = {
+	headers: {
+		"Run-API-Version": overlayVersion,
+	},
+	responseType: "json",
+	cache: gotCacheMap,
+	cacheOptions: {
+		immutableMinTimeToLive: 60000,
+	},
+	retry: {
+		maxRetryAfter: 100,
+	},
+	throwHttpErrors: false,
+	http2: false,
+} as const;
 
 /**
  * Create Application Window
@@ -204,7 +223,7 @@ export const createAppWindow = (): BrowserWindow => {
 				console.log("Express started");
 			});
 		}
-		playerCache = await caching("memory", { ttl: 120 * 5 });
+		playerCache = await caching("memory", { ttl: 120 * 5, max: 1000 });
 	});
 
 	registerMainIPC();
@@ -358,35 +377,36 @@ const registerSeraphIPC = () => {
 			runApiKey = args[4],
 			overlayUuid = args[5];
 
+		const gotClient = got.extend(gotOptions);
 		const seraphHeaders = {
 			...headers,
 			"Run-API-Version": overlayVersion,
 			//"seraph-api-key": runApiKey,
 			"run-api-key": runApiKey,
 			"run-api-uuid": overlayUuid,
+			"API-Key": hypixelApiKey,
+			"API-Key-Owner": hypixelApiKeyOwner,
 		};
 
 		if (endpoint === RunEndpoints.KEY) {
-			const response = await axiosClient(`https://antisniper.seraph.si/api/v4/key`, {
+			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/key`, {
 				headers: {
 					...headers,
 					...seraphHeaders,
 				},
 			});
-			return { data: response.data, status: response.status };
+			return { data: body, status: statusCode };
 		} else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
-			const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, { headers });
-			return { data: response.data.data, status: response.status };
+			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, { headers });
+			// @ts-ignore
+			return { data: body.data, status: statusCode };
 		} else {
-			const response = await axiosClient(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
+			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
 				headers: {
-					...headers,
 					...seraphHeaders,
-					"API-Key": hypixelApiKey,
-					"API-Key-Owner": hypixelApiKeyOwner,
 				},
 			});
-			return { data: response.data, status: response.status };
+			return { data: body, status: statusCode };
 		}
 	});
 
@@ -701,6 +721,7 @@ const getErrorHandler = (e) => {
 	if (e instanceof RateLimitError) return e.getJson();
 	else if (e instanceof InvalidKeyError) return e.getJson();
 	else if (e instanceof GenericHTTPError) return e.getJson();
+	else if (e instanceof RequestedTooManyTimes) return e.getJson();
 	else return { data: undefined, status: 400 };
 };
 
