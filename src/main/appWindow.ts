@@ -7,7 +7,7 @@ import TailFile from "@logdna/tail-file";
 import readline from "readline";
 import { caching, MemoryCache } from "cache-manager";
 import Store from "electron-store";
-import { getDefaultElectronStore, getDefaultElectronStoreObject, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreTagsType, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
+import { getDefaultElectronStore, Join, PathsToStringProps, RUNElectronStore, RUNElectronStoreType } from "@renderer/store/ElectronStoreUtils";
 import { RequestType, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { HypixelApi } from "./HypixelApi";
 import AppUpdater from "./AutoUpdate";
@@ -23,9 +23,9 @@ import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
 import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTimes";
-import * as https from "https";
 import { Agent } from "https";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
+import got, { ExtendOptions } from "got";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -36,7 +36,7 @@ const headers = {
 	"Content-Type": "application/json",
 	Accept: "application/json",
 	"User-Agent": `application/seraph-overlay-${overlayVersion} Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36`,
-};
+} as const;
 const registeredGlobalKeybinds = new Set<string>();
 const startTimestamp = new Date();
 /**
@@ -58,16 +58,10 @@ const electronStore = new Store<RUNElectronStoreType>({
 	schema: electronStoreSchema.properties,
 	defaults: getDefaultElectronStore,
 });
-const electronStoreTags = new Store<RUNElectronStoreTagsType>({
-	defaults: getDefaultElectronStoreObject,
-	name: "tags",
-});
 /**
  * Generates typings from the **existing** config.json file
  */
 export type RUNElectronStoreTyped = Join<PathsToStringProps<typeof electronStore.store>, ".">;
-export type RUNElectronStoreTagsTyped = Join<PathsToStringProps<typeof electronStoreTags.store>, ".">;
-electronStore.set("run.overlay.version", app.getVersion());
 
 let update = {
 	release: app.getVersion(),
@@ -90,6 +84,7 @@ const axiosConfig: AxiosRequestConfig = {
 	headers: {
 		...headers,
 		"Run-API-Version": overlayVersion,
+		"Accept-Encoding": "gzip,deflate,compress",
 	},
 	timeout: 20000,
 	timeoutErrorMessage: "Connection Timed Out!",
@@ -97,10 +92,27 @@ const axiosConfig: AxiosRequestConfig = {
 	validateStatus: () => true,
 };
 const axiosClient = axios.create(axiosConfig);
-axiosClient.defaults.httpsAgent = new https.Agent({
+axiosClient.defaults.httpsAgent = new Agent({
 	maxVersion: "TLSv1.3",
 	minVersion: "TLSv1.2",
 });
+
+const gotCacheMap = new Map();
+export const gotOptions: ExtendOptions = {
+	headers: {
+		"Run-API-Version": overlayVersion,
+	},
+	responseType: "json",
+	cache: gotCacheMap,
+	cacheOptions: {
+		immutableMinTimeToLive: 60000,
+	},
+	retry: {
+		maxRetryAfter: 100,
+	},
+	throwHttpErrors: false,
+	http2: false,
+} as const;
 
 /**
  * Create Application Window
@@ -111,8 +123,6 @@ export const createAppWindow = (): BrowserWindow => {
 		defaultWidth: 800,
 		defaultHeight: 600,
 	});
-	electronStore.set("run.overlay.browserWindow.width", mainWindowState.width);
-	electronStore.set("run.overlay.browserWindow.height", mainWindowState.height);
 	const options: BrowserWindowConstructorOptions = {
 		x: mainWindowState.x,
 		y: mainWindowState.y,
@@ -213,7 +223,7 @@ export const createAppWindow = (): BrowserWindow => {
 				console.log("Express started");
 			});
 		}
-		playerCache = await caching("memory", { ttl: 120 * 5 });
+		playerCache = await caching("memory", { ttl: 120 * 5, max: 1000 });
 	});
 
 	registerMainIPC();
@@ -233,7 +243,6 @@ export const createAppWindow = (): BrowserWindow => {
 const registerMainIPC = () => {
 	registerTitlebarIpc(appWindow);
 	registerSeraphIPC();
-	registerElectronStore();
 	registerExternalApis();
 	registerLogCommunications();
 	registerMainWindowCommunications();
@@ -252,8 +261,8 @@ const registerSeraphIPC = () => {
 		let proxyHypixel: { proxy: Agent } | {} =
 			args[3] != undefined && args[3]?.length > 2
 				? {
-					proxy: getProxyChannel()
-				}
+						proxy: getProxyChannel(),
+				  }
 				: {};
 		if (args[2] != undefined) playerName = args[2].toLowerCase() as string;
 		const hypixelClient = new HypixelApi(apiKey, {
@@ -265,9 +274,7 @@ const registerSeraphIPC = () => {
 		const client = hypixelClient.getClient();
 		if (resource === RequestType.KEY) {
 			try {
-				const key = await client.key();
-				if (key.data?.key != undefined) electronStore.set("hypixel.apiKey", key.data.key);
-				return key;
+				return await client.key();
 			} catch (e) {
 				return getErrorHandler(e);
 			}
@@ -370,35 +377,36 @@ const registerSeraphIPC = () => {
 			runApiKey = args[4],
 			overlayUuid = args[5];
 
+		const gotClient = got.extend(gotOptions);
 		const seraphHeaders = {
 			...headers,
 			"Run-API-Version": overlayVersion,
 			//"seraph-api-key": runApiKey,
 			"run-api-key": runApiKey,
-			"run-api-uuid": overlayUuid
+			"run-api-uuid": overlayUuid,
+			"API-Key": hypixelApiKey,
+			"API-Key-Owner": hypixelApiKeyOwner,
 		};
 
 		if (endpoint === RunEndpoints.KEY) {
-			const response = await axiosClient(`https://antisniper.seraph.si/api/v4/key`, {
-				headers: {
-					...headers,
-					...seraphHeaders
-				}
-			});
-			return { data: response.data, status: response.status };
-		} else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
-			const response = await axiosClient(`https://antisniper.seraph.si/api/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, { headers });
-			return { data: response.data.data, status: response.status };
-		} else {
-			const response = await axiosClient(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
+			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/key`, {
 				headers: {
 					...headers,
 					...seraphHeaders,
-					"API-Key": hypixelApiKey,
-					"API-Key-Owner": hypixelApiKeyOwner
-				}
+				},
 			});
-			return { data: response.data, status: response.status };
+			return { data: body, status: statusCode };
+		} else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
+			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, { headers });
+			// @ts-ignore
+			return { data: body.data, status: statusCode };
+		} else {
+			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
+				headers: {
+					...seraphHeaders,
+				},
+			});
+			return { data: body, status: statusCode };
 		}
 	});
 
@@ -406,51 +414,6 @@ const registerSeraphIPC = () => {
 		const uuid = args[0];
 		const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`, { headers });
 		return { status: response.status, data: response.data };
-	});
-
-	ipcMain.on("ContactStaff", async (event, ...args) => {
-		const hypixelApiKey: string = await electronStore.get("hypixel.apiKey");
-		const hypixelApiKeyOwner: string = await electronStore.get("hypixel.apiKeyOwner");
-		const runApiKey: string = await electronStore.get("run.apiKey");
-
-		await axiosClient.post("https://antisniper.seraph.si/api/v4/contact", destr(args[0]), {
-			headers: {
-				...headers,
-				"API-Key": hypixelApiKey,
-				"API-Key-Owner": hypixelApiKeyOwner,
-				"Run-API-Key": runApiKey,
-				"Run-API-Version": overlayVersion,
-				"RUN-API-UUID": hypixelApiKeyOwner,
-			},
-		});
-	});
-};
-
-/**
- * Register Store Inter Process Communication
- */
-const registerElectronStore = () => {
-	ipcMain.on("configSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
-		electronStore.set(data.key, data.data);
-	});
-
-	ipcMain.handle("configGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
-		return electronStore.get(data.key);
-	});
-
-	ipcMain.on("tagsSet", async (event: IpcMainInvokeEvent, data: { key: string; data: string | number | boolean }) => {
-		electronStoreTags.set(data.key, data.data);
-	});
-
-	ipcMain.handle("tagsGet", async (event: IpcMainInvokeEvent, data: { key: string }) => {
-		if (data.key == "*") {
-			return electronStore;
-		}
-		return electronStore.get(data.key);
-	});
-
-	ipcMain.handle("getWholeStore", async () => {
-		return { data: { tags: electronStoreTags.store, config: electronStore.store }, status: 200 };
 	});
 };
 
@@ -491,7 +454,6 @@ const registerLogCommunications = () => {
 
 	ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, ...args) => {
 		const path = args[0];
-		electronStore.set("overlay.logPath", path);
 		logFileReadline?.close();
 		logFileReadline = null;
 
@@ -579,15 +541,6 @@ const registerMainWindowCommunications = () => {
 		appWindow.setOpacity(Number.parseInt(args[0]));
 	});
 
-	ipcMain.on("openExternal", async (event, args: string[]) => {
-		const file_type = args[0];
-		if (file_type == "config_file") {
-			await shell.openExternal(electronStore.path);
-		} else if (file_type == "tag_file") {
-			await shell.openExternal(electronStoreTags.path);
-		}
-	});
-
 	ipcMain.handle("getAppInfo", async () => {
 		appWindow?.webContents.send("updater", handleIPCSend<AppInformation>({ data: { version: app.getVersion(), update: { ...update } }, status: 200 }));
 		return { data: { version: app.getVersion(), update }, status: 200 };
@@ -603,9 +556,9 @@ const registerExternalApis = () => {
 		const response = await axiosClient(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
 			headers,
 			httpsAgent: getProxyChannel(),
-			proxy: false
+			proxy: false,
 		});
-		const json_response = destr(response.data.toString().replaceAll("'", "\"").toLowerCase());
+		const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
 		let json: BoomzaAntisniper;
 		try {
 			json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
@@ -635,7 +588,7 @@ const registerExternalApis = () => {
 
 	ipcMain.handle("observer", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const uuid = args[0];
-		const apikey = electronStore.get("external.observer.apiKey");
+		const apikey = args[1];
 		const response = await axiosClient(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, { headers });
 		return { data: response.data, status: response.status };
 	});
@@ -699,7 +652,6 @@ const registerOverlayFeatures = () => {
 			}
 		});
 		path += "latest.log";
-		electronStore.set("overlay.logPath", path);
 	});
 
 	ipcMain.handle("openlink", async (event: IpcMainInvokeEvent, args: string[]) => {
@@ -747,19 +699,15 @@ const registerOverlayFeatures = () => {
 };
 
 const getProxyChannel = () => {
-	let proxyStore: ProxyStore = electronStore.get("external.proxy");
-	if (proxyStore == undefined) {
-		proxyStore = {
-			enableProxies: true,
-			hasAuth: true,
-			hostname: "p.webshare.io",
-			port: "80",
-			username: "twtmuzmg-rotate",
-			password: "8nhzubu4xg33",
-			type: ProxyType.HTTP,
-		};
-	}
-	console.log("using proxy");
+	let proxyStore: ProxyStore = {
+		enableProxies: true,
+		hasAuth: true,
+		hostname: "p.webshare.io",
+		port: "80",
+		username: "twtmuzmg-rotate",
+		password: "8nhzubu4xg33",
+		type: ProxyType.HTTP,
+	};
 	return tunnel.httpsOverHttp({
 		proxy: {
 			host: proxyStore.hostname,
@@ -773,6 +721,7 @@ const getErrorHandler = (e) => {
 	if (e instanceof RateLimitError) return e.getJson();
 	else if (e instanceof InvalidKeyError) return e.getJson();
 	else if (e instanceof GenericHTTPError) return e.getJson();
+	else if (e instanceof RequestedTooManyTimes) return e.getJson();
 	else return { data: undefined, status: 400 };
 };
 

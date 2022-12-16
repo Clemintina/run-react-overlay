@@ -1,10 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
 import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting } from "@common/zikeji";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
+import useConfigStore from "@renderer/store/ConfigStore";
 import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useTagStore from "@renderer/store/zustand/TagStore";
+import useTagStore from "@renderer/store/TagStore";
 import { Interweave } from "interweave";
-import usePlayerStore from "@renderer/store/zustand/PlayerStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { MinecraftColours, Player } from "@common/utils/PlayerUtils";
@@ -12,10 +11,10 @@ import { PlayerNickname } from "@common/utils/Schemas";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { RequestType } from "@common/utils/externalapis/RunApi";
 import destr from "destr";
-import { InputBoxButton, InputTextBox } from "@components/user/BaseComponents";
-import { SettingCard } from "@components/user/AppComponents";
-import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/user/TagComponents";
-import { StatsisticsTooltip } from "@components/user/TooltipComponents";
+import { InputBoxButton, InputTextBox, PlayerOptionsModal } from "@components/BaseComponents";
+import { SettingCard } from "@components/AppComponents";
+import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/TagComponents";
+import { StatsisticsTooltip } from "@components/TooltipComponents";
 
 export type PlayerCommonProperties = {
 	player: Player;
@@ -45,13 +44,13 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 					if (player.sources?.lunar?.data?.player?.lunarPlus?.premium) {
 						lunarRenderer = (
 							<span>
-								<img width="20px" height="20px" src="https://dl.seraph.si/lunarplus.webp" alt="lunar tag" />
+								<img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
 							</span>
 						);
 					} else {
 						lunarRenderer = (
 							<span>
-								<img width="20px" height="20px" src="https://img.icons8.com/nolan/512/ffffff/lunar-client.png" alt="lunar tag" />
+								<img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
 							</span>
 						);
 					}
@@ -63,8 +62,8 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	}
 
 	return (
-		<div className="inline flex" style={{ textAlign: table.settings.textAlign }}>
-			<img src={srcUrl} className="text-center" alt="player-head" />
+		<div className='inline flex' style={{ textAlign: table.settings.textAlign }}>
+			<img src={srcUrl} className='text-center' alt='player-head' />
 			{lunarRenderer}
 		</div>
 	);
@@ -169,7 +168,6 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	const { run } = useTagStore((state) => ({ run: state.run }));
 	const { settings, table, keathiz } = useConfigStore((state) => ({ settings: state.settings, table: state.table, keathiz: state.keathiz }));
-	const { players } = usePlayerStore((state) => ({ players: state.players }));
 
 	const handleDenickEvent = () => {
 		useConfigStore.getState().setKeathizData({ ...keathiz, showNick: !keathiz.showNick });
@@ -227,13 +225,13 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playerNick, handleAdd, handleRemove }) => {
 	const { nicksLocal, hypixelApiKey } = useConfigStore((state) => ({
 		nicksLocal: state.nicks,
-		hypixelApiKey: state.hypixel.apiKey
+		hypixelApiKey: state.hypixel.apiKey,
 	}));
 	const [playerNickname, setPlayerNickname] = useState<PlayerNickname>(nicksLocal.filter((player) => player.nick.toLowerCase() == playerNick.nick.toLowerCase())[0]);
 
 	return (
-		<SettingCard className={"border-2 border-cyan-500"}>
-			<span className={""}>
+		<SettingCard>
+			<span>
 				<InputTextBox
 					onBlur={async (event) => {
 						const userInput = event.currentTarget.value;
@@ -246,7 +244,7 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 								uuid: hypixelRequest?.data?.uuid,
 								name: hypixelRequest?.data?.displayname,
 								nick: playerNickname.nick,
-								added: Date.now()
+								added: Date.now(),
 							};
 							useConfigStore.getState().setNicks([...users, newState]);
 							setPlayerNickname(newState);
@@ -255,7 +253,7 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 					options={{ placeholder: "Username", value: playerNickname.name, label: { text: "Username" } }}
 				/>
 			</span>
-			<span className={" "}>
+			<span>
 				<InputTextBox
 					onBlur={async (event) => {
 						const userInput = event.currentTarget.value;
@@ -275,7 +273,7 @@ export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playe
 					options={{ placeholder: "Nickname", value: playerNickname.nick, label: { text: "Nickname" } }}
 				/>
 			</span>
-			<span className={""}>
+			<span>
 				<InputBoxButton
 					text={"Remove"}
 					onClick={() => {
@@ -293,7 +291,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 		settings: state.settings,
 		hypixel: state.hypixel,
 		runConfig: state.run,
-		table: state.table
+		table: state.table,
 	}));
 
 	let tagArray: Array<JSX.Element> = [];

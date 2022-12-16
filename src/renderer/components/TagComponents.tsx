@@ -1,7 +1,7 @@
 import { Player } from "@common/utils/PlayerUtils";
 import React, { FC } from "react";
-import useConfigStore from "@renderer/store/zustand/ConfigStore";
-import useTagStore from "@renderer/store/zustand/TagStore";
+import useConfigStore from "@renderer/store/ConfigStore";
+import useTagStore from "@renderer/store/TagStore";
 import Tooltip from "@mui/material/Tooltip";
 import { TagArray, TagColour } from "@common/utils/TagSchema";
 import jsonLogic from "json-logic-js";
@@ -128,7 +128,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 
 	if (tagDisplayPath == "run.blacklist") {
 		return (
-			<Tooltip title={<span className={"normal-case"}>{"This player is blacklisted, leave the queue."}</span>} arrow>
+			<Tooltip title={<span className={"normal-case"}>{`This player is blacklisted. It is advised to requeue!`}</span>} arrow>
 				<span style={{ color: `#${tagArray}` }}>{value != undefined ? value : tagDisplayIcon}</span>
 			</Tooltip>
 		);
