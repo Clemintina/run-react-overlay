@@ -2,8 +2,8 @@
 import { ColumnState } from "ag-grid-community";
 import create from "zustand";
 import { AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, CustomLinkURL, DisplayErrorMessage, FontConfig, GameType, HypixelSettings, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
-import { ResultObject } from "@common/zikeji/util/ResultObject";
-import { Paths } from "@common/zikeji";
+import { ResultObject } from "@common/../../main/zikeji/util/ResultObject";
+import { Paths } from "@common/../../main/zikeji";
 import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { awaitTimeout } from "@common/helpers";
 import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";

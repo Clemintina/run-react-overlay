@@ -11,7 +11,7 @@ import { Queue } from "./util/Queue";
 import { request } from "./util/Request";
 import { getResultObject, ResultObject } from "./util/ResultObject";
 import { IPCResponse } from "@common/utils/externalapis/RunApi";
-import { Friends } from "@common/zikeji/methods/friends";
+import { Friends } from "@main/zikeji/methods/friends";
 import destr from "destr";
 import { Agent } from "https";
 

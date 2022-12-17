@@ -9,7 +9,7 @@ import { CustomFileIpc, CustomLinkFile, KeybindInterface, PlayerNickname } from 
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import usePlayerStore from "@renderer/store/PlayerStore";
 import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/zikeji";
+import { Components } from "@common/../../main/zikeji";
 import { RequestType } from "@common/utils/externalapis/RunApi";
 import useTagStore from "@renderer/store/TagStore";
 import produce from "immer";

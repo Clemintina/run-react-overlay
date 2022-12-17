@@ -1,8 +1,8 @@
-import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
+import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@main/zikeji";
 import type { DefaultMeta, RequestOptions } from "../Client";
 import { Components } from "../types/api";
 import axios, { AxiosRequestConfig } from "axios";
-import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTimes";
+import { RequestedTooManyTimes } from "@main/zikeji/errors/RequestedTooManyTimes";
 
 /** @internal */
 const CACHE_CONTROL_REGEX = /s-maxage=(\d+)/;

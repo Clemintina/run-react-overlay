@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting } from "@common/zikeji";
+import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting } from "@common/../../main/zikeji";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import useTagStore from "@renderer/store/TagStore";

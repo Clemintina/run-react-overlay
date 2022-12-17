@@ -1,5 +1,5 @@
 import { Blacklist, IPCResponse, LunarAPIResponse } from "./externalapis/RunApi";
-import { Components } from "@common/zikeji";
+import { Components } from "@common/../../main/zikeji";
 import { BoomzaAntisniper, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
 import { CustomFileJsonType } from "@common/utils/Schemas";
