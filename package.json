@@ -30,6 +30,7 @@
 		"forge": "./tools/forge/forge.config.js"
 	},
 	"dependencies": {
+		"@clemintina/seraph-library": "^1.0.3",
 		"@emotion/react": "^11.10.5",
 		"@emotion/styled": "^11.10.5",
 		"@fortawesome/fontawesome-svg-core": "^6.2.1",

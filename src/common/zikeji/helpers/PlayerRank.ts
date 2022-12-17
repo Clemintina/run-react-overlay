@@ -1,5 +1,5 @@
 import { Components } from "../types/api";
-import { MinecraftColourAsHex, MinecraftFormatting } from "@main/zikeji";
+import { MinecraftColourAsHex, MinecraftFormatting } from "@common/zikeji";
 
 /** @internal */
 export enum PlayerRanks {

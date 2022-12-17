@@ -1,5 +1,5 @@
-import { Paths } from "@main/zikeji";
-import { Method } from "@main/zikeji/util/Method";
+import { Paths } from "@common/zikeji";
+import { Method } from "@common/zikeji/util/Method";
 import { getResultArray, ResultArray } from "../../util/ResultArray";
 
 export class SkyBlockAuction extends Method {

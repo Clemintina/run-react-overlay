@@ -1,5 +1,5 @@
 import { Components } from "../types/api";
-import { NBTInventory } from "@main/zikeji";
+import { NBTInventory } from "@common/zikeji";
 
 /**
  * Interface used in the {@link SkyBlockProfileMemberWithTransformedInventories} intersection to describe the intellisense for the inventory after being transformed.

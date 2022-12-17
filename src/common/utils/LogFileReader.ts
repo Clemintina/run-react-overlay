@@ -5,7 +5,7 @@ import usePlayerStore from "@renderer/store/PlayerStore";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import axios from "axios";
-import { removeMinecraftFormatting } from "@common/../../main/zikeji";
+import { removeMinecraftFormatting } from "@common/zikeji";
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 export type LogFileMessage = {

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting } from "@common/../../main/zikeji";
+import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting } from "@common/zikeji";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import useTagStore from "@renderer/store/TagStore";
@@ -11,7 +11,7 @@ import { PlayerNickname } from "@common/utils/Schemas";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { RequestType } from "@common/utils/externalapis/RunApi";
 import destr from "destr";
-import { InputBoxButton, InputTextBox, PlayerOptionsModal } from "@components/BaseComponents";
+import { InputBoxButton, InputTextBox } from "@components/BaseComponents";
 import { SettingCard } from "@components/AppComponents";
 import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/TagComponents";
 import { StatsisticsTooltip } from "@components/TooltipComponents";

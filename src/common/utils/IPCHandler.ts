@@ -27,6 +27,7 @@ export enum IpcValidInvokeChannels {
 	KEATHIZ = "keathiz",
 	OBSERVER = "observer",
 	LUNAR = "lunar",
+	POLSU = 'polsu',
 	PLAYER_DB = "playerdb",
 	GET_FILE_PATH = "getFilePath",
 	NOTIFICATIONS = "notifications",
@@ -55,6 +56,7 @@ export type IpcChannelMap = {
 	[IpcValidInvokeChannels.KEATHIZ]: [endpoint: KeathizEndpoints, uuid: string, apiKey: string];
 	[IpcValidInvokeChannels.OBSERVER]: [uuid: string];
 	[IpcValidInvokeChannels.LUNAR]: [uuid: string];
+	[IpcValidInvokeChannels.POLSU]: [endpoint: 'session' | 'apikey', apiKey: string, uuid?: string]
 	[IpcValidInvokeChannels.PLAYER_DB]: [uuid: string];
 	[IpcValidInvokeChannels.GET_FILE_PATH]: [request: string];
 	[IpcValidInvokeChannels.NOTIFICATIONS]: [message: string, subtitle: string | undefined];

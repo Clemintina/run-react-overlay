@@ -26,6 +26,7 @@ import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTim
 import { Agent } from "https";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 import got, { ExtendOptions } from "got";
+import { PolsuApi } from "@clemintina/seraph-library";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -39,6 +40,7 @@ const headers = {
 } as const;
 const registeredGlobalKeybinds = new Set<string>();
 const startTimestamp = new Date();
+const expressApplication = express();
 /**
  * Handle caching using {@link [cacheManager](https://www.npmjs.com/package/cache-manager)}
  */
@@ -156,7 +158,6 @@ export const createAppWindow = (): BrowserWindow => {
 
 	appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY, { userAgent: "SeraphOverlay" });
 
-	const expressApplication = express();
 	let isPortOpen = false;
 
 	if (process.platform === "win32" && !isDevelopment) {
@@ -396,10 +397,6 @@ const registerSeraphIPC = () => {
 				},
 			});
 			return { data: body, status: statusCode };
-		} else if (endpoint == RunEndpoints.KEATHIZ_PROXY) {
-			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}&key=${hypixelApiKey}`, { headers });
-			// @ts-ignore
-			return { data: body.data, status: statusCode };
 		} else {
 			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
 				headers: {
@@ -407,6 +404,23 @@ const registerSeraphIPC = () => {
 				},
 			});
 			return { data: body, status: statusCode };
+		}
+	});
+
+	ipcMain.handle("polsu", async (event: IpcMainInvokeEvent, args: string[]) => {
+		const endpoint = args[0],
+			apiKey = args[1],
+			uuid = args[2] ? args[2] : undefined;
+		const polsuApi = new PolsuApi({ apiKey });
+
+		if (endpoint == "session") {
+			if (uuid) {
+				const response = await polsuApi.getBedwarsSession(uuid);
+				return { data: response, status: response.code };
+			}
+		}else if ( endpoint == "apikey" ) {
+			const response = await polsuApi.getKeyInformation();
+			return {data: response, status: response.code}
 		}
 	});
 

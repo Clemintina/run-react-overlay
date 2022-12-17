@@ -1,5 +1,5 @@
-import { Components, Paths } from "@main/zikeji";
-import { Method } from "@main/zikeji/util/Method";
+import { Components, Paths } from "@common/zikeji";
+import { Method } from "@common/zikeji/util/Method";
 import { getResultObject, ResultObject } from "../util/ResultObject";
 
 export class FindGuild extends Method {

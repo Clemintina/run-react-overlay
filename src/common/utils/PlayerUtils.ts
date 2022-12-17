@@ -1,8 +1,9 @@
 import { Blacklist, IPCResponse, LunarAPIResponse } from "./externalapis/RunApi";
-import { Components } from "@common/../../main/zikeji";
+import { Components } from "@common/zikeji";
 import { BoomzaAntisniper, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
 import { CustomFileJsonType } from "@common/utils/Schemas";
+import { Session } from "@clemintina/seraph-library/lib/PolsuTypes";
 
 export type Player = {
 	name: string;
@@ -23,6 +24,9 @@ export type Player = {
 		boomza?: IPCResponse<BoomzaAntisniper> | null;
 		keathiz?: IPCResponse<KeathizOverlayRun> | null;
 		lunar?: IPCResponse<LunarAPIResponse> | null;
+		polsu?:{
+			sessions?: IPCResponse<Session>;
+		}
 		playerDb?: IPCResponse<PlayerDB> | null;
 		customFile?: CustomFileJsonType;
 		customApi?: CustomFileJsonType;

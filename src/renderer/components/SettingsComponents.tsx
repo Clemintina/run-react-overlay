@@ -9,7 +9,7 @@ import { CustomFileIpc, CustomLinkFile, KeybindInterface, PlayerNickname } from 
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import usePlayerStore from "@renderer/store/PlayerStore";
 import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/../../main/zikeji";
+import { Components } from "@common/zikeji";
 import { RequestType } from "@common/utils/externalapis/RunApi";
 import useTagStore from "@renderer/store/TagStore";
 import produce from "immer";
@@ -27,12 +27,14 @@ import { ColourPicker, ColourPickerArray, LogSelectorModal, SettingCard, Setting
 import { InputBoxButton, InputTextBox, ToggleButton, UserAccordion } from "@components/BaseComponents";
 import { Colour } from "@common/utils/TagSchema";
 import { PlayerNicknameViewComponent } from "@components/PlayerComponents";
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
 
 export const ApiOptions = () => {
-	const { hypixel, settings, keathiz } = useConfigStore((state) => ({
+	const { hypixel, settings, keathiz, polsu } = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		settings: state.settings,
 		keathiz: state.keathiz,
+		polsu: state.polsu
 	}));
 	const styledProps: SxProps = {
 		width: 0.86,
@@ -146,6 +148,47 @@ export const ApiOptions = () => {
 						sx={styledProps}
 						helperText={!keathiz.valid ? "Enter a valid Antisniper API Key" : ""}
 						initialValue={keathiz.key}
+					/>
+				</TextSettingCard>
+				<SettingCard>
+					<span>Polsu Sessions</span>
+					<span />
+					<span>
+						<ToggleButton
+							onChange={async () => {
+								const oldPolsuSettings = {...settings.polsu}
+								oldPolsuSettings.sessions = !oldPolsuSettings.sessions
+								useConfigStore.getState().setSettings({ ...settings, polsu: oldPolsuSettings });
+							}}
+							options={{ enabled: settings.polsu.sessions }}
+						>
+							<span className={"pl-2"}>
+								<Tooltip title='This API is NEW and may have issues.'>
+									<NewReleasesIcon/>
+								</Tooltip>
+							</span>
+						</ToggleButton>
+					</span>
+				</SettingCard>
+				<TextSettingCard options={{ shown: settings.polsu.sessions }}>
+					<InputTextBox
+						onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
+							if (event.key === "Enter") {
+								useConfigStore.getState().setPolsuApiKey(text.replaceAll(" ", ""));
+							}
+						}}
+						onBlur={(event, text) => {
+							useConfigStore.getState().setPolsuApiKey(text.replaceAll(" ", ""));
+						}}
+						options={{
+							placeholder: polsu.valid ? polsu.apiKey : "Polsu API Key",
+							label: { text: "Polsu API Key" },
+							colour: polsu.valid ? "success" : "error",
+							focused: true,
+						}}
+						sx={styledProps}
+						helperText={!polsu.valid ? "Enter a valid Polsu API Key" : ""}
+						initialValue={polsu.apiKey}
 					/>
 				</TextSettingCard>
 			</Box>

@@ -1,5 +1,5 @@
-import { Paths } from "@main/zikeji";
-import { Method } from "@main/zikeji/util/Method";
+import { Paths } from "@common/zikeji";
+import { Method } from "@common/zikeji/util/Method";
 import { getResultObject, ResultObject } from "../../util/ResultObject";
 import { GuildsResources } from "./guilds";
 import { SkyBlockResources } from "./skyblock";
