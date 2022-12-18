@@ -407,23 +407,6 @@ const registerSeraphIPC = () => {
 		}
 	});
 
-	ipcMain.handle("polsu", async (event: IpcMainInvokeEvent, args: string[]) => {
-		const endpoint = args[0],
-			apiKey = args[1],
-			uuid = args[2] ? args[2] : undefined;
-		const polsuApi = new PolsuApi({ apiKey });
-
-		if (endpoint == "session") {
-			if (uuid) {
-				const response = await polsuApi.getBedwarsSession(uuid);
-				return { data: response, status: response.code };
-			}
-		} else if (endpoint == "apikey") {
-			const response = await polsuApi.getKeyInformation();
-			return { data: response, status: response.code };
-		}
-	});
-
 	ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const uuid = args[0];
 		const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`, { headers });
@@ -611,6 +594,23 @@ const registerExternalApis = () => {
 		const uuid = args[0];
 		const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${uuid}`, { headers });
 		return { data: response.data, status: response.status };
+	});
+
+	ipcMain.handle("polsu", async (event: IpcMainInvokeEvent, args: string[]) => {
+		const endpoint = args[0],
+			apiKey = args[1],
+			uuid = args[2] ? args[2] : undefined;
+		const polsuApi = new PolsuApi({ apiKey, timeout: 10000 });
+
+		if (endpoint == "session") {
+			if (uuid) {
+				const response = await polsuApi.getBedwarsSession(uuid);
+				return { data: response, status: response.code };
+			}
+		} else if (endpoint == "apikey") {
+			const response = await polsuApi.getKeyInformation();
+			return { data: response, status: response.code };
+		}
 	});
 
 	ipcMain.handle("customUrl", async (event: IpcMainInvokeEvent, args: string[]) => {

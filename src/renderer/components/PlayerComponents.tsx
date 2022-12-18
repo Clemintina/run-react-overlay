@@ -6,7 +6,7 @@ import useTagStore from "@renderer/store/TagStore";
 import { Interweave } from "interweave";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { MinecraftColours, Player } from "@common/utils/PlayerUtils";
+import { MinecraftColours, Player, PlayerUtils } from "@common/utils/PlayerUtils";
 import { PlayerNickname } from "@common/utils/Schemas";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { RequestType } from "@common/utils/externalapis/RunApi";
@@ -14,7 +14,7 @@ import destr from "destr";
 import { InputBoxButton, InputTextBox } from "@components/BaseComponents";
 import { SettingCard } from "@components/AppComponents";
 import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/TagComponents";
-import { StatsisticsTooltip } from "@components/TooltipComponents";
+import { OverlayTooltip, StatsisticsTooltip } from "@components/TooltipComponents";
 
 export type PlayerCommonProperties = {
 	player: Player;
@@ -154,13 +154,45 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 		}
 	}
 
+	const playerStats = player.hypixelPlayer?.stats.Bedwars;
+	const polsuSession = player.sources.polsu?.sessions ? player.sources.polsu.sessions.data : undefined;
+
+	const playerFormatter = new PlayerUtils();
+
 	return (
 		<div style={{ textAlign: table.settings.textAlign }}>
-			{values.map(([session_timer, hex], index) => (
-				<span key={index} style={{ color: `#${hex}` }}>
-					{session_timer}
-				</span>
-			))}
+			<OverlayTooltip
+				player={player}
+				tooltip={
+					<div>
+						{player.sources.polsu?.sessions && player.hypixelPlayer && (
+							<div className={"statistics-tooltip text-center"}>
+								<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
+									{player.hypixelPlayer.displayname}
+								</span>
+								<div>
+									<div className={"statistics-tooltip-inline"}>Games Played: {(playerStats?.games_played_bedwars ?? 0) - (polsuSession?.games?.total ?? 0)}</div>
+									<div className={"statistics-tooltip-inline"}>Wins: {(playerStats?.wins_bedwars ?? 0) - (polsuSession?.stats.wins ?? 0)}</div>
+									<div className={"statistics-tooltip-inline"}>Losses: {(playerStats?.losses_bedwars ?? 0) - (polsuSession?.stats.losses ?? 0)}</div>
+									<br /><div className={"statistics-tooltip-inline"}>Final Kills: {(playerStats?.final_kills_bedwars ?? 0) - (polsuSession?.stats.fkills ?? 0)}</div>
+									<div className={"statistics-tooltip-inline"}>Final Deaths: {(playerStats?.final_deaths_bedwars ?? 0) - (polsuSession?.stats.fdeaths ?? 0)}</div>
+									<br /><div className={"statistics-tooltip-inline"}>Beds Broken: {(playerStats?.beds_broken_bedwars ?? 0) - (polsuSession?.stats.bbroken ?? 0)}</div>
+									<div className={"statistics-tooltip-inline"}>Beds Lost: {(playerStats?.beds_lost_bedwars ?? 0) - (polsuSession?.stats.blost ?? 0)}</div>
+									<br /><div className={"statistics-tooltip-inline"}>Kills: {(playerStats?.kills_bedwars ?? 0) - (polsuSession?.stats.kills ?? 0)}</div>
+									<div className={"statistics-tooltip-inline"}>Deaths: {(playerStats?.deaths_bedwars ?? 0) - (polsuSession?.stats.deaths ?? 0)}</div>
+									<br /><div className={"statistics-tooltip-inline"}>Session started: {playerFormatter.getPlayerHypixelUtils().getDateFormatted(polsuSession?.started ? polsuSession.started * 1000 : 0, undefined, { hour12: false, dateStyle: "full" })}</div>
+								</div>
+							</div>
+						)}
+					</div>
+				}
+			>
+				{values.map(([session_timer, hex], index) => (
+					<span key={index} style={{ color: `#${hex}` }}>
+						{session_timer}
+					</span>
+				))}
+			</OverlayTooltip>
 		</div>
 	);
 };
@@ -372,6 +404,24 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (player?.hypixelPlayer?.channel == "PARTY") {
 					tagArray.push(getTagsFromConfig("hypixel.party"));
 				}
+				if ( player.sources.polsu?.sessions ) {
+					const polsuSession = player.sources.polsu.sessions.data;
+					// @ts-ignore
+					if ( polsuSession.new || polsuSession.started == polsuSession.player.last_changed ){
+						tagArray.push(<span className={'text-red-500'}>N</span>)
+					}
+					// @ts-ignore
+					if ( polsuSession.player.last_changed != null){
+						const timeNow = Date.now();
+						// @ts-ignore
+						const nameBefore = new Date(polsuSession.player.last_changed*1000);
+						const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+						const result = (diffInMs / (1000 * 60 * 60 * 24)) <= 10;
+						if ( result ) {
+							tagArray.push(getTagsFromConfig("run.name_change"));
+						}
+					}
+				}
 				if (settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
 					if (player?.sources?.keathiz == null && player.loaded) {
 						tagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>ERROR</span>);
@@ -436,7 +486,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	return (
 		<div style={{ textAlign: table.settings.textAlign }}>
 			{tagArray.map((value, index) => (
-				<span key={index}>{value}</span>
+				<span key={index} className={index!=0 ? 'pl-1' : ''}>{value}</span>
 			))}
 		</div>
 	);

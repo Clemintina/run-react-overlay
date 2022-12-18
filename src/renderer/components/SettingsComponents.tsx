@@ -1,74 +1,41 @@
-import useConfigStore, {ConfigStore} from "@renderer/store/ConfigStore";
-import {
-	AccordionDetails,
-	Autocomplete,
-	Box,
-	Button,
-	createTheme,
-	FormControl,
-	FormGroup,
-	InputAdornment,
-	InputLabel,
-	ListItemButton,
-	Select,
-	SelectChangeEvent,
-	Slider,
-	SxProps,
-	TextField,
-	ThemeProvider,
-	useTheme
-} from "@mui/material";
+import useConfigStore, { ConfigStore } from "@renderer/store/ConfigStore";
+import { AccordionDetails, Autocomplete, Box, Button, createTheme, FormControl, FormGroup, InputAdornment, InputLabel, ListItemButton, Select, SelectChangeEvent, Slider, SxProps, TextField, ThemeProvider, useTheme } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
-import React, {FC, PropsWithChildren, useEffect, useState} from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
+import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
-import {CustomFileIpc, CustomLinkFile, KeybindInterface, PlayerNickname} from "@common/utils/Schemas";
-import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
+import { CustomFileIpc, CustomLinkFile, KeybindInterface, PlayerNickname } from "@common/utils/Schemas";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import usePlayerStore from "@renderer/store/PlayerStore";
-import {Player} from "@common/utils/PlayerUtils";
-import {Components} from "@common/zikeji";
-import {RequestType} from "@common/utils/externalapis/RunApi";
+import { Player } from "@common/utils/PlayerUtils";
+import { Components } from "@common/zikeji";
+import { RequestType } from "@common/utils/externalapis/RunApi";
 import useTagStore from "@renderer/store/TagStore";
 import produce from "immer";
 import destr from "destr";
 import Typography from "@mui/material/Typography";
-import {
-	ColumnMovedEvent,
-	GetRowIdParams,
-	GridColumnsChangedEvent,
-	GridOptions,
-	GridReadyEvent,
-	RowDataUpdatedEvent
-} from "ag-grid-community";
-import {columnDefsBase, defaultColDefBase} from "@renderer/views/Homepage";
-import {AgGridReact} from "ag-grid-react";
-import {Link} from "react-router-dom";
-import {NavigateNext, RefreshRounded} from "@mui/icons-material";
+import { ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
+import { columnDefsBase, defaultColDefBase } from "@renderer/views/Homepage";
+import { AgGridReact } from "ag-grid-react";
+import { Link } from "react-router-dom";
+import { NavigateNext, RefreshRounded } from "@mui/icons-material";
 import GoogleFontLoader from "react-google-font-loader";
-import {hexToRgbA} from "@common/helpers";
-import {constantPlayerData} from "@common/utils/SettingViewUtils";
-import {
-	ColourPicker,
-	ColourPickerArray,
-	LogSelectorModal,
-	SettingCard,
-	SettingHeader,
-	TagEditor,
-	TextSettingCard
-} from "@components/AppComponents";
-import {InputBoxButton, InputTextBox, ToggleButton, UserAccordion} from "@components/BaseComponents";
-import {Colour} from "@common/utils/TagSchema";
-import {PlayerNicknameViewComponent} from "@components/PlayerComponents";
-import NewReleasesIcon from '@mui/icons-material/NewReleases';
-import {faDiscord} from "@fortawesome/free-brands-svg-icons";
+import { hexToRgbA } from "@common/helpers";
+import { constantPlayerData } from "@common/utils/SettingViewUtils";
+import { ColourPicker, ColourPickerArray, LogSelectorModal, SettingCard, SettingHeader, TagEditor, TextSettingCard } from "@components/AppComponents";
+import { InputBoxButton, InputTextBox, ToggleButton, UserAccordion } from "@components/BaseComponents";
+import { Colour } from "@common/utils/TagSchema";
+import { PlayerNicknameViewComponent } from "@components/PlayerComponents";
+import NewReleasesIcon from "@mui/icons-material/NewReleases";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
 export const ApiOptions = () => {
-	const {hypixel, settings, keathiz, polsu} = useConfigStore((state) => ({
+	const { hypixel, settings, keathiz, polsu } = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		settings: state.settings,
 		keathiz: state.keathiz,
-		polsu: state.polsu
+		polsu: state.polsu,
 	}));
 	const styledProps: SxProps = {
 		width: 0.86,
@@ -186,33 +153,35 @@ export const ApiOptions = () => {
 				</TextSettingCard>
 				<SettingCard>
 					<span>Polsu</span>
-					<span/>
-					<Box className={'flex w-full'}>
+					<span />
+					<Box className={"flex w-full"}>
 						<ToggleButton
 							onChange={async () => {
-								const oldPolsuSettings = {...settings.polsu}
-								oldPolsuSettings.enabled = !oldPolsuSettings.enabled
-								useConfigStore.getState().setSettings({...settings, polsu: oldPolsuSettings});
+								const oldPolsuSettings = { ...settings.polsu };
+								oldPolsuSettings.enabled = !oldPolsuSettings.enabled;
+								useConfigStore.getState().setSettings({ ...settings, polsu: oldPolsuSettings });
 							}}
-							options={{enabled: settings.polsu.enabled}}
-							className={''}
-						>
-						</ToggleButton>
+							options={{ enabled: settings.polsu.enabled }}
+							className={""}
+						></ToggleButton>
 						<span className={"pl-2"}>
-								<Tooltip title='This API is NEW and may have issues.'>
-									<NewReleasesIcon/>
-								</Tooltip>
-							</span>
-						<span className={"pl-2"} onClick={() => {
-							window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ['https://discord.polsu.xyz/'])
-						}}>
-								<Tooltip title='Join the Discord!'>
-									<FontAwesomeIcon icon={faDiscord}/>
-								</Tooltip>
-							</span>
+							<Tooltip title='This API is NEW and may have issues.'>
+								<NewReleasesIcon />
+							</Tooltip>
+						</span>
+						<span
+							className={"pl-2"}
+							onClick={() => {
+								window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ["https://discord.polsu.xyz/"]);
+							}}
+						>
+							<Tooltip title='Join the Discord!'>
+								<FontAwesomeIcon icon={faDiscord} />
+							</Tooltip>
+						</span>
 					</Box>
 				</SettingCard>
-				<TextSettingCard options={{shown: settings.polsu.enabled}}>
+				<TextSettingCard options={{ shown: settings.polsu.enabled }}>
 					<InputTextBox
 						onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
 							if (event.key === "Enter") {
@@ -224,7 +193,7 @@ export const ApiOptions = () => {
 						}}
 						options={{
 							placeholder: polsu.valid ? polsu.apiKey : "Polsu API Key",
-							label: {text: "Polsu API Key"},
+							label: { text: "Polsu API Key" },
 							colour: polsu.valid ? "success" : "error",
 							focused: true,
 						}}
@@ -233,22 +202,21 @@ export const ApiOptions = () => {
 						initialValue={polsu.apiKey}
 					/>
 				</TextSettingCard>
-				<Box style={settings.polsu.enabled ? {} : {display: "none"}}>
-					<UserAccordion name={'Polsu Options'}>
+				<Box style={settings.polsu.enabled ? {} : { display: "none" }}>
+					<UserAccordion name={"Polsu Options"}>
 						<SettingCard>
 							<span>Sessions</span>
-							<span/>
+							<span />
 							<span>
-						<ToggleButton
-							onChange={async () => {
-								const oldPolsuSettings = {...settings.polsu}
-								oldPolsuSettings.sessions = !oldPolsuSettings.sessions
-								useConfigStore.getState().setSettings({...settings, polsu: oldPolsuSettings});
-							}}
-							options={{enabled: settings.polsu.sessions}}
-						>
-						</ToggleButton>
-					</span>
+								<ToggleButton
+									onChange={async () => {
+										const oldPolsuSettings = { ...settings.polsu };
+										oldPolsuSettings.sessions = !oldPolsuSettings.sessions;
+										useConfigStore.getState().setSettings({ ...settings, polsu: oldPolsuSettings });
+									}}
+									options={{ enabled: settings.polsu.sessions }}
+								></ToggleButton>
+							</span>
 						</SettingCard>
 					</UserAccordion>
 				</Box>
@@ -896,6 +864,50 @@ export const TagEditorView = () => {
 									);
 								}}
 								colourObject={run.personal_safelist.colour}
+							/>
+						</span>
+					</SettingCard>
+					<SettingCard>
+						<span>Name Change</span>
+						<span>
+							<TagEditor
+								options={{
+									colour: run.name_change.colour,
+									placeholder: run.name_change.display,
+									label: { text: "Name Change" },
+								}}
+								onBlur={(event) => {
+									useTagStore.getState().setStore(
+										produce((state: any) => {
+											state.run.name_change.display = event.currentTarget.value;
+										}),
+									);
+								}}
+							/>
+						</span>
+						<span>
+							<ColourPickerArray
+								setColour={async (newTagArray) => {
+									const newColourObject = { ...run.safelist };
+									const newItem = {
+										colour: newTagArray.colour,
+										requirement: newTagArray.requirement,
+										operator: "<=",
+									};
+									if (Array.isArray(newColourObject.colour)) {
+										const newColourArray: Array<Colour> = [...newColourObject.colour];
+										newColourArray.filter((item, index) => {
+											if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
+										});
+										newColourArray.push(newItem);
+										useTagStore.getState().setStore(
+											produce((state: any) => {
+												state.run.safelist.colour = newColourArray;
+											}),
+										);
+									}
+								}}
+								colourObject={run.safelist}
 							/>
 						</span>
 					</SettingCard>
