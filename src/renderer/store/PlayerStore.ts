@@ -208,13 +208,17 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					playerData.hypixelGuild = hypixelGuild;
 					get().updatePlayerState(playerData);
 
-					const [keathizApi,polsuSession] = await Promise.all([getKeathizData(playerData), getPolsuSession(playerData)]);
+					const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
 					playerData.sources.keathiz = keathizApi;
-					playerData.sources.polsu = {
-						sessions: polsuSession,
-					};
 					get().updatePlayerState(playerData);
+
+					const [ polsuSession ] = await Promise.all( [ getPolsuSession( playerData ) ] );
+					playerData.sources.polsu = {
+						sessions: polsuSession
+					}
+
 					console.log(polsuSession);
+					get().updatePlayerState(playerData);
 				}
 			} else {
 				if (runApi.status == 403) {
@@ -565,14 +569,14 @@ const getGuildData = async (player: Player) => {
 };
 
 const getPolsuSession = async (player: Player) => {
-	let api: IPCResponse<Session> | undefined;
-	if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.polsu.sessions) {
-		const { polsu } = useConfigStore.getState();
-		api = await window.ipcRenderer.invoke<Session>(IpcValidInvokeChannels.POLSU, ["session", polsu.apiKey, player.hypixelPlayer.uuid]);
+  let api: IPCResponse<Session> | undefined;
+	if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.polsu.enabled && useConfigStore.getState().settings.polsu.sessions) {
+		const {polsu} = useConfigStore.getState();
+		api = await window.ipcRenderer.invoke<Session>(IpcValidInvokeChannels.POLSU, ['session', polsu.apiKey, player.hypixelPlayer.uuid]);
 	} else {
 		api = undefined;
 	}
 	return api;
-};
+}
 
 export default usePlayerStore;
