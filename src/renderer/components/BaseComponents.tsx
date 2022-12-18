@@ -295,7 +295,7 @@ export const ToggleButton: FC<ToggleButton> = ({ text, options, onClick, onChang
 		tooltip = <span>{button}</span>;
 	}
 
-	return <div className={"flex flex-col w-full"}>{tooltip}</div>;
+	return <div className={"flex flex-col"}>{tooltip}</div>;
 };
 
 export const UserAccordion: FC<UserAccordion> = ({ name, children }) => {

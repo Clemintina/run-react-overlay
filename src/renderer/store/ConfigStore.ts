@@ -484,6 +484,7 @@ const useConfigStore = create<ConfigStore>()(
 					astolfo: false,
 					boomza: true,
 					polsu:{
+						enabled: false,
 						sessions: false
 					},
 					hypixel: {
@@ -598,6 +599,7 @@ const useConfigStore = create<ConfigStore>()(
 						updatedState.polsu.apiKey = ''
 						updatedState.polsu.valid = false
 						updatedState.settings.polsu.sessions = false
+						updatedState.settings.polsu.enabled = false
 					}
 					return updatedState;
 				},

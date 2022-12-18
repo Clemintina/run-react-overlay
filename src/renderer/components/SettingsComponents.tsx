@@ -1,36 +1,70 @@
-import useConfigStore, { ConfigStore } from "@renderer/store/ConfigStore";
-import { AccordionDetails, Autocomplete, Box, Button, createTheme, FormControl, FormGroup, InputAdornment, InputLabel, ListItemButton, Select, SelectChangeEvent, Slider, SxProps, TextField, ThemeProvider, useTheme } from "@mui/material";
+import useConfigStore, {ConfigStore} from "@renderer/store/ConfigStore";
+import {
+	AccordionDetails,
+	Autocomplete,
+	Box,
+	Button,
+	createTheme,
+	FormControl,
+	FormGroup,
+	InputAdornment,
+	InputLabel,
+	ListItemButton,
+	Select,
+	SelectChangeEvent,
+	Slider,
+	SxProps,
+	TextField,
+	ThemeProvider,
+	useTheme
+} from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
-import React, { FC, PropsWithChildren, useEffect, useState } from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMapLocation} from "@fortawesome/free-solid-svg-icons";
+import React, {FC, PropsWithChildren, useEffect, useState} from "react";
 import MenuItem from "@mui/material/MenuItem";
-import { CustomFileIpc, CustomLinkFile, KeybindInterface, PlayerNickname } from "@common/utils/Schemas";
-import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import {CustomFileIpc, CustomLinkFile, KeybindInterface, PlayerNickname} from "@common/utils/Schemas";
+import {IpcValidInvokeChannels} from "@common/utils/IPCHandler";
 import usePlayerStore from "@renderer/store/PlayerStore";
-import { Player } from "@common/utils/PlayerUtils";
-import { Components } from "@common/zikeji";
-import { RequestType } from "@common/utils/externalapis/RunApi";
+import {Player} from "@common/utils/PlayerUtils";
+import {Components} from "@common/zikeji";
+import {RequestType} from "@common/utils/externalapis/RunApi";
 import useTagStore from "@renderer/store/TagStore";
 import produce from "immer";
 import destr from "destr";
 import Typography from "@mui/material/Typography";
-import { ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from "ag-grid-community";
-import { columnDefsBase, defaultColDefBase } from "@renderer/views/Homepage";
-import { AgGridReact } from "ag-grid-react";
-import { Link } from "react-router-dom";
-import { NavigateNext, RefreshRounded } from "@mui/icons-material";
+import {
+	ColumnMovedEvent,
+	GetRowIdParams,
+	GridColumnsChangedEvent,
+	GridOptions,
+	GridReadyEvent,
+	RowDataUpdatedEvent
+} from "ag-grid-community";
+import {columnDefsBase, defaultColDefBase} from "@renderer/views/Homepage";
+import {AgGridReact} from "ag-grid-react";
+import {Link} from "react-router-dom";
+import {NavigateNext, RefreshRounded} from "@mui/icons-material";
 import GoogleFontLoader from "react-google-font-loader";
-import { hexToRgbA } from "@common/helpers";
-import { constantPlayerData } from "@common/utils/SettingViewUtils";
-import { ColourPicker, ColourPickerArray, LogSelectorModal, SettingCard, SettingHeader, TagEditor, TextSettingCard } from "@components/AppComponents";
-import { InputBoxButton, InputTextBox, ToggleButton, UserAccordion } from "@components/BaseComponents";
-import { Colour } from "@common/utils/TagSchema";
-import { PlayerNicknameViewComponent } from "@components/PlayerComponents";
+import {hexToRgbA} from "@common/helpers";
+import {constantPlayerData} from "@common/utils/SettingViewUtils";
+import {
+	ColourPicker,
+	ColourPickerArray,
+	LogSelectorModal,
+	SettingCard,
+	SettingHeader,
+	TagEditor,
+	TextSettingCard
+} from "@components/AppComponents";
+import {InputBoxButton, InputTextBox, ToggleButton, UserAccordion} from "@components/BaseComponents";
+import {Colour} from "@common/utils/TagSchema";
+import {PlayerNicknameViewComponent} from "@components/PlayerComponents";
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import {faDiscord} from "@fortawesome/free-brands-svg-icons";
 
 export const ApiOptions = () => {
-	const { hypixel, settings, keathiz, polsu } = useConfigStore((state) => ({
+	const {hypixel, settings, keathiz, polsu} = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		settings: state.settings,
 		keathiz: state.keathiz,
@@ -151,26 +185,34 @@ export const ApiOptions = () => {
 					/>
 				</TextSettingCard>
 				<SettingCard>
-					<span>Polsu Sessions</span>
-					<span />
-					<span>
+					<span>Polsu</span>
+					<span/>
+					<Box className={'flex w-full'}>
 						<ToggleButton
 							onChange={async () => {
 								const oldPolsuSettings = {...settings.polsu}
-								oldPolsuSettings.sessions = !oldPolsuSettings.sessions
-								useConfigStore.getState().setSettings({ ...settings, polsu: oldPolsuSettings });
+								oldPolsuSettings.enabled = !oldPolsuSettings.enabled
+								useConfigStore.getState().setSettings({...settings, polsu: oldPolsuSettings});
 							}}
-							options={{ enabled: settings.polsu.sessions }}
+							options={{enabled: settings.polsu.enabled}}
+							className={''}
 						>
-							<span className={"pl-2"}>
+						</ToggleButton>
+						<span className={"pl-2"}>
 								<Tooltip title='This API is NEW and may have issues.'>
 									<NewReleasesIcon/>
 								</Tooltip>
 							</span>
-						</ToggleButton>
-					</span>
+						<span className={"pl-2"} onClick={() => {
+							window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ['https://discord.polsu.xyz/'])
+						}}>
+								<Tooltip title='Join the Discord!'>
+									<FontAwesomeIcon icon={faDiscord}/>
+								</Tooltip>
+							</span>
+					</Box>
 				</SettingCard>
-				<TextSettingCard options={{ shown: settings.polsu.sessions }}>
+				<TextSettingCard options={{shown: settings.polsu.enabled}}>
 					<InputTextBox
 						onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
 							if (event.key === "Enter") {
@@ -182,7 +224,7 @@ export const ApiOptions = () => {
 						}}
 						options={{
 							placeholder: polsu.valid ? polsu.apiKey : "Polsu API Key",
-							label: { text: "Polsu API Key" },
+							label: {text: "Polsu API Key"},
 							colour: polsu.valid ? "success" : "error",
 							focused: true,
 						}}
@@ -191,6 +233,25 @@ export const ApiOptions = () => {
 						initialValue={polsu.apiKey}
 					/>
 				</TextSettingCard>
+				<Box style={settings.polsu.enabled ? {} : {display: "none"}}>
+					<UserAccordion name={'Polsu Options'}>
+						<SettingCard>
+							<span>Sessions</span>
+							<span/>
+							<span>
+						<ToggleButton
+							onChange={async () => {
+								const oldPolsuSettings = {...settings.polsu}
+								oldPolsuSettings.sessions = !oldPolsuSettings.sessions
+								useConfigStore.getState().setSettings({...settings, polsu: oldPolsuSettings});
+							}}
+							options={{enabled: settings.polsu.sessions}}
+						>
+						</ToggleButton>
+					</span>
+						</SettingCard>
+					</UserAccordion>
+				</Box>
 			</Box>
 		</NavigationBar>
 	);

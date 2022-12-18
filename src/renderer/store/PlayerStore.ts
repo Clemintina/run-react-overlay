@@ -570,9 +570,9 @@ const getGuildData = async (player: Player) => {
 
 const getPolsuSession = async (player: Player) => {
   let api: IPCResponse<Session> | undefined;
-	if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.polsu.sessions) {
+	if (player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.polsu.enabled && useConfigStore.getState().settings.polsu.sessions) {
 		const {polsu} = useConfigStore.getState();
-		api = await window.ipcRenderer.invoke<Session>(IpcValidInvokeChannels.POLSU, ['session',polsu.apiKey,player.hypixelPlayer.uuid]);
+		api = await window.ipcRenderer.invoke<Session>(IpcValidInvokeChannels.POLSU, ['session', polsu.apiKey, player.hypixelPlayer.uuid]);
 	} else {
 		api = undefined;
 	}
