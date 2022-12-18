@@ -24,9 +24,9 @@ export type Player = {
 		boomza?: IPCResponse<BoomzaAntisniper> | null;
 		keathiz?: IPCResponse<KeathizOverlayRun> | null;
 		lunar?: IPCResponse<LunarAPIResponse> | null;
-		polsu?:{
+		polsu?: {
 			sessions?: IPCResponse<Session>;
-		}
+		};
 		playerDb?: IPCResponse<PlayerDB> | null;
 		customFile?: CustomFileJsonType;
 		customApi?: CustomFileJsonType;

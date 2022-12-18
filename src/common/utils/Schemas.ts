@@ -62,9 +62,9 @@ export type SettingsConfig = {
 	boomza: boolean;
 	updater: boolean;
 	astolfo: boolean;
-	polsu:{
-		sessions: boolean
-	}
+	polsu: {
+		sessions: boolean;
+	};
 	hypixel: {
 		guilds: boolean;
 	};

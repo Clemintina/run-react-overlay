@@ -418,9 +418,9 @@ const registerSeraphIPC = () => {
 				const response = await polsuApi.getBedwarsSession(uuid);
 				return { data: response, status: response.code };
 			}
-		}else if ( endpoint == "apikey" ) {
+		} else if (endpoint == "apikey") {
 			const response = await polsuApi.getKeyInformation();
-			return {data: response, status: response.code}
+			return { data: response, status: response.code };
 		}
 	});
 

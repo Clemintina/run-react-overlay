@@ -38,10 +38,10 @@ export type ConfigStore = {
 	};
 	validateRunKey: () => void;
 	setRunApiKey: (runkey: string, source?: "USER_INPUT" | "SYSTEM") => void;
-	polsu:{
+	polsu: {
 		apiKey: string;
 		valid: boolean;
-	}
+	};
 	setPolsuApiKey: (apiKey: string, source?: "USER_INPUT" | "SYSTEM") => void;
 	browserWindow: BrowserWindowSettings;
 	setBrowserWindow: (browserWindow: BrowserWindowSettings) => void;
@@ -258,23 +258,23 @@ const useConfigStore = create<ConfigStore>()(
 					}
 				},
 				polsu: {
-					apiKey:'',
-					valid:false
+					apiKey: "",
+					valid: false,
 				},
-				setPolsuApiKey: async (apiKey, source)=>{
-					if (source && source == 'USER_INPUT' ){
-						if ( get().polsu.apiKey?.toLowerCase() == apiKey.toLowerCase() ){
+				setPolsuApiKey: async (apiKey, source) => {
+					if (source && source == "USER_INPUT") {
+						if (get().polsu.apiKey?.toLowerCase() == apiKey.toLowerCase()) {
 							return;
 						}
 					}
-					if ( apiKey == '' ) return;
-					const response = await window.ipcRenderer.invoke<ApiKey>(IpcValidInvokeChannels.POLSU,['apikey', apiKey])
+					if (apiKey == "") return;
+					const response = await window.ipcRenderer.invoke<ApiKey>(IpcValidInvokeChannels.POLSU, ["apikey", apiKey]);
 					set({
-						polsu:{
+						polsu: {
 							apiKey,
-							valid: response.status == 200
-						}
-					})
+							valid: response.status == 200,
+						},
+					});
 				},
 				browserWindow: {
 					width: 600,
@@ -483,8 +483,8 @@ const useConfigStore = create<ConfigStore>()(
 					updater: true,
 					astolfo: false,
 					boomza: true,
-					polsu:{
-						sessions: false
+					polsu: {
+						sessions: false,
 					},
 					hypixel: {
 						guilds: false,
@@ -595,9 +595,9 @@ const useConfigStore = create<ConfigStore>()(
 						updatedState.font.isGoogleFont = true;
 					} else if (version == 9) {
 						updatedState.hypixel.proxy = false;
-						updatedState.polsu.apiKey = ''
-						updatedState.polsu.valid = false
-						updatedState.settings.polsu.sessions = false
+						updatedState.polsu.apiKey = "";
+						updatedState.polsu.valid = false;
+						updatedState.settings.polsu.sessions = false;
 					}
 					return updatedState;
 				},

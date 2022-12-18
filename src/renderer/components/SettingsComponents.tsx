@@ -27,14 +27,14 @@ import { ColourPicker, ColourPickerArray, LogSelectorModal, SettingCard, Setting
 import { InputBoxButton, InputTextBox, ToggleButton, UserAccordion } from "@components/BaseComponents";
 import { Colour } from "@common/utils/TagSchema";
 import { PlayerNicknameViewComponent } from "@components/PlayerComponents";
-import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import NewReleasesIcon from "@mui/icons-material/NewReleases";
 
 export const ApiOptions = () => {
 	const { hypixel, settings, keathiz, polsu } = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		settings: state.settings,
 		keathiz: state.keathiz,
-		polsu: state.polsu
+		polsu: state.polsu,
 	}));
 	const styledProps: SxProps = {
 		width: 0.86,
@@ -156,15 +156,15 @@ export const ApiOptions = () => {
 					<span>
 						<ToggleButton
 							onChange={async () => {
-								const oldPolsuSettings = {...settings.polsu}
-								oldPolsuSettings.sessions = !oldPolsuSettings.sessions
+								const oldPolsuSettings = { ...settings.polsu };
+								oldPolsuSettings.sessions = !oldPolsuSettings.sessions;
 								useConfigStore.getState().setSettings({ ...settings, polsu: oldPolsuSettings });
 							}}
 							options={{ enabled: settings.polsu.sessions }}
 						>
 							<span className={"pl-2"}>
 								<Tooltip title='This API is NEW and may have issues.'>
-									<NewReleasesIcon/>
+									<NewReleasesIcon />
 								</Tooltip>
 							</span>
 						</ToggleButton>
