@@ -208,17 +208,13 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					playerData.hypixelGuild = hypixelGuild;
 					get().updatePlayerState(playerData);
 
-					const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
+					const [keathizApi,polsuSession] = await Promise.all([getKeathizData(playerData), getPolsuSession(playerData)]);
 					playerData.sources.keathiz = keathizApi;
-					get().updatePlayerState(playerData);
-
-					const [polsuSession] = await Promise.all([getPolsuSession(playerData)]);
 					playerData.sources.polsu = {
 						sessions: polsuSession,
 					};
-
-					console.log(polsuSession);
 					get().updatePlayerState(playerData);
+					console.log(polsuSession);
 				}
 			} else {
 				if (runApi.status == 403) {
