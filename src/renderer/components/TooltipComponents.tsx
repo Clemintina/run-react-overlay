@@ -20,12 +20,12 @@ export const StatsisticsTooltip: FC<StatisticsTooltip> = ({ children, player }) 
 	const playerFormatter = new PlayerUtils();
 
 	let blacklistedReason = <span />;
-	if (player.sources.runApi?.data.data?.blacklist?.tagged) {
+	if (!player.nicked && player.sources.runApi?.data.blacklist?.tagged) {
 		blacklistedReason = (
 			<div>
 				<span>Reason:</span>
 				<br />
-				<span className={"text-red-500"}>{player.sources.runApi.data.data.blacklist.reason}</span>
+				<span className={"text-red-500"}>{player.sources.runApi.data.blacklist.reason}</span>
 			</div>
 		);
 	}
@@ -36,7 +36,7 @@ export const StatsisticsTooltip: FC<StatisticsTooltip> = ({ children, player }) 
 				player={player}
 				tooltip={
 					<div>
-						{player.hypixelPlayer !== null && (
+						{!player.nicked && player.hypixelPlayer !== null && (
 							<div className={"statistics-tooltip text-center"}>
 								<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
 									{player.hypixelPlayer.displayname}
@@ -153,7 +153,7 @@ export const OverlayTooltip: FC<OverlayTooltip> = ({ player, tooltip, children }
 	}));
 	let renderTooltip;
 
-	if (player != undefined && (player.nicked || player.sources.runApi?.data.data?.bot?.tagged)) {
+	if (player != undefined && (player.nicked || player.sources.runApi?.data.bot?.tagged)) {
 		renderTooltip = children;
 	} else {
 		renderTooltip = (

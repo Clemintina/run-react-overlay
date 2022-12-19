@@ -19,7 +19,7 @@
 		"package": "electron-forge package",
 		"make": "electron-forge make",
 		"publish": "electron-forge publish",
-		"lint": "eslint src/ --ext .ts,.js,.tsx,.jsx",
+		"lint": "prettier --write src && eslint src/ --ext .ts,.js,.tsx,.jsx",
 		"prettify": "prettier --write src/",
 		"upgradePackages": "pnpm up -L"
 	},
@@ -31,7 +31,7 @@
 		"forge": "./tools/forge/forge.config.js"
 	},
 	"dependencies": {
-		"@clemintina/seraph-library": "^1.0.42",
+		"@clemintina/seraph-library": "^1.0.43",
 		"@emotion/react": "^11.10.5",
 		"@emotion/styled": "^11.10.5",
 		"@fortawesome/fontawesome-svg-core": "^6.2.1",

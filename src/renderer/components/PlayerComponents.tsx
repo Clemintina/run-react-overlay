@@ -24,7 +24,7 @@ export type PlayerNickNameView = { key: string; playerNick: PlayerNickname; hand
 
 export const PlayerGuildComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	let guildRenderer = <span />;
-	if (player.hypixelGuild != null) {
+	if (!player.nicked && player.hypixelGuild != null) {
 		const guild: Components.Schemas.Guild = player.hypixelGuild.data;
 		guildRenderer = <span style={{ color: `#${MinecraftColourAsHex[MinecraftFormatting[guild?.tagColor ?? "§7"]]}` }}>{guild.tag}</span>;
 	}
@@ -34,14 +34,14 @@ export const PlayerGuildComponent: FC<PlayerCommonProperties> = ({ player }) => 
 export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	const { configStore, table } = useConfigStore((state) => ({ configStore: state, table: state.table }));
 	let lunarRenderer: JSX.Element = <span />;
-
-	let srcUrl = `https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`;
+	let srcUrl;
 
 	if (!player?.nicked) {
+		srcUrl = `https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`;
 		if (configStore.settings.lunar) {
-			if (player.sources.lunar !== undefined && player.sources.lunar !== null && player.sources.lunar.status == 200) {
-				if (player.sources?.lunar?.data?.player?.online) {
-					if (player.sources?.lunar?.data?.player?.lunarPlus?.premium) {
+			if (player.sources.lunar !== undefined && player.sources.lunar !== null) {
+				if (player.sources?.lunar?.player?.online) {
+					if (player.sources?.lunar?.player?.lunarPlus?.premium) {
 						lunarRenderer = (
 							<span>
 								<img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
@@ -81,7 +81,7 @@ export const PlayerWinstreakComponent: FC<PlayerCommonProperties> = ({ player })
 				playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
 			}
 		}
-		if (player.sources.runApi?.data.data?.blacklist.tagged && player.loaded) {
+		if (player.sources.runApi?.data.blacklist.tagged && player.loaded) {
 			renderer = getTagsFromConfig("run.blacklist", playerValue);
 		} else {
 			renderer = getCoreFromConfig(`core.winstreak`, playerValue);
@@ -100,7 +100,7 @@ export const PlayerStarComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	let starRenderer: JSX.Element;
 	if (!player.nicked && player.hypixelPlayer !== null) {
 		const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
-		if (!player.sources.runApi?.data.data?.blacklist?.tagged) {
+		if (!player.sources.runApi?.data.blacklist?.tagged) {
 			if (bwLevel.level < 1000) {
 				starRenderer = <span style={{ color: `#${bwLevel.prestigeColourHex}` }}>{`[${bwLevel.level}✫]`}</span>;
 			} else {
@@ -122,14 +122,14 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 	const { table } = useConfigStore((state) => ({ table: state.table }));
 
 	useEffect(() => {
-		if (player?.hypixelPlayer?.lastLogout) {
+		if (!player.nicked &&player?.hypixelPlayer?.lastLogout) {
 			setTimeout(() => {
 				setTimer(new Date().getUTCMilliseconds());
 			}, 1000);
 		}
 	}, [timer]);
 
-	if (player.hypixelPlayer != null) {
+	if (!player.nicked &&player.hypixelPlayer) {
 		if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
 			values.push(["N/A", "ff0000"]);
 		} else {
@@ -152,49 +152,55 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 				values.push(["Offline", "ff0000"]);
 			}
 		}
-	}
+		const playerStats = player.hypixelPlayer?.stats.Bedwars;
+		const polsuSession = player.sources.polsu?.sessions ? player.sources.polsu.sessions.data : undefined;
 
-	const playerStats = player.hypixelPlayer?.stats.Bedwars;
-	const polsuSession = player.sources.polsu?.sessions ? player.sources.polsu.sessions.data : undefined;
+		const playerFormatter = new PlayerUtils();
 
-	const playerFormatter = new PlayerUtils();
-
-	return (
-		<div style={{ textAlign: table.settings.textAlign }}>
-			<OverlayTooltip
-				player={player}
-				tooltip={
-					<div>
-						{player.sources.polsu?.sessions && player.hypixelPlayer && (
-							<div className={"statistics-tooltip text-center"}>
+		return (
+			<div style={{ textAlign: table.settings.textAlign }}>
+				<OverlayTooltip
+					player={player}
+					tooltip={
+						<div>
+							{player.sources.polsu?.sessions && player.hypixelPlayer && (
+								<div className={"statistics-tooltip text-center"}>
 								<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
 									{player.hypixelPlayer.displayname}
 								</span>
-								<div>
-									<div className={"statistics-tooltip-inline"}>Games Played: {(playerStats?.games_played_bedwars ?? 0) - (polsuSession?.games?.total ?? 0)}</div>
-									<div className={"statistics-tooltip-inline"}>Wins: {(playerStats?.wins_bedwars ?? 0) - (polsuSession?.stats.wins ?? 0)}</div>
-									<div className={"statistics-tooltip-inline"}>Losses: {(playerStats?.losses_bedwars ?? 0) - (polsuSession?.stats.losses ?? 0)}</div>
-									<br /><div className={"statistics-tooltip-inline"}>Final Kills: {(playerStats?.final_kills_bedwars ?? 0) - (polsuSession?.stats.fkills ?? 0)}</div>
-									<div className={"statistics-tooltip-inline"}>Final Deaths: {(playerStats?.final_deaths_bedwars ?? 0) - (polsuSession?.stats.fdeaths ?? 0)}</div>
-									<br /><div className={"statistics-tooltip-inline"}>Beds Broken: {(playerStats?.beds_broken_bedwars ?? 0) - (polsuSession?.stats.bbroken ?? 0)}</div>
-									<div className={"statistics-tooltip-inline"}>Beds Lost: {(playerStats?.beds_lost_bedwars ?? 0) - (polsuSession?.stats.blost ?? 0)}</div>
-									<br /><div className={"statistics-tooltip-inline"}>Kills: {(playerStats?.kills_bedwars ?? 0) - (polsuSession?.stats.kills ?? 0)}</div>
-									<div className={"statistics-tooltip-inline"}>Deaths: {(playerStats?.deaths_bedwars ?? 0) - (polsuSession?.stats.deaths ?? 0)}</div>
-									<br /><div className={"statistics-tooltip-inline"}>Session started: {playerFormatter.getPlayerHypixelUtils().getDateFormatted(polsuSession?.started ? polsuSession.started * 1000 : 0, undefined, { hour12: false, dateStyle: "full" })}</div>
+									<div>
+										<div className={"statistics-tooltip-inline"}>Games Played: {(playerStats?.games_played_bedwars ?? 0) - (polsuSession?.games?.total ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Wins: {(playerStats?.wins_bedwars ?? 0) - (polsuSession?.stats.wins ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Losses: {(playerStats?.losses_bedwars ?? 0) - (polsuSession?.stats.losses ?? 0)}</div>
+										<br />
+										<div className={"statistics-tooltip-inline"}>Final Kills: {(playerStats?.final_kills_bedwars ?? 0) - (polsuSession?.stats.fkills ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Final Deaths: {(playerStats?.final_deaths_bedwars ?? 0) - (polsuSession?.stats.fdeaths ?? 0)}</div>
+										<br />
+										<div className={"statistics-tooltip-inline"}>Beds Broken: {(playerStats?.beds_broken_bedwars ?? 0) - (polsuSession?.stats.bbroken ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Beds Lost: {(playerStats?.beds_lost_bedwars ?? 0) - (polsuSession?.stats.blost ?? 0)}</div>
+										<br />
+										<div className={"statistics-tooltip-inline"}>Kills: {(playerStats?.kills_bedwars ?? 0) - (polsuSession?.stats.kills ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Deaths: {(playerStats?.deaths_bedwars ?? 0) - (polsuSession?.stats.deaths ?? 0)}</div>
+										<br />
+										<div className={"statistics-tooltip-inline"}>Session started: {playerFormatter.getPlayerHypixelUtils().getDateFormatted(polsuSession?.started ? polsuSession.started * 1000 : 0, undefined, { hour12: false, dateStyle: "full" })}</div>
+									</div>
 								</div>
-							</div>
-						)}
-					</div>
-				}
-			>
-				{values.map(([session_timer, hex], index) => (
-					<span key={index} style={{ color: `#${hex}` }}>
+							)}
+						</div>
+					}
+				>
+					{values.map(([session_timer, hex], index) => (
+						<span key={index} style={{ color: `#${hex}` }}>
 						{session_timer}
 					</span>
-				))}
-			</OverlayTooltip>
-		</div>
-	);
+					))}
+				</OverlayTooltip>
+			</div>
+		);
+	}
+	return  (
+		<span className={'text-red-500'}>N/A</span>
+	)
 };
 
 export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
@@ -206,7 +212,7 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	};
 
 	let rankPlayer: JSX.Element;
-	if (player.hypixelPlayer && !player.sources.runApi?.data?.data?.blacklist?.tagged) {
+	if (!player.nicked && player.hypixelPlayer && !player.sources.runApi?.data?.blacklist?.tagged) {
 		const rank = getPlayerRank(player?.hypixelPlayer, false);
 		let playerName = player?.hypixelPlayer?.displayname;
 		if (player.denicked) {
@@ -237,7 +243,7 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				</span>
 			);
 		}
-	} else if (player.sources.runApi?.data.data.blacklist.tagged) {
+	} else if (!player.nicked && player.hypixelPlayer&& player.sources.runApi?.data.blacklist.tagged) {
 		rankPlayer = (
 			<span>
 				<span style={{ color: `#${run.blacklist.colour}` }}>{player?.hypixelPlayer?.displayname}</span>
@@ -327,9 +333,9 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	}));
 
 	let tagArray: Array<JSX.Element> = [];
-	if (runConfig.valid && player.sources.runApi != null) {
+	if (!player.nicked && runConfig.valid && player.sources.runApi != null) {
 		let singularTag = false;
-		const runApi = player.sources.runApi?.data?.data;
+		const runApi = player.sources.runApi?.data;
 		const customData = player?.sources?.customFile;
 		const customUrl = player?.sources?.customApi;
 		if (runApi?.blacklist?.tagged) {
@@ -395,6 +401,15 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (runApi?.safelist?.personal) {
 					tagArray.push(getTagsFromConfig("run.personal_safelist", runApi.safelist.timesKilled));
 				}
+				if ( runApi?.name_change.last_change ) {
+					const timeNow = Date.now();
+					const nameBefore = new Date(runApi?.name_change.last_change);
+					const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+					const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
+					if (result) {
+						tagArray.push(getTagsFromConfig("run.name_change"));
+					}
+				}
 				if (settings.run.friends && player?.friended) {
 					tagArray.push(getTagsFromConfig("run.friends"));
 				}
@@ -404,20 +419,18 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (player?.hypixelPlayer?.channel == "PARTY") {
 					tagArray.push(getTagsFromConfig("hypixel.party"));
 				}
-				if ( player.sources.polsu?.sessions ) {
+				if (player.sources.polsu?.sessions) {
 					const polsuSession = player.sources.polsu.sessions.data;
-					// @ts-ignore
-					if ( polsuSession.new || polsuSession.started == polsuSession.player.last_changed ){
-						tagArray.push(<span className={'text-red-500'}>N</span>)
+					const isNew = polsuSession?.new || polsuSession?.started == polsuSession?.player?.last_changed;
+					if (isNew) {
+						tagArray.push(<span className={"text-red-500"}>N</span>);
 					}
-					// @ts-ignore
-					if ( polsuSession.player.last_changed != null){
+					if (polsuSession?.player?.last_changed != null && !isNew) {
 						const timeNow = Date.now();
-						// @ts-ignore
-						const nameBefore = new Date(polsuSession.player.last_changed*1000);
+						const nameBefore = new Date(polsuSession.player.last_changed * 1000);
 						const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-						const result = (diffInMs / (1000 * 60 * 60 * 24)) <= 10;
-						if ( result ) {
+						const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
+						if (result) {
 							tagArray.push(getTagsFromConfig("run.name_change"));
 						}
 					}
@@ -472,7 +485,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 			}
 		}
 	} else {
-		if (player.loaded) {
+		if (!player.nicked && player.loaded) {
 			if (!runConfig.valid) {
 				tagArray.push(<span style={{ color: "red" }}>Seraph Key Locked</span>);
 			} else if (hypixel.apiKeyValid) {
@@ -486,7 +499,9 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	return (
 		<div style={{ textAlign: table.settings.textAlign }}>
 			{tagArray.map((value, index) => (
-				<span key={index} className={index!=0 ? 'pl-1' : ''}>{value}</span>
+				<span key={index} className={index != 0 ? "pl-1" : ""}>
+					{value}
+				</span>
 			))}
 		</div>
 	);

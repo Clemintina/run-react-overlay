@@ -1340,7 +1340,10 @@ export const ColumnEditorView = () => {
 		});
 
 		useConfigStore.getState().setTableState(table);
-		setPlayerData([...constantPlayerData()]);
+		const players  = constantPlayerData()
+		if ( !players[0].nicked ){
+			setPlayerData([players[0]]);
+		}
 	};
 
 	const onGridUpdate = (event) => {

@@ -143,23 +143,23 @@ export const columnDefsBase: ColDef<Player>[] = [
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
 	const p1: Player = nodeA.data,
 		p2: Player = nodeB.data;
-	if (p1.sources.runApi?.data.data?.blacklist?.tagged || p1.nicked) {
-		return isDescending ? 1 : -1;
-	} else if (p2.sources.runApi?.data.data?.blacklist?.tagged || p2.nicked) {
-		return isDescending ? -1 : 1;
+	if ( (!p1.nicked && p1.sources.runApi?.data.blacklist?.tagged) || p1.nicked ) {
+		return isDescending ? 1 : - 1;
+	} else if ( (!p2.nicked && p2.sources.runApi?.data.blacklist?.tagged) || p2.nicked ) {
+		return isDescending ? - 1 : 1;
 	}
 
 	let player1, player2;
-	switch (sortingData) {
+	switch ( sortingData ) {
 		case "star":
 			return (p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0) - (p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0);
 		case "name":
-			return p1.name.localeCompare(p2.name);
+			return p1.name.localeCompare( p2.name );
 		case "winstreak":
 			player1 = p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
 			player2 = p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
-			if (p1.sources.keathiz != undefined && player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
-			if (p2.sources.keathiz != undefined && player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+			if ( p1.sources.keathiz != undefined && player1 == 0 ) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+			if ( p2.sources.keathiz != undefined && player2 == 0 ) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
 			return player1 - player2;
 		case "fkdr":
 			return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0);
@@ -176,9 +176,9 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
 		case "finalkills":
 			return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0);
 		default:
-			assertDefaultError(sortingData);
+			assertDefaultError( sortingData );
 	}
-	return 0;
+	return -1;
 };
 
 window.ipcRenderer.on("updater", async (event, args) => {
