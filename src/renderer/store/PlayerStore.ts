@@ -3,11 +3,11 @@ import { Player } from "@common/utils/PlayerUtils";
 import { Components } from "@common/zikeji";
 import { Blacklist, IPCResponse, LunarAPIResponse, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
 import { BoomzaAntisniper, KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
-import useConfigStore, { ConfigStore } from "@renderer/store/ConfigStore";
+import useConfigStore from "@renderer/store/ConfigStore";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { CustomFileJsonType } from "@common/utils/Schemas";
 import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
-import { PolsuResponse, Session } from "@clemintina/seraph-library/lib/PolsuTypes";
+import { Session } from "@clemintina/seraph-library/lib/PolsuTypes";
 
 export type PlayerStore = {
 	players: Array<Player>;
