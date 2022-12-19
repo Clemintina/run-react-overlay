@@ -3,6 +3,7 @@ import { Components } from "@common/zikeji";
 import { BoomzaAntisniper, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
 import { CustomFileJsonType } from "@common/utils/Schemas";
+import { Session } from "@clemintina/seraph-library/lib/PolsuTypes";
 
 export type Player = {
 	name: string;
@@ -23,6 +24,9 @@ export type Player = {
 		boomza?: IPCResponse<BoomzaAntisniper> | null;
 		keathiz?: IPCResponse<KeathizOverlayRun> | null;
 		lunar?: IPCResponse<LunarAPIResponse> | null;
+		polsu?: {
+			sessions?: IPCResponse<Session>;
+		};
 		playerDb?: IPCResponse<PlayerDB> | null;
 		customFile?: CustomFileJsonType;
 		customApi?: CustomFileJsonType;
@@ -42,28 +46,11 @@ export class PlayerUtils {
 }
 
 export class PlayerHypixelUtils {
-	public getDateFormatted = (epoch: number | undefined, options?: { day: boolean; month: boolean; year: boolean } | undefined) => {
+	public getDateFormatted = (epoch: number | undefined, locale?: Intl.LocalesArgument | undefined, options?: Intl.DateTimeFormatOptions | undefined) => {
 		if (epoch === undefined || epoch === 0) return "N/A";
 		const d = new Date(0);
 		d.setUTCMilliseconds(epoch);
-
-		if (options != undefined) {
-			let format = "";
-			if (options.day) {
-				format = d.getUTCDate().toLocaleString().padStart(2, "0");
-				if (options.month ?? options.year) format += ".";
-			}
-			if (options.month) {
-				const month = d.getUTCMonth() + 1;
-				const monthFormatted = month.toLocaleString().padStart(2, "0");
-				format += monthFormatted;
-				if (options.year) format += ".";
-			}
-			if (options.year) format = format + d.getUTCFullYear().toLocaleString().replace(",", "").replace(".", "");
-			return format.replaceAll(" ", "");
-		} else {
-			return d.toLocaleDateString();
-		}
+		return d.toLocaleString(locale ?? "en-GB", options ?? { hour12: false });
 	};
 }
 

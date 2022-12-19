@@ -10,11 +10,12 @@
 			"name": "Arman"
 		}
 	],
-	"version": "1.5.84-STABLE",
+	"version": "1.5.85-STABLE",
 	"description": "Seraph Overlay",
 	"main": ".webpack/main",
 	"scripts": {
-		"start": "lsof -ti:9000 | xargs kill && cross-env NODE_ENV=development ELECTRON_ENABLE_LOGGING=1 electron-forge start --enable-logging",
+		"start": "cross-env NODE_ENV=development ELECTRON_ENABLE_LOGGING=1 electron-forge start --enable-logging",
+		"macstart": "lsof -ti:9000 | xargs kill && cross-env NODE_ENV=development ELECTRON_ENABLE_LOGGING=1 electron-forge start --enable-logging",
 		"package": "electron-forge package",
 		"make": "electron-forge make",
 		"publish": "electron-forge publish",
@@ -30,6 +31,7 @@
 		"forge": "./tools/forge/forge.config.js"
 	},
 	"dependencies": {
+		"@clemintina/seraph-library": "^1.0.41",
 		"@emotion/react": "^11.10.5",
 		"@emotion/styled": "^11.10.5",
 		"@fortawesome/fontawesome-svg-core": "^6.2.1",

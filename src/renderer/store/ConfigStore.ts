@@ -2,8 +2,6 @@
 import { ColumnState } from "ag-grid-community";
 import create from "zustand";
 import { AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, CustomLinkURL, DisplayErrorMessage, FontConfig, GameType, HypixelSettings, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
-import { ResultObject } from "@common/zikeji/util/ResultObject";
-import { Paths } from "@common/zikeji";
 import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { awaitTimeout } from "@common/helpers";
 import { KeathizEndpoints, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
@@ -11,6 +9,9 @@ import { devtools, persist } from "zustand/middleware";
 import usePlayerStore from "@renderer/store/PlayerStore";
 import axios from "axios";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { ResultObject } from "@common/zikeji/util/ResultObject";
+import { Paths } from "@common/zikeji";
+import { ApiKey } from "@clemintina/seraph-library/lib/PolsuTypes";
 
 export type ConfigStore = {
 	hypixel: HypixelSettings;
@@ -37,6 +38,11 @@ export type ConfigStore = {
 	};
 	validateRunKey: () => void;
 	setRunApiKey: (runkey: string, source?: "USER_INPUT" | "SYSTEM") => void;
+	polsu: {
+		apiKey: string;
+		valid: boolean;
+	};
+	setPolsuApiKey: (apiKey: string, source?: "USER_INPUT" | "SYSTEM") => void;
 	browserWindow: BrowserWindowSettings;
 	setBrowserWindow: (browserWindow: BrowserWindowSettings) => void;
 	table: TableState;
@@ -251,6 +257,25 @@ const useConfigStore = create<ConfigStore>()(
 						await window.ipcRenderer.invoke(IpcValidInvokeChannels.NOTIFICATIONS, ["Your Seraph Key has been locked!"]);
 					}
 				},
+				polsu: {
+					apiKey: "",
+					valid: false,
+				},
+				setPolsuApiKey: async (apiKey, source) => {
+					if (source && source == "USER_INPUT") {
+						if (get().polsu.apiKey?.toLowerCase() == apiKey.toLowerCase()) {
+							return;
+						}
+					}
+					if (apiKey == "") return;
+					const response = await window.ipcRenderer.invoke<ApiKey>(IpcValidInvokeChannels.POLSU, ["apikey", apiKey]);
+					set({
+						polsu: {
+							apiKey,
+							valid: response.status == 200,
+						},
+					});
+				},
 				browserWindow: {
 					width: 600,
 					height: 800,
@@ -458,6 +483,10 @@ const useConfigStore = create<ConfigStore>()(
 					updater: true,
 					astolfo: false,
 					boomza: true,
+					polsu: {
+						enabled: false,
+						sessions: false,
+					},
 					hypixel: {
 						guilds: false,
 					},
@@ -543,36 +572,34 @@ const useConfigStore = create<ConfigStore>()(
 			}),
 			{
 				name: "user_settings",
-				version: 9,
+				version: 10,
 				migrate: (persistedState: any, version) => {
-					const updatedState = persistedState;
+					const updatedState = persistedState as ConfigStore;
 					if (version == 4) {
 						updatedState.settings.hypixel.guilds = false;
 						updatedState.settings.run.friends = false;
 						updatedState.settings.updater = true;
 						updatedState.font.family = "Nunito";
-						updatedState.settings.error.code = 201;
+						updatedState.error.code = 201;
 					} else if (version == 5) {
 						updatedState.keybinds = [];
 						updatedState.settings.appearance.displayRank = true;
 						updatedState.table.settings.textAlign = "left";
-					} else if (version == 6) {
-						updatedState.appInformation.version = "";
-						updatedState.appInformation.update.release = "";
-						updatedState.appInformation.update.ready = false;
-						updatedState.appInformation.update.updateAvailable = false;
-						updatedState.appInformation.update.releaseDate = new Date();
 					} else if (version == 7) {
-						updatedState.settings.customFile = false;
-						updatedState.settings.customUrl = false;
+						updatedState.settings.preferences.customFile = false;
+						updatedState.settings.preferences.customUrl = false;
 						updatedState.customFile.path = "";
 						updatedState.customFile.readable = false;
 						updatedState.game.last_server = "";
 					} else if (version == 8) {
-						updatedState.customUrl.url = "";
+						updatedState.customApi.url = "";
 						updatedState.font.isGoogleFont = true;
 					} else if (version == 9) {
 						updatedState.hypixel.proxy = false;
+						updatedState.polsu.apiKey = "";
+						updatedState.polsu.valid = false;
+						updatedState.settings.polsu.sessions = false;
+						updatedState.settings.polsu.enabled = false;
 					}
 					return updatedState;
 				},
