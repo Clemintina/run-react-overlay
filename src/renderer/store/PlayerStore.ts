@@ -8,7 +8,7 @@ import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { CustomFileJsonType } from "@common/utils/Schemas";
 import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
 import { Session } from "@clemintina/seraph-library/lib/PolsuTypes";
-import { Blacklist, ErrorResponse, LunarAPIResponse, SeraphResponse } from "@clemintina/seraph-library/lib/SeraphTypes";
+import { Blacklist, LunarAPIResponse, SeraphResponse } from "@clemintina/seraph-library/lib/SeraphTypes";
 
 export type PlayerStore = {
 	players: Array<Player>;
@@ -111,7 +111,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
 				playerObject.status = code;
 				playerObject.cause = cause;
-				playerData = {nicked: true, name: username}
+				playerData = { nicked: true, name: username };
 			} else {
 				if (!playerData.denicked) {
 					playerData.id = ipcHypixelPlayer.data.uuid;

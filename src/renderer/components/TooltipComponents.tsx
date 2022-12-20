@@ -124,6 +124,11 @@ export const StatsisticsTooltip: FC<StatisticsTooltip> = ({ children, player }) 
 									</span>
 								</div>
 								{blacklistedReason}
+								<div>
+									<span className={"statistics-tooltip-inline"}>
+										Discord: <span className={"text-cyan-400"}>{player.hypixelPlayer?.socialMedia?.links?.DISCORD ?? "None linked"}</span>
+									</span>
+								</div>
 							</div>
 						)}
 					</div>

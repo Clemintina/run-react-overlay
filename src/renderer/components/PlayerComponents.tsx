@@ -122,24 +122,24 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 	const { table } = useConfigStore((state) => ({ table: state.table }));
 
 	useEffect(() => {
-		if (!player.nicked &&player?.hypixelPlayer?.lastLogout) {
-			setTimeout(() => {
-				setTimer(new Date().getUTCMilliseconds());
-			}, 1000);
-		}
+		if (!player.nicked && player?.hypixelPlayer?.lastLogout) {
+      setTimeout(() => {
+        setTimer(new Date().getUTCMilliseconds());
+      }, 1000);
+    }
 	}, [timer]);
 
-	if (!player.nicked &&player.hypixelPlayer) {
-		if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
-			values.push(["N/A", "ff0000"]);
-		} else {
-			const lastLoginDate: Date = new Date(0);
-			lastLoginDate.setUTCMilliseconds(player.hypixelPlayer.lastLogin);
-			const now_timezoned: Date = new Date();
-			const now = new Date();
-			now.setUTCMilliseconds(now_timezoned.getUTCMilliseconds());
+  if (!player.nicked && player.hypixelPlayer) {
+    if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
+      values.push(["N/A", "ff0000"]);
+    } else {
+      const lastLoginDate: Date = new Date(0);
+      lastLoginDate.setUTCMilliseconds(player.hypixelPlayer.lastLogin);
+      const now_timezoned: Date = new Date();
+      const now = new Date();
+      now.setUTCMilliseconds(now_timezoned.getUTCMilliseconds());
 
-			if (player.hypixelPlayer.lastLogin > player.hypixelPlayer.lastLogout) {
+      if (player.hypixelPlayer.lastLogin > player.hypixelPlayer.lastLogout) {
 				const timeDiff = new Date(now_timezoned.getTime() - lastLoginDate.getTime());
 				if ((timeDiff.getUTCHours() >= 3 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 4) {
 					values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "00ff00"]);
@@ -164,20 +164,20 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 					tooltip={
 						<div>
 							{player.sources.polsu?.sessions && player.hypixelPlayer && (
-								<div className={"statistics-tooltip text-center"}>
-								<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
-									{player.hypixelPlayer.displayname}
-								</span>
-									<div>
-										<div className={"statistics-tooltip-inline"}>Games Played: {(playerStats?.games_played_bedwars ?? 0) - (polsuSession?.games?.total ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Wins: {(playerStats?.wins_bedwars ?? 0) - (polsuSession?.stats.wins ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Losses: {(playerStats?.losses_bedwars ?? 0) - (polsuSession?.stats.losses ?? 0)}</div>
-										<br />
-										<div className={"statistics-tooltip-inline"}>Final Kills: {(playerStats?.final_kills_bedwars ?? 0) - (polsuSession?.stats.fkills ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Final Deaths: {(playerStats?.final_deaths_bedwars ?? 0) - (polsuSession?.stats.fdeaths ?? 0)}</div>
-										<br />
-										<div className={"statistics-tooltip-inline"}>Beds Broken: {(playerStats?.beds_broken_bedwars ?? 0) - (polsuSession?.stats.bbroken ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Beds Lost: {(playerStats?.beds_lost_bedwars ?? 0) - (polsuSession?.stats.blost ?? 0)}</div>
+                <div className={"statistics-tooltip text-center"}>
+									<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
+										{player.hypixelPlayer.displayname}
+									</span>
+                  <div>
+                    <div className={"statistics-tooltip-inline"}>Games Played: {(playerStats?.games_played_bedwars ?? 0) - (polsuSession?.games?.total ?? 0)}</div>
+                    <div className={"statistics-tooltip-inline"}>Wins: {(playerStats?.wins_bedwars ?? 0) - (polsuSession?.stats.wins ?? 0)}</div>
+                    <div className={"statistics-tooltip-inline"}>Losses: {(playerStats?.losses_bedwars ?? 0) - (polsuSession?.stats.losses ?? 0)}</div>
+                    <br />
+                    <div className={"statistics-tooltip-inline"}>Final Kills: {(playerStats?.final_kills_bedwars ?? 0) - (polsuSession?.stats.fkills ?? 0)}</div>
+                    <div className={"statistics-tooltip-inline"}>Final Deaths: {(playerStats?.final_deaths_bedwars ?? 0) - (polsuSession?.stats.fdeaths ?? 0)}</div>
+                    <br />
+                    <div className={"statistics-tooltip-inline"}>Beds Broken: {(playerStats?.beds_broken_bedwars ?? 0) - (polsuSession?.stats.bbroken ?? 0)}</div>
+                    <div className={"statistics-tooltip-inline"}>Beds Lost: {(playerStats?.beds_lost_bedwars ?? 0) - (polsuSession?.stats.blost ?? 0)}</div>
 										<br />
 										<div className={"statistics-tooltip-inline"}>Kills: {(playerStats?.kills_bedwars ?? 0) - (polsuSession?.stats.kills ?? 0)}</div>
 										<div className={"statistics-tooltip-inline"}>Deaths: {(playerStats?.deaths_bedwars ?? 0) - (polsuSession?.stats.deaths ?? 0)}</div>
@@ -190,17 +190,15 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 					}
 				>
 					{values.map(([session_timer, hex], index) => (
-						<span key={index} style={{ color: `#${hex}` }}>
-						{session_timer}
-					</span>
+            <span key={index} style={{ color: `#${hex}` }}>
+							{session_timer}
+						</span>
 					))}
 				</OverlayTooltip>
 			</div>
 		);
 	}
-	return  (
-		<span className={'text-red-500'}>N/A</span>
-	)
+  return <span className={"text-red-500"}>N/A</span>;
 };
 
 export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
@@ -234,24 +232,24 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 							<FontAwesomeIcon icon={faEyeSlash} />
 						</span>
 					</span>
-				);
-			}
-		} else {
-			rankPlayer = (
-				<span>
+        );
+      }
+    } else {
+      rankPlayer = (
+        <span>
 					{settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>
 				</span>
-			);
-		}
-	} else if (!player.nicked && player.hypixelPlayer&& player.sources.runApi?.data.blacklist.tagged) {
-		rankPlayer = (
-			<span>
+      );
+    }
+  } else if (!player.nicked && player.hypixelPlayer && player.sources.runApi?.data.blacklist.tagged) {
+    rankPlayer = (
+      <span>
 				<span style={{ color: `#${run.blacklist.colour}` }}>{player?.hypixelPlayer?.displayname}</span>
 			</span>
-		);
-	} else {
-		rankPlayer = <span style={{ color: `#${run.blacklist.colour}` }}>{player.name}</span>;
-	}
+    );
+  } else {
+    rankPlayer = <span style={{ color: `#${run.blacklist.colour}` }}>{player.name}</span>;
+  }
 
 	return (
 		<div style={{ textAlign: table.settings.textAlign }}>
@@ -337,8 +335,8 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 		let singularTag = false;
 		const runApi = player.sources.runApi?.data;
 		const customData = player?.sources?.customFile;
-		const customUrl = player?.sources?.customApi;
-		const isPremium = runConfig.apiKey.toLowerCase() !='public'
+    const customUrl = player?.sources?.customApi;
+    const isPremium = runConfig.apiKey.toLowerCase() != "public";
 		if (runApi?.blacklist?.tagged) {
 			tagArray.push(getTagsFromConfig("run.blacklist"));
 		} else if (runApi?.bot?.tagged) {
@@ -399,20 +397,20 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (runApi?.safelist?.tagged) {
 					tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled));
 				}
-				if (runApi?.safelist?.personal) {
-					tagArray.push(getTagsFromConfig("run.personal_safelist", runApi.safelist.timesKilled));
-				}
-				if ( runApi?.name_change.last_change && isPremium) {
-					const timeNow = Date.now();
-					const nameBefore = new Date(runApi?.name_change.last_change);
-					const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-					const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
-					if (result) {
-						tagArray.push(getTagsFromConfig("run.name_change"));
-					}
-				}
-				if (settings.run.friends && player?.friended) {
-					tagArray.push(getTagsFromConfig("run.friends"));
+        if (runApi?.safelist?.personal) {
+          tagArray.push(getTagsFromConfig("run.personal_safelist", runApi.safelist.timesKilled));
+        }
+        if (runApi?.name_change.last_change && isPremium) {
+          const timeNow = Date.now();
+          const nameBefore = new Date(runApi?.name_change.last_change);
+          const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+          const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
+          if (result) {
+            tagArray.push(getTagsFromConfig("run.name_change"));
+          }
+        }
+        if (settings.run.friends && player?.friended) {
+          tagArray.push(getTagsFromConfig("run.friends"));
 				}
 				if (runApi?.statistics?.encounters != 0 ?? false) {
 					tagArray.push(getTagsFromConfig("run.encounters", runApi?.statistics.encounters));
@@ -488,11 +486,11 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	} else {
 		if (!player.nicked && player.loaded) {
 			if (!runConfig.valid) {
-				tagArray.push(<span className={'text-red-500'}>Seraph Key Locked</span>);
+        tagArray.push(<span className={"text-red-500"}>Seraph Key Locked</span>);
 			} else if (hypixel.apiKeyValid) {
-				tagArray.push(<span className={'text-red-500'}>NICKED</span>);
+        tagArray.push(<span className={"text-red-500"}>NICKED</span>);
 			} else {
-				tagArray.push(<span className={'text-red-500'}>Invalid Hypixel API Key</span>);
+        tagArray.push(<span className={"text-red-500"}>Invalid Hypixel API Key</span>);
 			}
 		}
 	}

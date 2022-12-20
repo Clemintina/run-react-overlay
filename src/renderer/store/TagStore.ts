@@ -4,17 +4,17 @@ import { TagSchema, TagStoreSchema } from "@common/utils/TagSchema";
 
 const useTagStore = create<TagStoreSchema>()(
 	persist(
-		(set, get) => ({
-			run: {
-				annoylist: {
-					display: "A",
-					colour: "FF5555",
-				},
-				blacklist: {
-					display: "BLACKLISTED",
-					colour: "FF5555",
-				},
-				friends: {
+		(set) => ({
+      run: {
+        annoylist: {
+          display: "A",
+          colour: "FF5555"
+        },
+        blacklist: {
+          display: "BLACKLISTED",
+          colour: "FF5555"
+        },
+        friends: {
 					display: "F",
 					colour: "FF55FF",
 				},

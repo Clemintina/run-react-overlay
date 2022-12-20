@@ -209,12 +209,12 @@ const useConfigStore = create<ConfigStore>()(
 							},
 						});
 						for (const player of usePlayerStore.getState().players) {
-							if ( !player.nicked && player.hypixelPlayer?.uuid ) {
-								const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey]);
-								if (keathiz.status == 200) {
-									player.sources.keathiz = keathiz;
-								}
-							}
+							if (!player.nicked && player.hypixelPlayer?.uuid) {
+                const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey]);
+                if (keathiz.status == 200) {
+                  player.sources.keathiz = keathiz;
+                }
+              }
 						}
 					} else {
 						get().setErrorMessage({

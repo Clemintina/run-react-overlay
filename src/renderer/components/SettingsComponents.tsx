@@ -1340,8 +1340,8 @@ export const ColumnEditorView = () => {
 		});
 
 		useConfigStore.getState().setTableState(table);
-		const players  = constantPlayerData()
-		if ( !players[0].nicked ){
+		const players = constantPlayerData();
+		if (!players[0].nicked) {
 			setPlayerData([players[0]]);
 		}
 	};
