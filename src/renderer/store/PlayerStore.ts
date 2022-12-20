@@ -147,7 +147,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				playerObject.status = mcUtilsRequest.status;
 				playerData = { nicked: true, name: username };
 				get().updatePlayerState(playerData);
-				console.log(playerData);
 				playerObject.cause = "try catch";
 			}
 		}

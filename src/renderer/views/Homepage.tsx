@@ -178,7 +178,7 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
 		default:
 			assertDefaultError( sortingData );
 	}
-	return -1;
+	return isDescending ? - 1 : 1;
 };
 
 window.ipcRenderer.on("updater", async (event, args) => {

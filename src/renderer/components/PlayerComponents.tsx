@@ -338,6 +338,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 		const runApi = player.sources.runApi?.data;
 		const customData = player?.sources?.customFile;
 		const customUrl = player?.sources?.customApi;
+		const isPremium = runConfig.apiKey.toLowerCase() !='public'
 		if (runApi?.blacklist?.tagged) {
 			tagArray.push(getTagsFromConfig("run.blacklist"));
 		} else if (runApi?.bot?.tagged) {
@@ -401,7 +402,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (runApi?.safelist?.personal) {
 					tagArray.push(getTagsFromConfig("run.personal_safelist", runApi.safelist.timesKilled));
 				}
-				if ( runApi?.name_change.last_change ) {
+				if ( runApi?.name_change.last_change && isPremium) {
 					const timeNow = Date.now();
 					const nameBefore = new Date(runApi?.name_change.last_change);
 					const diffInMs = Math.abs(timeNow - nameBefore.getTime());
@@ -425,7 +426,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 					if (isNew) {
 						tagArray.push(<span className={"text-red-500"}>N</span>);
 					}
-					if (polsuSession?.player?.last_changed != null && !isNew) {
+					if (polsuSession?.player?.last_changed != null && !isNew && isPremium) {
 						const timeNow = Date.now();
 						const nameBefore = new Date(polsuSession.player.last_changed * 1000);
 						const diffInMs = Math.abs(timeNow - nameBefore.getTime());
@@ -487,11 +488,11 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	} else {
 		if (!player.nicked && player.loaded) {
 			if (!runConfig.valid) {
-				tagArray.push(<span style={{ color: "red" }}>Seraph Key Locked</span>);
+				tagArray.push(<span className={'text-red-500'}>Seraph Key Locked</span>);
 			} else if (hypixel.apiKeyValid) {
-				tagArray.push(<span style={{ color: "red" }}>NICKED</span>);
+				tagArray.push(<span className={'text-red-500'}>NICKED</span>);
 			} else {
-				tagArray.push(<span style={{ color: "red" }}>Invalid Hypixel API Key</span>);
+				tagArray.push(<span className={'text-red-500'}>Invalid Hypixel API Key</span>);
 			}
 		}
 	}
