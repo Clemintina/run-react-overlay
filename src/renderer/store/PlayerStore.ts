@@ -60,9 +60,16 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 			useConfigStore.getState().setErrorMessage({
 				title: "No Hypixel API Key",
 				cause: "No Hypixel API Key",
-				code: 400,
+				code: 400
 			});
 			return { status: 403, cause: "No API Key", data: null };
+		}
+
+		let apiKey;
+		if (hypixel.apiKeyValid_2) {
+			apiKey = get().players.length % 2 ? hypixel.apiKey : hypixel.apiKey_2;
+		} else {
+			apiKey = hypixel.apiKey;
 		}
 
 		if (useConfigStore.getState().nicks.filter((nickname) => nickname.nick.toLowerCase() == username.toLowerCase()).length != 0) {

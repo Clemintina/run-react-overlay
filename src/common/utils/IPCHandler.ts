@@ -44,6 +44,7 @@ export enum IpcValidSendChannels {
 	WINDOW_MINIMISE = "windowMinimise",
 	WINDOW_MAXIMISE = "windowMaximise",
 	WINDOW_CLOSE = "windowClose",
+	WINDOW_RELOAD = "windowReload",
 	OPEN_EXTERNAL = "openExternal",
 }
 
@@ -75,5 +76,6 @@ export type IpcChannelMap = {
 	[IpcValidSendChannels.WINDOW_MINIMISE]: [];
 	[IpcValidSendChannels.WINDOW_MAXIMISE]: [];
 	[IpcValidSendChannels.WINDOW_CLOSE]: [];
+	[IpcValidSendChannels.WINDOW_RELOAD]: [];
 	[IpcValidSendChannels.OPEN_EXTERNAL]: [filePath: "config_file" | "tag_file"];
 };
