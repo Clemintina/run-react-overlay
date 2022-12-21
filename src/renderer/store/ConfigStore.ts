@@ -78,7 +78,7 @@ const useConfigStore = create<ConfigStore>()(
 					proxy: false,
 					apiKey_2: "",
 					apiKeyValid_2: false,
-					apiKeyOwner_2: ""
+					apiKeyOwner_2: "",
 				},
 				setHypixelState: (hypixel) => {
 					set({ hypixel });
@@ -107,7 +107,7 @@ const useConfigStore = create<ConfigStore>()(
 								...get().hypixel,
 								apiKey: hypixelApiKey,
 								apiKeyValid: true,
-								apiKeyOwner: apiResponse.data.owner
+								apiKeyOwner: apiResponse.data.owner,
 							},
 						}));
 					} else {
@@ -121,8 +121,8 @@ const useConfigStore = create<ConfigStore>()(
 								...get().hypixel,
 								apiKey: get().hypixel.apiKey,
 								apiKeyValid: false,
-								apiKeyOwner: apiResponse.data.owner
-							}
+								apiKeyOwner: apiResponse.data.owner,
+							},
 						}));
 					}
 				},
@@ -133,8 +133,8 @@ const useConfigStore = create<ConfigStore>()(
 						set(() => ({
 							hypixel: {
 								...oldHypixel,
-								apiKeyValid_2: false
-							}
+								apiKeyValid_2: false,
+							},
 						}));
 						return;
 					}
@@ -143,40 +143,40 @@ const useConfigStore = create<ConfigStore>()(
 						get().setErrorMessage({
 							title: "2nd Hypixel Key Set",
 							cause: "Successfully set your 2nd Hypixel API key!",
-							code: 200
+							code: 200,
 						});
 						set(() => ({
 							hypixel: {
 								...get().hypixel,
 								apiKey_2: hypixelApiKey,
 								apiKeyValid_2: true,
-								apiKeyOwner_2: apiResponse.data.owner
-							}
+								apiKeyOwner_2: apiResponse.data.owner,
+							},
 						}));
 					} else {
 						get().setErrorMessage({
 							title: "Invalid 2nd Hypixel Key",
 							cause: "The 2nd Hypixel API key provided is not valid! Generate one with /api new.",
-							code: 400
+							code: 400,
 						});
 						set(() => ({
 							hypixel: {
 								...get().hypixel,
 								apiKey_2: get().hypixel.apiKey,
 								apiKeyValid_2: false,
-								apiKeyOwner_2: apiResponse.data.owner
-							}
+								apiKeyOwner_2: apiResponse.data.owner,
+							},
 						}));
 					}
 				},
 				colours: {
 					backgroundColour: "#242424",
 					primaryColour: "#808080",
-					secondaryColour: "#00FFFF"
+					secondaryColour: "#00FFFF",
 				},
 				setColours: (colourObject) => {
 					set(() => ({
-						colours: colourObject
+						colours: colourObject,
 					}));
 				},
 				version: "",
@@ -257,11 +257,11 @@ const useConfigStore = create<ConfigStore>()(
 						});
 						for (const player of usePlayerStore.getState().players) {
 							if (!player.nicked && player.hypixelPlayer?.uuid) {
-                const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey]);
-                if (keathiz.status == 200) {
-                  player.sources.keathiz = keathiz;
-                }
-              }
+								const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey]);
+								if (keathiz.status == 200) {
+									player.sources.keathiz = keathiz;
+								}
+							}
 						}
 					} else {
 						get().setErrorMessage({

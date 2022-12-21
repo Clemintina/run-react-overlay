@@ -1434,12 +1434,12 @@ export const Essentials = () => {
 						initialValue={hypixel.apiKey}
 						inputProps={{
 							endAdornment: (
-								<InputAdornment position="end">
+								<InputAdornment position='end'>
 									<Button onClick={() => useConfigStore.getState().setHypixelApiKey(hypixel.apiKey)}>
 										<RefreshRounded />
 									</Button>
 								</InputAdornment>
-							)
+							),
 						}}
 					/>
 				</TextSettingCard>
@@ -1458,19 +1458,19 @@ export const Essentials = () => {
 						options={{
 							placeholder: hypixel.apiKeyValid_2 ? hypixel.apiKey_2 : "Alternate Hypixel API Key",
 							label: { text: "Alternate Hypixel API Key" },
-							colour: hypixel.apiKeyValid ? "success" : "error"
+							colour: hypixel.apiKeyValid ? "success" : "error",
 						}}
 						sx={styledProps}
 						helperText={!hypixel.apiKeyValid_2 ? "Enter a valid Hypixel API Key ( Optional )" : ""}
 						initialValue={hypixel.apiKey_2}
 						inputProps={{
 							endAdornment: (
-								<InputAdornment position="end">
+								<InputAdornment position='end'>
 									<Button onClick={() => useConfigStore.getState().setHypixelApiKey_2(hypixel.apiKey_2)}>
 										<RefreshRounded />
 									</Button>
 								</InputAdornment>
-							)
+							),
 						}}
 					/>
 				</TextSettingCard>
@@ -1562,10 +1562,13 @@ export const Essentials = () => {
 						</Link>
 					</div>
 					<Tooltip title={<span className={"text-red-500"}>Only press this button if you're getting errors with Settings!</span>}>
-						<div className={"flex hover:border-2 hover:border-red-500 rounded"} onClick={() => {
-							window.localStorage.clear();
-							window.ipcRenderer.send(IpcValidSendChannels.WINDOW_RELOAD);
-						}}>
+						<div
+							className={"flex hover:border-2 hover:border-red-500 rounded"}
+							onClick={() => {
+								window.localStorage.clear();
+								window.ipcRenderer.send(IpcValidSendChannels.WINDOW_RELOAD);
+							}}
+						>
 							<ListItemButton>
 								<div className={"flex w-full justify-between font-bold"}>
 									<div>Reset to default</div>

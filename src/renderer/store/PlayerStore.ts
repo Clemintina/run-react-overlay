@@ -60,7 +60,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 			useConfigStore.getState().setErrorMessage({
 				title: "No Hypixel API Key",
 				cause: "No Hypixel API Key",
-				code: 400
+				code: 400,
 			});
 			return { status: 403, cause: "No API Key", data: null };
 		}

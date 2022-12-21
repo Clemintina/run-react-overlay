@@ -89,9 +89,9 @@ export type HypixelSettings = {
 	apiKeyValid: boolean;
 	apiKeyOwner: string;
 	proxy: boolean;
-	apiKey_2: string
-	apiKeyValid_2: boolean
-	apiKeyOwner_2: string
+	apiKey_2: string;
+	apiKeyValid_2: boolean;
+	apiKeyOwner_2: string;
 };
 
 export type ColourSettings = {

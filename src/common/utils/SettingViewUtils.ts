@@ -5591,19 +5591,19 @@ export const constantPlayerData = () => {
 		denicked: false,
 		sources: {
 			runApi: {
-        success: true,
-        code: 200,
-        data: {
-          uuid: "8589389e8b6b46c288084eb71ec3479e",
-          username: "INVALID",
-          bot: {
-            tagged: false,
-            unidentified: false,
-            kay: false
-          },
-          blacklist: {
-            tagged: false,
-            timestamp: 0,
+				success: true,
+				code: 200,
+				data: {
+					uuid: "8589389e8b6b46c288084eb71ec3479e",
+					username: "INVALID",
+					bot: {
+						tagged: false,
+						unidentified: false,
+						kay: false,
+					},
+					blacklist: {
+						tagged: false,
+						timestamp: 0,
 						reason: "",
 						report_type: "",
 					},
@@ -5614,23 +5614,23 @@ export const constantPlayerData = () => {
 						personal: true,
 					},
 					customTag: "§c<3",
-          statistics: {
-            encounters: 3,
-            threat_level: 0
-          },
-          migrated: {
-            tagged: false
-          },
-          annoylist: {
-            tagged: true
-          },
-          name_change: {
-            last_change: 0
-          },
-          ranked_bedwars: {
-            elo: 0
-          }
-        },
+					statistics: {
+						encounters: 3,
+						threat_level: 0,
+					},
+					migrated: {
+						tagged: false,
+					},
+					annoylist: {
+						tagged: true,
+					},
+					name_change: {
+						last_change: 0,
+					},
+					ranked_bedwars: {
+						elo: 0,
+					},
+				},
 				msTime: 1664792488853,
 			},
 			boomza: {
@@ -5717,18 +5717,18 @@ export const constantPlayerData = () => {
 								four_four_underworld_winstreak: 0,
 								eight_two_swap_winstreak: 0,
 								four_four_swap_winstreak: 0,
-              },
-            },
-            extra: {
-              last_seen_lobby: "",
-              blacklisted: false,
-              status: ""
-            }
-          },
-        },
-      },
-      lunar: null
-    },
-  };
-  return [player];
+							},
+						},
+						extra: {
+							last_seen_lobby: "",
+							blacklisted: false,
+							status: "",
+						},
+					},
+				},
+			},
+			lunar: null,
+		},
+	};
+	return [player];
 };
