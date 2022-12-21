@@ -534,6 +534,10 @@ const registerMainWindowCommunications = () => {
 		appWindow?.isVisible() ? appWindow?.minimize() : appWindow?.showInactive();
 	});
 
+	ipcMain.on("windowReload", async () => {
+		appWindow?.reload();
+	});
+
 	ipcMain.on("opacity", async (event, args: string[]) => {
 		appWindow.setOpacity(Number.parseInt(args[0]));
 	});

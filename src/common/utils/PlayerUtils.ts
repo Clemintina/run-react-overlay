@@ -1,37 +1,44 @@
-import { Blacklist, IPCResponse, LunarAPIResponse } from "./externalapis/RunApi";
+import { IPCResponse } from "./externalapis/RunApi";
 import { Components } from "@common/zikeji";
 import { BoomzaAntisniper, KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
 import { CustomFileJsonType } from "@common/utils/Schemas";
 import { Session } from "@clemintina/seraph-library/lib/PolsuTypes";
+import { Blacklist, LunarAPIResponse, SeraphResponse } from "@clemintina/seraph-library/lib/SeraphTypes";
 
 export type Player = {
 	name: string;
-	id: string | null;
-	nick?: string;
-	nicked: boolean | null;
-	bot: boolean | null;
-	friended: boolean | null;
-	denicked: boolean | null;
-	loaded: boolean;
-	last_updated: number;
-	hypixelPlayer: Components.Schemas.Player | null;
-	hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
-	hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
-	hypixelFriendsMutuals?: Array<string> | null;
-	sources: {
-		runApi: IPCResponse<Blacklist> | null;
-		boomza?: IPCResponse<BoomzaAntisniper> | null;
-		keathiz?: IPCResponse<KeathizOverlayRun> | null;
-		lunar?: IPCResponse<LunarAPIResponse> | null;
-		polsu?: {
-			sessions?: IPCResponse<Session>;
-		};
-		playerDb?: IPCResponse<PlayerDB> | null;
-		customFile?: CustomFileJsonType;
-		customApi?: CustomFileJsonType;
-	};
-};
+} & (
+	| {
+			id: string | null;
+			nick?: string;
+			nicked: false;
+			bot: boolean | null;
+			loaded: boolean;
+			friended: boolean | null;
+			denicked: boolean | null;
+			last_updated: number;
+			hypixelPlayer: Components.Schemas.Player | null;
+			hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
+			hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
+			hypixelFriendsMutuals?: Array<string> | null;
+			sources: {
+				runApi: Blacklist | null;
+				boomza?: IPCResponse<BoomzaAntisniper> | null;
+				keathiz?: IPCResponse<KeathizOverlayRun> | null;
+				lunar?: LunarAPIResponse | null;
+				polsu?: {
+					sessions?: IPCResponse<Session>;
+				};
+				playerDb?: IPCResponse<PlayerDB> | null;
+				customFile?: CustomFileJsonType;
+				customApi?: CustomFileJsonType;
+			};
+	  }
+	| {
+			nicked: true;
+	  }
+);
 
 export class PlayerUtils {
 	private readonly playerHypixelUtils: PlayerHypixelUtils;

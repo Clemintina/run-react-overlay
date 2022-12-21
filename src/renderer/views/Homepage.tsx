@@ -143,9 +143,9 @@ export const columnDefsBase: ColDef<Player>[] = [
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
 	const p1: Player = nodeA.data,
 		p2: Player = nodeB.data;
-	if (p1.sources.runApi?.data.data?.blacklist?.tagged || p1.nicked) {
+	if ((!p1.nicked && p1.sources.runApi?.data.blacklist?.tagged) || p1.nicked) {
 		return isDescending ? 1 : -1;
-	} else if (p2.sources.runApi?.data.data?.blacklist?.tagged || p2.nicked) {
+	} else if ((!p2.nicked && p2.sources.runApi?.data.blacklist?.tagged) || p2.nicked) {
 		return isDescending ? -1 : 1;
 	}
 
@@ -178,7 +178,7 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
 		default:
 			assertDefaultError(sortingData);
 	}
-	return 0;
+	return isDescending ? -1 : 1;
 };
 
 window.ipcRenderer.on("updater", async (event, args) => {

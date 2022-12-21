@@ -6,7 +6,7 @@ import { faMapLocation } from "@fortawesome/free-solid-svg-icons";
 import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import { CustomFileIpc, CustomLinkFile, KeybindInterface, PlayerNickname } from "@common/utils/Schemas";
-import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
+import { IpcValidInvokeChannels, IpcValidSendChannels } from "@common/utils/IPCHandler";
 import usePlayerStore from "@renderer/store/PlayerStore";
 import { Player } from "@common/utils/PlayerUtils";
 import { Components } from "@common/zikeji";
@@ -19,7 +19,7 @@ import { ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions,
 import { columnDefsBase, defaultColDefBase } from "@renderer/views/Homepage";
 import { AgGridReact } from "ag-grid-react";
 import { Link } from "react-router-dom";
-import { NavigateNext, RefreshRounded } from "@mui/icons-material";
+import { DangerousRounded, ErrorOutlined, NavigateNext, RefreshRounded } from "@mui/icons-material";
 import GoogleFontLoader from "react-google-font-loader";
 import { hexToRgbA } from "@common/helpers";
 import { constantPlayerData } from "@common/utils/SettingViewUtils";
@@ -1340,7 +1340,10 @@ export const ColumnEditorView = () => {
 		});
 
 		useConfigStore.getState().setTableState(table);
-		setPlayerData([...constantPlayerData()]);
+		const players = constantPlayerData();
+		if (!players[0].nicked) {
+			setPlayerData([players[0]]);
+		}
 	};
 
 	const onGridUpdate = (event) => {
@@ -1441,6 +1444,37 @@ export const Essentials = () => {
 					/>
 				</TextSettingCard>
 				<TextSettingCard>
+					<span>2nd Hypixel API Key</span>
+					<span />
+					<InputTextBox
+						onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>, text) => {
+							if (event.key === "Enter") {
+								useConfigStore.getState().setHypixelApiKey(text.replaceAll(" ", ""));
+							}
+						}}
+						onBlur={(event, text) => {
+							useConfigStore.getState().setHypixelApiKey_2(text.replaceAll(" ", ""));
+						}}
+						options={{
+							placeholder: hypixel.apiKeyValid_2 ? hypixel.apiKey_2 : "Alternate Hypixel API Key",
+							label: { text: "Alternate Hypixel API Key" },
+							colour: hypixel.apiKeyValid ? "success" : "error",
+						}}
+						sx={styledProps}
+						helperText={!hypixel.apiKeyValid_2 ? "Enter a valid Hypixel API Key ( Optional )" : ""}
+						initialValue={hypixel.apiKey_2}
+						inputProps={{
+							endAdornment: (
+								<InputAdornment position='end'>
+									<Button onClick={() => useConfigStore.getState().setHypixelApiKey_2(hypixel.apiKey_2)}>
+										<RefreshRounded />
+									</Button>
+								</InputAdornment>
+							),
+						}}
+					/>
+				</TextSettingCard>
+				<TextSettingCard>
 					<span>Seraph API Key</span>
 					<span />
 					<div className={"flex justify-center"}>
@@ -1527,6 +1561,24 @@ export const Essentials = () => {
 							</ListItemButton>
 						</Link>
 					</div>
+					<Tooltip title={<span className={"text-red-500"}>Only press this button if you're getting errors with Settings!</span>}>
+						<div
+							className={"flex hover:border-2 hover:border-red-500 rounded"}
+							onClick={() => {
+								window.localStorage.clear();
+								window.ipcRenderer.send(IpcValidSendChannels.WINDOW_RELOAD);
+							}}
+						>
+							<ListItemButton>
+								<div className={"flex w-full justify-between font-bold"}>
+									<div>Reset to default</div>
+									<div>
+										<ErrorOutlined />
+									</div>
+								</div>
+							</ListItemButton>
+						</div>
+					</Tooltip>
 				</SettingCard>
 			</Box>
 		</NavigationBar>

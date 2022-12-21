@@ -4,7 +4,7 @@ import { TagSchema, TagStoreSchema } from "@common/utils/TagSchema";
 
 const useTagStore = create<TagStoreSchema>()(
 	persist(
-		(set, get) => ({
+		(set) => ({
 			run: {
 				annoylist: {
 					display: "A",

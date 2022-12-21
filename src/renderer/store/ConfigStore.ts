@@ -17,6 +17,7 @@ export type ConfigStore = {
 	hypixel: HypixelSettings;
 	setHypixelState: (hypixel: HypixelSettings) => void;
 	setHypixelApiKey: (arg0: string) => void;
+	setHypixelApiKey_2: (arg0: string) => void;
 	colours: ColourSettings;
 	setColours: (colour: ColourSettings) => void;
 	version: string;
@@ -75,6 +76,9 @@ const useConfigStore = create<ConfigStore>()(
 					apiKeyValid: false,
 					apiKeyOwner: "",
 					proxy: false,
+					apiKey_2: "",
+					apiKeyValid_2: false,
+					apiKeyOwner_2: "",
 				},
 				setHypixelState: (hypixel) => {
 					set({ hypixel });
@@ -100,10 +104,10 @@ const useConfigStore = create<ConfigStore>()(
 						});
 						set(() => ({
 							hypixel: {
+								...get().hypixel,
 								apiKey: hypixelApiKey,
 								apiKeyValid: true,
 								apiKeyOwner: apiResponse.data.owner,
-								proxy: get().hypixel.proxy,
 							},
 						}));
 					} else {
@@ -114,10 +118,53 @@ const useConfigStore = create<ConfigStore>()(
 						});
 						set(() => ({
 							hypixel: {
+								...get().hypixel,
 								apiKey: get().hypixel.apiKey,
 								apiKeyValid: false,
 								apiKeyOwner: apiResponse.data.owner,
-								proxy: get().hypixel.proxy,
+							},
+						}));
+					}
+				},
+				setHypixelApiKey_2: async (hypixelApiKey) => {
+					if (hypixelApiKey.length === 0 || (get().hypixel.apiKey_2.toLowerCase() == hypixelApiKey.toLowerCase() && get().hypixel.apiKeyValid_2)) {
+						const oldHypixel = get().hypixel;
+						if (oldHypixel.apiKeyValid_2) return;
+						set(() => ({
+							hypixel: {
+								...oldHypixel,
+								apiKeyValid_2: false,
+							},
+						}));
+						return;
+					}
+					const apiResponse = await window.ipcRenderer.invoke<ResultObject<Paths.Key.Get.Responses.$200, ["record"]>>(IpcValidInvokeChannels.HYPIXEL, [RequestType.KEY, hypixelApiKey]);
+					if (apiResponse?.status === 200 && apiResponse?.data?.key !== undefined) {
+						get().setErrorMessage({
+							title: "2nd Hypixel Key Set",
+							cause: "Successfully set your 2nd Hypixel API key!",
+							code: 200,
+						});
+						set(() => ({
+							hypixel: {
+								...get().hypixel,
+								apiKey_2: hypixelApiKey,
+								apiKeyValid_2: true,
+								apiKeyOwner_2: apiResponse.data.owner,
+							},
+						}));
+					} else {
+						get().setErrorMessage({
+							title: "Invalid 2nd Hypixel Key",
+							cause: "The 2nd Hypixel API key provided is not valid! Generate one with /api new.",
+							code: 400,
+						});
+						set(() => ({
+							hypixel: {
+								...get().hypixel,
+								apiKey_2: get().hypixel.apiKey,
+								apiKeyValid_2: false,
+								apiKeyOwner_2: apiResponse.data.owner,
 							},
 						}));
 					}
@@ -209,10 +256,9 @@ const useConfigStore = create<ConfigStore>()(
 							},
 						});
 						for (const player of usePlayerStore.getState().players) {
-							if (player.hypixelPlayer?.uuid && !player.nicked) {
+							if (!player.nicked && player.hypixelPlayer?.uuid) {
 								const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey]);
 								if (keathiz.status == 200) {
-									console.log(keathiz.status);
 									player.sources.keathiz = keathiz;
 								}
 							}
@@ -572,7 +618,7 @@ const useConfigStore = create<ConfigStore>()(
 			}),
 			{
 				name: "user_settings",
-				version: 10,
+				version: 9,
 				migrate: (persistedState: any, version) => {
 					const updatedState = persistedState as ConfigStore;
 					if (version == 4) {
@@ -600,6 +646,9 @@ const useConfigStore = create<ConfigStore>()(
 						updatedState.polsu.valid = false;
 						updatedState.settings.polsu.sessions = false;
 						updatedState.settings.polsu.enabled = false;
+						updatedState.hypixel.apiKey_2 = "";
+						updatedState.hypixel.apiKeyValid_2 = false;
+						updatedState.hypixel.apiKeyOwner_2 = "";
 					}
 					return updatedState;
 				},

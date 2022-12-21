@@ -72,7 +72,7 @@ export const RenderCoreStatsColour: FC<RenderCoreStatsColour> = (props: RenderCo
 				playerValue = player.hypixelPlayer?.stats?.Bedwars?.[modeObj + "games_played_bedwars"] ?? 0;
 		}
 		if (player.loaded) {
-			if (!player.sources.runApi?.data.data?.blacklist.tagged) renderer = getCoreFromConfig("core.statistics", playerValue);
+			if (!player.sources.runApi?.data?.blacklist.tagged) renderer = getCoreFromConfig("core.statistics", playerValue);
 			else renderer = getTagsFromConfig("run.blacklist", playerValue);
 		} else {
 			renderer = getCoreFromConfig("core.statistics", playerValue);
@@ -105,7 +105,7 @@ export const RenderRatioColour: FC<RenderRatioColour> = (props: RenderRatioColou
 				break;
 		}
 
-		if (player.sources.runApi?.data.data?.blacklist.tagged && player.loaded) {
+		if (player.sources.runApi?.data?.blacklist.tagged && player.loaded) {
 			let displayValue = playerValue;
 			if (!isFinite(playerValue)) displayValue = ~~Number((((0 - 18) / 0) * 100).toFixed(2));
 			if (!Number.isInteger(playerValue)) displayValue = playerValue.toFixed(2);
@@ -138,7 +138,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 		for (const { colour, requirement } of arr) {
 			if (value >= requirement) {
 				return (
-					<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll('_',' ')}</span>} arrow>
+					<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("_", " ")}</span>} arrow>
 						<span>
 							<span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
 						</span>
