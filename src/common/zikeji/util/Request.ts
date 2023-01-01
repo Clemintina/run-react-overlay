@@ -12,7 +12,6 @@ export const request = async <T extends Components.Schemas.ApiSuccess & { cause?
 	let axiosError: Error;
 	const axiosConfig: AxiosRequestConfig = {
 		headers: {
-			"Content-Type": "application/json",
 			Accept: "application/json",
 			"Accept-Encoding": "gzip,deflate,compress",
 		},
