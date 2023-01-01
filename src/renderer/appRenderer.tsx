@@ -21,11 +21,6 @@ if (!inDev()) {
 	});
 }
 
-const logs = useConfigStore.getState().logs;
-if (logs.readable) {
-	window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
-}
-
 /**
  * Starts the Log readers
  * We use multiple to make each method cleaner and less ify
