@@ -229,15 +229,22 @@ window.ipcRenderer.on("updater", async (event, args) => {
 	if (appUpdater.update.ready) {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
-			cause: "The overlay is ready to update, Restarting in 5 seconds",
+			cause: "The overlay is ready to update, Restarting in 5 seconds"
 		});
 	} else if (appUpdater.update.updateAvailable) {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
-			cause: "An update is currently being downloaded!",
+			cause: "An update is currently being downloaded!"
 		});
 	}
+
+	const logs = useConfigStore.getState().logs;
+	if (logs.readable && window?.ipcRenderer) {
+		window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
+	}
+
 });
+
 
 export default () => {
 	const { columnState, table } = useConfigStore((state) => ({

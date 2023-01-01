@@ -458,6 +458,7 @@ const registerLogCommunications = () => {
 
 	ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, ...args) => {
 		const path = args[0];
+		console.log("Log FIle Set invoked with path: ", args[0]);
 		logFileReadline?.close();
 		logFileReadline = null;
 
