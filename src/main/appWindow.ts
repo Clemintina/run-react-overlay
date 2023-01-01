@@ -397,19 +397,26 @@ const registerSeraphIPC = () => {
 				},
 			});
 			return { data: body, status: statusCode };
-		} else {
-			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
-				headers: {
+		} else if ( endpoint == RunEndpoints.BLACKLIST ) {
+			const { body, statusCode } = await gotClient.get( `https://beta.seraph.si/blacklist/${ uuid }`, {
+				headers : {
 					...seraphHeaders,
 				},
-			});
-			return { data: body, status: statusCode };
+			} );
+			return { data : body, status : statusCode };
+		}else {
+			const { body, statusCode } = await gotClient.get( `https://antisniper.seraph.si/v4/${ endpoint }?uuid=${ uuid }`, {
+				headers : {
+					...seraphHeaders,
+				},
+			} );
+			return { data : body, status : statusCode };
 		}
 	});
 
 	ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const uuid = args[0];
-		const response = await axiosClient(`https://api.seraph.si/lunar/${uuid}`, { headers });
+		const response = await axiosClient(`https://lunar.seraph.si/${uuid}`, { headers });
 		return { status: response.status, data: response.data };
 	});
 };
