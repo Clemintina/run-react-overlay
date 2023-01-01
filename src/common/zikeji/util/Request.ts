@@ -21,6 +21,7 @@ export const request = async <T extends Components.Schemas.ApiSuccess & { cause?
 	};
 
 	if (options.key) {
+		// @ts-ignore
 		axiosConfig.headers = {
 			...axiosConfig.headers,
 			"API-Key": options.key,
