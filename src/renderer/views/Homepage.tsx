@@ -150,7 +150,7 @@ export const columnDefsBase: ColDef<Player>[] = [
 					<PlayerSessionComponent player={data} />
 				</OverlayTooltip>
 			);
-		}
+		},
 	},
 	{
 		field: "guild",
