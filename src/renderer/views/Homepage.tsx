@@ -230,11 +230,13 @@ window.ipcRenderer.on("updater", async (event, args) => {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "The overlay is ready to update, Restarting in 5 seconds",
+			type: "SUCCESS"
 		});
 	} else if (appUpdater.update.updateAvailable) {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "An update is currently being downloaded!",
+			type: "SUCCESS"
 		});
 	}
 

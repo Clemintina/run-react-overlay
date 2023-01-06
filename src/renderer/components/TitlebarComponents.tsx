@@ -127,7 +127,7 @@ export const Titlebar = ({ children }) => {
 	};
 	const theme = useTheme();
 	const { error, browserWindow, colours } = useConfigStore((state) => ({ error: state.error, browserWindow: state.browserWindow, colours: state.colours }));
-	const errorMessageCode = error.code;
+	const errorMessageCode = error.type;
 
 	return (
 		<Box sx={{ display: "flex" }} className={"drag"}>
@@ -246,7 +246,7 @@ export const Titlebar = ({ children }) => {
 			</Drawer>
 			<Main open={open}>
 				<DrawerHeader />
-				{errorMessageCode === 200 ? (
+				{errorMessageCode === "SUCCESS" ? (
 					<Alert color={"success"} sx={{ opacity: 100 }}>
 						<Typography sx={{ opacity: 100 }}>
 							<span className={"p-1"}>
@@ -254,11 +254,22 @@ export const Titlebar = ({ children }) => {
 							</span>
 						</Typography>
 					</Alert>
-				) : errorMessageCode === 400 ? (
+				) : errorMessageCode === "ERROR" ? (
 					<Alert color={"error"} sx={{ opacity: 100 }}>
 						<Typography sx={{ opacity: 100 }}>
 							<span className={"font-medium"}>
 								Code: <span className={"errorMessage"}> {error.code}</span>
+							</span>
+							<span className={"p-1"}>
+								Cause: <span className={"errorMessage"}> {error.cause}</span>
+							</span>
+						</Typography>
+					</Alert>
+				) : errorMessageCode === "WARNING" ? (
+					<Alert color={"warning"} sx={{ opacity: 100 }}>
+						<Typography sx={{ opacity: 100 }}>
+							<span className={"font-medium"}>
+								Title: <span className={"errorMessage"}> {error.title}</span>
 							</span>
 							<span className={"p-1"}>
 								Cause: <span className={"errorMessage"}> {error.cause}</span>

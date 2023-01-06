@@ -286,7 +286,8 @@ const registerSeraphIPC = () => {
 			const uuid: string | undefined = await playerCache.get(`mojang:${playerName}`);
 			if (playerName.length == 32 || uuid?.length == 32) {
 				try {
-					return await hypixelClient.getClient().player.uuid(uuid ?? playerName);
+					const res = await hypixelClient.getClient().player.uuid(uuid ?? playerName);
+					return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 				} catch (e) {
 					return getErrorHandler(e);
 				}
@@ -296,7 +297,7 @@ const registerSeraphIPC = () => {
 					if (res?.data?.uuid) {
 						await playerCache.set(`mojang:${playerName}`, res.data.uuid);
 					}
-					return { res,...limit };
+					return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 				} catch (e) {
 					if (e instanceof RequestedTooManyTimes) {
 						try {
@@ -316,7 +317,7 @@ const registerSeraphIPC = () => {
 								if (res?.data?.uuid) {
 									await playerCache.set(`mojang:${playerName}`, res.data.uuid);
 								}
-								return { res,...limit };
+								return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 							} catch (e) {
 								return getErrorHandler(e);
 							}
@@ -331,21 +332,21 @@ const registerSeraphIPC = () => {
 		} else if (resource === RequestType.UUID) {
 			try {
 				const res =  await hypixelClient.getClient().player.uuid(playerName);
-				return { res,...limit };
+				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
 		} else if (resource === RequestType.FRIENDS) {
 			try {
 				const res =  await hypixelClient.getClient().friends.uuid(playerName);
-				return { res,...limit };
+				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
 		} else if (resource === RequestType.GUILD_PLAYER) {
 			try {
 				const res =  await hypixelClient.getClient().guild.player(playerName);
-				return { res,...limit };
+				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
@@ -617,7 +618,7 @@ const registerExternalApis = () => {
 		const endpoint = args[0],
 			apiKey = args[1],
 			uuid = args[2] ? args[2] : undefined;
-		const polsuApi = new PolsuApi({ apiKey, timeout: 10000 });
+		const polsuApi = new PolsuApi({ apiKey, timeout: 40000 });
 
 		if (endpoint == "session") {
 			if (uuid) {

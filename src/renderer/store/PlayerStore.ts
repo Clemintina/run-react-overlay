@@ -61,6 +61,7 @@ const usePlayerStore = create<PlayerStore>( ( set, get ) => ({
 				title : "No Hypixel API Key",
 				cause : "No Hypixel API Key",
 				code : 400,
+				type: "WARNING"
 			} );
 			return { status : 403, cause : "No API Key", data : null };
 		}
@@ -98,6 +99,7 @@ const usePlayerStore = create<PlayerStore>( ( set, get ) => ({
 						cause : "Invalid Hypixel API key. Generate a new one with /api new.",
 						detail : "This key has been suspended by Hypixel, Please enter a new one.",
 						referenceId : "HYPIXEL_KEY_LOCK",
+						type: "WARNING"
 					} );
 					useConfigStore.getState().setStore( {
 						...useConfigStore.getState(),
@@ -113,6 +115,7 @@ const usePlayerStore = create<PlayerStore>( ( set, get ) => ({
 						cause : "Too many invalid API keys",
 						detail : "Too many invalid API keys. This is an unknown error.",
 						referenceId : "HYPIXEL_KEY_INVALID_KEYS",
+						type: "WARNING"
 					} );
 				}
 
@@ -123,6 +126,14 @@ const usePlayerStore = create<PlayerStore>( ( set, get ) => ({
 				if ( ! playerData.denicked ) {
 					playerData.id = ipcHypixelPlayer.data.uuid;
 					playerData.hypixelPlayer = ipcHypixelPlayer.data;
+					if (ipcHypixelPlayer.limit && ipcHypixelPlayer.limit?.remaining < 20) {
+						useConfigStore.getState().setErrorMessage({
+							title: "Approching rate limit",
+							cause: `Slow down! ${ipcHypixelPlayer.limit.limit - ipcHypixelPlayer.limit.remaining} / ${ipcHypixelPlayer.limit.limit} (${ipcHypixelPlayer.limit.reset} seconds remaining)`,
+							type: "WARNING",
+							code: 429
+						});
+					}
 				}
 			}
 
@@ -237,6 +248,7 @@ const usePlayerStore = create<PlayerStore>( ( set, get ) => ({
 							cause : "The RUN Key provided is currently locked, Please contact support.",
 							detail : "This key has been locked for security reasons, please contact support.",
 							referenceId : "RUN_KEY_LOCK",
+							type: "WARNING"
 						} );
 					} else {
 						useConfigStore.getState().setRunApiKey( run.apiKey );
