@@ -211,7 +211,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					const [boomza, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
 					playerData.sources.boomza = boomza;
 					playerData.hypixelFriends = hypixelFriends;
-					console.log(playerData.hypixelFriends);
 					playerData.hypixelGuild = hypixelGuild;
 					if (lunarApi?.data?.code == 200) {
 						playerData.sources.lunar = lunarApi.data;
