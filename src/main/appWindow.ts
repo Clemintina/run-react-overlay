@@ -390,27 +390,27 @@ const registerSeraphIPC = () => {
 		};
 
 		if (endpoint === RunEndpoints.KEY) {
-			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/key`, {
+			const { body, statusCode } = await gotClient.get(`https://api.seraph.si/key`, {
 				headers: {
 					...headers,
 					...seraphHeaders,
 				},
 			});
 			return { data: body, status: statusCode };
-		} else if ( endpoint == RunEndpoints.BLACKLIST ) {
-			const { body, statusCode } = await gotClient.get( `https://beta.seraph.si/blacklist/${ uuid }`, {
-				headers : {
+		} else if (endpoint == RunEndpoints.BLACKLIST) {
+			const { body, statusCode } = await gotClient.get(`https://beta.seraph.si/blacklist/${uuid}`, {
+				headers: {
 					...seraphHeaders,
 				},
-			} );
-			return { data : body, status : statusCode };
-		}else {
-			const { body, statusCode } = await gotClient.get( `https://antisniper.seraph.si/v4/${ endpoint }?uuid=${ uuid }`, {
-				headers : {
+			});
+			return { data: body, status: statusCode };
+		} else {
+			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
+				headers: {
 					...seraphHeaders,
 				},
-			} );
-			return { data : body, status : statusCode };
+			});
+			return { data: body, status: statusCode };
 		}
 	});
 
@@ -458,7 +458,6 @@ const registerLogCommunications = () => {
 
 	ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, ...args) => {
 		const path = args[0];
-		console.log("Log FIle Set invoked with path: ", args[0]);
 		logFileReadline?.close();
 		logFileReadline = null;
 
