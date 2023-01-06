@@ -79,8 +79,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 		try {
 			const ipcHypixelPlayer =
 				playerData.name.length <= 16
-					? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, hypixel.apiKey, playerData.name, useConfigStore.getState().hypixel.proxy ? "sdad" : undefined])
-					: await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, hypixel.apiKey, playerData.name.replaceAll("-", ""), useConfigStore.getState().hypixel.proxy ? "dsadas" : undefined]);
+					? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name, useConfigStore.getState().hypixel.proxy ? "sdad" : undefined])
+					: await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", ""), useConfigStore.getState().hypixel.proxy ? "dsadas" : undefined]);
 			if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
 				const data: unknown = ipcHypixelPlayer.data;
 				let cause, code;
@@ -211,6 +211,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					const [boomza, lunarApi, hypixelFriends, hypixelGuild] = await Promise.all([getBoomza(playerData), getLunarTags(playerData), getHypixelFriends(playerData), getGuildData(playerData)]);
 					playerData.sources.boomza = boomza;
 					playerData.hypixelFriends = hypixelFriends;
+					console.log(playerData.hypixelFriends);
 					playerData.hypixelGuild = hypixelGuild;
 					if (lunarApi?.data?.code == 200) {
 						playerData.sources.lunar = lunarApi.data;
@@ -291,19 +292,24 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				}
 				if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
 					const p1Friends = player?.hypixelFriends?.data;
+					const now = Date.now();
 					if (p1Friends !== undefined) {
 						for (const friendUuid of p1Friends) {
 							for (const statePlayers of storedPlayers) {
-								if (!statePlayers.nicked && player.hypixelPlayer) {
-									if (friendUuid?.uuidReceiver === player?.hypixelPlayer?.uuid) {
-										if (statePlayers?.hypixelPlayer?.uuid !== undefined && friendUuid?.uuidSender?.includes(statePlayers?.hypixelPlayer?.uuid ?? "")) {
-											player.friended = true;
-											statePlayers.friended = true;
-										}
-									} else {
-										if (statePlayers?.hypixelPlayer?.uuid !== undefined && friendUuid?.uuidReceiver?.includes(statePlayers?.hypixelPlayer?.uuid ?? "")) {
-											player.friended = true;
-											statePlayers.friended = true;
+								if (!statePlayers.nicked && player.hypixelPlayer && !player.friended) {
+									const started = friendUuid?.started ?? Date.now();
+									const twoWeeks = 86400000 * 14;
+									if (now - twoWeeks > started && !player.friended) {
+										if (friendUuid?.uuidReceiver === player?.hypixelPlayer?.uuid) {
+											if (statePlayers?.hypixelPlayer?.uuid !== undefined && friendUuid?.uuidSender?.includes(statePlayers?.hypixelPlayer?.uuid ?? "")) {
+												player.friended = true;
+												statePlayers.friended = true;
+											}
+										} else {
+											if (statePlayers?.hypixelPlayer?.uuid !== undefined && friendUuid?.uuidReceiver?.includes(statePlayers?.hypixelPlayer?.uuid ?? "")) {
+												player.friended = true;
+												statePlayers.friended = true;
+											}
 										}
 									}
 									set({
@@ -511,7 +517,7 @@ const getHypixelFriends = async (player: Player) => {
 	let api: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]>;
 	if ("hypixelPlayer" in player && player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.run.friends) {
 		const state = useConfigStore.getState();
-		api = await window.ipcRenderer.invoke(IpcValidInvokeChannels.HYPIXEL, [RequestType.FRIENDS, player.hypixelPlayer.uuid, state.hypixel.apiKey]);
+		api = await window.ipcRenderer.invoke(IpcValidInvokeChannels.HYPIXEL, [RequestType.FRIENDS, state.hypixel.apiKey, player.hypixelPlayer.uuid]);
 	} else {
 		api = {
 			data: [],
@@ -525,7 +531,7 @@ const getGuildData = async (player: Player) => {
 	let api: IPCResponse<Components.Schemas.Guild> | null;
 	if ("hypixelPlayer" in player && player.hypixelPlayer?.uuid !== undefined && useConfigStore.getState().settings.hypixel.guilds) {
 		const state = useConfigStore.getState();
-		api = await window.ipcRenderer.invoke<Components.Schemas.Guild>(IpcValidInvokeChannels.HYPIXEL, [RequestType.GUILD_PLAYER, player.hypixelPlayer.uuid, state.hypixel.apiKey]);
+		api = await window.ipcRenderer.invoke<Components.Schemas.Guild>(IpcValidInvokeChannels.HYPIXEL, [RequestType.GUILD_PLAYER, state.hypixel.apiKey, player.hypixelPlayer.uuid]);
 	} else {
 		api = null;
 	}
