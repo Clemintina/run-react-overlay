@@ -14,6 +14,7 @@ export type DisplayErrorMessage = {
 	cause: string;
 	detail?: string;
 	referenceId?: string | number;
+	type: "ERROR" | "WARNING" | "SUCCESS" | "NONE"
 };
 
 export type ProxyStore = {

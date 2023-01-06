@@ -273,6 +273,9 @@ const registerSeraphIPC = () => {
 			timeout: 7200,
 		});
 		const client = hypixelClient.getClient();
+
+		const limit = {limit: client.getRateLimit()}
+
 		if (resource === RequestType.KEY) {
 			try {
 				return await client.key();
@@ -283,7 +286,8 @@ const registerSeraphIPC = () => {
 			const uuid: string | undefined = await playerCache.get(`mojang:${playerName}`);
 			if (playerName.length == 32 || uuid?.length == 32) {
 				try {
-					return await hypixelClient.getClient().player.uuid(uuid ?? playerName);
+					const res = await hypixelClient.getClient().player.uuid(uuid ?? playerName);
+					return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 				} catch (e) {
 					return getErrorHandler(e);
 				}
@@ -293,7 +297,7 @@ const registerSeraphIPC = () => {
 					if (res?.data?.uuid) {
 						await playerCache.set(`mojang:${playerName}`, res.data.uuid);
 					}
-					return res;
+					return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 				} catch (e) {
 					if (e instanceof RequestedTooManyTimes) {
 						try {
@@ -313,7 +317,7 @@ const registerSeraphIPC = () => {
 								if (res?.data?.uuid) {
 									await playerCache.set(`mojang:${playerName}`, res.data.uuid);
 								}
-								return res;
+								return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 							} catch (e) {
 								return getErrorHandler(e);
 							}
@@ -327,19 +331,22 @@ const registerSeraphIPC = () => {
 			}
 		} else if (resource === RequestType.UUID) {
 			try {
-				return await hypixelClient.getClient().player.uuid(playerName);
+				const res =  await hypixelClient.getClient().player.uuid(playerName);
+				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
 		} else if (resource === RequestType.FRIENDS) {
 			try {
-				return await hypixelClient.getClient().friends.uuid(playerName);
+				const res =  await hypixelClient.getClient().friends.uuid(playerName);
+				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
 		} else if (resource === RequestType.GUILD_PLAYER) {
 			try {
-				return await hypixelClient.getClient().guild.player(playerName);
+				const res =  await hypixelClient.getClient().guild.player(playerName);
+				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
@@ -390,27 +397,27 @@ const registerSeraphIPC = () => {
 		};
 
 		if (endpoint === RunEndpoints.KEY) {
-			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/key`, {
+			const { body, statusCode } = await gotClient.get(`https://api.seraph.si/key`, {
 				headers: {
 					...headers,
 					...seraphHeaders,
 				},
 			});
 			return { data: body, status: statusCode };
-		} else if ( endpoint == RunEndpoints.BLACKLIST ) {
-			const { body, statusCode } = await gotClient.get( `https://beta.seraph.si/blacklist/${ uuid }`, {
-				headers : {
+		} else if (endpoint == RunEndpoints.BLACKLIST) {
+			const { body, statusCode } = await gotClient.get(`https://beta.seraph.si/blacklist/${uuid}`, {
+				headers: {
 					...seraphHeaders,
 				},
-			} );
-			return { data : body, status : statusCode };
-		}else {
-			const { body, statusCode } = await gotClient.get( `https://antisniper.seraph.si/v4/${ endpoint }?uuid=${ uuid }`, {
-				headers : {
+			});
+			return { data: body, status: statusCode };
+		} else {
+			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
+				headers: {
 					...seraphHeaders,
 				},
-			} );
-			return { data : body, status : statusCode };
+			});
+			return { data: body, status: statusCode };
 		}
 	});
 
@@ -458,7 +465,6 @@ const registerLogCommunications = () => {
 
 	ipcMain.on("logFileSet", async (event: IpcMainInvokeEvent, ...args) => {
 		const path = args[0];
-		console.log("Log FIle Set invoked with path: ", args[0]);
 		logFileReadline?.close();
 		logFileReadline = null;
 
@@ -612,7 +618,7 @@ const registerExternalApis = () => {
 		const endpoint = args[0],
 			apiKey = args[1],
 			uuid = args[2] ? args[2] : undefined;
-		const polsuApi = new PolsuApi({ apiKey, timeout: 10000 });
+		const polsuApi = new PolsuApi({ apiKey, timeout: 40000 });
 
 		if (endpoint == "session") {
 			if (uuid) {

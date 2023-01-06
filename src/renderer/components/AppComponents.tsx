@@ -134,6 +134,7 @@ export const LogSelectorModal: FC<LogSelectorModal> = ({ children }) => {
 					cause: "The file set is invalid.",
 					detail: "Please try and set the client again if you're on a Mac, Ensure the Overlay has sufficient privileges to read the file.",
 					referenceId: "Unable to read log file.",
+					type: "ERROR"
 				});
 			}
 		}
@@ -204,6 +205,7 @@ export const LogSelectorModal: FC<LogSelectorModal> = ({ children }) => {
 												cause: "The file set is invalid.",
 												detail: "Please try and set the client again if you're on a Mac and ensure the Overlay has sufficient privileges to read the file.",
 												referenceId: "Unable to read log file.",
+												type: "ERROR"
 											});
 										}
 									}
