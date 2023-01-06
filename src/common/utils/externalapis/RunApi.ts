@@ -1,3 +1,5 @@
+import { RateLimitData } from "@common/zikeji";
+
 export type Blacklist = {
 	success: boolean;
 	code: number;
@@ -128,4 +130,5 @@ export type IPCResponse<T> = {
 	status: number;
 	cause?: string;
 	data: T;
+	limit?: RateLimitData
 };

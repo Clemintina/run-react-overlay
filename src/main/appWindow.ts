@@ -273,6 +273,9 @@ const registerSeraphIPC = () => {
 			timeout: 7200,
 		});
 		const client = hypixelClient.getClient();
+
+		const limit = {limit: client.getRateLimit()}
+
 		if (resource === RequestType.KEY) {
 			try {
 				return await client.key();
@@ -293,7 +296,7 @@ const registerSeraphIPC = () => {
 					if (res?.data?.uuid) {
 						await playerCache.set(`mojang:${playerName}`, res.data.uuid);
 					}
-					return res;
+					return { res,...limit };
 				} catch (e) {
 					if (e instanceof RequestedTooManyTimes) {
 						try {
@@ -313,7 +316,7 @@ const registerSeraphIPC = () => {
 								if (res?.data?.uuid) {
 									await playerCache.set(`mojang:${playerName}`, res.data.uuid);
 								}
-								return res;
+								return { res,...limit };
 							} catch (e) {
 								return getErrorHandler(e);
 							}
@@ -327,19 +330,22 @@ const registerSeraphIPC = () => {
 			}
 		} else if (resource === RequestType.UUID) {
 			try {
-				return await hypixelClient.getClient().player.uuid(playerName);
+				const res =  await hypixelClient.getClient().player.uuid(playerName);
+				return { res,...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
 		} else if (resource === RequestType.FRIENDS) {
 			try {
-				return await hypixelClient.getClient().friends.uuid(playerName);
+				const res =  await hypixelClient.getClient().friends.uuid(playerName);
+				return { res,...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
 		} else if (resource === RequestType.GUILD_PLAYER) {
 			try {
-				return await hypixelClient.getClient().guild.player(playerName);
+				const res =  await hypixelClient.getClient().guild.player(playerName);
+				return { res,...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}

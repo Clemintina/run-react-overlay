@@ -121,24 +121,24 @@ export const columnDefsBase: ColDef<Player>[] = [
 					player={player}
 					tooltip={
 						<div>
-							{player?.sources.polsu?.sessions && player.hypixelPlayer && (
+							{polsuSession && player.hypixelPlayer && (
 								<div className={"statistics-tooltip text-center"}>
 									<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
 										{player.hypixelPlayer.displayname}
 									</span>
 									<div>
-										<div className={"statistics-tooltip-inline"}>Games Played: {(playerStats?.games_played_bedwars ?? 0) - (polsuSession?.games?.total ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Wins: {(playerStats?.wins_bedwars ?? 0) - (polsuSession?.stats.wins ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Losses: {(playerStats?.losses_bedwars ?? 0) - (polsuSession?.stats.losses ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Games Played: {(playerStats?.games_played_bedwars ?? 1) - (polsuSession?.games?.total ?? 1)}</div>
+										<div className={"statistics-tooltip-inline"}>Wins: {(playerStats?.wins_bedwars ?? 1) - (polsuSession?.stats.wins ?? 1)}</div>
+										<div className={"statistics-tooltip-inline"}>Losses: {(playerStats?.losses_bedwars ?? 1) - (polsuSession?.stats.losses ?? 1)}</div>
 										<br />
-										<div className={"statistics-tooltip-inline"}>Final Kills: {(playerStats?.final_kills_bedwars ?? 0) - (polsuSession?.stats.fkills ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Final Deaths: {(playerStats?.final_deaths_bedwars ?? 0) - (polsuSession?.stats.fdeaths ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Final Kills: {(playerStats?.final_kills_bedwars ?? 1) - (polsuSession?.stats.fkills ?? 1)}</div>
+										<div className={"statistics-tooltip-inline"}>Final Deaths: {(playerStats?.final_deaths_bedwars ?? 1) - (polsuSession?.stats.fdeaths ?? 1)}</div>
 										<br />
-										<div className={"statistics-tooltip-inline"}>Beds Broken: {(playerStats?.beds_broken_bedwars ?? 0) - (polsuSession?.stats.bbroken ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Beds Lost: {(playerStats?.beds_lost_bedwars ?? 0) - (polsuSession?.stats.blost ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Beds Broken: {(playerStats?.beds_broken_bedwars ?? 1) - (polsuSession?.stats.bbroken ?? 1)}</div>
+										<div className={"statistics-tooltip-inline"}>Beds Lost: {(playerStats?.beds_lost_bedwars ?? 1) - (polsuSession?.stats.blost ?? 1)}</div>
 										<br />
-										<div className={"statistics-tooltip-inline"}>Kills: {(playerStats?.kills_bedwars ?? 0) - (polsuSession?.stats.kills ?? 0)}</div>
-										<div className={"statistics-tooltip-inline"}>Deaths: {(playerStats?.deaths_bedwars ?? 0) - (polsuSession?.stats.deaths ?? 0)}</div>
+										<div className={"statistics-tooltip-inline"}>Kills: {(playerStats?.kills_bedwars ?? 1) - (polsuSession?.stats.kills ?? 1)}</div>
+										<div className={"statistics-tooltip-inline"}>Deaths: {(playerStats?.deaths_bedwars ?? 1) - (polsuSession?.stats.deaths ?? 1)}</div>
 										<br />
 										<div className={"statistics-tooltip-inline"}>Session started: {playerFormatter.getPlayerHypixelUtils().getDateFormatted(polsuSession?.started ? polsuSession.started * 1000 : 0, undefined, { hour12: false, dateStyle: "full" })}</div>
 									</div>
