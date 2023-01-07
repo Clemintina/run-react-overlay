@@ -1252,7 +1252,7 @@ export const CustomLinks = () => {
 													code: 400,
 													title: "Bad Custom file",
 													cause: "The file set is unreadable.",
-													type: "ERROR"
+													type: "ERROR",
 												});
 											}
 										}
