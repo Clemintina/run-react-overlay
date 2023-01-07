@@ -390,7 +390,7 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, children }) =
 														useConfigStore.getState().setErrorMessage({
 															title: "Report error",
 															cause: JSON.stringify(response.data),
-															type: "ERROR"
+															type: "ERROR",
 														});
 														setError(true);
 													} else {
