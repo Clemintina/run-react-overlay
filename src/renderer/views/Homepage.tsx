@@ -11,7 +11,7 @@ import useConfigStore from "@renderer/store/ConfigStore";
 import { Box } from "@mui/material";
 import { Interweave } from "interweave";
 import { AppInformation } from "@common/utils/Schemas";
-import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
+import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
 import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { CustomHeader } from "@components/AppComponents";
 import { PlayerOptionsModal } from "@components/BaseComponents";
@@ -111,7 +111,7 @@ export const columnDefsBase: ColDef<Player>[] = [
 		sortable: false,
 		cellRenderer: ({ data }) => {
 			const player = data;
-			const playerStats = player.hypixelPlayer?.stats.Bedwars;
+			const playerStats = player.hypixelPlayer?.stats?.Bedwars;
 			const polsuSession = player?.sources?.polsu?.sessions ? player.sources.polsu.sessions.data : undefined;
 
 			const playerFormatter = new PlayerUtils();
@@ -121,7 +121,7 @@ export const columnDefsBase: ColDef<Player>[] = [
 					player={player}
 					tooltip={
 						<div>
-							{polsuSession && player.hypixelPlayer && (
+							{polsuSession && player.hypixelPlayer && player.hypixelPlayer?.stats?.Bedwars && (
 								<div className={"statistics-tooltip text-center"}>
 									<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
 										{player.hypixelPlayer.displayname}
@@ -181,6 +181,15 @@ export const columnDefsBase: ColDef<Player>[] = [
 			return <PlayerOptionsModal data={data} />;
 		},
 	},
+	{
+		field: 'NWL',
+		type: 'number',
+		sortable: false,
+		hide: true,
+		cellRenderer: ({data}) => {
+			return <PlayerNetworkLevel player={data}/>
+		}
+	}
 ];
 
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
@@ -230,13 +239,13 @@ window.ipcRenderer.on("updater", async (event, args) => {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "The overlay is ready to update, Restarting in 5 seconds",
-			type: "SUCCESS"
+			type: "SUCCESS",
 		});
 	} else if (appUpdater.update.updateAvailable) {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "An update is currently being downloaded!",
-			type: "SUCCESS"
+			type: "SUCCESS",
 		});
 	}
 
