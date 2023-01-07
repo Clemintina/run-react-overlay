@@ -56,7 +56,7 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	}
 
 	return (
-		<div className='inline flex space-x-1 w-9 h-4 text-center' style={{ textAlign: table.settings.textAlign }}>
+		<div className='inline flex space-x-1 w-9 h-4' style={{ textAlign: table.settings.textAlign }}>
 			<img src={srcUrl} alt='player-head' />
 			{lunarRenderer}
 		</div>
@@ -157,7 +157,11 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 			</div>
 		);
 	}
-	return <span className={"text-red-500"}>N/A</span>;
+	return (
+		<div style={{ textAlign: table.settings.textAlign }} className={"text-red-500"}>
+			N/A
+		</div>
+	);
 };
 
 export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
@@ -371,19 +375,21 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (player?.hypixelPlayer?.channel == "PARTY") {
 					tagArray.push(getTagsFromConfig("hypixel.party"));
 				}
-				if (player.sources.polsu?.sessions) {
-					const polsuSession = player.sources.polsu.sessions.data;
-					const isNew = polsuSession?.new;
-					if (isNew) {
-						tagArray.push(<span className={"text-green-500"}>R</span>);
-					}
-					if (polsuSession?.player?.last_changed != null && !isNew && isPremium) {
-						const timeNow = Date.now();
-						const nameBefore = new Date(polsuSession.player.last_changed * 1000);
-						const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-						const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
-						if (result) {
-							tagArray.push(getTagsFromConfig("run.name_change"));
+				if (settings.polsu.enabled) {
+					if (player.sources.polsu?.sessions && settings.polsu.sessions) {
+						const polsuSession = player.sources.polsu.sessions.data;
+						const isNew = polsuSession?.new;
+						if (isNew) {
+							tagArray.push(<span className={"text-green-500"}>R</span>);
+						}
+						if (polsuSession?.player?.last_changed != null && !isNew && isPremium) {
+							const timeNow = Date.now();
+							const nameBefore = new Date(polsuSession.player.last_changed);
+							const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+							const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
+							if (result) {
+								tagArray.push(getTagsFromConfig("run.name_change"));
+							}
 						}
 					}
 				}
