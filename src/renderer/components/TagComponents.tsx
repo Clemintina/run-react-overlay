@@ -148,7 +148,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 		}
 	} else {
 		return (
-			<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("-", " ")}</span>} arrow>
+			<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("_", " ")}</span>} arrow>
 				<span>
 					<span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>
 				</span>
