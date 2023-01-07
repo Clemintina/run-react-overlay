@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting } from "@common/zikeji";
+import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getNetworkLevel, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting, NetworkLevel } from "@common/zikeji";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import useTagStore from "@renderer/store/TagStore";
@@ -15,6 +15,8 @@ import { InputBoxButton, InputTextBox } from "@components/BaseComponents";
 import { SettingCard } from "@components/AppComponents";
 import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/TagComponents";
 import { OverlayTooltip, StatsisticsTooltip } from "@components/TooltipComponents";
+import { Colour, TagColour } from "@common/utils/TagSchema";
+import Tooltip from "@mui/material/Tooltip";
 
 export type PlayerCommonProperties = {
 	player: Player;
@@ -42,17 +44,9 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 			if (player.sources.lunar !== undefined && player.sources.lunar !== null) {
 				if (player.sources?.lunar?.player?.online) {
 					if (player.sources?.lunar?.player?.lunarPlus?.premium) {
-						lunarRenderer = (
-							<span>
-								<img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
-							</span>
-						);
+						lunarRenderer = <img src={"https://dl.seraph.si/lunarplus.webp"} alt={"lunar plus"} />;
 					} else {
-						lunarRenderer = (
-							<span>
-								<img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
-							</span>
-						);
+						lunarRenderer = <img src={"https://dl.seraph.si/lunar.webp"} alt={"lunar plus"} />;
 					}
 				}
 			}
@@ -62,8 +56,8 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	}
 
 	return (
-		<div className='inline flex' style={{ textAlign: table.settings.textAlign }}>
-			<img src={srcUrl} className='text-center' alt='player-head' />
+		<div className='inline flex space-x-1 w-9 h-4' style={{ textAlign: table.settings.textAlign }}>
+			<img src={srcUrl} alt='player-head' />
 			{lunarRenderer}
 		</div>
 	);
@@ -163,7 +157,11 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 			</div>
 		);
 	}
-	return <span className={"text-red-500"}>N/A</span>;
+	return (
+		<div style={{ textAlign: table.settings.textAlign }} className={"text-red-500"}>
+			N/A
+		</div>
+	);
 };
 
 export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
@@ -365,14 +363,8 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (runApi?.safelist?.personal) {
 					tagArray.push(getTagsFromConfig("run.personal_safelist", runApi.safelist.timesKilled));
 				}
-				if (runApi?.name_change.last_change && isPremium) {
-					const timeNow = Date.now();
-					const nameBefore = new Date(runApi?.name_change.last_change);
-					const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-					const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
-					if (result) {
-						tagArray.push(getTagsFromConfig("run.name_change"));
-					}
+				if (runApi?.name_change.last_change) {
+					tagArray.push(getTagsFromConfig("run.name_change"));
 				}
 				if (settings.run.friends && player?.friended) {
 					tagArray.push(getTagsFromConfig("run.friends"));
@@ -383,19 +375,21 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (player?.hypixelPlayer?.channel == "PARTY") {
 					tagArray.push(getTagsFromConfig("hypixel.party"));
 				}
-				if (player.sources.polsu?.sessions) {
-					const polsuSession = player.sources.polsu.sessions.data;
-					const isNew = polsuSession?.new || polsuSession?.started == polsuSession?.player?.last_changed;
-					if (isNew) {
-						tagArray.push(<span className={"text-green-500"}>R</span>);
-					}
-					if (polsuSession?.player?.last_changed != null && !isNew && isPremium) {
-						const timeNow = Date.now();
-						const nameBefore = new Date(polsuSession.player.last_changed * 1000);
-						const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-						const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
-						if (result) {
-							tagArray.push(getTagsFromConfig("run.name_change"));
+				if (settings.polsu.enabled) {
+					if (player.sources.polsu?.sessions && settings.polsu.sessions) {
+						const polsuSession = player.sources.polsu.sessions.data;
+						const isNew = polsuSession?.new;
+						if (isNew) {
+							tagArray.push(<span className={"text-green-500"}>R</span>);
+						}
+						if (polsuSession?.player?.last_changed != null && !isNew && isPremium) {
+							const timeNow = Date.now();
+							const nameBefore = new Date(polsuSession.player.last_changed);
+							const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+							const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
+							if (result) {
+								tagArray.push(getTagsFromConfig("run.name_change"));
+							}
 						}
 					}
 				}
@@ -467,6 +461,89 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 					{value}
 				</span>
 			))}
+		</div>
+	);
+};
+
+export const PlayerNetworkLevel: FC<PlayerCommonProperties> = ({ player }) => {
+	const { table } = useConfigStore((state) => ({
+		table: state.table,
+	}));
+	let playerNetworkLevel: NetworkLevel & { colour: string } = {
+		currentExp: 0,
+		expToLevel: 0,
+		expToNextLevel: 0,
+		level: 0,
+		preciseLevel: 0,
+		remainingExpToNextLevel: 0,
+		colour: "FF5555",
+	};
+	if (!player.nicked && player.hypixelPlayer) {
+		const tempNetworkLevel = getNetworkLevel(player.hypixelPlayer);
+		const localPlayerNetworkLevel = {
+			...tempNetworkLevel,
+			colour: "FF5555",
+		};
+		const colourArray: Array<Colour> = [
+			{
+				requirement: 0,
+				colour: "555555",
+				operator: "<=",
+			},
+			{
+				requirement: 26,
+				colour: "aaaaaa",
+				operator: "<=",
+			},
+			{
+				requirement: 99,
+				colour: "ffffff",
+				operator: "<=",
+			},
+			{
+				requirement: 150,
+				colour: "ffaa00",
+				operator: "<=",
+			},
+			{
+				requirement: 200,
+				colour: "00AA00",
+				operator: "<=",
+			},
+			{
+				requirement: 220,
+				colour: "ff5555",
+				operator: "<=",
+			},
+			{
+				requirement: 250,
+				colour: "aa0000",
+				operator: "<=",
+			},
+			{
+				requirement: 300,
+				colour: "ff55ff",
+				operator: "<=",
+			},
+			{
+				requirement: 500,
+				colour: "800080",
+				operator: "<=",
+			},
+		];
+		const arr = colourArray.sort((a, b) => a.requirement - b.requirement);
+		for (const { colour, requirement } of arr) {
+			if (localPlayerNetworkLevel.level >= requirement) {
+				localPlayerNetworkLevel.colour = colour;
+			}
+		}
+		playerNetworkLevel = localPlayerNetworkLevel;
+	}
+	return (
+		<div style={{ textAlign: table.settings.textAlign }}>
+			<Tooltip title={<span className={"capitalize"}>Network Level</span>} arrow>
+				<span style={{ color: `#${playerNetworkLevel.colour}` }}>{playerNetworkLevel?.level ?? 0}</span>
+			</Tooltip>
 		</div>
 	);
 };

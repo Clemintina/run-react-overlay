@@ -101,7 +101,7 @@ const useConfigStore = create<ConfigStore>()(
 							title: "Hypixel Key Set",
 							cause: "Successfully set your Hypixel API key!",
 							code: 200,
-							type: "SUCCESS"
+							type: "SUCCESS",
 						});
 						set(() => ({
 							hypixel: {
@@ -116,7 +116,7 @@ const useConfigStore = create<ConfigStore>()(
 							title: "Invalid Hypixel Key",
 							cause: "The Hypixel API key provided is not valid! Generate one with /api new.",
 							code: 400,
-							type: "WARNING"
+							type: "WARNING",
 						});
 						set(() => ({
 							hypixel: {
@@ -146,7 +146,7 @@ const useConfigStore = create<ConfigStore>()(
 							title: "2nd Hypixel Key Set",
 							cause: "Successfully set your 2nd Hypixel API key!",
 							code: 200,
-							type: "SUCCESS"
+							type: "SUCCESS",
 						});
 						set(() => ({
 							hypixel: {
@@ -161,7 +161,7 @@ const useConfigStore = create<ConfigStore>()(
 							title: "Invalid 2nd Hypixel Key",
 							cause: "The 2nd Hypixel API key provided is not valid! Generate one with /api new.",
 							code: 400,
-							type: "WARNING"
+							type: "WARNING",
 						});
 						set(() => ({
 							hypixel: {
@@ -220,7 +220,7 @@ const useConfigStore = create<ConfigStore>()(
 					title: "",
 					cause: "",
 					detail: "",
-					type: "NONE"
+					type: "NONE",
 				},
 				setErrorMessage: async (structuredError) => {
 					set({
@@ -236,7 +236,7 @@ const useConfigStore = create<ConfigStore>()(
 							title: "",
 							cause: "",
 							detail: "",
-							type: "NONE"
+							type: "NONE",
 						},
 					});
 				},
@@ -274,7 +274,7 @@ const useConfigStore = create<ConfigStore>()(
 							title: "Invalid Antisniper Key",
 							cause: "The Antisniper API key provided is not valid!",
 							code: 400,
-							type: "ERROR"
+							type: "ERROR",
 						});
 					}
 				},
@@ -294,7 +294,7 @@ const useConfigStore = create<ConfigStore>()(
 							title: "Seraph Key Set",
 							cause: "Successfully set your Seraph API key!",
 							code: 200,
-							type: "SUCCESS"
+							type: "SUCCESS",
 						});
 						set({
 							run: {
@@ -307,7 +307,7 @@ const useConfigStore = create<ConfigStore>()(
 							title: "Invalid Seraph Key",
 							cause: "The Seraph API key provided is invalid or locked!",
 							code: 400,
-							type: "ERROR"
+							type: "ERROR",
 						});
 						await window.ipcRenderer.invoke(IpcValidInvokeChannels.NOTIFICATIONS, ["Your Seraph Key has been locked!"]);
 					}

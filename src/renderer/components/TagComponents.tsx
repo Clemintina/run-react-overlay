@@ -72,8 +72,11 @@ export const RenderCoreStatsColour: FC<RenderCoreStatsColour> = (props: RenderCo
 				playerValue = player.hypixelPlayer?.stats?.Bedwars?.[modeObj + "games_played_bedwars"] ?? 0;
 		}
 		if (player.loaded) {
-			if (!player.sources.runApi?.data?.blacklist.tagged) renderer = getCoreFromConfig("core.statistics", playerValue);
-			else renderer = getTagsFromConfig("run.blacklist", playerValue);
+			if (!player.sources.runApi?.data?.blacklist.tagged) {
+				renderer = getCoreFromConfig("core.statistics", playerValue);
+			} else {
+				renderer = getTagsFromConfig("run.blacklist", playerValue);
+			}
 		} else {
 			renderer = getCoreFromConfig("core.statistics", playerValue);
 		}
@@ -148,7 +151,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 		}
 	} else {
 		return (
-			<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("-", " ")}</span>} arrow>
+			<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("_", " ")}</span>} arrow>
 				<span>
 					<span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>
 				</span>

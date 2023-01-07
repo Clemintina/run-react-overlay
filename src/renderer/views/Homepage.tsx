@@ -11,7 +11,7 @@ import useConfigStore from "@renderer/store/ConfigStore";
 import { Box } from "@mui/material";
 import { Interweave } from "interweave";
 import { AppInformation } from "@common/utils/Schemas";
-import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
+import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
 import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { CustomHeader } from "@components/AppComponents";
 import { PlayerOptionsModal } from "@components/BaseComponents";
@@ -111,7 +111,7 @@ export const columnDefsBase: ColDef<Player>[] = [
 		sortable: false,
 		cellRenderer: ({ data }) => {
 			const player = data;
-			const playerStats = player.hypixelPlayer?.stats.Bedwars;
+			const playerStats = player.hypixelPlayer?.stats?.Bedwars;
 			const polsuSession = player?.sources?.polsu?.sessions ? player.sources.polsu.sessions.data : undefined;
 
 			const playerFormatter = new PlayerUtils();
@@ -121,7 +121,7 @@ export const columnDefsBase: ColDef<Player>[] = [
 					player={player}
 					tooltip={
 						<div>
-							{polsuSession && player.hypixelPlayer && (
+							{polsuSession && player.hypixelPlayer && player.hypixelPlayer?.stats?.Bedwars && (
 								<div className={"statistics-tooltip text-center"}>
 									<span className={"statistics-tooltip-inline"} style={{ color: `#${getPlayerRank(player.hypixelPlayer).colourHex}` }}>
 										{player.hypixelPlayer.displayname}
@@ -181,7 +181,30 @@ export const columnDefsBase: ColDef<Player>[] = [
 			return <PlayerOptionsModal data={data} />;
 		},
 	},
+	{
+		field: "NWL",
+		type: "number",
+		sortable: false,
+		hide: true,
+		cellRenderer: ({ data }) => {
+			return <PlayerNetworkLevel player={data} />;
+		},
+	},
 ];
+
+const checkIfNich = (num1: number | undefined, num2: number | undefined, isDescending) => {
+	if (num1 == undefined || isNaN(num1)) {
+		return isDescending ? 1 : -1;
+	} else if (num2 == undefined || isNaN(num2)) {
+		return isDescending ? -1 : 1;
+	} else if (Math.round(num1) == 0 && num2 != 0) {
+		return isDescending ? 2 : -2;
+	} else if (Math.round(num2) == 0 && num1 != 0) {
+		return isDescending ? -2 : 2;
+	} else {
+		return num1 - num2;
+	}
+};
 
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
 	const p1: Player = nodeA.data,
@@ -195,7 +218,7 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
 	let player1, player2;
 	switch (sortingData) {
 		case "star":
-			return (p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0) - (p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0);
+			return checkIfNich(p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0, p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0, isDescending);
 		case "name":
 			return p1.name.localeCompare(p2.name);
 		case "winstreak":
@@ -203,21 +226,21 @@ const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, 
 			player2 = p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
 			if (p1.sources.keathiz != undefined && player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
 			if (p2.sources.keathiz != undefined && player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
-			return player1 - player2;
+			return checkIfNich(player1, player2, isDescending);
 		case "fkdr":
-			return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0);
+			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), isDescending);
 		case "wlr":
-			return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
+			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), isDescending);
 		case "KDR":
-			return (p1?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0);
+			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), isDescending);
 		case "bblr":
-			return (p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0);
+			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), isDescending);
 		case "wins":
-			return (p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0);
+			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, isDescending);
 		case "losses":
-			return (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0);
+			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, isDescending);
 		case "finalkills":
-			return (p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) - (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0);
+			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, isDescending);
 		default:
 			assertDefaultError(sortingData);
 	}
@@ -230,13 +253,13 @@ window.ipcRenderer.on("updater", async (event, args) => {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "The overlay is ready to update, Restarting in 5 seconds",
-			type: "SUCCESS"
+			type: "SUCCESS",
 		});
 	} else if (appUpdater.update.updateAvailable) {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "An update is currently being downloaded!",
-			type: "SUCCESS"
+			type: "SUCCESS",
 		});
 	}
 
