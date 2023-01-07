@@ -182,14 +182,14 @@ export const columnDefsBase: ColDef<Player>[] = [
 		},
 	},
 	{
-		field: 'NWL',
-		type: 'number',
+		field: "NWL",
+		type: "number",
 		sortable: false,
 		hide: true,
-		cellRenderer: ({data}) => {
-			return <PlayerNetworkLevel player={data}/>
-		}
-	}
+		cellRenderer: ({ data }) => {
+			return <PlayerNetworkLevel player={data} />;
+		},
+	},
 ];
 
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
