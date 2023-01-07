@@ -1603,6 +1603,6 @@ export const ColourRenderer: FC<PropsWithChildren> = ({ children }) => {
 	);
 };
 
-const NavigationBar = (props: { children }) => {
-	return <Box className={"grid grid-col-3 w-full"}>{props.children}</Box>;
+const NavigationBar:FC<PropsWithChildren> = ( { children }) => {
+	return <Box className={"grid grid-col-3 w-full"}>{children}</Box>;
 };
