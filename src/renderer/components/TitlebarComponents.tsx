@@ -34,8 +34,8 @@ import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { hexToRgbA } from "@common/helpers";
 import { InputTextBox } from "@components/BaseComponents";
 import { FC, useState } from "react";
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
 
 const drawerWidth = 200;
 const menuOptions = Array<MenuOption>(
@@ -72,7 +72,6 @@ const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== "open" 
 }));
 
 const DrawerHeader = styled("div")(({ theme }) => ({
-
 	// Keep the menu options below the title
 	...theme.mixins.toolbar,
 	justifyContent: "flex-end",
@@ -115,13 +114,13 @@ export const Titlebar = ({ children }) => {
 	const errorMessageCode = error.type;
 
 	const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-		if ( event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift') ) {
+		if (event.type === "keydown" && ((event as React.KeyboardEvent).key === "Tab" || (event as React.KeyboardEvent).key === "Shift")) {
 			return;
 		}
-		if ( open ) {
+		if (open) {
 			handleDrawerOpen();
 		} else {
-			handleDrawerClose()
+			handleDrawerClose();
 		}
 	};
 
@@ -130,7 +129,7 @@ export const Titlebar = ({ children }) => {
 			<CssBaseline />
 			<AppBar position={"fixed"} open={open} className={"drag"} sx={{ backgroundColor: hexToRgbA(colours.backgroundColour, browserWindow.opacity / 100) }}>
 				<Toolbar>
-					<IconButton color={"inherit"} onClick={handleDrawerOpen} edge={ 'start' } className={"nodrag"}>
+					<IconButton color={"inherit"} onClick={handleDrawerOpen} edge={"start"} className={"nodrag"}>
 						<MenuIcon />
 					</IconButton>
 					<Typography variant={"h6"} noWrap component={"div"} className={"text-bold"}>
@@ -179,12 +178,8 @@ export const Titlebar = ({ children }) => {
 					</Typography>
 				</Toolbar>
 			</AppBar>
-			<Drawer
-				anchor={'left'}
-				open={open}
-				onClose={toggleDrawer( false)}
-			>
-				<Box sx={{ width: drawerWidth }} role={ "presentation" } onClick={handleDrawerClose} onKeyDown={handleDrawerClose}>
+			<Drawer anchor={"left"} open={open} onClose={toggleDrawer(false)}>
+				<Box sx={{ width: drawerWidth }} role={"presentation"} onClick={handleDrawerClose} onKeyDown={handleDrawerClose}>
 					<DrawerHeader className={"nodrag"}></DrawerHeader>
 					<Divider />
 					<List className={"nodrag"}>
@@ -221,7 +216,9 @@ export const Titlebar = ({ children }) => {
 						</ListItem>
 						<ListItem disablePadding>
 							<ListItemButton onClick={() => window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ["https://seraph.si"])}>
-								<ListItemIcon><Code/></ListItemIcon>
+								<ListItemIcon>
+									<Code />
+								</ListItemIcon>
 								<ListItemText className={"text-center"} primary={useConfigStore.getState().version} />
 							</ListItemButton>
 						</ListItem>
@@ -264,7 +261,7 @@ export const Titlebar = ({ children }) => {
 					<span />
 				)}
 				<div className={"nodrag"}>
-					<Box height={"100vh"} width={'100vw'} display={"flex"} flexDirection={"column"}>
+					<Box height={"100vh"} width={"100vw"} display={"flex"} flexDirection={"column"}>
 						{children}
 					</Box>
 				</div>
@@ -274,66 +271,66 @@ export const Titlebar = ({ children }) => {
 	// <OldDrawer open={open} setOpen={(open)=>setOpen(open)} handleDrawerClose={()=>handleDrawerClose()} theme={theme}/>
 };
 
-const OldDrawer:FC< {open:boolean,setOpen: (open:boolean)=> void, handleDrawerClose:()=>void,theme:Theme}> = ({open,setOpen, handleDrawerClose, theme})=>{
-	const {  browserWindow, colours } = useConfigStore((state) => ({ browserWindow: state.browserWindow, colours: state.colours }));
+const OldDrawer: FC<{ open: boolean; setOpen: (open: boolean) => void; handleDrawerClose: () => void; theme: Theme }> = ({ open, setOpen, handleDrawerClose, theme }) => {
+	const { browserWindow, colours } = useConfigStore((state) => ({ browserWindow: state.browserWindow, colours: state.colours }));
 	return (
 		<Drawer
-		sx={{
-			width: drawerWidth,
-			flexShrink: 0,
-			"& .MuiDrawer-paper": {
+			sx={{
 				width: drawerWidth,
-				boxSizing: "border-box",
-			},
-			opacity: 100,
-			backgroundColor: hexToRgbA(colours.backgroundColour, browserWindow.opacity / 100)
-		}}
-		variant={"persistent"}
-		anchor={"left"}
-		open={open}
-	>
-		<DrawerHeader className={"nodrag"}>
-			<IconButton onClick={handleDrawerClose}>{theme.direction === "ltr" ? <ChevronLeftIcon /> : <ChevronRightIcon />}</IconButton>
-		</DrawerHeader>
-		<Divider />
-		<List className={"nodrag"}>
-			<ListItem disablePadding>
-				<Link to={"/"} onClick={() => setOpen(!open)} className={"nodrag"}>
-					<ListItemButton sx={{ width: drawerWidth }}>
-						<ListItemIcon>
-							<Home />
-						</ListItemIcon>
-						<ListItemText primary={"Home"} />
-					</ListItemButton>
-				</Link>
-			</ListItem>
-			{menuOptions.map((text, index) => (
-				<ListItem key={index} disablePadding>
-					<Link to={text.menuLink} onClick={() => setOpen(!open)} className={"nodrag"}>
+				flexShrink: 0,
+				"& .MuiDrawer-paper": {
+					width: drawerWidth,
+					boxSizing: "border-box",
+				},
+				opacity: 100,
+				backgroundColor: hexToRgbA(colours.backgroundColour, browserWindow.opacity / 100),
+			}}
+			variant={"persistent"}
+			anchor={"left"}
+			open={open}
+		>
+			<DrawerHeader className={"nodrag"}>
+				<IconButton onClick={handleDrawerClose}>{theme.direction === "ltr" ? <ChevronLeftIcon /> : <ChevronRightIcon />}</IconButton>
+			</DrawerHeader>
+			<Divider />
+			<List className={"nodrag"}>
+				<ListItem disablePadding>
+					<Link to={"/"} onClick={() => setOpen(!open)} className={"nodrag"}>
 						<ListItemButton sx={{ width: drawerWidth }}>
-							<ListItemIcon>{getIconType(text)}</ListItemIcon>
-							<ListItemText primary={text.menuName} />
+							<ListItemIcon>
+								<Home />
+							</ListItemIcon>
+							<ListItemText primary={"Home"} />
 						</ListItemButton>
 					</Link>
 				</ListItem>
-			))}
-		</List>
-		<Divider />
-		<List className={"nodrag"}>
-			<ListItem disablePadding>
-				<ListItemButton onClick={() => window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ["https://seraph.si/discord"])}>
-					<ListItemIcon>
-						<FontAwesomeIcon icon={faDiscord} />
-					</ListItemIcon>
-					<ListItemText>Discord</ListItemText>
-				</ListItemButton>
-			</ListItem>
-			<ListItem disablePadding>
-				<ListItemButton onClick={() => window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ["https://seraph.si"])}>
-					<ListItemText className={"text-center"} primary={useConfigStore.getState().version} />
-				</ListItemButton>
-			</ListItem>
-		</List>
-	</Drawer>
-	)
-}
+				{menuOptions.map((text, index) => (
+					<ListItem key={index} disablePadding>
+						<Link to={text.menuLink} onClick={() => setOpen(!open)} className={"nodrag"}>
+							<ListItemButton sx={{ width: drawerWidth }}>
+								<ListItemIcon>{getIconType(text)}</ListItemIcon>
+								<ListItemText primary={text.menuName} />
+							</ListItemButton>
+						</Link>
+					</ListItem>
+				))}
+			</List>
+			<Divider />
+			<List className={"nodrag"}>
+				<ListItem disablePadding>
+					<ListItemButton onClick={() => window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ["https://seraph.si/discord"])}>
+						<ListItemIcon>
+							<FontAwesomeIcon icon={faDiscord} />
+						</ListItemIcon>
+						<ListItemText>Discord</ListItemText>
+					</ListItemButton>
+				</ListItem>
+				<ListItem disablePadding>
+					<ListItemButton onClick={() => window.ipcRenderer.invoke(IpcValidInvokeChannels.OPEN_LINK, ["https://seraph.si"])}>
+						<ListItemText className={"text-center"} primary={useConfigStore.getState().version} />
+					</ListItemButton>
+				</ListItem>
+			</List>
+		</Drawer>
+	);
+};
