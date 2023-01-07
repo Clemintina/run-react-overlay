@@ -274,7 +274,7 @@ const registerSeraphIPC = () => {
 		});
 		const client = hypixelClient.getClient();
 
-		const limit = {limit: client.getRateLimit()}
+		const limit = { limit: client.getRateLimit() };
 
 		if (resource === RequestType.KEY) {
 			try {
@@ -331,21 +331,21 @@ const registerSeraphIPC = () => {
 			}
 		} else if (resource === RequestType.UUID) {
 			try {
-				const res =  await hypixelClient.getClient().player.uuid(playerName);
+				const res = await hypixelClient.getClient().player.uuid(playerName);
 				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
 		} else if (resource === RequestType.FRIENDS) {
 			try {
-				const res =  await hypixelClient.getClient().friends.uuid(playerName);
+				const res = await hypixelClient.getClient().friends.uuid(playerName);
 				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);
 			}
 		} else if (resource === RequestType.GUILD_PLAYER) {
 			try {
-				const res =  await hypixelClient.getClient().guild.player(playerName);
+				const res = await hypixelClient.getClient().guild.player(playerName);
 				return { data: res.data, status: res.status, cause: res?.cause ?? undefined, ...limit };
 			} catch (e) {
 				return getErrorHandler(e);

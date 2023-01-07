@@ -478,7 +478,7 @@ export class Client {
 		});
 	}
 
-	public getRateLimit(){
+	public getRateLimit() {
 		return this.rateLimit;
 	}
 }

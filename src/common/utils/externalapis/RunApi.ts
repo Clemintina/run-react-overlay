@@ -130,5 +130,5 @@ export type IPCResponse<T> = {
 	status: number;
 	cause?: string;
 	data: T;
-	limit?: RateLimitData
+	limit?: RateLimitData;
 };
