@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting } from "@common/zikeji";
+import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getNetworkLevel, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting, NetworkLevel } from "@common/zikeji";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";
 import useTagStore from "@renderer/store/TagStore";
@@ -15,43 +15,41 @@ import { InputBoxButton, InputTextBox } from "@components/BaseComponents";
 import { SettingCard } from "@components/AppComponents";
 import { getCoreFromConfig, getPlayerTagDividerNicked, getTagsFromConfig } from "@components/TagComponents";
 import { OverlayTooltip, StatsisticsTooltip } from "@components/TooltipComponents";
+import { Colour, TagColour } from "@common/utils/TagSchema";
+import Tooltip from "@mui/material/Tooltip";
 
 export type PlayerCommonProperties = {
 	player: Player;
 };
 
-export type PlayerNickNameView = { key: string; playerNick: PlayerNickname; handleAdd: (player) => void; handleRemove: (player) => void };
+export type PlayerNickNameView = { key: string; playerNick: PlayerNickname; handleAdd: ( player ) => void; handleRemove: ( player ) => void };
 
-export const PlayerGuildComponent: FC<PlayerCommonProperties> = ({ player }) => {
+export const PlayerGuildComponent: FC<PlayerCommonProperties> = ( { player } ) => {
 	let guildRenderer = <span />;
-	if (!player.nicked && player.hypixelGuild != null) {
+	if ( ! player.nicked && player.hypixelGuild != null ) {
 		const guild: Components.Schemas.Guild = player.hypixelGuild.data;
-		guildRenderer = <span style={{ color: `#${MinecraftColourAsHex[MinecraftFormatting[guild?.tagColor ?? "§7"]]}` }}>{guild.tag}</span>;
+		guildRenderer = <span style={ { color : `#${ MinecraftColourAsHex[ MinecraftFormatting[ guild?.tagColor ?? "§7" ] ] }` } }>{ guild.tag }</span>;
 	}
-	return <span>{guildRenderer}</span>;
+	return <span>{ guildRenderer }</span>;
 };
 
-export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
-	const { configStore, table } = useConfigStore((state) => ({ configStore: state, table: state.table }));
+export const PlayerHeadComponent: FC<PlayerCommonProperties> = ( { player } ) => {
+	const { configStore, table } = useConfigStore( ( state ) => ({ configStore : state, table : state.table }) );
 	let lunarRenderer: JSX.Element = <span />;
 	let srcUrl;
 
-	if (!player?.nicked) {
-		srcUrl = `https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`;
-		if (configStore.settings.lunar) {
-			if (player.sources.lunar !== undefined && player.sources.lunar !== null) {
-				if (player.sources?.lunar?.player?.online) {
-					if (player.sources?.lunar?.player?.lunarPlus?.premium) {
+	if ( ! player?.nicked ) {
+		srcUrl = `https://crafatar.com/avatars/${ player.hypixelPlayer?.uuid }?size=16&overlay=true`;
+		if ( configStore.settings.lunar ) {
+			if ( player.sources.lunar !== undefined && player.sources.lunar !== null ) {
+				if ( player.sources?.lunar?.player?.online ) {
+					if ( player.sources?.lunar?.player?.lunarPlus?.premium ) {
 						lunarRenderer = (
-							<span>
-								<img width='20px' height='20px' src='https://dl.seraph.si/lunarplus.webp' alt='lunar tag' />
-							</span>
+							<img src={'https://dl.seraph.si/lunarplus.webp'} alt={'lunar plus'}/>
 						);
 					} else {
 						lunarRenderer = (
-							<span>
-								<img width='20px' height='20px' src='https://img.icons8.com/nolan/512/ffffff/lunar-client.png' alt='lunar tag' />
-							</span>
+							<img src={'https://dl.seraph.si/lunar.webp'} alt={'lunar plus'}/>
 						);
 					}
 				}
@@ -62,129 +60,129 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	}
 
 	return (
-		<div className='inline flex' style={{ textAlign: table.settings.textAlign }}>
-			<img src={srcUrl} className='text-center' alt='player-head' />
-			{lunarRenderer}
+		<div className="inline flex space-x-1 w-9 h-4 text-center" style={ { textAlign : table.settings.textAlign } }>
+			<img src={ srcUrl } alt="player-head" />
+			{ lunarRenderer }
 		</div>
 	);
 };
 
-export const PlayerWinstreakComponent: FC<PlayerCommonProperties> = ({ player }) => {
-	const { table, settings } = useConfigStore((state) => ({ table: state.table, settings: state.settings }));
+export const PlayerWinstreakComponent: FC<PlayerCommonProperties> = ( { player } ) => {
+	const { table, settings } = useConfigStore( ( state ) => ({ table : state.table, settings : state.settings }) );
 
 	let renderer: JSX.Element;
-	if (!player.nicked) {
+	if ( ! player.nicked ) {
 		let playerValue = player.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
-		if (player.sources.keathiz != null && settings.keathiz) {
+		if ( player.sources.keathiz != null && settings.keathiz ) {
 			const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-			if (keathizTags?.player?.winstreak != null && keathizTags.player?.winstreak?.accurate == false) {
+			if ( keathizTags?.player?.winstreak != null && keathizTags.player?.winstreak?.accurate == false ) {
 				playerValue = keathizTags.player.winstreak.estimates.overall_winstreak;
 			}
 		}
-		if (player.sources.runApi?.data.blacklist.tagged && player.loaded) {
-			renderer = getTagsFromConfig("run.blacklist", playerValue);
+		if ( player.sources.runApi?.data.blacklist.tagged && player.loaded ) {
+			renderer = getTagsFromConfig( "run.blacklist", playerValue );
 		} else {
-			renderer = getCoreFromConfig(`core.winstreak`, playerValue);
+			renderer = getCoreFromConfig( `core.winstreak`, playerValue );
 		}
 	} else {
 		renderer = getPlayerTagDividerNicked();
 	}
 
-	return <div style={{ textAlign: table.settings.textAlign }}>{renderer}</div>;
+	return <div style={ { textAlign : table.settings.textAlign } }>{ renderer }</div>;
 };
 
-export const PlayerStarComponent: FC<PlayerCommonProperties> = ({ player }) => {
-	const { table } = useConfigStore((state) => ({ table: state.table }));
-	const { run } = useTagStore((state) => ({ run: state.run }));
+export const PlayerStarComponent: FC<PlayerCommonProperties> = ( { player } ) => {
+	const { table } = useConfigStore( ( state ) => ({ table : state.table }) );
+	const { run } = useTagStore( ( state ) => ({ run : state.run }) );
 
 	let starRenderer: JSX.Element;
-	if (!player.nicked && player.hypixelPlayer !== null) {
-		const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
-		if (!player.sources.runApi?.data.blacklist?.tagged) {
-			if (bwLevel.level < 1000) {
-				starRenderer = <span style={{ color: `#${bwLevel.prestigeColourHex}` }}>{`[${bwLevel.level}✫]`}</span>;
+	if ( ! player.nicked && player.hypixelPlayer !== null ) {
+		const bwLevel = getBedwarsLevelInfo( player.hypixelPlayer );
+		if ( ! player.sources.runApi?.data.blacklist?.tagged ) {
+			if ( bwLevel.level < 1000 ) {
+				starRenderer = <span style={ { color : `#${ bwLevel.prestigeColourHex }` } }>{ `[${ bwLevel.level }✫]` }</span>;
 			} else {
-				starRenderer = <Interweave content={getHighLevelPrestigeColour(bwLevel)} />;
+				starRenderer = <Interweave content={ getHighLevelPrestigeColour( bwLevel ) } />;
 			}
 		} else {
-			starRenderer = <span style={{ color: `#${run.blacklist.colour}` }}>{bwLevel.level ?? 0}</span>;
+			starRenderer = <span style={ { color : `#${ run.blacklist.colour }` } }>{ bwLevel.level ?? 0 }</span>;
 		}
 	} else {
-		starRenderer = <span style={{ color: `#${run.blacklist.colour}` }}>?</span>;
+		starRenderer = <span style={ { color : `#${ run.blacklist.colour }` } }>?</span>;
 	}
 
-	return <div style={{ textAlign: table.settings.textAlign }}>{starRenderer}</div>;
+	return <div style={ { textAlign : table.settings.textAlign } }>{ starRenderer }</div>;
 };
 
-export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) => {
-	const values: [string, string][] = [];
-	const [timer, setTimer] = useState(0);
-	const { table } = useConfigStore((state) => ({ table: state.table }));
+export const PlayerSessionComponent: FC<PlayerCommonProperties> = ( { player } ) => {
+	const values: [ string, string ][] = [];
+	const [ timer, setTimer ] = useState( 0 );
+	const { table } = useConfigStore( ( state ) => ({ table : state.table }) );
 
-	useEffect(() => {
-		if (!player.nicked && player?.hypixelPlayer?.lastLogout) {
-			setTimeout(() => {
-				setTimer(new Date().getUTCMilliseconds());
-			}, 1000);
+	useEffect( () => {
+		if ( ! player.nicked && player?.hypixelPlayer?.lastLogout ) {
+			setTimeout( () => {
+				setTimer( new Date().getUTCMilliseconds() );
+			}, 1000 );
 		}
-	}, [timer]);
+	}, [ timer ] );
 
-	if (!player.nicked && player.hypixelPlayer) {
-		if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
-			values.push(["N/A", "ff0000"]);
+	if ( ! player.nicked && player.hypixelPlayer ) {
+		if ( player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null ) {
+			values.push( [ "N/A", "ff0000" ] );
 		} else {
-			const lastLoginDate: Date = new Date(0);
-			lastLoginDate.setUTCMilliseconds(player.hypixelPlayer.lastLogin);
+			const lastLoginDate: Date = new Date( 0 );
+			lastLoginDate.setUTCMilliseconds( player.hypixelPlayer.lastLogin );
 			const now_timezoned: Date = new Date();
 			const now = new Date();
-			now.setUTCMilliseconds(now_timezoned.getUTCMilliseconds());
+			now.setUTCMilliseconds( now_timezoned.getUTCMilliseconds() );
 
-			if (player.hypixelPlayer.lastLogin > player.hypixelPlayer.lastLogout) {
-				const timeDiff = new Date(now_timezoned.getTime() - lastLoginDate.getTime());
-				if ((timeDiff.getUTCHours() >= 3 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 4) {
-					values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "00ff00"]);
-				} else if ((timeDiff.getUTCHours() >= 0 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 2) {
-					values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ffff00"]);
+			if ( player.hypixelPlayer.lastLogin > player.hypixelPlayer.lastLogout ) {
+				const timeDiff = new Date( now_timezoned.getTime() - lastLoginDate.getTime() );
+				if ( (timeDiff.getUTCHours() >= 3 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 4 ) {
+					values.push( [ `${ timeDiff.getUTCHours() }`.padStart( 2, "0" ) + ":" + `${ timeDiff.getUTCMinutes() }`.padStart( 2, "0" ) + ":" + `${ timeDiff.getUTCSeconds() }`.padStart( 2, "0" ), "00ff00" ] );
+				} else if ( (timeDiff.getUTCHours() >= 0 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 2 ) {
+					values.push( [ `${ timeDiff.getUTCHours() }`.padStart( 2, "0" ) + ":" + `${ timeDiff.getUTCMinutes() }`.padStart( 2, "0" ) + ":" + `${ timeDiff.getUTCSeconds() }`.padStart( 2, "0" ), "ffff00" ] );
 				} else {
-					values.push([`${timeDiff.getUTCHours()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCMinutes()}`.padStart(2, "0") + ":" + `${timeDiff.getUTCSeconds()}`.padStart(2, "0"), "ff0000"]);
+					values.push( [ `${ timeDiff.getUTCHours() }`.padStart( 2, "0" ) + ":" + `${ timeDiff.getUTCMinutes() }`.padStart( 2, "0" ) + ":" + `${ timeDiff.getUTCSeconds() }`.padStart( 2, "0" ), "ff0000" ] );
 				}
 			} else {
-				values.push(["Offline", "ff0000"]);
+				values.push( [ "Offline", "ff0000" ] );
 			}
 		}
 
 		return (
-			<div style={{ textAlign: table.settings.textAlign }}>
-				{values.map(([session_timer, hex], index) => (
-					<span key={index} style={{ color: `#${hex}` }}>
-						{session_timer}
+			<div style={ { textAlign : table.settings.textAlign } }>
+				{ values.map( ( [ session_timer, hex ], index ) => (
+					<span key={ index } style={ { color : `#${ hex }` } }>
+						{ session_timer }
 					</span>
-				))}
+				) ) }
 			</div>
 		);
 	}
-	return <span className={"text-red-500"}>N/A</span>;
+	return <span className={ "text-red-500" }>N/A</span>;
 };
 
-export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
-	const { run } = useTagStore((state) => ({ run: state.run }));
-	const { settings, table, keathiz } = useConfigStore((state) => ({ settings: state.settings, table: state.table, keathiz: state.keathiz }));
+export const PlayerNameComponent: FC<PlayerCommonProperties> = ( { player } ) => {
+	const { run } = useTagStore( ( state ) => ({ run : state.run }) );
+	const { settings, table, keathiz } = useConfigStore( ( state ) => ({ settings : state.settings, table : state.table, keathiz : state.keathiz }) );
 
 	const handleDenickEvent = () => {
-		useConfigStore.getState().setKeathizData({ ...keathiz, showNick: !keathiz.showNick });
+		useConfigStore.getState().setKeathizData( { ...keathiz, showNick : ! keathiz.showNick } );
 	};
 
 	let rankPlayer: JSX.Element;
-	if (!player.nicked && player.hypixelPlayer && !player.sources.runApi?.data?.blacklist?.tagged) {
-		const rank = getPlayerRank(player?.hypixelPlayer, false);
+	if ( ! player.nicked && player.hypixelPlayer && ! player.sources.runApi?.data?.blacklist?.tagged ) {
+		const rank = getPlayerRank( player?.hypixelPlayer, false );
 		let playerName = player?.hypixelPlayer?.displayname;
-		if (player.denicked) {
-			if (keathiz.showNick) {
+		if ( player.denicked ) {
+			if ( keathiz.showNick ) {
 				rankPlayer = (
 					<span>
-						{settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>{" "}
-						<span className={"font-bold"} onClick={handleDenickEvent}>
-							<FontAwesomeIcon icon={faEye} />
+						{ settings.appearance.displayRank ? <Interweave content={ `${ rank.rankHtml }` } /> : <span /> } <span style={ { color : `#${ rank.colourHex }` } }>{ playerName }</span>{ " " }
+						<span className={ "font-bold" } onClick={ handleDenickEvent }>
+							<FontAwesomeIcon icon={ faEye } />
 						</span>
 					</span>
 				);
@@ -192,9 +190,9 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				playerName = player.name;
 				rankPlayer = (
 					<span>
-						<span style={{ color: `#${run.blacklist.colour}` }}>{playerName}</span>{" "}
-						<span className={"font-bold"} onClick={handleDenickEvent}>
-							<FontAwesomeIcon icon={faEyeSlash} />
+						<span style={ { color : `#${ run.blacklist.colour }` } }>{ playerName }</span>{ " " }
+						<span className={ "font-bold" } onClick={ handleDenickEvent }>
+							<FontAwesomeIcon icon={ faEyeSlash } />
 						</span>
 					</span>
 				);
@@ -202,271 +200,347 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 		} else {
 			rankPlayer = (
 				<span>
-					{settings.appearance.displayRank ? <Interweave content={`${rank.rankHtml}`} /> : <span />} <span style={{ color: `#${rank.colourHex}` }}>{playerName}</span>
+					{ settings.appearance.displayRank ? <Interweave content={ `${ rank.rankHtml }` } /> : <span /> } <span style={ { color : `#${ rank.colourHex }` } }>{ playerName }</span>
 				</span>
 			);
 		}
-	} else if (!player.nicked && player.hypixelPlayer && player.sources.runApi?.data.blacklist.tagged) {
+	} else if ( ! player.nicked && player.hypixelPlayer && player.sources.runApi?.data.blacklist.tagged ) {
 		rankPlayer = (
 			<span>
-				<span style={{ color: `#${run.blacklist.colour}` }}>{player?.hypixelPlayer?.displayname}</span>
+				<span style={ { color : `#${ run.blacklist.colour }` } }>{ player?.hypixelPlayer?.displayname }</span>
 			</span>
 		);
 	} else {
-		rankPlayer = <span style={{ color: `#${run.blacklist.colour}` }}>{player.name}</span>;
+		rankPlayer = <span style={ { color : `#${ run.blacklist.colour }` } }>{ player.name }</span>;
 	}
 
 	return (
-		<div style={{ textAlign: table.settings.textAlign }}>
-			<StatsisticsTooltip player={player}>{rankPlayer}</StatsisticsTooltip>
+		<div style={ { textAlign : table.settings.textAlign } }>
+			<StatsisticsTooltip player={ player }>{ rankPlayer }</StatsisticsTooltip>
 		</div>
 	);
 };
 
-export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ({ key, playerNick, handleAdd, handleRemove }) => {
-	const { nicksLocal, hypixelApiKey } = useConfigStore((state) => ({
-		nicksLocal: state.nicks,
-		hypixelApiKey: state.hypixel.apiKey,
-	}));
-	const [playerNickname, setPlayerNickname] = useState<PlayerNickname>(nicksLocal.filter((player) => player.nick.toLowerCase() == playerNick.nick.toLowerCase())[0]);
+export const PlayerNicknameViewComponent: FC<PlayerNickNameView> = ( { key, playerNick, handleAdd, handleRemove } ) => {
+	const { nicksLocal, hypixelApiKey } = useConfigStore( ( state ) => ({
+		nicksLocal : state.nicks,
+		hypixelApiKey : state.hypixel.apiKey,
+	}) );
+	const [ playerNickname, setPlayerNickname ] = useState<PlayerNickname>( nicksLocal.filter( ( player ) => player.nick.toLowerCase() == playerNick.nick.toLowerCase() )[ 0 ] );
 
 	return (
 		<SettingCard>
 			<span>
 				<InputTextBox
-					onBlur={async (event) => {
+					onBlur={ async ( event ) => {
 						const userInput = event.currentTarget.value;
-						if (userInput.length == 0) return;
-						const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, hypixelApiKey, userInput]);
-						const user = nicksLocal.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
-						if (user) {
-							const users = nicksLocal.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
+						if ( userInput.length == 0 ) return;
+						const hypixelRequest = await window.ipcRenderer.invoke<Components.Schemas.Player>( IpcValidInvokeChannels.HYPIXEL, [ RequestType.USERNAME, hypixelApiKey, userInput ] );
+						const user = nicksLocal.some( ( player ) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase() );
+						if ( user ) {
+							const users = nicksLocal.filter( ( player ) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase() );
 							const newState = {
-								uuid: hypixelRequest?.data?.uuid,
-								name: hypixelRequest?.data?.displayname,
-								nick: playerNickname.nick,
-								added: Date.now(),
+								uuid : hypixelRequest?.data?.uuid,
+								name : hypixelRequest?.data?.displayname,
+								nick : playerNickname.nick,
+								added : Date.now(),
 							};
-							useConfigStore.getState().setNicks([...users, newState]);
-							setPlayerNickname(newState);
+							useConfigStore.getState().setNicks( [ ...users, newState ] );
+							setPlayerNickname( newState );
 						}
-					}}
-					options={{ placeholder: "Username", value: playerNickname.name, label: { text: "Username" } }}
+					} }
+					options={ { placeholder : "Username", value : playerNickname.name, label : { text : "Username" } } }
 				/>
 			</span>
 			<span>
 				<InputTextBox
-					onBlur={async (event) => {
+					onBlur={ async ( event ) => {
 						const userInput = event.currentTarget.value;
-						if (userInput.length == 0) return;
-						setPlayerNickname({ ...playerNickname, nick: userInput });
-						const user = nicksLocal.some((player) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase());
-						if (user) {
-							const users = nicksLocal.filter((player) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase());
-							useConfigStore.getState().setNicks([...users, playerNickname]);
+						if ( userInput.length == 0 ) return;
+						setPlayerNickname( { ...playerNickname, nick : userInput } );
+						const user = nicksLocal.some( ( player ) => player.uuid.toLowerCase() == playerNickname.uuid.toLowerCase() );
+						if ( user ) {
+							const users = nicksLocal.filter( ( player ) => player.uuid.toLowerCase() != playerNickname.uuid.toLowerCase() );
+							useConfigStore.getState().setNicks( [ ...users, playerNickname ] );
 						}
-					}}
-					onChange={async (event) => {
+					} }
+					onChange={ async ( event ) => {
 						const userInput = event.currentTarget.value;
-						if (userInput.length == 0 || userInput.toLowerCase() == playerNickname.nick.toLowerCase()) return;
-						setPlayerNickname({ ...playerNickname, nick: userInput });
-					}}
-					options={{ placeholder: "Nickname", value: playerNickname.nick, label: { text: "Nickname" } }}
+						if ( userInput.length == 0 || userInput.toLowerCase() == playerNickname.nick.toLowerCase() ) return;
+						setPlayerNickname( { ...playerNickname, nick : userInput } );
+					} }
+					options={ { placeholder : "Nickname", value : playerNickname.nick, label : { text : "Nickname" } } }
 				/>
 			</span>
 			<span>
 				<InputBoxButton
-					text={"Remove"}
-					onClick={() => {
-						handleRemove(playerNickname);
-					}}
-					options={{ colour: "error" }}
+					text={ "Remove" }
+					onClick={ () => {
+						handleRemove( playerNickname );
+					} }
+					options={ { colour : "error" } }
 				/>
 			</span>
 		</SettingCard>
 	);
 };
 
-export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
-	const { settings, hypixel, runConfig, table } = useConfigStore((state) => ({
-		settings: state.settings,
-		hypixel: state.hypixel,
-		runConfig: state.run,
-		table: state.table,
-	}));
+export const PlayerTagsComponent: FC<PlayerCommonProperties> = ( { player } ) => {
+	const { settings, hypixel, runConfig, table } = useConfigStore( ( state ) => ({
+		settings : state.settings,
+		hypixel : state.hypixel,
+		runConfig : state.run,
+		table : state.table,
+	}) );
 
 	let tagArray: Array<JSX.Element> = [];
-	if (!player.nicked && runConfig.valid && player.sources.runApi != null) {
+	if ( ! player.nicked && runConfig.valid && player.sources.runApi != null ) {
 		let singularTag = false;
 		const runApi = player.sources.runApi?.data;
 		const customData = player?.sources?.customFile;
 		const customUrl = player?.sources?.customApi;
 		const isPremium = runConfig.apiKey.toLowerCase() != "public";
-		if (runApi?.blacklist?.tagged) {
-			tagArray.push(getTagsFromConfig("run.blacklist"));
-		} else if (runApi?.bot?.tagged) {
-			tagArray.push(getTagsFromConfig("run.bot"));
-		} else if (runApi?.customTag) {
-			parseColour(runApi.customTag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
+		if ( runApi?.blacklist?.tagged ) {
+			tagArray.push( getTagsFromConfig( "run.blacklist" ) );
+		} else if ( runApi?.bot?.tagged ) {
+			tagArray.push( getTagsFromConfig( "run.bot" ) );
+		} else if ( runApi?.customTag ) {
+			parseColour( runApi.customTag ).forEach( ( tag: [ string, string ] ) => tagArray.push( <span style={ { color : `#${ tag[ 1 ] }` } }>{ tag[ 0 ] }</span> ) );
 		} else {
-			if (settings.preferences.customFile && customData?.tags != null) {
-				for (const tag of customData.tags) {
-					if (tag?.singularTag) {
+			if ( settings.preferences.customFile && customData?.tags != null ) {
+				for ( const tag of customData.tags ) {
+					if ( tag?.singularTag ) {
 						tagArray = [];
-						if (tag.tag.includes("§")) {
-							parseColour(tag.tag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
+						if ( tag.tag.includes( "§" ) ) {
+							parseColour( tag.tag ).forEach( ( tag: [ string, string ] ) => tagArray.push( <span style={ { color : `#${ tag[ 1 ] }` } }>{ tag[ 0 ] }</span> ) );
 						} else {
-							tagArray.push(<span style={{ color: tag.hex }}>{tag.tag}</span>);
+							tagArray.push( <span style={ { color : tag.hex } }>{ tag.tag }</span> );
 						}
 						singularTag = true;
 						break;
 					} else {
-						if (tag.tag.includes("§")) {
-							parseColour(tag.tag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
+						if ( tag.tag.includes( "§" ) ) {
+							parseColour( tag.tag ).forEach( ( tag: [ string, string ] ) => tagArray.push( <span style={ { color : `#${ tag[ 1 ] }` } }>{ tag[ 0 ] }</span> ) );
 						} else {
-							tagArray.push(<span style={{ color: tag.hex }}>{tag.tag}</span>);
+							tagArray.push( <span style={ { color : tag.hex } }>{ tag.tag }</span> );
 						}
 					}
 				}
 			}
-			if (settings.preferences.customUrl && customUrl?.tags) {
-				for (const tag of customUrl.tags) {
-					if (tag?.singularTag) {
+			if ( settings.preferences.customUrl && customUrl?.tags ) {
+				for ( const tag of customUrl.tags ) {
+					if ( tag?.singularTag ) {
 						tagArray = [];
-						if (tag.tag.includes("§")) {
-							parseColour(tag.tag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
+						if ( tag.tag.includes( "§" ) ) {
+							parseColour( tag.tag ).forEach( ( tag: [ string, string ] ) => tagArray.push( <span style={ { color : `#${ tag[ 1 ] }` } }>{ tag[ 0 ] }</span> ) );
 						} else {
-							tagArray.push(<span style={{ color: tag.hex }}>{tag.tag}</span>);
+							tagArray.push( <span style={ { color : tag.hex } }>{ tag.tag }</span> );
 						}
 						singularTag = true;
 						break;
 					} else {
-						if (tag.tag.includes("§")) {
-							parseColour(tag.tag).forEach((tag: [string, string]) => tagArray.push(<span style={{ color: `#${tag[1]}` }}>{tag[0]}</span>));
+						if ( tag.tag.includes( "§" ) ) {
+							parseColour( tag.tag ).forEach( ( tag: [ string, string ] ) => tagArray.push( <span style={ { color : `#${ tag[ 1 ] }` } }>{ tag[ 0 ] }</span> ) );
 						} else {
-							tagArray.push(<span style={{ color: tag.hex }}>{tag.tag}</span>);
+							tagArray.push( <span style={ { color : tag.hex } }>{ tag.tag }</span> );
 						}
 					}
 				}
 			}
-			if (!singularTag) {
-				if (player?.sources?.boomza?.status === 200) {
-					const boomza = destr(player.sources.boomza.data);
-					if (boomza?.sniper) {
-						tagArray.push(getTagsFromConfig("boomza.sniper"));
+			if ( ! singularTag ) {
+				if ( player?.sources?.boomza?.status === 200 ) {
+					const boomza = destr( player.sources.boomza.data );
+					if ( boomza?.sniper ) {
+						tagArray.push( getTagsFromConfig( "boomza.sniper" ) );
 					}
-					if (boomza?.report) {
-						tagArray.push(getTagsFromConfig("boomza.cheater"));
-					}
-				}
-				if (runApi?.safelist?.tagged) {
-					tagArray.push(getTagsFromConfig("run.safelist", runApi.safelist.timesKilled));
-				}
-				if (runApi?.safelist?.personal) {
-					tagArray.push(getTagsFromConfig("run.personal_safelist", runApi.safelist.timesKilled));
-				}
-				if (runApi?.name_change.last_change && isPremium) {
-					const timeNow = Date.now();
-					const nameBefore = new Date(runApi?.name_change.last_change);
-					const diffInMs = Math.abs(timeNow - nameBefore.getTime());
-					const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
-					if (result) {
-						tagArray.push(getTagsFromConfig("run.name_change"));
+					if ( boomza?.report ) {
+						tagArray.push( getTagsFromConfig( "boomza.cheater" ) );
 					}
 				}
-				if (settings.run.friends && player?.friended) {
-					tagArray.push(getTagsFromConfig("run.friends"));
+				if ( runApi?.safelist?.tagged ) {
+					tagArray.push( getTagsFromConfig( "run.safelist", runApi.safelist.timesKilled ) );
 				}
-				if (runApi?.statistics?.encounters != 0 ?? false) {
-					tagArray.push(getTagsFromConfig("run.encounters", runApi?.statistics.encounters));
+				if ( runApi?.safelist?.personal ) {
+					tagArray.push( getTagsFromConfig( "run.personal_safelist", runApi.safelist.timesKilled ) );
 				}
-				if (player?.hypixelPlayer?.channel == "PARTY") {
-					tagArray.push(getTagsFromConfig("hypixel.party"));
+				if ( runApi?.name_change.last_change ) {
+					tagArray.push( getTagsFromConfig( "run.name_change" ) );
 				}
-				if (player.sources.polsu?.sessions) {
+				if ( settings.run.friends && player?.friended ) {
+					tagArray.push( getTagsFromConfig( "run.friends" ) );
+				}
+				if ( runApi?.statistics?.encounters != 0 ?? false ) {
+					tagArray.push( getTagsFromConfig( "run.encounters", runApi?.statistics.encounters ) );
+				}
+				if ( player?.hypixelPlayer?.channel == "PARTY" ) {
+					tagArray.push( getTagsFromConfig( "hypixel.party" ) );
+				}
+				if ( player.sources.polsu?.sessions ) {
 					const polsuSession = player.sources.polsu.sessions.data;
-					const isNew = polsuSession?.new || polsuSession?.started == polsuSession?.player?.last_changed;
-					if (isNew) {
-						tagArray.push(<span className={"text-green-500"}>R</span>);
+					const isNew = polsuSession?.new
+					if ( isNew ) {
+						tagArray.push( <span className={ "text-green-500" }>R</span> );
 					}
-					if (polsuSession?.player?.last_changed != null && !isNew && isPremium) {
+					if ( polsuSession?.player?.last_changed != null && ! isNew && isPremium ) {
 						const timeNow = Date.now();
-						const nameBefore = new Date(polsuSession.player.last_changed * 1000);
-						const diffInMs = Math.abs(timeNow - nameBefore.getTime());
+						const nameBefore = new Date( polsuSession.player.last_changed * 1000 );
+						const diffInMs = Math.abs( timeNow - nameBefore.getTime() );
 						const result = diffInMs / (1000 * 60 * 60 * 24) <= 10;
-						if (result) {
-							tagArray.push(getTagsFromConfig("run.name_change"));
+						if ( result ) {
+							tagArray.push( getTagsFromConfig( "run.name_change" ) );
 						}
 					}
 				}
-				if (settings.keathiz && player?.hypixelPlayer?.uuid != undefined) {
-					if (player?.sources?.keathiz == null && player.loaded) {
-						tagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>ERROR</span>);
+				if ( settings.keathiz && player?.hypixelPlayer?.uuid != undefined ) {
+					if ( player?.sources?.keathiz == null && player.loaded ) {
+						tagArray.push( <span style={ { color : `#${ MinecraftColours.DARK_RED.hex }` } }>ERROR</span> );
 					} else {
-						if (player?.sources?.keathiz?.status == 200 && player?.sources?.keathiz?.data) {
+						if ( player?.sources?.keathiz?.status == 200 && player?.sources?.keathiz?.data ) {
 							const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
-							if (keathizTags?.player?.exits?.last_10_min ?? 0 >= 1) {
-								tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`E10`}</span>);
+							if ( keathizTags?.player?.exits?.last_10_min ?? 0 >= 1 ) {
+								tagArray.push( <span style={ { color : `#${ MinecraftColours.GOLD.hex }` } }>{ `E10` }</span> );
 							}
-							if (keathizTags?.player?.queues?.total ?? 0 == 0) {
-								tagArray.push(getTagsFromConfig("keathiz.queues.queue_total"));
+							if ( keathizTags?.player?.queues?.total ?? 0 == 0 ) {
+								tagArray.push( getTagsFromConfig( "keathiz.queues.queue_total" ) );
 							}
-							if (keathizTags?.player?.queues?.last_3_min ?? 0 >= 2) {
+							if ( keathizTags?.player?.queues?.last_3_min ?? 0 >= 2 ) {
 								const count = keathizTags?.player.queues.last_3_min;
-								tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q3-${count}`}</span>);
+								tagArray.push( <span style={ { color : `#${ MinecraftColours.GOLD.hex }` } }>{ `Q3-${ count }` }</span> );
 							}
-							if (keathizTags?.player?.queues?.last_10_min ?? 0 >= 2) {
+							if ( keathizTags?.player?.queues?.last_10_min ?? 0 >= 2 ) {
 								const count = keathizTags?.player.queues.last_10_min;
-								tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q10-${count}`}</span>);
+								tagArray.push( <span style={ { color : `#${ MinecraftColours.GOLD.hex }` } }>{ `Q10-${ count }` }</span> );
 							}
-							if (keathizTags?.player?.queues?.last_30_min ?? 0 >= 5) {
+							if ( keathizTags?.player?.queues?.last_30_min ?? 0 >= 5 ) {
 								const count = keathizTags?.player?.queues?.last_30_min;
-								tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q30-${count}`}</span>);
+								tagArray.push( <span style={ { color : `#${ MinecraftColours.GOLD.hex }` } }>{ `Q30-${ count }` }</span> );
 							}
-							if (keathizTags?.player?.queues?.last_24_hours ?? 0 >= 50) {
-								tagArray.push(<span style={{ color: `#${MinecraftColours.GOLD.hex}` }}>{`Q24`}</span>);
+							if ( keathizTags?.player?.queues?.last_24_hours ?? 0 >= 50 ) {
+								tagArray.push( <span style={ { color : `#${ MinecraftColours.GOLD.hex }` } }>{ `Q24` }</span> );
 							}
-							if (keathizTags?.player?.queues?.consecutive_queue_checks?.weighted["1_min_requeue"] ?? 0 >= 50) {
-								tagArray.push(getTagsFromConfig("keathiz.one_minute_requeue"));
+							if ( keathizTags?.player?.queues?.consecutive_queue_checks?.weighted[ "1_min_requeue" ] ?? 0 >= 50 ) {
+								tagArray.push( getTagsFromConfig( "keathiz.one_minute_requeue" ) );
 							}
 							if (
-								keathizTags?.player?.queues?.consecutive_queue_checks?.last_30_queues["1_min_requeue"] ??
+								keathizTags?.player?.queues?.consecutive_queue_checks?.last_30_queues[ "1_min_requeue" ] ??
 								0 >= 15 ??
-								keathizTags?.player?.queues?.consecutive_queue_checks?.last_10_queues["1_min_requeue"] ??
+								keathizTags?.player?.queues?.consecutive_queue_checks?.last_10_queues[ "1_min_requeue" ] ??
 								0 >= 5 ??
-								keathizTags?.player?.queues?.consecutive_queue_checks?.last_10_queues["2_min_requeue"] ??
+								keathizTags?.player?.queues?.consecutive_queue_checks?.last_10_queues[ "2_min_requeue" ] ??
 								0 >= 6 ??
-								keathizTags?.player?.queues?.consecutive_queue_checks?.last_10_queues["3_min_requeue"] ??
+								keathizTags?.player?.queues?.consecutive_queue_checks?.last_10_queues[ "3_min_requeue" ] ??
 								0 >= 8
 							) {
-								tagArray.push(getTagsFromConfig("keathiz.consecutive"));
+								tagArray.push( getTagsFromConfig( "keathiz.consecutive" ) );
 							}
 						} else {
-							if (useConfigStore.getState().settings.keathiz) tagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>{`FAILED`}</span>);
+							if ( useConfigStore.getState().settings.keathiz ) tagArray.push( <span style={ { color : `#${ MinecraftColours.DARK_RED.hex }` } }>{ `FAILED` }</span> );
 						}
 					}
 				}
 			}
 		}
 	} else {
-		if (!player.nicked && player.loaded) {
-			if (!runConfig.valid) {
-				tagArray.push(<span className={"text-red-500"}>Seraph Key Locked</span>);
-			} else if (hypixel.apiKeyValid) {
-				tagArray.push(<span className={"text-red-500"}>NICKED</span>);
+		if ( ! player.nicked && player.loaded ) {
+			if ( ! runConfig.valid ) {
+				tagArray.push( <span className={ "text-red-500" }>Seraph Key Locked</span> );
+			} else if ( hypixel.apiKeyValid ) {
+				tagArray.push( <span className={ "text-red-500" }>NICKED</span> );
 			} else {
-				tagArray.push(<span className={"text-red-500"}>Invalid Hypixel API Key</span>);
+				tagArray.push( <span className={ "text-red-500" }>Invalid Hypixel API Key</span> );
 			}
 		}
 	}
 
 	return (
-		<div style={{ textAlign: table.settings.textAlign }}>
-			{tagArray.map((value, index) => (
-				<span key={index} className={index != 0 ? "pl-1" : ""}>
-					{value}
+		<div style={ { textAlign : table.settings.textAlign } }>
+			{ tagArray.map( ( value, index ) => (
+				<span key={ index } className={ index != 0 ? "pl-1" : "" }>
+					{ value }
 				</span>
-			))}
+			) ) }
+		</div>
+	);
+};
+
+export const PlayerNetworkLevel: FC<PlayerCommonProperties> = ( { player } ) => {
+	const {  table } = useConfigStore( ( state ) => ({
+		table : state.table,
+	}) );
+	let playerNetworkLevel: NetworkLevel & {colour: string } =  {
+		currentExp : 0,
+		expToLevel : 0,
+		expToNextLevel : 0,
+		level : 0,
+		preciseLevel : 0,
+		remainingExpToNextLevel : 0,
+		colour: "FF5555"
+	}
+	if ( !player.nicked && player.hypixelPlayer ){
+		const tempNetworkLevel = getNetworkLevel(player.hypixelPlayer)
+		const localPlayerNetworkLevel = {
+			...tempNetworkLevel,
+			colour: 'FF5555'
+		}
+		const colourArray:Array<Colour> = [
+			{
+				requirement:0,
+				colour: '555555',
+				operator: '<='
+			},
+			{
+				requirement:26,
+				colour: 'aaaaaa',
+				operator: '<='
+			},{
+				requirement:99,
+				colour: 'ffffff',
+				operator: '<='
+			},
+			{
+				requirement:150,
+				colour: 'ffaa00',
+				operator: '<='
+			},
+			{
+				requirement:200,
+				colour: '00AA00',
+				operator: '<='
+			},
+			{
+				requirement:220,
+				colour: 'ff5555',
+				operator: '<='
+			},
+			{
+				requirement:250,
+				colour: 'aa0000',
+				operator: '<='
+			},
+			{
+				requirement: 300,
+				colour:'ff55ff',
+				operator:"<="
+			},
+			{
+				requirement:500,
+				colour: '800080',
+				operator: '<='
+			},
+		]
+		const arr = colourArray.sort((a, b) => a.requirement - b.requirement);
+		for (const { colour, requirement } of arr) {
+			if (localPlayerNetworkLevel.level >= requirement) {
+				localPlayerNetworkLevel.colour = colour;
+			}
+		}
+		playerNetworkLevel = localPlayerNetworkLevel;
+	}
+	return (
+		<div style={ { textAlign : table.settings.textAlign } }>
+		<Tooltip title={<span className={"capitalize"}>Network Level</span>} arrow>
+			<span style={{ color: `#${playerNetworkLevel.colour}` }}>{playerNetworkLevel?.level ?? 0}</span>
+		</Tooltip>
 		</div>
 	);
 };
