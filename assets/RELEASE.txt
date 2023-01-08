@@ -1,0 +1,13 @@
+**1.6.1**
+
+**Features:**
+
+- Made the sidebar look nicer
+- Added Network Level as a column
+
+**Fixes:**
+- Lunar logo and head not aligning
+- Tag not removing underscore in tooltip
+- Players with only a login hiding overlay
+- Fixed Polsu showing "R" if disabled
+- Fixed Nan breaking sorting

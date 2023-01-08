@@ -82,7 +82,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				playerData.name.length <= 16
 					? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name, useConfigStore.getState().hypixel.proxy ? "sdad" : undefined])
 					: await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", ""), useConfigStore.getState().hypixel.proxy ? "dsadas" : undefined]);
-			console.log(ipcHypixelPlayer.data.uuid);
 			if ((ipcHypixelPlayer?.data?.uuid == null || ipcHypixelPlayer.status != 200) && !playerData.denicked) {
 				const data: unknown = ipcHypixelPlayer.data;
 				let cause, code;
@@ -259,9 +258,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 		}
 
 		if (!playerData.nicked) {
-			if (playerData.name == playerData.hypixelPlayer!.uuid) {
-				playerData.name = playerData.hypixelPlayer!.displayname.toLowerCase();
-			}
 			playerData.loaded = true;
 		}
 
