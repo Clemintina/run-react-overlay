@@ -165,7 +165,7 @@ export const createAppWindow = (): BrowserWindow => {
 			const line = req.query.msg;
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const newLine = line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "");
+			const newLine = JSON.parse(JSON.stringify(line.replaceAll(/\u00A7[\dA-FK-OR]/gi, "")));
 			appWindow?.webContents.send(
 				"logFileLine",
 				handleIPCSend<LogFileMessage>({
