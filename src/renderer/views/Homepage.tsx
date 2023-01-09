@@ -14,7 +14,7 @@ import { AppInformation } from "@common/utils/Schemas";
 import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
 import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { CustomHeader } from "@components/AppComponents";
-import { PlayerOptionsModal } from "@components/BaseComponents";
+import { PlayerMenuOption, PlayerOptionsModal } from "@components/BaseComponents";
 import { getPlayerRank } from "@common/zikeji";
 import { OverlayTooltip } from "@components/TooltipComponents";
 
@@ -175,10 +175,10 @@ export const columnDefsBase: ColDef<Player>[] = [
 	},
 	{
 		field: "report",
-		headerName: "Report",
+		headerName: "extra",
 		sortable: false,
 		cellRenderer: ({ data }) => {
-			return <PlayerOptionsModal data={data} />;
+			return <PlayerMenuOption player={data} />;
 		},
 	},
 	{
