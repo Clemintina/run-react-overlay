@@ -194,13 +194,13 @@ export const columnDefsBase: ColDef<Player>[] = [
 
 const checkIfNich = (num1: number | undefined, num2: number | undefined, isDescending) => {
 	if (num1 == undefined || isNaN(num1)) {
-		return isDescending ? 1 : -1;
-	} else if (num2 == undefined || isNaN(num2)) {
 		return isDescending ? -1 : 1;
-	} else if (Math.round(num1) == 0 && num2 != 0) {
-		return isDescending ? 2 : -2;
-	} else if (Math.round(num2) == 0 && num1 != 0) {
-		return isDescending ? -2 : 2;
+	} else if (num2 == undefined || isNaN(num2)) {
+		return isDescending ? 1 : -1;
+	} else if (num1 == 0 && num2 != 0) {
+		return isDescending ? 1 : -1;
+	} else if (num2 == 0 && num1 != 0) {
+		return isDescending ? -1 : 1;
 	} else {
 		return num1 - num2;
 	}
