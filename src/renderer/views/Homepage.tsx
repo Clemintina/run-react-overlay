@@ -175,7 +175,7 @@ export const columnDefsBase: ColDef<Player>[] = [
 	},
 	{
 		field: "report",
-		headerName: "extra",
+		headerName: "Extra",
 		sortable: false,
 		cellRenderer: ({ data }) => {
 			return <PlayerMenuOption player={data} />;

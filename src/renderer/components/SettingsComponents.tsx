@@ -30,7 +30,7 @@ import { PlayerNicknameViewComponent } from "@components/PlayerComponents";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
-export const ApiOptions = () => {
+export const ApiOptions:FC = () => {
 	const { hypixel, settings, keathiz, polsu } = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		settings: state.settings,
@@ -225,7 +225,7 @@ export const ApiOptions = () => {
 	);
 };
 
-export const Appearance = () => {
+export const Appearance:FC = () => {
 	const localConfigStore = useConfigStore<ConfigStore>((state) => state);
 	const { settings, browserWindow, font, table } = useConfigStore((state) => ({
 		settings: state.settings,
@@ -373,7 +373,7 @@ export const Appearance = () => {
 	);
 };
 
-export const KeybindEditorView = () => {
+export const KeybindEditorView:FC = () => {
 	const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));
 	const [controlBind, setControlBind] = useState<KeybindInterface>({ keybind: "", focus: "none" });
 	const [lastKeyPressed, setLastKeyPressed] = useState<string>("");
@@ -452,7 +452,7 @@ export const KeybindEditorView = () => {
 	);
 };
 
-export const NickView = () => {
+export const NickView:FC = () => {
 	const { nicks, hypixelApiKey } = useConfigStore((state) => ({
 		nicks: state.nicks,
 		hypixelApiKey: state.hypixel.apiKey,
@@ -641,7 +641,7 @@ export const NickView = () => {
 	);
 };
 
-export const TagEditorView = () => {
+export const TagEditorView:FC = () => {
 	const { run, boomza, keathiz, hypixel } = useTagStore((state) => ({ run: state.run, boomza: state.boomza, keathiz: state.keathiz, hypixel: state.hypixel }));
 	const theme = {};
 
@@ -1190,7 +1190,7 @@ export const TagEditorView = () => {
 	);
 };
 
-export const CustomLinks = () => {
+export const CustomLinks:FC = () => {
 	const { settings, customApi, customFile } = useConfigStore((state) => ({
 		settings: state.settings,
 		customApi: state.customApi,
@@ -1217,7 +1217,7 @@ export const CustomLinks = () => {
 						<span />
 						<span />
 						<div style={settings.preferences.customFile ? {} : { display: "none" }} className={"flex inline-block"}>
-							<Box className={"flex inline-block"}>
+							<Box className={"flex inline-block space-x-2"}>
 								<InputBoxButton
 									onClick={async () => {
 										const path: Electron.OpenDialogReturnValue = await window.ipcRenderer.invoke(IpcValidInvokeChannels.SELECT_LOG_FILE, [[{ name: "Custom File", extensions: ["txt", "json"] }]]);
@@ -1305,7 +1305,7 @@ export const CustomLinks = () => {
 							options={{ enabled: settings.preferences.customUrl }}
 						/>
 					</SettingCard>
-					<Box style={settings.preferences.customUrl ? {} : { display: "none" }}>
+					<Box style={settings.preferences.customUrl ? {} : { display: "none" }} className={"space-y-3"}>
 						<InputTextBox initialValue={customApi.url} options={{ placeholder: "https://antisniper.seraph.si/api/v4/overlay/blacklist", label: { text: "Custom URL" } }} onBlur={(event) => useConfigStore.getState().setCustomApi({ url: event.currentTarget.value })} />
 						<UserAccordion name={"Request Parameters"}>
 							<div className={"grid grid-cols-2"}>
@@ -1328,7 +1328,7 @@ export const CustomLinks = () => {
 	);
 };
 
-export const ColumnEditorView = () => {
+export const ColumnEditorView:FC = () => {
 	const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
 	const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
@@ -1396,7 +1396,7 @@ export const ColumnEditorView = () => {
 	);
 };
 
-export const Essentials = () => {
+export const Essentials:FC = () => {
 	const { hypixel, settings, run } = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		logs: state.logs,

@@ -1,5 +1,5 @@
 import React, { FC, PropsWithChildren, ReactNode, useEffect, useState } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, FilledInputProps, InputLabel, InputProps, Modal, Snackbar, styled, Switch, SwitchProps, SxProps, TextField, Theme, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, FilledInputProps, InputLabel, InputProps, ListItemIcon, ListItemText, Modal, Snackbar, styled, Switch, SwitchProps, SxProps, TextField, Theme, Typography } from "@mui/material";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { hexToRgbA } from "@common/helpers";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
@@ -9,7 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { OutlinedInputProps } from "@mui/material/OutlinedInput";
-import { CheckCircle, MoreHorizRounded, ReportRounded, SvgIconComponent } from "@mui/icons-material";
+import { CheckCircle, DangerousRounded, MoreHorizRounded, ReportProblem, ReportRounded, SvgIconComponent } from "@mui/icons-material";
 import { SniperBody } from "@common/utils/externalapis/RunApi";
 import axios from "axios";
 import IconButton from '@mui/material/IconButton';
@@ -17,6 +17,7 @@ import Menu from '@mui/material/Menu';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { GridExpandMoreIcon } from "@mui/x-data-grid";
 import { PlayerCommonProperties } from "@components/PlayerComponents";
+import MenuIcon from "@mui/icons-material/Menu";
 
 type CommonPropertyTypes = PropsWithChildren;
 
@@ -310,14 +311,12 @@ export const ToggleButton: FC<ToggleButton> = ({ text, options, onClick, onChang
 
 export const UserAccordion: FC<UserAccordion> = ({ name, children }) => {
 	return (
-		<div>
-			<Accordion>
-				<AccordionSummary sx={{ backgroundColor: "transparent" }} expandIcon={<ExpandMoreIcon />} aria-controls={`${name}-content`} id={`${name}-header`}>
-					<Typography className={"text-gray-400"}>{name}</Typography>
-				</AccordionSummary>
-				<AccordionDetails sx={{ backgroundColor: "transparent" }}>{children}</AccordionDetails>
-			</Accordion>
-		</div>
+		<Accordion>
+			<AccordionSummary sx={{ backgroundColor: "transparent" }} expandIcon={<ExpandMoreIcon />} aria-controls={`${name}-content`} id={`${name}-header`}>
+				<Typography className={"text-white"}>{name}</Typography>
+			</AccordionSummary>
+			<AccordionDetails>{children}</AccordionDetails>
+		</Accordion>
 	);
 };
 
@@ -458,18 +457,11 @@ export const PlayerMenuOption:FC<PlayerCommonProperties> = ({player}) => {
 					}}
 				>
 					<MenuItem onClick={()=>handleClose('report')}>
-						<div>Report</div>
+						<ListItemIcon>
+							<ReportRounded/>
+						</ListItemIcon>
+						<ListItemText>Report</ListItemText>
 					</MenuItem>
-					<MenuItem onClick={()=>handleClose('report')}>
-						<div>Extra 1</div>
-					</MenuItem>
-					<MenuItem onClick={()=>handleClose('report')}>
-						<div>Extra 2</div>
-					</MenuItem>
-					<MenuItem onClick={()=>handleClose('report')}>
-						<div>Extra 3</div>
-					</MenuItem>
-
 				</Menu>
 			</div>
 			{isPlayerReportModalOpen  ?(<PlayerOptionsModal data={player} isOpen={isPlayerReportModalOpen} onClose={()=>setPlayerReportModalOpen(false)} />): (<span/>)}
