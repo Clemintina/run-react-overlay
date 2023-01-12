@@ -19,7 +19,7 @@ import { ColumnMovedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions,
 import { columnDefsBase, defaultColDefBase } from "@renderer/views/Homepage";
 import { AgGridReact } from "ag-grid-react";
 import { Link } from "react-router-dom";
-import { DangerousRounded, ErrorOutlined, NavigateNext, RefreshRounded } from "@mui/icons-material";
+import { ErrorOutlined, NavigateNext, RefreshRounded } from "@mui/icons-material";
 import GoogleFontLoader from "react-google-font-loader";
 import { hexToRgbA } from "@common/helpers";
 import { constantPlayerData } from "@common/utils/SettingViewUtils";
@@ -30,7 +30,7 @@ import { PlayerNicknameViewComponent } from "@components/PlayerComponents";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
-export const ApiOptions:FC = () => {
+export const ApiOptions: FC = () => {
 	const { hypixel, settings, keathiz, polsu } = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		settings: state.settings,
@@ -225,7 +225,7 @@ export const ApiOptions:FC = () => {
 	);
 };
 
-export const Appearance:FC = () => {
+export const Appearance: FC = () => {
 	const localConfigStore = useConfigStore<ConfigStore>((state) => state);
 	const { settings, browserWindow, font, table } = useConfigStore((state) => ({
 		settings: state.settings,
@@ -373,7 +373,7 @@ export const Appearance:FC = () => {
 	);
 };
 
-export const KeybindEditorView:FC = () => {
+export const KeybindEditorView: FC = () => {
 	const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));
 	const [controlBind, setControlBind] = useState<KeybindInterface>({ keybind: "", focus: "none" });
 	const [lastKeyPressed, setLastKeyPressed] = useState<string>("");
@@ -452,7 +452,7 @@ export const KeybindEditorView:FC = () => {
 	);
 };
 
-export const NickView:FC = () => {
+export const NickView: FC = () => {
 	const { nicks, hypixelApiKey } = useConfigStore((state) => ({
 		nicks: state.nicks,
 		hypixelApiKey: state.hypixel.apiKey,
@@ -641,292 +641,33 @@ export const NickView:FC = () => {
 	);
 };
 
-export const TagEditorView:FC = () => {
+export const TagEditorView: FC = () => {
 	const { run, boomza, keathiz, hypixel } = useTagStore((state) => ({ run: state.run, boomza: state.boomza, keathiz: state.keathiz, hypixel: state.hypixel }));
-	const theme = {};
 
 	// TODO make it look nicer and cleaner
 	return (
 		<NavigationBar>
-			<div className='h-fu"l p-2 flex flex-col space-y-2'>
+			<div className='h-full p-2 flex flex-col text-center'>
 				<SettingCard>
 					<span className={"w-80"}>Tag</span>
 					<span className={"w-80"}>Display</span>
 					<span className={"w-80"}>Colour</span>
 				</SettingCard>
-				<UserAccordion name={"Seraph"}>
-					<SettingCard>
-						<span>Annoy List</span>
-						<span>
-							<TagEditor
-								options={{
-									colour: run.annoylist.colour,
-									placeholder: run.annoylist.display,
-									label: { text: "Annoy list" },
-								}}
-								onBlur={(event) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.annoylist.display = event.currentTarget.value;
-										}),
-									);
-								}}
-							/>
-						</span>
-						<span>
-							<ColourPicker
-								setColour={async (colour: string) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.annoylist.colour = colour;
-										}),
-									);
-								}}
-								colourObject={run.annoylist.colour}
-							/>
-						</span>
-					</SettingCard>
-					<SettingCard>
-						<span>Blacklisted</span>
-						<span>
-							<TagEditor
-								options={{
-									colour: run.blacklist.colour,
-									placeholder: run.blacklist.display,
-									label: { text: "Blacklist" },
-								}}
-								onBlur={(event) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.blacklist.display = event.currentTarget.value;
-										}),
-									);
-								}}
-							/>
-						</span>
-						<span>
-							<ColourPicker
-								setColour={async (colour: string) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.blacklist.colour = colour;
-										}),
-									);
-								}}
-								colourObject={run.blacklist.colour}
-							/>
-						</span>
-					</SettingCard>
-					<SettingCard>
-						<span>Encounters</span>
-						<span>
-							<TagEditor
-								options={{
-									colour: run.encounters.colour[0],
-									placeholder: run.encounters.display,
-									label: { text: "Encounters" },
-								}}
-								onBlur={(event) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.encounters.display = event.currentTarget.value;
-										}),
-									);
-								}}
-							/>
-						</span>
-						<span>
-							<ColourPickerArray
-								setColour={async (newTagArray) => {
-									const newColourObject = { ...run.encounters };
-									const newItem = {
-										colour: newTagArray.colour,
-										requirement: newTagArray.requirement,
-										operator: "<=",
-									};
-									if (Array.isArray(newColourObject.colour)) {
-										const newColourArray: Array<Colour> = [...newColourObject.colour];
-										newColourArray.filter((item, index) => {
-											if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
-										});
-										newColourArray.push(newItem);
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.run.encounters.colour = newColourArray;
-											}),
-										);
-									}
-								}}
-								colourObject={run.encounters}
-							/>
-						</span>
-					</SettingCard>
-					<SettingCard>
-						<span>Friends</span>
-						<span>
-							<TagEditor
-								options={{
-									colour: run.friends.colour,
-									placeholder: run.friends.display,
-									label: { text: "Friends" },
-								}}
-								onBlur={(event) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.friends.display = event.currentTarget.value;
-										}),
-									);
-								}}
-							/>
-						</span>
-						<span>
-							<ColourPicker
-								setColour={async (colour: string) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.friends.colour = colour;
-										}),
-									);
-								}}
-								colourObject={run.friends.colour}
-							/>
-						</span>
-					</SettingCard>
-					<SettingCard>
-						<span>Safelist</span>
-						<span>
-							<TagEditor
-								options={{
-									colour: run.safelist.colour,
-									placeholder: run.safelist.display,
-									label: { text: "Safelist" },
-								}}
-								onBlur={(event) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.safelist.display = event.currentTarget.value;
-										}),
-									);
-								}}
-							/>
-						</span>
-						<span>
-							<ColourPickerArray
-								setColour={async (newTagArray) => {
-									const newColourObject = { ...run.safelist };
-									const newItem = {
-										colour: newTagArray.colour,
-										requirement: newTagArray.requirement,
-										operator: "<=",
-									};
-									if (Array.isArray(newColourObject.colour)) {
-										const newColourArray: Array<Colour> = [...newColourObject.colour];
-										newColourArray.filter((item, index) => {
-											if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
-										});
-										newColourArray.push(newItem);
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.run.safelist.colour = newColourArray;
-											}),
-										);
-									}
-								}}
-								colourObject={run.safelist}
-							/>
-						</span>
-					</SettingCard>
-					<SettingCard>
-						<span>Personal Safelist</span>
-						<span>
-							<TagEditor
-								options={{
-									colour: run.personal_safelist.colour,
-									placeholder: run.personal_safelist.display,
-									label: { text: "Personal Safelist" },
-								}}
-								onBlur={(event) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.personal_safelist.display = event.currentTarget.value;
-										}),
-									);
-								}}
-							/>
-						</span>
-						<span>
-							<ColourPicker
-								setColour={async (colour: string) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.personal_safelist.colour = colour;
-										}),
-									);
-								}}
-								colourObject={run.personal_safelist.colour}
-							/>
-						</span>
-					</SettingCard>
-					<SettingCard>
-						<span>Name Change</span>
-						<span>
-							<TagEditor
-								options={{
-									colour: run.name_change.colour,
-									placeholder: run.name_change.display,
-									label: { text: "Name Change" },
-								}}
-								onBlur={(event) => {
-									useTagStore.getState().setStore(
-										produce((state: any) => {
-											state.run.name_change.display = event.currentTarget.value;
-										}),
-									);
-								}}
-							/>
-						</span>
-						<span>
-							<ColourPickerArray
-								setColour={async (newTagArray) => {
-									const newColourObject = { ...run.safelist };
-									const newItem = {
-										colour: newTagArray.colour,
-										requirement: newTagArray.requirement,
-										operator: "<=",
-									};
-									if (Array.isArray(newColourObject.colour)) {
-										const newColourArray: Array<Colour> = [...newColourObject.colour];
-										newColourArray.filter((item, index) => {
-											if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
-										});
-										newColourArray.push(newItem);
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.run.safelist.colour = newColourArray;
-											}),
-										);
-									}
-								}}
-								colourObject={run.safelist}
-							/>
-						</span>
-					</SettingCard>
-				</UserAccordion>
-				<UserAccordion name={"Boomza"}>
-					<AccordionDetails>
+				<div className={"text-center space-y-2"}>
+					<UserAccordion name={"Seraph"}>
 						<SettingCard>
-							<span>Cheater</span>
+							<span>Annoy List</span>
 							<span>
 								<TagEditor
 									options={{
-										colour: boomza.cheater.colour,
-										placeholder: boomza.cheater.display,
-										label: { text: "Boomza Cheater" },
+										colour: run.annoylist.colour,
+										placeholder: run.annoylist.display,
+										label: { text: "Annoy list" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.boomza.cheater.display = event.currentTarget.value;
+												state.run.annoylist.display = event.currentTarget.value;
 											}),
 										);
 									}}
@@ -937,27 +678,27 @@ export const TagEditorView:FC = () => {
 									setColour={async (colour: string) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.boomza.cheater.colour = colour;
+												state.run.annoylist.colour = colour;
 											}),
 										);
 									}}
-									colourObject={boomza.cheater.colour}
+									colourObject={run.annoylist.colour}
 								/>
 							</span>
 						</SettingCard>
 						<SettingCard>
-							<span>Sniper</span>
+							<span>Blacklisted</span>
 							<span>
 								<TagEditor
 									options={{
-										colour: boomza.sniper.colour,
-										placeholder: boomza.sniper.display,
-										label: { text: "Boomza Sniper" },
+										colour: run.blacklist.colour,
+										placeholder: run.blacklist.display,
+										label: { text: "Blacklist" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.boomza.sniper.display = event.currentTarget.value;
+												state.run.blacklist.display = event.currentTarget.value;
 											}),
 										);
 									}}
@@ -968,128 +709,27 @@ export const TagEditorView:FC = () => {
 									setColour={async (colour: string) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.boomza.sniper.colour = colour;
+												state.run.blacklist.colour = colour;
 											}),
 										);
 									}}
-									colourObject={boomza.sniper.colour}
-								/>
-							</span>
-						</SettingCard>
-					</AccordionDetails>
-				</UserAccordion>
-				<UserAccordion name={"Hypixel"}>
-					<AccordionDetails>
-						<SettingCard>
-							<span>Party</span>
-							<span>
-								<TagEditor
-									options={{
-										colour: hypixel.party.colour,
-										placeholder: hypixel.party.display,
-										label: { text: "Party" },
-									}}
-									onBlur={(event) => {
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.hypixel.party.display = event.currentTarget.value;
-											}),
-										);
-									}}
-								/>
-							</span>
-							<span>
-								<ColourPicker
-									setColour={async (colour: string) => {
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.hypixel.party.colour = colour;
-											}),
-										);
-									}}
-									colourObject={hypixel.party.colour}
-								/>
-							</span>
-						</SettingCard>
-					</AccordionDetails>
-				</UserAccordion>
-				<UserAccordion name={"Antisniper"}>
-					<AccordionDetails>
-						<SettingCard>
-							<span>No Data</span>
-							<span>
-								<TagEditor
-									options={{
-										colour: keathiz.no_data.colour,
-										placeholder: keathiz.no_data.display,
-										label: { text: "Keathiz No Data" },
-									}}
-									onBlur={(event) => {
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.keathiz.no_data.display = event.currentTarget.value;
-											}),
-										);
-									}}
-								/>
-							</span>
-							<span>
-								<ColourPicker
-									setColour={async (colour: string) => {
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.keathiz.no_data.colour = colour;
-											}),
-										);
-									}}
-									colourObject={keathiz.no_data.colour}
+									colourObject={run.blacklist.colour}
 								/>
 							</span>
 						</SettingCard>
 						<SettingCard>
-							<span>Queue Total</span>
+							<span>Encounters</span>
 							<span>
 								<TagEditor
 									options={{
-										colour: keathiz.queues.queue_total.colour,
-										placeholder: keathiz.queues.queue_total.display,
-										label: { text: "Keathiz Queue Total" },
+										colour: run.encounters.colour[0],
+										placeholder: run.encounters.display,
+										label: { text: "Encounters" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.keathiz.queues.queue_total.display = event.currentTarget.value;
-											}),
-										);
-									}}
-								/>
-							</span>
-							<span>
-								<ColourPicker
-									setColour={async (colour: string) => {
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.keathiz.queues.queue_total.colour = colour;
-											}),
-										);
-									}}
-									colourObject={keathiz.queues.queue_total.colour}
-								/>
-							</span>
-						</SettingCard>
-						<SettingCard>
-							<span>Queue Count</span>
-							<span>
-								<TagEditor
-									options={{
-										colour: keathiz.queues.queue_count.colour[0],
-										placeholder: keathiz.queues.queue_count.display,
-										label: { text: "Keathiz Queue Count" },
-									}}
-									onBlur={(event) => {
-										useTagStore.getState().setStore(
-											produce((state: any) => {
-												state.keathiz.queues.queue_count.display = event.currentTarget.value;
+												state.run.encounters.display = event.currentTarget.value;
 											}),
 										);
 									}}
@@ -1098,7 +738,7 @@ export const TagEditorView:FC = () => {
 							<span>
 								<ColourPickerArray
 									setColour={async (newTagArray) => {
-										const newColourObject = { ...keathiz.queues.queue_count };
+										const newColourObject = { ...run.encounters };
 										const newItem = {
 											colour: newTagArray.colour,
 											requirement: newTagArray.requirement,
@@ -1112,28 +752,28 @@ export const TagEditorView:FC = () => {
 											newColourArray.push(newItem);
 											useTagStore.getState().setStore(
 												produce((state: any) => {
-													state.keathiz.queues.queue_count.colour = newColourArray;
+													state.run.encounters.colour = newColourArray;
 												}),
 											);
 										}
 									}}
-									colourObject={keathiz.queues.queue_count}
+									colourObject={run.encounters}
 								/>
 							</span>
 						</SettingCard>
 						<SettingCard>
-							<span>Consecutive</span>
+							<span>Friends</span>
 							<span>
 								<TagEditor
 									options={{
-										colour: keathiz.consecutive.colour,
-										placeholder: keathiz.consecutive.display,
-										label: { text: "Keathiz Consecutive Tag ( C )" },
+										colour: run.friends.colour,
+										placeholder: run.friends.display,
+										label: { text: "Friends" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.keathiz.no_data.display = event.currentTarget.value;
+												state.run.friends.display = event.currentTarget.value;
 											}),
 										);
 									}}
@@ -1144,27 +784,71 @@ export const TagEditorView:FC = () => {
 									setColour={async (colour: string) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.keathiz.consecutive.colour = colour;
+												state.run.friends.colour = colour;
 											}),
 										);
 									}}
-									colourObject={keathiz.consecutive.colour}
+									colourObject={run.friends.colour}
 								/>
 							</span>
 						</SettingCard>
 						<SettingCard>
-							<span>One Minute Requeue</span>
+							<span>Safelist</span>
 							<span>
 								<TagEditor
 									options={{
-										colour: keathiz.one_minute_requeue.colour,
-										placeholder: keathiz.one_minute_requeue.display,
-										label: { text: "Keathiz One Minute Queue ( Z )" },
+										colour: run.safelist.colour,
+										placeholder: run.safelist.display,
+										label: { text: "Safelist" },
 									}}
 									onBlur={(event) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.keathiz.no_data.display = event.currentTarget.value;
+												state.run.safelist.display = event.currentTarget.value;
+											}),
+										);
+									}}
+								/>
+							</span>
+							<span>
+								<ColourPickerArray
+									setColour={async (newTagArray) => {
+										const newColourObject = { ...run.safelist };
+										const newItem = {
+											colour: newTagArray.colour,
+											requirement: newTagArray.requirement,
+											operator: "<=",
+										};
+										if (Array.isArray(newColourObject.colour)) {
+											const newColourArray: Array<Colour> = [...newColourObject.colour];
+											newColourArray.filter((item, index) => {
+												if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
+											});
+											newColourArray.push(newItem);
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.run.safelist.colour = newColourArray;
+												}),
+											);
+										}
+									}}
+									colourObject={run.safelist}
+								/>
+							</span>
+						</SettingCard>
+						<SettingCard>
+							<span>Personal Safelist</span>
+							<span>
+								<TagEditor
+									options={{
+										colour: run.personal_safelist.colour,
+										placeholder: run.personal_safelist.display,
+										label: { text: "Personal Safelist" },
+									}}
+									onBlur={(event) => {
+										useTagStore.getState().setStore(
+											produce((state: any) => {
+												state.run.personal_safelist.display = event.currentTarget.value;
 											}),
 										);
 									}}
@@ -1175,22 +859,339 @@ export const TagEditorView:FC = () => {
 									setColour={async (colour: string) => {
 										useTagStore.getState().setStore(
 											produce((state: any) => {
-												state.keathiz.one_minute_requeue.colour = colour;
+												state.run.personal_safelist.colour = colour;
 											}),
 										);
 									}}
-									colourObject={keathiz.one_minute_requeue.colour}
+									colourObject={run.personal_safelist.colour}
 								/>
 							</span>
 						</SettingCard>
-					</AccordionDetails>
-				</UserAccordion>
+						<SettingCard>
+							<span>Name Change</span>
+							<span>
+								<TagEditor
+									options={{
+										colour: run.name_change.colour,
+										placeholder: run.name_change.display,
+										label: { text: "Name Change" },
+									}}
+									onBlur={(event) => {
+										useTagStore.getState().setStore(
+											produce((state: any) => {
+												state.run.name_change.display = event.currentTarget.value;
+											}),
+										);
+									}}
+								/>
+							</span>
+							<span>
+								<ColourPickerArray
+									setColour={async (newTagArray) => {
+										const newColourObject = { ...run.safelist };
+										const newItem = {
+											colour: newTagArray.colour,
+											requirement: newTagArray.requirement,
+											operator: "<=",
+										};
+										if (Array.isArray(newColourObject.colour)) {
+											const newColourArray: Array<Colour> = [...newColourObject.colour];
+											newColourArray.filter((item, index) => {
+												if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
+											});
+											newColourArray.push(newItem);
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.run.safelist.colour = newColourArray;
+												}),
+											);
+										}
+									}}
+									colourObject={run.safelist}
+								/>
+							</span>
+						</SettingCard>
+					</UserAccordion>
+					<UserAccordion name={"Boomza"}>
+						<AccordionDetails>
+							<SettingCard>
+								<span>Cheater</span>
+								<span>
+									<TagEditor
+										options={{
+											colour: boomza.cheater.colour,
+											placeholder: boomza.cheater.display,
+											label: { text: "Boomza Cheater" },
+										}}
+										onBlur={(event) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.boomza.cheater.display = event.currentTarget.value;
+												}),
+											);
+										}}
+									/>
+								</span>
+								<span>
+									<ColourPicker
+										setColour={async (colour: string) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.boomza.cheater.colour = colour;
+												}),
+											);
+										}}
+										colourObject={boomza.cheater.colour}
+									/>
+								</span>
+							</SettingCard>
+							<SettingCard>
+								<span>Sniper</span>
+								<span>
+									<TagEditor
+										options={{
+											colour: boomza.sniper.colour,
+											placeholder: boomza.sniper.display,
+											label: { text: "Boomza Sniper" },
+										}}
+										onBlur={(event) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.boomza.sniper.display = event.currentTarget.value;
+												}),
+											);
+										}}
+									/>
+								</span>
+								<span>
+									<ColourPicker
+										setColour={async (colour: string) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.boomza.sniper.colour = colour;
+												}),
+											);
+										}}
+										colourObject={boomza.sniper.colour}
+									/>
+								</span>
+							</SettingCard>
+						</AccordionDetails>
+					</UserAccordion>
+					<UserAccordion name={"Hypixel"}>
+						<AccordionDetails>
+							<SettingCard>
+								<span>Party</span>
+								<span>
+									<TagEditor
+										options={{
+											colour: hypixel.party.colour,
+											placeholder: hypixel.party.display,
+											label: { text: "Party" },
+										}}
+										onBlur={(event) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.hypixel.party.display = event.currentTarget.value;
+												}),
+											);
+										}}
+									/>
+								</span>
+								<span>
+									<ColourPicker
+										setColour={async (colour: string) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.hypixel.party.colour = colour;
+												}),
+											);
+										}}
+										colourObject={hypixel.party.colour}
+									/>
+								</span>
+							</SettingCard>
+						</AccordionDetails>
+					</UserAccordion>
+					<UserAccordion name={"Antisniper"}>
+						<AccordionDetails>
+							<SettingCard>
+								<span>No Data</span>
+								<span>
+									<TagEditor
+										options={{
+											colour: keathiz.no_data.colour,
+											placeholder: keathiz.no_data.display,
+											label: { text: "Keathiz No Data" },
+										}}
+										onBlur={(event) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.no_data.display = event.currentTarget.value;
+												}),
+											);
+										}}
+									/>
+								</span>
+								<span>
+									<ColourPicker
+										setColour={async (colour: string) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.no_data.colour = colour;
+												}),
+											);
+										}}
+										colourObject={keathiz.no_data.colour}
+									/>
+								</span>
+							</SettingCard>
+							<SettingCard>
+								<span>Queue Total</span>
+								<span>
+									<TagEditor
+										options={{
+											colour: keathiz.queues.queue_total.colour,
+											placeholder: keathiz.queues.queue_total.display,
+											label: { text: "Keathiz Queue Total" },
+										}}
+										onBlur={(event) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.queues.queue_total.display = event.currentTarget.value;
+												}),
+											);
+										}}
+									/>
+								</span>
+								<span>
+									<ColourPicker
+										setColour={async (colour: string) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.queues.queue_total.colour = colour;
+												}),
+											);
+										}}
+										colourObject={keathiz.queues.queue_total.colour}
+									/>
+								</span>
+							</SettingCard>
+							<SettingCard>
+								<span>Queue Count</span>
+								<span>
+									<TagEditor
+										options={{
+											colour: keathiz.queues.queue_count.colour[0],
+											placeholder: keathiz.queues.queue_count.display,
+											label: { text: "Keathiz Queue Count" },
+										}}
+										onBlur={(event) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.queues.queue_count.display = event.currentTarget.value;
+												}),
+											);
+										}}
+									/>
+								</span>
+								<span>
+									<ColourPickerArray
+										setColour={async (newTagArray) => {
+											const newColourObject = { ...keathiz.queues.queue_count };
+											const newItem = {
+												colour: newTagArray.colour,
+												requirement: newTagArray.requirement,
+												operator: "<=",
+											};
+											if (Array.isArray(newColourObject.colour)) {
+												const newColourArray: Array<Colour> = [...newColourObject.colour];
+												newColourArray.filter((item, index) => {
+													if (item.requirement == newItem.requirement) newColourArray.splice(index, 1);
+												});
+												newColourArray.push(newItem);
+												useTagStore.getState().setStore(
+													produce((state: any) => {
+														state.keathiz.queues.queue_count.colour = newColourArray;
+													}),
+												);
+											}
+										}}
+										colourObject={keathiz.queues.queue_count}
+									/>
+								</span>
+							</SettingCard>
+							<SettingCard>
+								<span>Consecutive</span>
+								<span>
+									<TagEditor
+										options={{
+											colour: keathiz.consecutive.colour,
+											placeholder: keathiz.consecutive.display,
+											label: { text: "Keathiz Consecutive Tag ( C )" },
+										}}
+										onBlur={(event) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.no_data.display = event.currentTarget.value;
+												}),
+											);
+										}}
+									/>
+								</span>
+								<span>
+									<ColourPicker
+										setColour={async (colour: string) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.consecutive.colour = colour;
+												}),
+											);
+										}}
+										colourObject={keathiz.consecutive.colour}
+									/>
+								</span>
+							</SettingCard>
+							<SettingCard>
+								<span>One Minute Requeue</span>
+								<span>
+									<TagEditor
+										options={{
+											colour: keathiz.one_minute_requeue.colour,
+											placeholder: keathiz.one_minute_requeue.display,
+											label: { text: "Keathiz One Minute Queue ( Z )" },
+										}}
+										onBlur={(event) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.no_data.display = event.currentTarget.value;
+												}),
+											);
+										}}
+									/>
+								</span>
+								<span>
+									<ColourPicker
+										setColour={async (colour: string) => {
+											useTagStore.getState().setStore(
+												produce((state: any) => {
+													state.keathiz.one_minute_requeue.colour = colour;
+												}),
+											);
+										}}
+										colourObject={keathiz.one_minute_requeue.colour}
+									/>
+								</span>
+							</SettingCard>
+						</AccordionDetails>
+					</UserAccordion>
+				</div>
 			</div>
 		</NavigationBar>
 	);
 };
 
-export const CustomLinks:FC = () => {
+export const CustomLinks: FC = () => {
 	const { settings, customApi, customFile } = useConfigStore((state) => ({
 		settings: state.settings,
 		customApi: state.customApi,
@@ -1328,7 +1329,7 @@ export const CustomLinks:FC = () => {
 	);
 };
 
-export const ColumnEditorView:FC = () => {
+export const ColumnEditorView: FC = () => {
 	const { columnState } = useConfigStore((state) => ({ columnState: state.table.columnState }));
 	const [playerData, setPlayerData] = useState<Array<Player>>([]);
 
@@ -1396,7 +1397,7 @@ export const ColumnEditorView:FC = () => {
 	);
 };
 
-export const Essentials:FC = () => {
+export const Essentials: FC = () => {
 	const { hypixel, settings, run } = useConfigStore((state) => ({
 		hypixel: state.hypixel,
 		logs: state.logs,
