@@ -1,17 +1,14 @@
 import React, { FC, PropsWithChildren, ReactNode, useEffect, useState } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, FilledInputProps, InputLabel, InputProps, Modal, Snackbar, styled, Switch, SwitchProps, SxProps, TextField, Theme, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, FormControl, Tooltip, Select, MenuItem, Alert, Box, Button, FilledInputProps, InputLabel, InputProps, ListItemIcon, ListItemText, Modal, Snackbar, styled, Switch, SwitchProps, SxProps, TextField, Theme, Typography, Menu } from "@mui/material";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { hexToRgbA } from "@common/helpers";
-import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { Player } from "@common/utils/PlayerUtils";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import { OutlinedInputProps } from "@mui/material/OutlinedInput";
-import { CheckCircle, ReportRounded } from "@mui/icons-material";
+import { CheckCircle, MoreHorizRounded, ReportRounded, ExpandMore } from "@mui/icons-material";
 import { SniperBody } from "@common/utils/externalapis/RunApi";
 import axios from "axios";
+import { PlayerCommonProperties } from "@components/PlayerComponents";
 
 type CommonPropertyTypes = PropsWithChildren;
 
@@ -82,7 +79,12 @@ export type UserAccordion = {
 
 export type PlayerOptionsModal = {
 	data: Player;
-} & CommonPropertyTypes;
+} & CommonPropertyTypes & PlayerMenuStateManager;
+
+type PlayerMenuStateManager = {
+	isOpen?: boolean;
+	onClose?: (closed: boolean) => void;
+};
 
 export const AppSnackbar: FC<AppSnackbar> = ({ display, timeout, message }) => {
 	const [open, setOpen] = useState(display ?? false);
@@ -300,28 +302,31 @@ export const ToggleButton: FC<ToggleButton> = ({ text, options, onClick, onChang
 
 export const UserAccordion: FC<UserAccordion> = ({ name, children }) => {
 	return (
-		<div>
-			<Accordion>
-				<AccordionSummary sx={{ backgroundColor: "transparent" }} expandIcon={<ExpandMoreIcon />} aria-controls={`${name}-content`} id={`${name}-header`}>
-					<Typography className={"text-gray-400"}>{name}</Typography>
-				</AccordionSummary>
-				<AccordionDetails sx={{ backgroundColor: "transparent" }}>{children}</AccordionDetails>
-			</Accordion>
-		</div>
+		<Accordion>
+			<AccordionSummary sx={{ backgroundColor: "transparent" }} expandIcon={<ExpandMore />} aria-controls={`${name}-content`} id={`${name}-header`}>
+				<Typography className={"text-white"}>{name}</Typography>
+			</AccordionSummary>
+			<AccordionDetails>{children}</AccordionDetails>
+		</Accordion>
 	);
 };
 
-export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, children }) => {
+export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, isOpen, onClose, children }) => {
 	const { colours, run } = useConfigStore((state) => ({ colours: state.colours, run: state.run }));
 
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(isOpen ?? false);
 	const [reportType, setReportType] = useState("");
 	const [reportReason, setReportReason] = useState("");
 	const [successful, setSuccessful] = useState<boolean>(false);
 	const [axiosError, setError] = useState<boolean>(false);
 
 	const handleOpen = () => setOpen(true);
-	const handleClose = () => setOpen(false);
+	const handleClose = () => {
+		setOpen(false);
+		if (onClose) {
+			onClose(open);
+		}
+	};
 
 	const style = {
 		position: "absolute",
@@ -336,17 +341,15 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, children }) =
 		color: colours.primaryColour,
 	};
 
+	if (data.nicked) {
+		return <span />;
+	}
+
+	const playerUsername = data.hypixelPlayer?.displayname ?? "Unknown";
+
 	// TODO Add player options
 	return (
-		<>
-			<InputBoxButton
-				onClick={handleOpen}
-				text={"X"}
-				options={{
-					variant: "outlined",
-				}}
-				sx={{ height: 25 }}
-			/>
+		<div>
 			{open ? (
 				<Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
 					<Box sx={style}>
@@ -368,7 +371,7 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, children }) =
 										<InputBoxButton
 											text={
 												<div>
-													<ReportRounded /> Report this player
+													<ReportRounded /> {`Report ${playerUsername}`}
 												</div>
 											}
 											onClick={async () => {
@@ -379,22 +382,31 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, children }) =
 														report_type: reportType,
 														apikey: run.apiKey,
 													};
-													const response = await axios.post("https://antisniper.seraph.si/v4/addsniper", report, {
-														validateStatus: () => true,
-														headers: {
-															"run-api-key": run.apiKey,
-															"Accept-Encoding": "gzip,deflate,compress",
-														},
-													});
-													if (response.status != 200) {
+													try {
+														const response = await axios.post("https://antisniper.seraph.si/v4/addsniper", report, {
+															validateStatus: () => true,
+															headers: {
+																"run-api-key": run.apiKey,
+																"Accept-Encoding": "gzip,deflate,compress",
+															},
+														});
+														if (response.status != 200) {
+															useConfigStore.getState().setErrorMessage({
+																title: "Report error",
+																cause: JSON.stringify(response.data),
+																type: "ERROR",
+															});
+															setError(true);
+														} else {
+															setSuccessful(true);
+														}
+													} catch (e) {
 														useConfigStore.getState().setErrorMessage({
 															title: "Report error",
-															cause: JSON.stringify(response.data),
+															cause: "Timed out",
 															type: "ERROR",
 														});
 														setError(true);
-													} else {
-														setSuccessful(true);
 													}
 												}
 											}}
@@ -417,6 +429,48 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, children }) =
 			) : (
 				<span />
 			)}
+		</div>
+	);
+};
+
+export const PlayerMenuOption: FC<PlayerCommonProperties> = ({ player }) => {
+	const ITEM_HEIGHT = 48;
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [isPlayerReportModalOpen, setPlayerReportModalOpen] = useState<boolean>(false);
+	const open = Boolean(anchorEl);
+
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+	const handleClose = (optionSelected?: "report") => {
+		setAnchorEl(null);
+		if (optionSelected == "report") setPlayerReportModalOpen(true);
+	};
+
+	return (
+		<>
+			<div className={"text-center text-white"}>
+				<MoreHorizRounded onClick={handleClick} />
+				<Menu
+					anchorEl={anchorEl}
+					open={open}
+					onClose={() => handleClose()}
+					PaperProps={{
+						style: {
+							maxHeight: ITEM_HEIGHT * 4.5,
+							width: "20ch",
+						},
+					}}
+				>
+					<MenuItem onClick={() => handleClose("report")}>
+						<ListItemIcon>
+							<ReportRounded />
+						</ListItemIcon>
+						<ListItemText>Report</ListItemText>
+					</MenuItem>
+				</Menu>
+			</div>
+			{isPlayerReportModalOpen ? <PlayerOptionsModal data={player} isOpen={isPlayerReportModalOpen} onClose={() => setPlayerReportModalOpen(false)} /> : <span />}
 		</>
 	);
 };
