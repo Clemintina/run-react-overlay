@@ -171,6 +171,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 
 		if (!playerData.nicked && playerData.hypixelPlayer) {
 			const [runApi] = await Promise.all([getRunApi(playerData)]);
+			console.log(JSON.stringify(runApi));
 			if (runApi.data && runApi.data.code == 200) {
 				playerData.sources.runApi = runApi.data;
 				playerObject.data = playerData;

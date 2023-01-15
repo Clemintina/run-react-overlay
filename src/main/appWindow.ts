@@ -389,11 +389,10 @@ const registerSeraphIPC = () => {
 		const seraphHeaders = {
 			...headers,
 			"Run-API-Version": overlayVersion,
-			//"seraph-api-key": runApiKey,
-			"run-api-key": runApiKey,
+			"seraph-api-key": runApiKey,
 			"run-api-uuid": overlayUuid,
 			"API-Key": hypixelApiKey,
-			"API-Key-Owner": hypixelApiKeyOwner,
+			"API-Key-Owner": hypixelApiKeyOwner
 		};
 
 		if (endpoint === RunEndpoints.KEY) {
