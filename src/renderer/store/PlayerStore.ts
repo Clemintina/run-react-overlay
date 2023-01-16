@@ -128,10 +128,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					playerData.hypixelPlayer = ipcHypixelPlayer.data;
 					if (ipcHypixelPlayer.limit && ipcHypixelPlayer.limit?.remaining < 20) {
 						useConfigStore.getState().setErrorMessage({
-							title: "Approching rate limit",
+							title: "Approaching rate limit",
 							cause: `Slow down! ${ipcHypixelPlayer.limit.limit - ipcHypixelPlayer.limit.remaining} / ${ipcHypixelPlayer.limit.limit} (${ipcHypixelPlayer.limit.reset} seconds remaining)`,
 							type: "WARNING",
-							code: 429,
+							code: 429
 						});
 					}
 				}
