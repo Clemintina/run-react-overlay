@@ -10,25 +10,24 @@ export type Player = {
 	name: string;
 } & (
 	| {
-			id: string | null;
-			nick?: string;
-			nicked: false;
-			bot: boolean | null;
-			loaded: boolean;
-			friended: boolean | null;
-			denicked: boolean | null;
-			last_updated: number;
-			hypixelPlayer: Components.Schemas.Player | null;
-			hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
-			hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
-			hypixelFriendsMutuals?: Array<string> | null;
-			sources: {
-				runApi: Blacklist | null;
-				boomza?: IPCResponse<BoomzaAntisniper> | null;
-				keathiz?: IPCResponse<KeathizOverlayRun> | null;
-				lunar?: LunarAPIResponse | null;
-				polsu?: {
-					sessions?: IPCResponse<Session>;
+	id: string | null;
+	bot: boolean | null;
+	loaded: boolean;
+	friended: boolean | null;
+	denicked: boolean | null;
+	nicked: false;
+	last_updated: number;
+	hypixelPlayer: Components.Schemas.Player;
+	hypixelGuild: IPCResponse<Components.Schemas.Guild> | null;
+	hypixelFriends: IPCResponse<{ _id: string; uuidSender: string; uuidReceiver: string; started: number }[]> | null;
+	hypixelFriendsMutuals?: Array<string> | null;
+	sources: {
+		runApi: Blacklist | null;
+		boomza?: IPCResponse<BoomzaAntisniper> | null;
+		keathiz?: IPCResponse<KeathizOverlayRun> | null;
+		lunar?: LunarAPIResponse | null;
+		polsu?: {
+			sessions?: IPCResponse<Session>;
 				};
 				playerDb?: IPCResponse<PlayerDB> | null;
 				customFile?: CustomFileJsonType;
@@ -37,6 +36,7 @@ export type Player = {
 	  }
 	| {
 			nicked: true;
+	last_nick_encountered: number
 	  }
 );
 

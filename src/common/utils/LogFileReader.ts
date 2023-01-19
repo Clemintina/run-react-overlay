@@ -80,16 +80,15 @@ export class LogFileReader {
 				const configStore = useConfigStore.getState();
 				const players = usePlayerStore.getState();
 				const player: Player | undefined = players.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
-				if (player !== undefined && !player.nicked && player.hypixelPlayer !== null) {
+				if (player && "hypixelPlayer" in player) {
 					await window.ipcRenderer.invoke(IpcValidInvokeChannels.SERAPH, [RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner]);
 				}
 			}
 			if (line.includes("Protect your bed and destroy the enemy beds.")) {
 				const players = usePlayerStore.getState().players;
 				const uuid_array: Array<string> = [];
-
 				players.map((player) => {
-					if (!player.nicked && player.hypixelPlayer != undefined) uuid_array.push(player.hypixelPlayer.uuid);
+					if (player && "hypixelPlayer" in player) uuid_array.push(player.hypixelPlayer.uuid);
 				});
 				const playerData: PlayerData = {
 					data: {
@@ -97,7 +96,6 @@ export class LogFileReader {
 						server: useConfigStore.getState().game.last_server,
 					},
 				};
-
 				if (uuid_array.length >= 1) postData(playerData);
 			}
 		});
@@ -237,7 +235,7 @@ const clearOverlayTable = async () => {
 	const uuid_array: Array<string> = [];
 
 	players.map((player) => {
-		if (!player.nicked && player.hypixelPlayer != undefined) uuid_array.push(player.hypixelPlayer.uuid);
+		if (player && "hypixelPlayer" in player) uuid_array.push(player.hypixelPlayer.uuid);
 	});
 	usePlayerStore.getState().clearPlayers();
 

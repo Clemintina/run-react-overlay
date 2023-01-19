@@ -209,42 +209,46 @@ const checkIfNich = (num1: number | undefined, num2: number | undefined, isDesce
 const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
 	const p1: Player = nodeA.data,
 		p2: Player = nodeB.data;
-	if ((!p1.nicked && p1.sources.runApi?.data.blacklist?.tagged) || p1.nicked) {
+	if (p1.nicked) {
 		return isDescending ? 1 : -1;
-	} else if ((!p2.nicked && p2.sources.runApi?.data.blacklist?.tagged) || p2.nicked) {
+	} else if (p2.nicked) {
+		return isDescending ? -1 : 1;
+	} else if ("hypixelPlayer" in p1 && p1.sources.runApi?.data.blacklist?.tagged) {
+		return isDescending ? 1 : -1;
+	} else if ("hypixelPlayer" in p2 && p2.sources.runApi?.data.blacklist?.tagged) {
+		return isDescending ? -1 : 1;
+	} else {
+		let player1, player2;
+		switch (sortingData) {
+			case "star":
+				return checkIfNich(p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0, p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0, isDescending);
+			case "name":
+				return p1.name.localeCompare(p2.name);
+			case "winstreak":
+				player1 = p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
+				player2 = p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
+				if (p1.sources.keathiz != undefined && player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+				if (p2.sources.keathiz != undefined && player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+				return checkIfNich(player1, player2, isDescending);
+			case "fkdr":
+				return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), isDescending);
+			case "wlr":
+				return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), isDescending);
+			case "KDR":
+				return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), isDescending);
+			case "bblr":
+				return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), isDescending);
+			case "wins":
+				return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, isDescending);
+			case "losses":
+				return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, isDescending);
+			case "finalkills":
+				return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, isDescending);
+			default:
+				assertDefaultError(sortingData);
+		}
 		return isDescending ? -1 : 1;
 	}
-
-	let player1, player2;
-	switch (sortingData) {
-		case "star":
-			return checkIfNich(p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0, p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0, isDescending);
-		case "name":
-			return p1.name.localeCompare(p2.name);
-		case "winstreak":
-			player1 = p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
-			player2 = p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
-			if (p1.sources.keathiz != undefined && player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
-			if (p2.sources.keathiz != undefined && player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
-			return checkIfNich(player1, player2, isDescending);
-		case "fkdr":
-			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), isDescending);
-		case "wlr":
-			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), isDescending);
-		case "KDR":
-			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), isDescending);
-		case "bblr":
-			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), isDescending);
-		case "wins":
-			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, isDescending);
-		case "losses":
-			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, isDescending);
-		case "finalkills":
-			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, isDescending);
-		default:
-			assertDefaultError(sortingData);
-	}
-	return isDescending ? -1 : 1;
 };
 
 window.ipcRenderer.on("updater", async (event, args) => {

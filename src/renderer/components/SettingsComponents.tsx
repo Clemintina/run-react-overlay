@@ -473,7 +473,7 @@ export const NickView: FC = () => {
 	const nickArray: Array<string> = [];
 
 	players.map((p: Player) => {
-		if (!p.nicked) {
+		if ("hypixelPlayer" in p) {
 			playerArray.push(p?.hypixelPlayer?.displayname ?? p.name);
 		} else {
 			nickArray.push(p.name);
@@ -1343,7 +1343,7 @@ export const ColumnEditorView: FC = () => {
 
 		useConfigStore.getState().setTableState(table);
 		const players = constantPlayerData();
-		if (!players[0].nicked) {
+		if ("hypixelPlayer" in players[0]) {
 			setPlayerData([players[0]]);
 		}
 	};

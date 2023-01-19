@@ -375,12 +375,12 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, isOpen, onClo
 												</div>
 											}
 											onClick={async () => {
-												if (reportType.length > 2 && !data.nicked && run.apiKey.toLowerCase() != "public" && run.valid && reportReason.length > 2) {
+												if (reportType.length > 2 && "hypixelPlayer" in data && run.apiKey.toLowerCase() != "public" && run.valid && reportReason.length > 2) {
 													const report: SniperBody = {
-														uuid: data.hypixelPlayer!.uuid,
+														uuid: data.hypixelPlayer.uuid,
 														reason: reportReason,
 														report_type: reportType,
-														apikey: run.apiKey,
+														apikey: run.apiKey
 													};
 													try {
 														const response = await axios.post("https://antisniper.seraph.si/v4/addsniper", report, {

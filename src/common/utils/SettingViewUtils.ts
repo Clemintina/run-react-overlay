@@ -8,10 +8,9 @@ export const generateRandomNumber = (param1, param2) => {
 export const constantPlayerData = () => {
 	const player: Player = {
 		name: "queued_player",
-		nick: "queued_player",
 		id: "8589389e8b6b46c288084eb71ec3479e",
-		nicked: false,
 		bot: false,
+		nicked: false,
 		friended: false,
 		loaded: true,
 		last_updated: 0,

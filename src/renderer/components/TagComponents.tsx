@@ -25,7 +25,7 @@ export const RenderCoreStatsColour: FC<RenderCoreStatsColour> = (props: RenderCo
 	let playerValue;
 	const { table } = useConfigStore((state) => ({ table: state.table }));
 
-	if (!player.nicked) {
+	if ("hypixelPlayer" in player) {
 		let modeObj = "";
 		if (props.mode != undefined) {
 			switch (props.mode) {
@@ -91,8 +91,8 @@ export const RenderRatioColour: FC<RenderRatioColour> = (props: RenderRatioColou
 	let renderer: JSX.Element;
 	let playerValue;
 	const { table } = useConfigStore((state) => ({ table: state.table }));
-
-	if (!player.nicked) {
+	
+	if ("hypixelPlayer" in player) {
 		switch (props.ratio) {
 			case "wlr":
 				playerValue = (player.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (player.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 1);
