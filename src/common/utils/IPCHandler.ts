@@ -8,7 +8,7 @@ import { KeybindInterface } from "@common/utils/Schemas";
 const IPCValidInvokeArray = ["hypixel", "registerGlobalKeybinds", "seraph", "isAdmin", "autoLog", "mcutils", "selectLogFile", "isFileReadable", "boomza", "keathiz", "observer", "lunar", "playerdb", "getFilePath", "notifications", "getAppInfo", "astolfo", "openlink"] as const;
 export type IPCValidInvokeChannels = typeof IPCValidInvokeArray[number];
 
-const IPCValidOnArray = ["logFileLine", "globalShortcutPressed", "updater"] as const;
+const IPCValidOnArray = ["logFileLine", "globalShortcutPressed", "updater", "ready"] as const;
 export type IPCValidOnChannels = typeof IPCValidOnArray[number];
 
 const IPCValidSendArray = ["logFileSet", "windowToggle", "windowMinimise", "windowMaximise", "windowClose", "openExternal"] as const;

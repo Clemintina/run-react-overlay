@@ -152,9 +152,9 @@ export const InputTextBox: FC<InputTextBox> = ({ options, inputProps, helperText
 
 	return (
 		<Box className='w-full'>
-			<span>{icon}</span>
+			<div>{icon}</div>
 			<TextField
-				type='text'
+				type="text"
 				onKeyDown={(event) => {
 					if (onKeyDown) {
 						onKeyDown(event, getTextField);

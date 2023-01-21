@@ -218,6 +218,9 @@ export const createAppWindow = (): BrowserWindow => {
 				});
 			}
 		}
+		
+		appWindow?.webContents.send("ready", JSON.stringify({ status: 200 }));
+		
 		appWindow.show();
 		if (isPortOpen && process.platform === "win32") {
 			expressApplication.listen(5000, () => {
@@ -531,6 +534,7 @@ const registerLogCommunications = () => {
  * Register Main Window Inter Process Communication
  */
 const registerMainWindowCommunications = () => {
+	let isWindowDisplayed = true;
 	ipcMain.on("windowClose", async () => {
 		app.quit();
 	});
@@ -544,7 +548,8 @@ const registerMainWindowCommunications = () => {
 	});
 
 	ipcMain.on("windowToggle", () => {
-		appWindow?.isVisible() ? appWindow?.minimize() : appWindow?.showInactive();
+		!isWindowDisplayed ? appWindow?.minimize() : appWindow?.showInactive();
+		isWindowDisplayed = !isWindowDisplayed;
 	});
 
 	ipcMain.on("windowReload", async () => {

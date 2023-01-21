@@ -10,13 +10,14 @@ import usePlayerStore from "@renderer/store/PlayerStore";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { Box } from "@mui/material";
 import { Interweave } from "interweave";
-import { AppInformation } from "@common/utils/Schemas";
+import { AppInformation, KeyboardFocusType } from "@common/utils/Schemas";
 import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
 import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { CustomHeader } from "@components/AppComponents";
 import { PlayerMenuOption, PlayerOptionsModal } from "@components/BaseComponents";
 import { getPlayerRank } from "@common/zikeji";
 import { OverlayTooltip } from "@components/TooltipComponents";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;
@@ -44,7 +45,6 @@ export const columnDefsBase: ColDef<Player>[] = [
 	},
 	{
 		field: "name",
-		type: "string",
 		minWidth: 150,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
 		cellRenderer: ({ data }) => <PlayerNameComponent player={data} />,
@@ -56,44 +56,37 @@ export const columnDefsBase: ColDef<Player>[] = [
 	},
 	{
 		field: "WS",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
 		cellRenderer: ({ data }) => <PlayerWinstreakComponent player={data} />,
 	},
 	{
 		field: "FKDR",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
 		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />,
 	},
 	{
 		field: "WLR",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
 		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />,
 	},
 	{
 		field: "KDR",
-		type: "number",
 		hide: true,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "KDR"),
 		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"kdr"} />,
 	},
 	{
 		field: "BBLR",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
 		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />,
 	},
 	{
 		field: "wins",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
 		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />,
 	},
 	{
 		field: "losses",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
 		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />,
 	},
@@ -101,13 +94,11 @@ export const columnDefsBase: ColDef<Player>[] = [
 		field: "final_kills",
 		headerName: "Final Kills",
 		hide: true,
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "finalkills"),
 		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
 	},
 	{
 		field: "session",
-		type: "number",
 		sortable: false,
 		cellRenderer: ({ data }) => {
 			const player = data;
@@ -154,7 +145,6 @@ export const columnDefsBase: ColDef<Player>[] = [
 	},
 	{
 		field: "guild",
-		type: "string",
 		sortable: false,
 		hide: true,
 		cellRenderer: ({ data }) => <PlayerGuildComponent player={data} />,
@@ -183,7 +173,6 @@ export const columnDefsBase: ColDef<Player>[] = [
 	},
 	{
 		field: "NWL",
-		type: "number",
 		sortable: false,
 		hide: true,
 		cellRenderer: ({ data }) => {
@@ -257,35 +246,42 @@ window.ipcRenderer.on("updater", async (event, args) => {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "The overlay is ready to update, Restarting in 5 seconds",
-			type: "SUCCESS",
+			type: "SUCCESS"
 		});
 	} else if (appUpdater.update.updateAvailable) {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "An update is currently being downloaded!",
-			type: "SUCCESS",
+			type: "SUCCESS"
 		});
 	}
+});
 
-	const logs = useConfigStore.getState().logs;
-	if (logs.readable && window?.ipcRenderer) {
-		window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
+window.ipcRenderer.on("ready", async () => {
+	if (window?.ipcRenderer) {
+		const logs = useConfigStore.getState().logs;
+		if (logs.readable) {
+			window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
+		}
+		
+		const keybinds = useConfigStore.getState().keybinds;
+		await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
 	}
 });
 
 export default () => {
 	const { columnState, table } = useConfigStore((state) => ({
 		columnState: state.table.columnState,
-		table: state.table,
+		table: state.table
 	}));
 	const { players } = usePlayerStore((state) => ({ players: state.players }));
-
+	
 	let onGridReady = false;
-
+	
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		useConfigStore.getState().setVersion();
-	}, []);
+	}, [players, columnState, table]);
 
 	const defaultColDef = { ...defaultColDefBase };
 

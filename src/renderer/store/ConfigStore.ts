@@ -581,20 +581,27 @@ const useConfigStore = create<ConfigStore>()(
 				},
 				keybinds: [],
 				addKeybind: async (focus, keybind) => {
-					if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
-						get().keybinds.push({ keybind, focus });
+					let keybindArray: Array<KeybindInterface> = get().keybinds;
+					if (keybindArray.filter((arr) => arr.focus == focus).length == 0) {
+						keybindArray.push({ keybind, focus });
 					} else {
-						get().removeKeybind(focus);
-						get().keybinds.push({ keybind, focus });
+						keybindArray = keybindArray.filter((arr) => arr.focus !== focus);
+						keybindArray.push({ keybind, focus });
 					}
-				},
-				removeKeybind: (focus: KeyboardFocusType) => {
+					await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybindArray);
 					set({
-						keybinds: get().keybinds.filter((arr) => arr.focus !== focus),
+						keybinds: keybindArray
+					});
+				},
+				removeKeybind: async (focus: KeyboardFocusType) => {
+					const keybindArray = get().keybinds.filter((arr) => arr.focus !== focus);
+					await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybindArray);
+					set({
+						keybinds: keybindArray
 					});
 				},
 				getKeybind: (focus: KeyboardFocusType) => {
-					return get().keybinds.filter((arr) => arr.focus == focus)[0];
+					return get().keybinds.filter((arr) => arr.focus == focus)[0] ?? { keybind: "", focus };
 				},
 				font: {
 					family: "Nunito",

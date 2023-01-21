@@ -36,7 +36,7 @@ export type Player = {
 	  }
 	| {
 			nicked: true;
-	last_nick_encountered: number
+			last_nick_encountered: number
 	  }
 );
 
