@@ -1,7 +1,6 @@
 import { app, BrowserWindow, dialog, globalShortcut, ipcMain, IpcMainInvokeEvent, Notification, NotificationConstructorOptions, shell } from "electron";
 import { registerTitlebarIpc } from "@misc/window/titlebarIPC";
 import path from "path";
-import axios, { AxiosRequestConfig } from "axios";
 import fs from "fs";
 import TailFile from "@logdna/tail-file";
 import readline from "readline";
@@ -27,6 +26,7 @@ import { Agent } from "https";
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions;
 import got, { ExtendOptions } from "got";
 import { PolsuApi } from "@clemintina/seraph-library";
+import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -78,26 +78,6 @@ let update = {
 let logFileTail: TailFile | null = null;
 let logFileReadline: readline.Interface | null = null;
 let appWindow: BrowserWindow;
-
-/**
- * Axios HTTP Client
- */
-const axiosConfig: AxiosRequestConfig = {
-	headers: {
-		...headers,
-		"Run-API-Version": overlayVersion,
-		"Accept-Encoding": "gzip,deflate,compress",
-	},
-	timeout: 20000,
-	timeoutErrorMessage: "Connection Timed Out!",
-	responseType: "json",
-	validateStatus: () => true,
-};
-const axiosClient = axios.create(axiosConfig);
-axiosClient.defaults.httpsAgent = new Agent({
-	maxVersion: "TLSv1.3",
-	minVersion: "TLSv1.2",
-});
 
 const gotCacheMap = new Map();
 export const gotOptions: ExtendOptions = {
@@ -259,6 +239,7 @@ const registerMainIPC = () => {
  */
 const registerSeraphIPC = () => {
 	ipcMain.handle("hypixel", async (event: IpcMainInvokeEvent, args: string[]) => {
+		const gotClient = got.extend(gotOptions);
 		const resource = args[0] as string;
 		const apiKey = args[1] as string;
 		let playerName: string = "" as string;
@@ -304,16 +285,16 @@ const registerSeraphIPC = () => {
 				} catch (e) {
 					if (e instanceof RequestedTooManyTimes) {
 						try {
-							const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${playerName}`, {
+							const { body, statusCode } = await gotClient.get<PlayerDB>(`https://playerdb.co/api/player/minecraft/${playerName}`, {
 								headers: {
-									Accept: "application/json",
-								},
+									Accept: "application/json"
+								}
 							});
-							if (response.data.code != "player.found") {
-								return { data: null, status: response.status };
+							if (body.code != "player.found") {
+								return { data: null, status: statusCode };
 							}
 							try {
-								const res = await hypixelClient.getClient().player.uuid(response.data.data.player.raw_id);
+								const res = await hypixelClient.getClient().player.uuid(body.data.player.raw_id);
 								if (res.data.displayname.toLowerCase() != playerName) {
 									return { data: null, status: 400 };
 								}
@@ -358,6 +339,7 @@ const registerSeraphIPC = () => {
 	});
 
 	ipcMain.handle("mcutils", async (event: IpcMainInvokeEvent, args: string[]) => {
+		const gotClient = got.extend(gotOptions);
 		let url: string;
 		const playerClean = args[0] as string;
 		const resource = args[1] as string;
@@ -373,8 +355,8 @@ const registerSeraphIPC = () => {
 				break;
 		}
 		try {
-			const response = await axiosClient(url, { headers });
-			return { data: response.data, status: response.status };
+			const { body, statusCode } = await gotClient.get(url, { headers });
+			return { data: body, status: statusCode };
 		} catch (e) {
 			return { data: null, status: 400 };
 		}
@@ -387,8 +369,8 @@ const registerSeraphIPC = () => {
 			hypixelApiKeyOwner = args[3],
 			runApiKey = args[4],
 			overlayUuid = args[5];
-
-		const gotClient = got.extend(gotOptions);
+		
+		const gotClient = got.extend({ ...gotOptions, http2: true });
 		const seraphHeaders = {
 			...headers,
 			"Run-API-Version": overlayVersion,
@@ -424,9 +406,10 @@ const registerSeraphIPC = () => {
 	});
 
 	ipcMain.handle("lunar", async (event: IpcMainInvokeEvent, args: string[]) => {
+		const gotClient = got.extend(gotOptions);
 		const uuid = args[0];
-		const response = await axiosClient(`https://lunar.seraph.si/${uuid}`, { headers });
-		return { status: response.status, data: response.data };
+		const { body, statusCode } = await gotClient.get(`https://lunar.seraph.si/${uuid}`, { headers, http2: true });
+		return { status: statusCode, data: body };
 	});
 };
 
@@ -572,19 +555,19 @@ const registerMainWindowCommunications = () => {
 const registerExternalApis = () => {
 	ipcMain.handle("boomza", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const username = args[0];
-		const response = await axiosClient(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
+		const gotClient = got.extend(gotOptions);
+		const { body, statusCode } = await gotClient.get(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
 			headers,
-			httpsAgent: getProxyChannel(),
-			proxy: false,
+			agent
 		});
-		const json_response = destr(response.data.toString().replaceAll("'", '"').toLowerCase());
+		const json_response = destr(body.toString().replaceAll("'", "\"").toLowerCase());
 		let json: BoomzaAntisniper;
 		try {
 			json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
 		} catch (e) {
 			json = { sniper: false, report: 0, error: true, username: username };
 		}
-		return { data: json, status: response.status };
+		return { data: json, status: statusCode };
 	});
 
 	ipcMain.handle("keathiz", async (event: IpcMainInvokeEvent, args: string[]) => {
@@ -597,25 +580,34 @@ const registerExternalApis = () => {
 		} else if (endpoint == KeathizEndpoints.DENICK) {
 			params = `&nick=${uuid}`;
 		}
-		const response = await axiosClient(`https://api.antisniper.net/${endpoint}?key=${apikey}${params}`, {
+		const gotClient = got.extend(gotOptions);
+		const { body, statusCode } = await gotClient.get(`https://api.antisniper.net/${endpoint}?key=${apikey}${params}`, {
 			headers,
-			httpsAgent: getProxyChannel(),
-			proxy: false,
+			agent
 		});
-		return { data: response.data, status: response.status };
+		return { data: body, status: statusCode };
 	});
 
 	ipcMain.handle("observer", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const uuid = args[0];
 		const apikey = args[1];
-		const response = await axiosClient(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, { headers });
-		return { data: response.data, status: response.status };
+		
+		const gotClient = got.extend(gotOptions);
+		const { body, statusCode } = await gotClient.get(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
+			headers,
+			agent
+		});
+		return { data: body, status: statusCode };
 	});
 
 	ipcMain.handle("playerdb", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const uuid = args[0];
-		const response = await axiosClient(`https://playerdb.co/api/player/minecraft/${uuid}`, { headers });
-		return { data: response.data, status: response.status };
+		const gotClient = got.extend(gotOptions);
+		const { body, statusCode } = await gotClient.get(`https://playerdb.co/api/player/minecraft/${uuid}`, {
+			headers,
+			agent
+		});
+		return { data: body, status: statusCode };
 	});
 
 	ipcMain.handle("polsu", async (event: IpcMainInvokeEvent, args: string[]) => {
@@ -637,8 +629,12 @@ const registerExternalApis = () => {
 
 	ipcMain.handle("customUrl", async (event: IpcMainInvokeEvent, args: string[]) => {
 		try {
-			const response = await axiosClient.get<{ data: CustomFileJsonType }>(args[0], { headers });
-			return { data: response.data.data, status: response.status };
+			const gotClient = got.extend(gotOptions);
+			const { body, statusCode } = await gotClient.get<{ data: CustomFileJsonType }>(args[0], {
+				headers,
+				agent
+			});
+			return { data: body.data, status: statusCode };
 		} catch (e) {
 			return { data: null, response: 400 };
 		}
@@ -748,10 +744,14 @@ const getProxyChannel = () => {
 		proxy: {
 			host: proxyStore.hostname,
 			port: Number(proxyStore.port),
-			proxyAuth: proxyStore.username + ":" + proxyStore.password,
-		},
+			proxyAuth: proxyStore.username + ":" + proxyStore.password
+		}
 	});
 };
+
+const agent = {
+	http: getProxyChannel()
+} as const;
 
 const getErrorHandler = (e) => {
 	if (e instanceof RateLimitError) return e.getJson();

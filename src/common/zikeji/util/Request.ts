@@ -1,7 +1,7 @@
 import { GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
 import type { DefaultMeta, RequestOptions } from "../Client";
 import { Components } from "../types/api";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { CreateAxiosDefaults } from "axios";
 import { RequestedTooManyTimes } from "@common/zikeji/errors/RequestedTooManyTimes";
 
 /** @internal */
@@ -10,14 +10,13 @@ const CACHE_CONTROL_REGEX = /s-maxage=(\d+)/;
 /** @internal */
 export const request = async <T extends Components.Schemas.ApiSuccess & { cause?: string } & { cloudflareCache?: DefaultMeta["cloudflareCache"] }>(options: RequestOptions): Promise<T> => {
 	let axiosError: Error;
-	const axiosConfig: AxiosRequestConfig = {
+	const axiosConfig: CreateAxiosDefaults = {
 		headers: {
-			Accept: "application/json",
-			"Accept-Encoding": "gzip,deflate,compress",
+			Accept: "application/json"
 		},
 		timeout: options.timeout,
 		timeoutErrorMessage: JSON.stringify({ status: 408, data: { success: false } }),
-		validateStatus: () => true,
+		validateStatus: () => true
 	};
 
 	if (options.key) {
