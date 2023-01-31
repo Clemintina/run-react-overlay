@@ -11,7 +11,7 @@ import useConfigStore from "@renderer/store/ConfigStore";
 import { Box } from "@mui/material";
 import { Interweave } from "interweave";
 import { AppInformation } from "@common/utils/Schemas";
-import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
+import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerRankedBedwarsRating, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
 import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { CustomHeader } from "@components/AppComponents";
 import { PlayerMenuOption } from "@components/BaseComponents";
@@ -176,6 +176,14 @@ export const columnDefsBase: ColDef<Player>[] = [
 		hide: true,
 		cellRenderer: ({ data }) => {
 			return <PlayerNetworkLevel player={data} />;
+		}
+	},
+	{
+		field: "RBW",
+		sortable: false,
+		hide: true,
+		cellRenderer: ({ data }) => {
+			return <PlayerRankedBedwarsRating player={data} />;
 		}
 	}
 ];

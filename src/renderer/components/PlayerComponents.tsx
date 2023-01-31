@@ -375,6 +375,9 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (player?.hypixelPlayer?.channel == "PARTY") {
 					tagArray.push(getTagsFromConfig("hypixel.party"));
 				}
+				if ((player?.hypixelPlayer?.firstLogin ?? 0) < (new Date().getUTCMilliseconds() - 2592000000)) {
+					tagArray.push(<span className={"text-red-500"}>R</span>);
+				}
 				if (settings.polsu.enabled) {
 					if (player.sources.polsu?.sessions && settings.polsu.sessions) {
 						const polsuSession = player.sources.polsu.sessions.data;
@@ -548,11 +551,89 @@ export const PlayerNetworkLevel: FC<PlayerCommonProperties> = ({ player }) => {
 	);
 };
 
+export const PlayerRankedBedwarsRating: FC<PlayerCommonProperties> = ({ player }) => {
+	const { table } = useConfigStore((state) => ({
+		table: state.table
+	}));
+	let playerNetworkLevel: { colour: string, level: number } = {
+		colour: "FF5555",
+		level: 0
+	};
+	if ("hypixelPlayer" in player && player.hypixelPlayer) {
+		const tempNetworkLevel = player.sources?.runApi?.data?.ranked_bedwars?.elo ?? 0;
+		const localPlayerNetworkLevel = {
+			colour: "FF5555",
+			level: tempNetworkLevel
+		};
+		const colourArray: Array<Colour> = [
+			{
+				requirement: 0,
+				colour: "555555",
+				operator: "<="
+			},
+			{
+				requirement: 26,
+				colour: "aaaaaa",
+				operator: "<="
+			},
+			{
+				requirement: 99,
+				colour: "ffffff",
+				operator: "<="
+			},
+			{
+				requirement: 150,
+				colour: "ffaa00",
+				operator: "<="
+			},
+			{
+				requirement: 200,
+				colour: "00AA00",
+				operator: "<="
+			},
+			{
+				requirement: 220,
+				colour: "ff5555",
+				operator: "<="
+			},
+			{
+				requirement: 250,
+				colour: "aa0000",
+				operator: "<="
+			},
+			{
+				requirement: 300,
+				colour: "ff55ff",
+				operator: "<="
+			},
+			{
+				requirement: 500,
+				colour: "800080",
+				operator: "<="
+			}
+		];
+		const arr = colourArray.sort((a, b) => a.requirement - b.requirement);
+		for (const { colour, requirement } of arr) {
+			if (tempNetworkLevel >= requirement) {
+				localPlayerNetworkLevel.colour = colour;
+			}
+		}
+		playerNetworkLevel = localPlayerNetworkLevel;
+	}
+	return (
+		<div style={{ textAlign: table.settings.textAlign }}>
+			<Tooltip title={<span className={"capitalize"}>Ranked Bedwars ELO</span>} arrow>
+				<span style={{ color: `#${playerNetworkLevel.colour}` }}>{playerNetworkLevel.level}</span>
+			</Tooltip>
+		</div>
+	);
+};
+
 // Utils
 const parseColour = (text: string) => {
 	const splitText = text.split("§");
 	const finalText: [string, string][] = [];
-
+	
 	for (const letter of splitText) {
 		if (letter != undefined) {
 			finalText.push([letter.slice(1), MinecraftColourAsHex[`§${letter[0]}`]]);
