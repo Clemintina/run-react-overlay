@@ -1,14 +1,16 @@
 // eslint-disable-next-line import/named
-import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, RowDataUpdatedEvent, SortChangedEvent } from "ag-grid-community";
+import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, RowDataUpdatedEvent, SortChangedEvent, IRowNode } from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import React, { useEffect } from "react";
 import { Player, PlayerUtils } from "@common/utils/PlayerUtils";
 import { AgGridReact } from "ag-grid-react";
 import { assertDefaultError } from "@common/helpers";
 import usePlayerStore from "@renderer/store/PlayerStore";
 import useConfigStore from "@renderer/store/ConfigStore";
-import { Box } from "@mui/material";
+import { alpha, Box } from "@mui/material";
 import { Interweave } from "interweave";
 import { AppInformation } from "@common/utils/Schemas";
 import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerRankedBedwarsRating, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
@@ -202,7 +204,7 @@ const checkIfNich = (num1: number | undefined, num2: number | undefined, isDesce
 	}
 };
 
-const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
+const sortData = (valueA, valueB, nodeA: IRowNode, nodeB: IRowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
 	const p1 = nodeA.data,
 		p2 = nodeB.data;
 	
@@ -299,13 +301,8 @@ export default () => {
 	
 	const columnDefs = [...columnDefsBase];
 	
-	const frameworkComponents = {
+	const components = {
 		agColumnHeader: CustomHeader
-	};
-	
-	const onSaveGridColumnState = (e: ColumnApi) => {
-		const columnState = e.getColumnState();
-		if (onGridReady) useConfigStore.getState().setTableState({ ...table, columnState });
 	};
 	
 	const onSortingOrderChange = (e: SortChangedEvent<Player>) => {
@@ -321,20 +318,12 @@ export default () => {
 			onGridReady = true;
 			this.suppressDragLeaveHidesColumns = true;
 		},
-		onGridColumnsChanged(event: GridColumnsChangedEvent) {
-			onSaveGridColumnState(event.columnApi);
-		},
-		onColumnResized(event: ColumnResizedEvent<Player>) {
-			onSaveGridColumnState(event.columnApi);
-		},
 		onSortChanged(event: SortChangedEvent<Player>) {
 			onSortingOrderChange(event);
 		},
-		onColumnMoved(event: ColumnMovedEvent) {
-			onSaveGridColumnState(event.columnApi);
-		},
 		onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
 			event.api.redrawRows();
+			useConfigStore.getState().setTableState({ ...table, columnState });
 		},
 		animateRows: false,
 		autoSizePadding: 0,
@@ -343,15 +332,15 @@ export default () => {
 		suppressCellFocus: true,
 		suppressChangeDetection: false,
 		overlayNoRowsTemplate: "No Players",
-		components: frameworkComponents,
+		components,
 		getRowId: (params: GetRowIdParams<Player>) => params.data.name
 	};
 	
 	return (
 		<Box height={"100vh"}>
 			<div className="pl-1 pr-1 w-full h-full">
-				<div className="ag-theme-alpine-dark" style={{ height: "89vh" }}>
-					<AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={frameworkComponents} />
+				<div className="" style={{ height: "89vh" }}>
+					<AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={components} />
 				</div>
 			</div>
 		</Box>

@@ -1389,12 +1389,6 @@ export const ColumnEditorView: FC = () => {
 		onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
 			onGridUpdate(event);
 		},
-		onGridColumnsChanged(event: GridColumnsChangedEvent) {
-			onGridUpdate(event);
-		},
-		onColumnMoved(event: ColumnMovedEvent) {
-			onGridUpdate(event);
-		},
 		defaultColDef: defaultColDefBase,
 		columnDefs: columnDefsBase,
 		autoSizePadding: 0,
@@ -1407,7 +1401,7 @@ export const ColumnEditorView: FC = () => {
 	return (
 		<NavigationBar>
 			<Box className={"pl-2"}>
-				<div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
+				<div style={{ height: "15vh" }}>
 					<AgGridReact rowData={playerData} gridOptions={gridOptions} />
 				</div>
 				<div className={"grid grid-cols-6 justify-center"}>
