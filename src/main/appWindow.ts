@@ -90,10 +90,10 @@ export const gotOptions: ExtendOptions = {
 		immutableMinTimeToLive: 60000,
 	},
 	retry: {
-		maxRetryAfter: 100,
+		maxRetryAfter: 30,
 	},
 	throwHttpErrors: false,
-	http2: false,
+	http2: true,
 } as const;
 
 /**
@@ -198,9 +198,9 @@ export const createAppWindow = (): BrowserWindow => {
 				});
 			}
 		}
-		
+
 		appWindow?.webContents.send("ready", JSON.stringify({ status: 200 }));
-		
+
 		appWindow.show();
 		if (isPortOpen && process.platform === "win32") {
 			expressApplication.listen(5000, () => {
@@ -369,7 +369,7 @@ const registerSeraphIPC = () => {
 			hypixelApiKeyOwner = args[3],
 			runApiKey = args[4],
 			overlayUuid = args[5];
-		
+
 		const gotClient = got.extend({ ...gotOptions, http2: true });
 		const seraphHeaders = {
 			...headers,
@@ -591,7 +591,7 @@ const registerExternalApis = () => {
 	ipcMain.handle("observer", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const uuid = args[0];
 		const apikey = args[1];
-		
+
 		const gotClient = got.extend(gotOptions);
 		const { body, statusCode } = await gotClient.get(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
 			headers,
