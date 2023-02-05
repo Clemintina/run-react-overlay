@@ -383,7 +383,11 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 						const polsuSession = player.sources.polsu.sessions.data;
 						const isNew = polsuSession?.new;
 						if (isNew) {
-							tagArray.push(<span className={"text-green-500"}>R</span>);
+							tagArray.push(
+								<Tooltip title={<span className={"capitalize"}>Just registered with Polsu</span>} arrow>
+									<span className={"text-green-500"}>R</span>
+								</Tooltip>
+							);
 						}
 						if (polsuSession?.player?.last_changed != null && !isNew && isPremium) {
 							const timeNow = Date.now();
@@ -440,6 +444,31 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 							}
 						} else {
 							if (useConfigStore.getState().settings.keathiz) tagArray.push(<span style={{ color: `#${MinecraftColours.DARK_RED.hex}` }}>{`FAILED`}</span>);
+						}
+					}
+				}
+				
+				const quests = player.hypixelPlayer.quests;
+				if (quests) {
+					const TIME_TO_COMPLEAT = Date.now() - (3600 * 1000);
+					if (quests?.["bedwars_weekly_bed_elims"]) {
+						const quest = quests["bedwars_weekly_bed_elims"];
+						if (quest.active && quest["started"] > TIME_TO_COMPLEAT) {
+							tagArray.push(
+								<Tooltip title={<span className={"capitalize"}>[BETA] Alt check</span>} arrow>
+									<span className={"text-yellow-500"}>AC1</span>
+								</Tooltip>
+							);
+						}
+					}
+					if (quests?.["bedwars_weekly_challenges"]) {
+						const quest = quests["bedwars_weekly_challenges"];
+						if (quest.active && quest["started"] > TIME_TO_COMPLEAT) {
+							tagArray.push(
+								<Tooltip title={<span className={"capitalize"}>[BETA] Alt check</span>} arrow>
+									<span className={"text-yellow-500"}>AC2</span>
+								</Tooltip>
+							);
 						}
 					}
 				}
