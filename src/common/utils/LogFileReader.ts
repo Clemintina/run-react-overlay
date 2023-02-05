@@ -2,11 +2,12 @@ import { IPCResponse, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { Player } from "@common/utils/PlayerUtils";
 import destr from "destr";
 import usePlayerStore from "@renderer/store/PlayerStore";
-import useConfigStore from "@renderer/store/ConfigStore";
+import useConfigStore, { ConfigStore } from "@renderer/store/ConfigStore";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import axios from "axios";
 import { removeMinecraftFormatting } from "@common/zikeji";
 import IpcRendererEvent = Electron.IpcRendererEvent;
+import { ConfigState } from "@reduxjs/toolkit/dist/query/core/apiState";
 
 export type LogFileMessage = {
 	message: string;
@@ -72,20 +73,25 @@ export class LogFileReader {
 	};
 
 	public startSeraphHandler = async () => {
+		let players: Player[], configStore: ConfigStore;
+		usePlayerStore.subscribe((state) => {
+			players = state.players;
+		});
+		useConfigStore.subscribe((state) => {
+			configStore = state;
+		});
+		
 		await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
 			const line = readLogLine(data, true);
 			if (line.includes("FINAL KILL!")) {
 				const lineTemp = line.toString().substring(line.indexOf("[CHAT]"), line.length).replace("[CHAT] ", "");
 				const final_ign = lineTemp.split(" ")[0];
-				const configStore = useConfigStore.getState();
-				const players = usePlayerStore.getState();
-				const player: Player | undefined = players.players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
+				const player: Player | undefined = players.find((player: Player) => player.name.toLowerCase() === final_ign.toLowerCase());
 				if (player && "hypixelPlayer" in player) {
 					await window.ipcRenderer.invoke(IpcValidInvokeChannels.SERAPH, [RunEndpoints.SAFELIST, player.hypixelPlayer.uuid, configStore.hypixel.apiKey, configStore.hypixel.apiKeyOwner, configStore.run.apiKey, configStore.hypixel.apiKeyOwner]);
 				}
 			}
 			if (line.includes("Protect your bed and destroy the enemy beds.")) {
-				const players = usePlayerStore.getState().players;
 				const uuid_array: Array<string> = [];
 				players.map((player) => {
 					if (player && "hypixelPlayer" in player) uuid_array.push(player.hypixelPlayer.uuid);
