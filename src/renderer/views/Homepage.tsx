@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/named
-import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowNode, RowDataUpdatedEvent, SortChangedEvent, IRowNode } from "ag-grid-community";
+import { ColDef, ColumnApi, GetRowIdParams, GridOptions, GridReadyEvent, RowDataUpdatedEvent, SortChangedEvent, IRowNode } from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
 import "ag-grid-community/styles/ag-grid.css";
@@ -10,7 +10,7 @@ import { AgGridReact } from "ag-grid-react";
 import { assertDefaultError } from "@common/helpers";
 import usePlayerStore from "@renderer/store/PlayerStore";
 import useConfigStore from "@renderer/store/ConfigStore";
-import { alpha, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import { Interweave } from "interweave";
 import { AppInformation } from "@common/utils/Schemas";
 import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerRankedBedwarsRating, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
