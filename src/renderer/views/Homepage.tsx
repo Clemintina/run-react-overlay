@@ -105,9 +105,9 @@ export const columnDefsBase: ColDef<Player>[] = [
 			const player = data;
 			const playerStats = player.hypixelPlayer?.stats?.Bedwars;
 			const polsuSession = player?.sources?.polsu?.sessions ? player.sources.polsu.sessions.data : undefined;
-			
+
 			const playerFormatter = new PlayerUtils();
-			
+
 			return (
 				<OverlayTooltip
 					player={player}
@@ -142,7 +142,7 @@ export const columnDefsBase: ColDef<Player>[] = [
 					<PlayerSessionComponent player={data} />
 				</OverlayTooltip>
 			);
-		}
+		},
 	},
 	{
 		field: "guild",
@@ -207,7 +207,7 @@ const checkIfNich = (num1: number | undefined, num2: number | undefined, isDesce
 const sortData = (valueA, valueB, nodeA: IRowNode, nodeB: IRowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
 	const p1 = nodeA.data,
 		p2 = nodeB.data;
-	
+
 	if (p1 == undefined) {
 		return isDescending ? 1 : -1;
 	} else if (p2 == undefined) {
@@ -277,7 +277,7 @@ window.ipcRenderer.on("ready", async () => {
 		if (logs.readable) {
 			window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
 		}
-		
+
 		const keybinds = useConfigStore.getState().keybinds;
 		await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
 	}

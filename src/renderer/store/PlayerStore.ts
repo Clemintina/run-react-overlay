@@ -93,7 +93,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				playerData.name.length <= 16
 					? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name, useConfigStore.getState().hypixel.proxy ? "sdad" : undefined])
 					: await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", ""), useConfigStore.getState().hypixel.proxy ? "dsadas" : undefined]);
-			if ((!ipcHypixelPlayer?.data?.uuid || ipcHypixelPlayer.status != 200)) {
+			if (!ipcHypixelPlayer?.data?.uuid || ipcHypixelPlayer.status != 200) {
 				const data: unknown = ipcHypixelPlayer.data;
 				let cause, code;
 				if (typeof data === "string") {
@@ -179,7 +179,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				playerObject.cause = "try catch";
 			}
 		}
-		
+
 		if ("hypixelPlayer" in playerData) {
 			const [runApi] = await Promise.all([getRunApi(playerData)]);
 			if (runApi.data && runApi.data.code == 200) {

@@ -37,7 +37,7 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	const { configStore, table } = useConfigStore((state) => ({ configStore: state, table: state.table }));
 	let lunarRenderer: JSX.Element = <span />;
 	let srcUrl;
-	
+
 	if ("hypixelPlayer" in player) {
 		srcUrl = `https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`;
 		if (configStore.settings.lunar) {
@@ -122,7 +122,7 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 			}, 1000);
 		}
 	}, [timer]);
-	
+
 	if ("hypixelPlayer" in player && player.hypixelPlayer) {
 		if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
 			values.push(["N/A", "ff0000"]);
@@ -132,7 +132,7 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 			const now_timezoned: Date = new Date();
 			const now = new Date();
 			now.setUTCMilliseconds(now_timezoned.getUTCMilliseconds());
-			
+
 			if (player.hypixelPlayer.lastLogin > player.hypixelPlayer.lastLogout) {
 				const timeDiff = new Date(now_timezoned.getTime() - lastLoginDate.getTime());
 				if ((timeDiff.getUTCHours() >= 3 && timeDiff.getUTCMinutes() >= 30) || timeDiff.getUTCHours() > 4) {
@@ -375,7 +375,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (player?.hypixelPlayer?.channel == "PARTY") {
 					tagArray.push(getTagsFromConfig("hypixel.party"));
 				}
-				if ((player?.hypixelPlayer?.firstLogin ?? 0) < (new Date().getUTCMilliseconds() - 2592000000)) {
+				if ((player?.hypixelPlayer?.firstLogin ?? 0) < new Date().getUTCMilliseconds() - 2592000000) {
 					tagArray.push(<span className={"text-red-500"}>R</span>);
 				}
 				if (settings.polsu.enabled) {
@@ -447,10 +447,10 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 						}
 					}
 				}
-				
+
 				const quests = player.hypixelPlayer.quests;
 				if (quests) {
-					const TIME_TO_COMPLEAT = Date.now() - (3600 * 1000);
+					const TIME_TO_COMPLEAT = Date.now() - 3600 * 1000;
 					if (quests?.["bedwars_weekly_bed_elims"]) {
 						const quest = quests["bedwars_weekly_bed_elims"];
 						if (quest.active && quest["started"] > TIME_TO_COMPLEAT) {
@@ -584,7 +584,7 @@ export const PlayerRankedBedwarsRating: FC<PlayerCommonProperties> = ({ player }
 	const { table } = useConfigStore((state) => ({
 		table: state.table
 	}));
-	let playerNetworkLevel: { colour: string, level: number } = {
+	let playerNetworkLevel: { colour: string; level: number } = {
 		colour: "FF5555",
 		level: 0
 	};

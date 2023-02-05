@@ -28,16 +28,16 @@ export type Player = {
 		lunar?: LunarAPIResponse | null;
 		polsu?: {
 			sessions?: IPCResponse<Session>;
-				};
-				playerDb?: IPCResponse<PlayerDB> | null;
-				customFile?: CustomFileJsonType;
-				customApi?: CustomFileJsonType;
-			};
-	  }
+		};
+		playerDb?: IPCResponse<PlayerDB> | null;
+		customFile?: CustomFileJsonType;
+		customApi?: CustomFileJsonType;
+	};
+}
 	| {
-			nicked: true;
-			last_nick_encountered: number
-	  }
+	nicked: true;
+	last_nick_encountered: number;
+}
 );
 
 export class PlayerUtils {

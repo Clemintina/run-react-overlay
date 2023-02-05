@@ -79,7 +79,8 @@ export type UserAccordion = {
 
 export type PlayerOptionsModal = {
 	data: Player;
-} & CommonPropertyTypes & PlayerMenuStateManager;
+} & CommonPropertyTypes &
+	PlayerMenuStateManager;
 
 type PlayerMenuStateManager = {
 	isOpen?: boolean;
@@ -437,7 +438,7 @@ export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onCl
 		colours: state.colours,
 		polsu: state.polsu
 	}));
-	
+
 	const [open, setOpen] = useState(isOpen ?? false);
 	const handleClose = () => {
 		setOpen(false);
@@ -445,7 +446,7 @@ export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onCl
 			onClose(open);
 		}
 	};
-	
+
 	const style = {
 		position: "absolute",
 		top: "50%",

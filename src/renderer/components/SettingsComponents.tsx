@@ -376,10 +376,10 @@ export const Appearance: FC = () => {
 export const KeybindEditorView: FC = () => {
 	const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));
 	const [lastKeyPressed, setLastKeyPressed] = useState<string>("");
-	
+
 	const [visibilityKeybind, setToggleVisibilityKeybind] = useState<KeybindInterface>({ keybind: useConfigStore.getState().getKeybind("open_overlay")?.keybind, focus: "open_overlay" });
 	const [clearPlayerKeybind, setClearPlayerKeybind] = useState<KeybindInterface>({ keybind: useConfigStore.getState().getKeybind("clear_players")?.keybind, focus: "clear_players" });
-	
+
 	const getKeyPressed = (event) => {
 		let inputKey: string;
 		if (event.altKey) {
