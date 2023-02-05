@@ -142,9 +142,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 			if (value >= requirement) {
 				return (
 					<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("_", " ")}</span>} arrow>
-						<span>
-							<span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
-						</span>
+						<span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
 					</Tooltip>
 				);
 			}
@@ -152,9 +150,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 	} else {
 		return (
 			<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("-", " ")}</span>} arrow>
-				<span>
-					<span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>
-				</span>
+				<span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>
 			</Tooltip>
 		);
 	}
