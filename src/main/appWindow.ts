@@ -389,17 +389,24 @@ const registerSeraphIPC = () => {
 			});
 			return { data: body, status: statusCode };
 		} else if (endpoint == RunEndpoints.BLACKLIST) {
-			const { body, statusCode } = await gotClient.get(`https://beta.seraph.si/blacklist/${uuid}`, {
+			const { body, statusCode } = await gotClient.get(`https://api.seraph.si/blacklist/${uuid}`, {
 				headers: {
-					...seraphHeaders,
-				},
+					...seraphHeaders
+				}
+			});
+			return { data: body, status: statusCode };
+		} else if (endpoint == RunEndpoints.SAFELIST) {
+			const { body, statusCode } = await gotClient.get(`https://api.seraph.si/safelist/${uuid}`, {
+				headers: {
+					...seraphHeaders
+				}
 			});
 			return { data: body, status: statusCode };
 		} else {
 			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
 				headers: {
-					...seraphHeaders,
-				},
+					...seraphHeaders
+				}
 			});
 			return { data: body, status: statusCode };
 		}
