@@ -278,7 +278,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 	},
 	removePlayer: async (username: string) => {
 		set((state) => ({
-			players: state.players.filter((player) => player.name !== username.toLowerCase()),
+			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase())
 		}));
 	},
 	clearPlayers: async () => {
@@ -418,7 +418,6 @@ const getRunApi = async (player: Player) => {
 		const { hypixelPlayer } = player;
 		const state = useConfigStore.getState();
 		const { data, status } = await window.ipcRenderer.invoke<Awaited<SeraphResponse<Blacklist>>>(IpcValidInvokeChannels.SERAPH, [RunEndpoints.BLACKLIST, hypixelPlayer.uuid, state.hypixel.apiKey, state.hypixel.apiKeyOwner, state.run.apiKey, state.hypixel.apiKeyOwner]);
-		console.log(data, state.run.apiKey, status);
 		return { data };
 	}
 	return { data: null };
