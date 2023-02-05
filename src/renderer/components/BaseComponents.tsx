@@ -5,7 +5,7 @@ import { hexToRgbA } from "@common/helpers";
 import { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { Player } from "@common/utils/PlayerUtils";
 import { OutlinedInputProps } from "@mui/material/OutlinedInput";
-import { CheckCircle, MoreHorizRounded, ReportRounded, ExpandMore } from "@mui/icons-material";
+import { CheckCircle, MoreHorizRounded, ReportRounded, ExpandMore, ShopRounded } from "@mui/icons-material";
 import { SniperBody } from "@common/utils/externalapis/RunApi";
 import axios from "axios";
 import { PlayerCommonProperties } from "@components/PlayerComponents";
@@ -353,77 +353,125 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, isOpen, onClo
 			{open ? (
 				<Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
 					<Box sx={style}>
-						<div className={""}>
-							<div className={"py-2"}>
-								<FormControl fullWidth>
-									<InputLabel>Report Type</InputLabel>
-									<Select value={reportType} label='Client' onChange={(event) => setReportType(event.target.value)}>
-										<MenuItem value={"cheating_blatant"}>Blatant Cheating</MenuItem>
-										<MenuItem value={"cheating_closet"}>Closet Cheating</MenuItem>
-										<MenuItem value={"sniping"}>Sniping</MenuItem>
-										<MenuItem value={"bot"}>Botting</MenuItem>
-										<MenuItem value={"sniping_potential"}>Potential Sniper</MenuItem>
-									</Select>
-									<div className={"pt-4"}>
-										<InputTextBox helperText={"Your API Key will be used to identify you and any abuse will result in termination of your key."} options={{ placeholder: "Why are you reporting this player?", label: { text: "Report reason" } }} onBlur={(event) => setReportReason(event.target.value)} />
-									</div>
-									<div className={"pt-4"}>
-										<InputBoxButton
-											text={
-												<div>
-													<ReportRounded /> {`Report ${playerUsername}`}
-												</div>
-											}
-											onClick={async () => {
-												if (reportType.length > 2 && "hypixelPlayer" in data && run.apiKey.toLowerCase() != "public" && run.valid && reportReason.length > 2) {
-													const report: SniperBody = {
-														uuid: data.hypixelPlayer.uuid,
-														reason: reportReason,
-														report_type: reportType,
-														apikey: run.apiKey
-													};
-													try {
-														const response = await axios.post("https://antisniper.seraph.si/v4/addsniper", report, {
-															validateStatus: () => true,
-															headers: {
-																"run-api-key": run.apiKey,
-																"Accept-Encoding": "gzip,deflate,compress",
-															},
-														});
-														if (response.status != 200) {
-															useConfigStore.getState().setErrorMessage({
-																title: "Report error",
-																cause: JSON.stringify(response.data),
-																type: "ERROR",
-															});
-															setError(true);
-														} else {
-															setSuccessful(true);
+						<div className={"py-2"}>
+							<FormControl fullWidth>
+								<InputLabel>Report Type</InputLabel>
+								<Select value={reportType} label="Client" onChange={(event) => setReportType(event.target.value)}>
+									<MenuItem value={"cheating_blatant"}>Blatant Cheating</MenuItem>
+									<MenuItem value={"cheating_closet"}>Closet Cheating</MenuItem>
+									<MenuItem value={"sniping"}>Sniping</MenuItem>
+									<MenuItem value={"bot"}>Botting</MenuItem>
+									<MenuItem value={"sniping_potential"}>Potential Sniper</MenuItem>
+								</Select>
+								<div className={"pt-4"}>
+									<InputTextBox helperText={"Your API Key will be used to identify you and any abuse will result in termination of your key."} options={{ placeholder: "Why are you reporting this player?", label: { text: "Report reason" } }}
+									              onBlur={(event) => setReportReason(event.target.value)} />
+								</div>
+								<div className={"pt-4"}>
+									<InputBoxButton
+										text={
+											<div>
+												<ReportRounded /> {`Report ${playerUsername}`}
+											</div>
+										}
+										onClick={async () => {
+											if (reportType.length > 2 && "hypixelPlayer" in data && run.apiKey.toLowerCase() != "public" && run.valid && reportReason.length > 2) {
+												const report: SniperBody = {
+													uuid: data.hypixelPlayer.uuid,
+													reason: reportReason,
+													report_type: reportType,
+													apikey: run.apiKey
+												};
+												try {
+													const response = await axios.post("https://antisniper.seraph.si/v4/addsniper", report, {
+														validateStatus: () => true,
+														headers: {
+															"run-api-key": run.apiKey,
+															"Accept-Encoding": "gzip,deflate,compress"
 														}
-													} catch (e) {
+													});
+													if (response.status != 200) {
 														useConfigStore.getState().setErrorMessage({
 															title: "Report error",
-															cause: "Timed out",
-															type: "ERROR",
+															cause: JSON.stringify(response.data),
+															type: "ERROR"
 														});
 														setError(true);
+													} else {
+														setSuccessful(true);
 													}
+												} catch (e) {
+													useConfigStore.getState().setErrorMessage({
+														title: "Report error",
+														cause: "Timed out",
+														type: "ERROR"
+													});
+													setError(true);
 												}
-											}}
-											options={{ colour: "error", disabled: run.apiKey.toLowerCase() == "public" }}
-										/>
-										{successful ? (
-											<div className={"text-green-500 pt-3"}>
-												Completed <CheckCircle />
-											</div>
-										) : (
-											<span />
-										)}
-										{axiosError ? <div className={"text-red-500 pt-3"}>Error</div> : <span />}
-									</div>
-								</FormControl>
-							</div>
+											}
+										}}
+										options={{ colour: "error", disabled: run.apiKey.toLowerCase() == "public" }}
+									/>
+									{successful ? (
+										<div className={"text-green-500 pt-3"}>
+											Completed <CheckCircle />
+										</div>
+									) : (
+										<span />
+									)}
+									{axiosError ? <div className={"text-red-500 pt-3"}>Error</div> : <span />}
+								</div>
+							</FormControl>
 						</div>
+					</Box>
+				</Modal>
+			) : (
+				<span />
+			)}
+		</div>
+	);
+};
+
+export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onClose, children }) => {
+	const { colours, polsu } = useConfigStore((state) => ({
+		colours: state.colours,
+		polsu: state.polsu
+	}));
+	
+	const [open, setOpen] = useState(isOpen ?? false);
+	const handleClose = () => {
+		setOpen(false);
+		if (onClose) {
+			onClose(open);
+		}
+	};
+	
+	const style = {
+		position: "absolute",
+		top: "50%",
+		left: "50%",
+		transform: "translate(-50%, -50%)",
+		width: window.innerWidth / 1.2,
+		bgcolor: colours.backgroundColour,
+		border: `2px solid ${colours.primaryColour}`,
+		boxShadow: 24,
+		p: 4,
+		color: colours.primaryColour
+	};
+	
+	if (data.nicked) {
+		return <span />;
+	}
+	
+	const polsuApiResponse = `https://api.polsu.xyz/polsu/bedwars/quickbuy?key=${polsu.apiKey}&uuid=${data.hypixelPlayer.uuid}`;
+	
+	// TODO Add player options
+	return (
+		<div>
+			{open ? (
+				<Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
+					<Box sx={style}>
+						<img src={polsuApiResponse} alt={"Polsu Quickbuy"} />
 					</Box>
 				</Modal>
 			) : (
@@ -437,14 +485,16 @@ export const PlayerMenuOption: FC<PlayerCommonProperties> = ({ player }) => {
 	const ITEM_HEIGHT = 48;
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [isPlayerReportModalOpen, setPlayerReportModalOpen] = useState<boolean>(false);
+	const [isPlayerQuickbuyModalOpen, setPlayerQuickbuyModalOpen] = useState<boolean>(false);
 	const open = Boolean(anchorEl);
-
+	
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
-	const handleClose = (optionSelected?: "report") => {
+	const handleClose = (optionSelected?: "report" | "quickbuy") => {
 		setAnchorEl(null);
 		if (optionSelected == "report") setPlayerReportModalOpen(true);
+		else if (optionSelected == "quickbuy") setPlayerQuickbuyModalOpen(true);
 	};
 
 	return (
@@ -458,7 +508,7 @@ export const PlayerMenuOption: FC<PlayerCommonProperties> = ({ player }) => {
 					PaperProps={{
 						style: {
 							maxHeight: ITEM_HEIGHT * 4.5,
-							width: "20ch",
+							width: "20ch"
 						},
 					}}
 				>
@@ -468,9 +518,16 @@ export const PlayerMenuOption: FC<PlayerCommonProperties> = ({ player }) => {
 						</ListItemIcon>
 						<ListItemText>Report</ListItemText>
 					</MenuItem>
+					<MenuItem onClick={() => handleClose("quickbuy")}>
+						<ListItemIcon>
+							<ShopRounded />
+						</ListItemIcon>
+						<ListItemText>Quickbuy</ListItemText>
+					</MenuItem>
 				</Menu>
 			</div>
 			{isPlayerReportModalOpen ? <PlayerOptionsModal data={player} isOpen={isPlayerReportModalOpen} onClose={() => setPlayerReportModalOpen(false)} /> : <span />}
+			{isPlayerQuickbuyModalOpen ? <PlayerQuickBuyModal data={player} isOpen={isPlayerQuickbuyModalOpen} onClose={() => setPlayerQuickbuyModalOpen(false)} /> : <span />}
 		</>
 	);
 };
