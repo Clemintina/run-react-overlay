@@ -53,15 +53,15 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				achievements: {},
 				stats: {},
 				achievementsOneTime: [],
-				achievementTracking: [],
+				achievementTracking: []
 			},
 			hypixelFriends: null,
 			hypixelFriendsMutuals: null,
 			denicked: false,
 			last_updated: new Date().getTime(),
 			sources: {
-				runApi: null,
-			},
+				runApi: null
+			}
 		};
 		let playerData: Player = defaultPlayer;
 		const playerObject: IPCResponse<Player> = { status: 400, cause: "none", data: playerData };
@@ -142,7 +142,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 							title: "Approaching rate limit",
 							cause: `Slow down! ${ipcHypixelPlayer.limit.limit - ipcHypixelPlayer.limit.remaining} / ${ipcHypixelPlayer.limit.limit} (${ipcHypixelPlayer.limit.reset} seconds remaining)`,
 							type: "WARNING",
-							code: 429,
+							code: 429
 						});
 					}
 				}
@@ -274,7 +274,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 			const polsuPost = {
 				player: {
 					achievements: {
-						bedwars_level: player.achievements.bedwars_level,
+						bedwars_level: player.achievements.bedwars_level
 					},
 					uuid: player.uuid,
 					displayname: player.displayname,
@@ -290,10 +290,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 							_items_purchased_bedwars: player.stats.Bedwars?._items_purchased_bedwars ?? 0,
 							permanent_items_purchased_bedwars: player.stats.Bedwars?.permanent_items_purchased_bedwars ?? 0,
 							favourites_2: player.stats.Bedwars?.favourites_2 ?? "",
-							favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? "",
-						},
-					},
-				},
+							favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? ""
+						}
+					}
+				}
 			};
 			window.ipcRenderer.invoke(IpcValidInvokeChannels.POLSU, ["quickbuy", useConfigStore.getState().polsu.apiKey, playerData.hypixelPlayer.uuid, JSON.stringify(polsuPost)]);
 		}
@@ -304,7 +304,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 	},
 	removePlayer: async (username: string) => {
 		set((state) => ({
-			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase()),
+			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase())
 		}));
 	},
 	clearPlayers: async () => {
@@ -375,7 +375,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				const playerArr = [...state.players];
 				playerArr[exists] = playerObject;
 				return {
-					players: playerArr,
+					players: playerArr
 				};
 			});
 		}
