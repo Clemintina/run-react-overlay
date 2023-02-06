@@ -289,14 +289,14 @@ export default () => {
 		table: state.table
 	}));
 	const { players } = usePlayerStore((state) => ({ players: state.players }));
-	
+
 	let onGridReady = false;
-	
+
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		useConfigStore.getState().setVersion();
 	}, [players]);
-	
+
 	const defaultColDef = { ...defaultColDefBase };
 	
 	const columnDefs = [...columnDefsBase];

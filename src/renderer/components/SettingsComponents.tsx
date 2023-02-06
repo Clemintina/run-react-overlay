@@ -395,7 +395,7 @@ export const KeybindEditorView: FC = () => {
 		}
 		return inputKey;
 	};
-	
+
 	// TODO make it look nicer and cleaner
 	return (
 		<div>

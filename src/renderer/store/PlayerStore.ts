@@ -53,15 +53,15 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				achievements: {},
 				stats: {},
 				achievementsOneTime: [],
-				achievementTracking: []
+				achievementTracking: [],
 			},
 			hypixelFriends: null,
 			hypixelFriendsMutuals: null,
 			denicked: false,
 			last_updated: new Date().getTime(),
 			sources: {
-				runApi: null
-			}
+				runApi: null,
+			},
 		};
 		let playerData: Player = defaultPlayer;
 		const playerObject: IPCResponse<Player> = { status: 400, cause: "none", data: playerData };
@@ -142,7 +142,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 							title: "Approaching rate limit",
 							cause: `Slow down! ${ipcHypixelPlayer.limit.limit - ipcHypixelPlayer.limit.remaining} / ${ipcHypixelPlayer.limit.limit} (${ipcHypixelPlayer.limit.reset} seconds remaining)`,
 							type: "WARNING",
-							code: 429
+							code: 429,
 						});
 					}
 				}
@@ -189,7 +189,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				playerData.bot = playerData.sources.runApi.data.bot.tagged;
 				if (!playerData.bot && !playerData.sources.runApi.data.blacklist.tagged) {
 					get().updatePlayerState(playerData);
-					
+
 					if (settings.preferences.customFile) {
 						if (customFile.data != null) {
 							if (typeof customFile?.data[0] === "string") {
@@ -267,9 +267,35 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				}
 			}
 		}
-		
+
 		if ("hypixelPlayer" in playerData) {
 			playerData.loaded = true;
+			const player = playerData.hypixelPlayer;
+			const polsuPost = {
+				player: {
+					achievements: {
+						bedwars_level: player.achievements.bedwars_level,
+					},
+					uuid: player.uuid,
+					displayname: player.displayname,
+					newPackageRank: player.newPackageRank,
+					rankPlusColor: player.rankPlusColor,
+					monthlyPackageRank: player.monthlyPackageRank,
+					stats: {
+						Bedwars: {
+							gold_resources_collected_bedwars: player.stats.Bedwars?.gold_resources_collected_bedwars ?? 0,
+							iron_resources_collected_bedwars: player.stats.Bedwars?.iron_resources_collected_bedwars ?? 0,
+							emerald_resources_collected_bedwars: player.stats.Bedwars?.emerald_resources_collected_bedwars ?? 0,
+							diamond_resources_collected_bedwars: player.stats.Bedwars?.diamond_resources_collected_bedwars ?? 0,
+							_items_purchased_bedwars: player.stats.Bedwars?._items_purchased_bedwars ?? 0,
+							permanent_items_purchased_bedwars: player.stats.Bedwars?.permanent_items_purchased_bedwars ?? 0,
+							favourites_2: player.stats.Bedwars?.favourites_2 ?? "",
+							favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? "",
+						},
+					},
+				},
+			};
+			window.ipcRenderer.invoke(IpcValidInvokeChannels.POLSU, ["quickbuy", useConfigStore.getState().polsu.apiKey, playerData.hypixelPlayer.uuid, JSON.stringify(polsuPost)]);
 		}
 
 		playerObject.data = playerData;
@@ -278,7 +304,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 	},
 	removePlayer: async (username: string) => {
 		set((state) => ({
-			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase())
+			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase()),
 		}));
 	},
 	clearPlayers: async () => {
@@ -342,7 +368,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 			}
 		}
 	},
-	updatePlayerState: async (playerObject: Player) => {
+	updatePlayerState: async (playerObject) => {
 		const exists = get().players.findIndex((player) => player.name == playerObject.name);
 		if (exists != -1) {
 			set((state) => {
