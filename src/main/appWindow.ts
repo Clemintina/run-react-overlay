@@ -636,7 +636,7 @@ const registerExternalApis = () => {
 			const playerUrl = `https://api.polsu.xyz/polsu/bedwars/quickbuy/${uuid}.png`;
 			const gotClient = got.extend({
 				headers: {
-					"user-agent": "seraph-library"
+					"user-agent": "seraph-overlay-polsu"
 				}
 			});
 			try {
