@@ -470,7 +470,7 @@ export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onCl
 		<div>
 			{open ? (
 				<Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
-					<Box sx={style} className={'border-red-500'}>
+					<Box sx={style}>
 						<img src={`https://api.polsu.xyz/assets/bedwars/quickbuy/${data.hypixelPlayer.uuid}.png`} alt={"Polsu Quickbuy"} />
 					</Box>
 				</Modal>
