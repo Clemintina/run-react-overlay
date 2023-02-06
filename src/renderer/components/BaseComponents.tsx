@@ -458,8 +458,8 @@ export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onCl
 		left: "50%",
 		transform: "translate(-50%, -50%)",
 		width: window.innerWidth / 1.2,
-		bgcolor: colours.backgroundColour,
-		border: `2px solid ${colours.primaryColour}`,
+		//bgcolor: colours.backgroundColour,
+		//border: `2px solid ${colours.primaryColour}`,
 		boxShadow: 24,
 		p: 4,
 		color: colours.primaryColour
@@ -470,7 +470,7 @@ export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onCl
 		<div>
 			{open ? (
 				<Modal open={open} onClose={handleClose} style={{ color: colours.primaryColour }}>
-					<Box sx={style}>
+					<Box sx={style} className={'border-red-500'}>
 						<img src={`https://api.polsu.xyz/assets/bedwars/quickbuy/${data.hypixelPlayer.uuid}.png`} alt={"Polsu Quickbuy"} />
 					</Box>
 				</Modal>
