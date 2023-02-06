@@ -289,8 +289,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 							diamond_resources_collected_bedwars: player.stats.Bedwars?.diamond_resources_collected_bedwars ?? 0,
 							_items_purchased_bedwars: player.stats.Bedwars?._items_purchased_bedwars ?? 0,
 							permanent_items_purchased_bedwars: player.stats.Bedwars?.permanent_items_purchased_bedwars ?? 0,
-							favourites_2: player.stats.Bedwars?.favourites_2 ?? [],
-							favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? []
+							favourites_2: player.stats.Bedwars?.favourites_2 ?? '',
+							favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? ''
 						}
 					}
 				}
