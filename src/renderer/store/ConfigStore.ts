@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
 import { ColumnState } from "ag-grid-community";
-import create from "zustand";
+import { create } from "zustand";
 import { AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, CustomLinkURL, DisplayErrorMessage, FontConfig, GameType, HypixelSettings, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
 import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { awaitTimeout } from "@common/helpers";

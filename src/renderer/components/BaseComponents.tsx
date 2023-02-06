@@ -9,6 +9,7 @@ import { CheckCircle, ExpandMore, MoreHorizRounded, ReportRounded, ShopRounded }
 import { SniperBody } from "@common/utils/externalapis/RunApi";
 import axios from "axios";
 import { PlayerCommonProperties } from "@components/PlayerComponents";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 type CommonPropertyTypes = PropsWithChildren;
 
@@ -437,13 +438,13 @@ export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onCl
 	if (data.nicked) {
 		return <span />;
 	}
-	
+
 	const { colours } = useConfigStore((state) => ({
 		colours: state.colours
 	}));
-	
+
 	const [open, setOpen] = useState(isOpen ?? false);
-	
+
 	const handleClose = () => {
 		setOpen(false);
 		if (onClose) {
@@ -486,7 +487,7 @@ export const PlayerMenuOption: FC<PlayerCommonProperties> = ({ player }) => {
 	const [isPlayerReportModalOpen, setPlayerReportModalOpen] = useState<boolean>(false);
 	const [isPlayerQuickbuyModalOpen, setPlayerQuickbuyModalOpen] = useState<boolean>(false);
 	const open = Boolean(anchorEl);
-	
+
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};

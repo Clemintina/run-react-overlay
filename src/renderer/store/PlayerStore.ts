@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { Player } from "@common/utils/PlayerUtils";
 import { Components } from "@common/zikeji";
 import { IPCResponse, RequestType, RunEndpoints, RunFriendList } from "@common/utils/externalapis/RunApi";
@@ -278,9 +278,9 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					},
 					uuid: player.uuid,
 					displayname: player.displayname,
-					newPackageRank: player.newPackageRank,
-					rankPlusColor: player.rankPlusColor,
-					monthlyPackageRank: player.monthlyPackageRank,
+					newPackageRank: player?.newPackageRank ?? 'NONE',
+					rankPlusColor: player?.rankPlusColor ?? 'WHITE',
+					monthlyPackageRank: player?.monthlyPackageRank ?? 'NONE',
 					stats: {
 						Bedwars: {
 							gold_resources_collected_bedwars: player.stats.Bedwars?.gold_resources_collected_bedwars ?? 0,

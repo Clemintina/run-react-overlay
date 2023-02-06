@@ -651,7 +651,7 @@ const registerExternalApis = () => {
 			} catch (e) {
 				await gotClient.post(`https://api.polsu.xyz/polsu/bedwars/quickbuy?key=${apiKey}`, {
 					json: JSON.parse(args[3])
-				});
+				}).catch((reason)=>console.log(reason));
 			}
 			return { data: playerUrl, status: 200 };
 		}
