@@ -639,20 +639,9 @@ const registerExternalApis = () => {
 					"user-agent": "seraph-overlay-polsu"
 				}
 			});
-			try {
-				if (uuid) {
-					const { statusCode } = await gotClient.get(playerUrl);
-					if (statusCode != 200) {
-						await gotClient.post(`https://api.polsu.xyz/polsu/bedwars/quickbuy?key=${apiKey}`, {
-							json: JSON.parse(args[3])
-						});
-					}
-				}
-			} catch (e) {
-				await gotClient.post(`https://api.polsu.xyz/polsu/bedwars/quickbuy?key=${apiKey}`, {
-					json: JSON.parse(args[3])
-				}).catch((reason)=>console.log(reason));
-			}
+			await gotClient.post(`https://api.polsu.xyz/polsu/bedwars/quickbuy?key=${apiKey}`, {
+				json: JSON.parse(args[3])
+			}).catch((reason) => console.log(reason));
 			return { data: playerUrl, status: 200 };
 		}
 	});
