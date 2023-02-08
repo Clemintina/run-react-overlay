@@ -25,7 +25,7 @@ export const RenderCoreStatsColour: FC<RenderCoreStatsColour> = (props: RenderCo
 	let playerValue;
 	const { table } = useConfigStore((state) => ({ table: state.table }));
 
-	if (!player.nicked) {
+	if ("hypixelPlayer" in player) {
 		let modeObj = "";
 		if (props.mode != undefined) {
 			switch (props.mode) {
@@ -91,8 +91,8 @@ export const RenderRatioColour: FC<RenderRatioColour> = (props: RenderRatioColou
 	let renderer: JSX.Element;
 	let playerValue;
 	const { table } = useConfigStore((state) => ({ table: state.table }));
-
-	if (!player.nicked) {
+	
+	if ("hypixelPlayer" in player) {
 		switch (props.ratio) {
 			case "wlr":
 				playerValue = (player.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (player.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 1);
@@ -142,9 +142,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 			if (value >= requirement) {
 				return (
 					<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("_", " ")}</span>} arrow>
-						<span>
-							<span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
-						</span>
+						<span style={{ color: `#${colour}` }}>{tagDisplayIcon}</span>
 					</Tooltip>
 				);
 			}
@@ -152,9 +150,7 @@ export const getTagsFromConfig = (tagDisplayPath: string, value?: number) => {
 	} else {
 		return (
 			<Tooltip title={<span className={"capitalize"}>{tagDisplayPath.split(".")[tagDisplayPath.split(".").length - 1].replaceAll("-", " ")}</span>} arrow>
-				<span>
-					<span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>
-				</span>
+				<span style={{ color: `#${tagArray?.toString()}` }}>{tagDisplayIcon}</span>
 			</Tooltip>
 		);
 	}

@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/named
 import { ColumnState } from "ag-grid-community";
-import create from "zustand";
+import { create } from "zustand";
 import { AppInformation, BrowserWindowSettings, ClientSetting, ColourSettings, CustomLinkFile, CustomLinkURL, DisplayErrorMessage, FontConfig, GameType, HypixelSettings, KeybindInterface, KeyboardFocusType, PlayerNickname, SettingsConfig, TableState } from "@common/utils/Schemas";
 import { RequestType, RunApiKey, RunEndpoints } from "@common/utils/externalapis/RunApi";
 import { awaitTimeout } from "@common/helpers";
@@ -262,7 +262,7 @@ const useConfigStore = create<ConfigStore>()(
 							},
 						});
 						for (const player of usePlayerStore.getState().players) {
-							if (!player.nicked && player.hypixelPlayer?.uuid) {
+							if ("hypixelPlayer" in player && player.hypixelPlayer?.uuid) {
 								const keathiz = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid, keathizApiKey]);
 								if (keathiz.status == 200) {
 									player.sources.keathiz = keathiz;
@@ -581,20 +581,27 @@ const useConfigStore = create<ConfigStore>()(
 				},
 				keybinds: [],
 				addKeybind: async (focus, keybind) => {
-					if (get().keybinds.filter((arr) => arr.focus == focus).length == 0) {
-						get().keybinds.push({ keybind, focus });
+					let keybindArray: Array<KeybindInterface> = get().keybinds;
+					if (keybindArray.filter((arr) => arr.focus == focus).length == 0) {
+						keybindArray.push({ keybind, focus });
 					} else {
-						get().removeKeybind(focus);
-						get().keybinds.push({ keybind, focus });
+						keybindArray = keybindArray.filter((arr) => arr.focus !== focus);
+						keybindArray.push({ keybind, focus });
 					}
-				},
-				removeKeybind: (focus: KeyboardFocusType) => {
+					await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybindArray);
 					set({
-						keybinds: get().keybinds.filter((arr) => arr.focus !== focus),
+						keybinds: keybindArray
+					});
+				},
+				removeKeybind: async (focus: KeyboardFocusType) => {
+					const keybindArray = get().keybinds.filter((arr) => arr.focus !== focus);
+					await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybindArray);
+					set({
+						keybinds: keybindArray
 					});
 				},
 				getKeybind: (focus: KeyboardFocusType) => {
-					return get().keybinds.filter((arr) => arr.focus == focus)[0];
+					return get().keybinds.filter((arr) => arr.focus == focus)[0] ?? { keybind: "", focus };
 				},
 				font: {
 					family: "Nunito",

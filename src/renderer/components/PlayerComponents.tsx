@@ -26,7 +26,7 @@ export type PlayerNickNameView = { key: string; playerNick: PlayerNickname; hand
 
 export const PlayerGuildComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	let guildRenderer = <span />;
-	if (!player.nicked && player.hypixelGuild != null) {
+	if ("hypixelPlayer" in player && player.hypixelGuild != null) {
 		const guild: Components.Schemas.Guild = player.hypixelGuild.data;
 		guildRenderer = <span style={{ color: `#${MinecraftColourAsHex[MinecraftFormatting[guild?.tagColor ?? "§7"]]}` }}>{guild.tag}</span>;
 	}
@@ -38,7 +38,7 @@ export const PlayerHeadComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	let lunarRenderer: JSX.Element = <span />;
 	let srcUrl;
 
-	if (!player?.nicked) {
+	if ("hypixelPlayer" in player) {
 		srcUrl = `https://crafatar.com/avatars/${player.hypixelPlayer?.uuid}?size=16&overlay=true`;
 		if (configStore.settings.lunar) {
 			if (player.sources.lunar !== undefined && player.sources.lunar !== null) {
@@ -67,7 +67,7 @@ export const PlayerWinstreakComponent: FC<PlayerCommonProperties> = ({ player })
 	const { table, settings } = useConfigStore((state) => ({ table: state.table, settings: state.settings }));
 
 	let renderer: JSX.Element;
-	if (!player.nicked) {
+	if ("hypixelPlayer" in player) {
 		let playerValue = player.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
 		if (player.sources.keathiz != null && settings.keathiz) {
 			const keathizTags: KeathizOverlayRun = player.sources.keathiz.data;
@@ -92,7 +92,7 @@ export const PlayerStarComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	const { run } = useTagStore((state) => ({ run: state.run }));
 
 	let starRenderer: JSX.Element;
-	if (!player.nicked && player.hypixelPlayer !== null) {
+	if ("hypixelPlayer" in player && player.hypixelPlayer !== null) {
 		const bwLevel = getBedwarsLevelInfo(player.hypixelPlayer);
 		if (!player.sources.runApi?.data.blacklist?.tagged) {
 			if (bwLevel.level < 1000) {
@@ -116,14 +116,14 @@ export const PlayerSessionComponent: FC<PlayerCommonProperties> = ({ player }) =
 	const { table } = useConfigStore((state) => ({ table: state.table }));
 
 	useEffect(() => {
-		if (!player.nicked && player?.hypixelPlayer?.lastLogout) {
+		if ("hypixelPlayer" in player && player?.hypixelPlayer?.lastLogout) {
 			setTimeout(() => {
 				setTimer(new Date().getUTCMilliseconds());
 			}, 1000);
 		}
 	}, [timer]);
 
-	if (!player.nicked && player.hypixelPlayer) {
+	if ("hypixelPlayer" in player && player.hypixelPlayer) {
 		if (player.hypixelPlayer.lastLogin == null || player.hypixelPlayer.lastLogout == null) {
 			values.push(["N/A", "ff0000"]);
 		} else {
@@ -173,7 +173,7 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	};
 
 	let rankPlayer: JSX.Element;
-	if (!player.nicked && player.hypixelPlayer && !player.sources.runApi?.data?.blacklist?.tagged) {
+	if ("hypixelPlayer" in player && player.hypixelPlayer && !player.sources.runApi?.data?.blacklist?.tagged) {
 		const rank = getPlayerRank(player?.hypixelPlayer, false);
 		let playerName = player?.hypixelPlayer?.displayname;
 		if (player.denicked) {
@@ -204,7 +204,7 @@ export const PlayerNameComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				</span>
 			);
 		}
-	} else if (!player.nicked && player.hypixelPlayer && player.sources.runApi?.data.blacklist.tagged) {
+	} else if ("hypixelPlayer" in player && player.hypixelPlayer && player.sources.runApi?.data.blacklist.tagged) {
 		rankPlayer = (
 			<span>
 				<span style={{ color: `#${run.blacklist.colour}` }}>{player?.hypixelPlayer?.displayname}</span>
@@ -294,7 +294,7 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 	}));
 
 	let tagArray: Array<JSX.Element> = [];
-	if (!player.nicked && runConfig.valid && player.sources.runApi != null) {
+	if ("hypixelPlayer" in player && runConfig.valid && player.sources.runApi != null) {
 		let singularTag = false;
 		const runApi = player.sources.runApi?.data;
 		const customData = player?.sources?.customFile;
@@ -375,12 +375,19 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 				if (player?.hypixelPlayer?.channel == "PARTY") {
 					tagArray.push(getTagsFromConfig("hypixel.party"));
 				}
+				if ((player?.hypixelPlayer?.firstLogin ?? 0) < new Date().getUTCMilliseconds() - 2592000000) {
+					tagArray.push(<span className={"text-red-500"}>R</span>);
+				}
 				if (settings.polsu.enabled) {
 					if (player.sources.polsu?.sessions && settings.polsu.sessions) {
 						const polsuSession = player.sources.polsu.sessions.data;
 						const isNew = polsuSession?.new;
 						if (isNew) {
-							tagArray.push(<span className={"text-green-500"}>R</span>);
+							tagArray.push(
+								<Tooltip title={<span className={"capitalize"}>Just registered with Polsu</span>} arrow>
+									<span className={"text-green-500"}>R</span>
+								</Tooltip>
+							);
 						}
 						if (polsuSession?.player?.last_changed != null && !isNew && isPremium) {
 							const timeNow = Date.now();
@@ -440,10 +447,35 @@ export const PlayerTagsComponent: FC<PlayerCommonProperties> = ({ player }) => {
 						}
 					}
 				}
+
+				const quests = player.hypixelPlayer.quests;
+				if (quests) {
+					const TIME_TO_COMPLEAT = Date.now() - 3600 * 1000;
+					if (quests?.["bedwars_weekly_bed_elims"]) {
+						const quest = quests["bedwars_weekly_bed_elims"];
+						if (quest.active && quest["started"] > TIME_TO_COMPLEAT) {
+							tagArray.push(
+								<Tooltip title={<span className={"capitalize"}>[BETA] Alt check</span>} arrow>
+									<span className={"text-yellow-500"}>AC1</span>
+								</Tooltip>
+							);
+						}
+					}
+					if (quests?.["bedwars_weekly_challenges"]) {
+						const quest = quests["bedwars_weekly_challenges"];
+						if (quest.active && quest["started"] > TIME_TO_COMPLEAT) {
+							tagArray.push(
+								<Tooltip title={<span className={"capitalize"}>[BETA] Alt check</span>} arrow>
+									<span className={"text-yellow-500"}>AC2</span>
+								</Tooltip>
+							);
+						}
+					}
+				}
 			}
 		}
 	} else {
-		if (!player.nicked && player.loaded) {
+		if ("hypixelPlayer" in player && player.loaded) {
 			if (!runConfig.valid) {
 				tagArray.push(<span className={"text-red-500"}>Seraph Key Locked</span>);
 			} else if (hypixel.apiKeyValid) {
@@ -478,17 +510,17 @@ export const PlayerNetworkLevel: FC<PlayerCommonProperties> = ({ player }) => {
 		remainingExpToNextLevel: 0,
 		colour: "FF5555",
 	};
-	if (!player.nicked && player.hypixelPlayer) {
+	if ("hypixelPlayer" in player && player.hypixelPlayer) {
 		const tempNetworkLevel = getNetworkLevel(player.hypixelPlayer);
 		const localPlayerNetworkLevel = {
 			...tempNetworkLevel,
-			colour: "FF5555",
+			colour: "FF5555"
 		};
 		const colourArray: Array<Colour> = [
 			{
 				requirement: 0,
 				colour: "555555",
-				operator: "<=",
+				operator: "<="
 			},
 			{
 				requirement: 26,
@@ -548,11 +580,89 @@ export const PlayerNetworkLevel: FC<PlayerCommonProperties> = ({ player }) => {
 	);
 };
 
+export const PlayerRankedBedwarsRating: FC<PlayerCommonProperties> = ({ player }) => {
+	const { table } = useConfigStore((state) => ({
+		table: state.table
+	}));
+	let playerNetworkLevel: { colour: string; level: number } = {
+		colour: "FF5555",
+		level: 0
+	};
+	if ("hypixelPlayer" in player && player.hypixelPlayer) {
+		const tempNetworkLevel = player.sources?.runApi?.data?.ranked_bedwars?.elo ?? 0;
+		const localPlayerNetworkLevel = {
+			colour: "FF5555",
+			level: tempNetworkLevel
+		};
+		const colourArray: Array<Colour> = [
+			{
+				requirement: 0,
+				colour: "555555",
+				operator: "<="
+			},
+			{
+				requirement: 26,
+				colour: "aaaaaa",
+				operator: "<="
+			},
+			{
+				requirement: 99,
+				colour: "ffffff",
+				operator: "<="
+			},
+			{
+				requirement: 150,
+				colour: "ffaa00",
+				operator: "<="
+			},
+			{
+				requirement: 200,
+				colour: "00AA00",
+				operator: "<="
+			},
+			{
+				requirement: 220,
+				colour: "ff5555",
+				operator: "<="
+			},
+			{
+				requirement: 250,
+				colour: "aa0000",
+				operator: "<="
+			},
+			{
+				requirement: 300,
+				colour: "ff55ff",
+				operator: "<="
+			},
+			{
+				requirement: 500,
+				colour: "800080",
+				operator: "<="
+			}
+		];
+		const arr = colourArray.sort((a, b) => a.requirement - b.requirement);
+		for (const { colour, requirement } of arr) {
+			if (tempNetworkLevel >= requirement) {
+				localPlayerNetworkLevel.colour = colour;
+			}
+		}
+		playerNetworkLevel = localPlayerNetworkLevel;
+	}
+	return (
+		<div style={{ textAlign: table.settings.textAlign }}>
+			<Tooltip title={<span className={"capitalize"}>Ranked Bedwars ELO</span>} arrow>
+				<span style={{ color: `#${playerNetworkLevel.colour}` }}>{playerNetworkLevel.level}</span>
+			</Tooltip>
+		</div>
+	);
+};
+
 // Utils
 const parseColour = (text: string) => {
 	const splitText = text.split("§");
 	const finalText: [string, string][] = [];
-
+	
 	for (const letter of splitText) {
 		if (letter != undefined) {
 			finalText.push([letter.slice(1), MinecraftColourAsHex[`§${letter[0]}`]]);

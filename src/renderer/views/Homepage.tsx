@@ -1,7 +1,9 @@
 // eslint-disable-next-line import/named
-import { ColDef, ColumnApi, ColumnMovedEvent, ColumnResizedEvent, GetRowIdParams, GridColumnsChangedEvent, GridOptions, GridReadyEvent, RowDataUpdatedEvent, RowNode, SortChangedEvent } from "ag-grid-community";
+import { ColDef, ColumnApi, GetRowIdParams, GridOptions, GridReadyEvent, RowDataUpdatedEvent, SortChangedEvent, IRowNode } from "ag-grid-community";
 import "@assets/scss/app.scss";
 import "@assets/index.css";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import React, { useEffect } from "react";
 import { Player, PlayerUtils } from "@common/utils/PlayerUtils";
 import { AgGridReact } from "ag-grid-react";
@@ -11,12 +13,13 @@ import useConfigStore from "@renderer/store/ConfigStore";
 import { Box } from "@mui/material";
 import { Interweave } from "interweave";
 import { AppInformation } from "@common/utils/Schemas";
-import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
+import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerRankedBedwarsRating, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
 import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { CustomHeader } from "@components/AppComponents";
-import { PlayerMenuOption, PlayerOptionsModal } from "@components/BaseComponents";
+import { PlayerMenuOption } from "@components/BaseComponents";
 import { getPlayerRank } from "@common/zikeji";
 import { OverlayTooltip } from "@components/TooltipComponents";
+import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;
@@ -27,87 +30,76 @@ export const defaultColDefBase: ColDef<Player> = {
 	sortable: true,
 	flex: 1,
 	minWidth: tinyColumnSize,
-	headerComponent: "agColumnHeader",
+	headerComponent: "agColumnHeader"
 };
 
 export const columnDefsBase: ColDef<Player>[] = [
 	{
 		field: "head",
 		sortable: false,
-		cellRenderer: ({ data }) => <PlayerHeadComponent player={data} />,
+		cellRenderer: ({ data }) => <PlayerHeadComponent player={data} />
 	},
 	{
 		field: "star",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
-		cellRenderer: ({ data }) => <PlayerStarComponent player={data} />,
+		cellRenderer: ({ data }) => <PlayerStarComponent player={data} />
 	},
 	{
 		field: "name",
-		type: "string",
 		minWidth: 150,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
-		cellRenderer: ({ data }) => <PlayerNameComponent player={data} />,
+		cellRenderer: ({ data }) => <PlayerNameComponent player={data} />
 	},
 	{
 		field: "tags",
 		cellRenderer: ({ data }) => <PlayerTagsComponent player={data} />,
-		sortable: false,
+		sortable: false
 	},
 	{
 		field: "WS",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
-		cellRenderer: ({ data }) => <PlayerWinstreakComponent player={data} />,
+		cellRenderer: ({ data }) => <PlayerWinstreakComponent player={data} />
 	},
 	{
 		field: "FKDR",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
-		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />,
+		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />
 	},
 	{
 		field: "WLR",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
-		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />,
+		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />
 	},
 	{
 		field: "KDR",
-		type: "number",
 		hide: true,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "KDR"),
-		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"kdr"} />,
+		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"kdr"} />
 	},
 	{
 		field: "BBLR",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
-		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />,
+		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />
 	},
 	{
 		field: "wins",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
-		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />,
+		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />
 	},
 	{
 		field: "losses",
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
-		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />,
+		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />
 	},
 	{
 		field: "final_kills",
 		headerName: "Final Kills",
 		hide: true,
-		type: "number",
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "finalkills"),
-		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
+		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />
 	},
 	{
 		field: "session",
-		type: "number",
 		sortable: false,
 		cellRenderer: ({ data }) => {
 			const player = data;
@@ -154,10 +146,9 @@ export const columnDefsBase: ColDef<Player>[] = [
 	},
 	{
 		field: "guild",
-		type: "string",
 		sortable: false,
 		hide: true,
-		cellRenderer: ({ data }) => <PlayerGuildComponent player={data} />,
+		cellRenderer: ({ data }) => <PlayerGuildComponent player={data} />
 	},
 	{
 		field: "first_login",
@@ -171,7 +162,7 @@ export const columnDefsBase: ColDef<Player>[] = [
 					<Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(data?.hypixelPlayer?.firstLogin ?? 0)} isTooltip={false} />
 				</div>
 			);
-		},
+		}
 	},
 	{
 		field: "report",
@@ -179,17 +170,24 @@ export const columnDefsBase: ColDef<Player>[] = [
 		sortable: false,
 		cellRenderer: ({ data }) => {
 			return <PlayerMenuOption player={data} />;
-		},
+		}
 	},
 	{
 		field: "NWL",
-		type: "number",
 		sortable: false,
 		hide: true,
 		cellRenderer: ({ data }) => {
 			return <PlayerNetworkLevel player={data} />;
-		},
+		}
 	},
+	{
+		field: "RBW",
+		sortable: false,
+		hide: true,
+		cellRenderer: ({ data }) => {
+			return <PlayerRankedBedwarsRating player={data} />;
+		}
+	}
 ];
 
 const checkIfNich = (num1: number | undefined, num2: number | undefined, isDescending) => {
@@ -206,45 +204,54 @@ const checkIfNich = (num1: number | undefined, num2: number | undefined, isDesce
 	}
 };
 
-const sortData = (valueA, valueB, nodeA: RowNode, nodeB: RowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
-	const p1: Player = nodeA.data,
-		p2: Player = nodeB.data;
-	if ((!p1.nicked && p1.sources.runApi?.data.blacklist?.tagged) || p1.nicked) {
+const sortData = (valueA, valueB, nodeA: IRowNode, nodeB: IRowNode, isDescending, sortingData: "star" | "name" | "winstreak" | "fkdr" | "wlr" | "KDR" | "bblr" | "wins" | "losses" | "finalkills") => {
+	const p1 = nodeA.data,
+		p2 = nodeB.data;
+
+	if (p1 == undefined) {
 		return isDescending ? 1 : -1;
-	} else if ((!p2.nicked && p2.sources.runApi?.data.blacklist?.tagged) || p2.nicked) {
+	} else if (p2 == undefined) {
+		return isDescending ? -1 : 1;
+	} else if (p1.nicked) {
+		return isDescending ? 1 : -1;
+	} else if (p2.nicked) {
+		return isDescending ? -1 : 1;
+	} else if ("hypixelPlayer" in p1 && p1.sources.runApi?.data.blacklist?.tagged) {
+		return isDescending ? 1 : -1;
+	} else if ("hypixelPlayer" in p2 && p2.sources.runApi?.data.blacklist?.tagged) {
+		return isDescending ? -1 : 1;
+	} else {
+		let player1, player2;
+		switch (sortingData) {
+			case "star":
+				return checkIfNich(p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0, p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0, isDescending);
+			case "name":
+				return p1.name.localeCompare(p2.name);
+			case "winstreak":
+				player1 = p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
+				player2 = p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
+				if (p1.sources.keathiz != undefined && player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+				if (p2.sources.keathiz != undefined && player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
+				return checkIfNich(player1, player2, isDescending);
+			case "fkdr":
+				return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), isDescending);
+			case "wlr":
+				return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), isDescending);
+			case "KDR":
+				return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), isDescending);
+			case "bblr":
+				return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), isDescending);
+			case "wins":
+				return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, isDescending);
+			case "losses":
+				return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, isDescending);
+			case "finalkills":
+				return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, isDescending);
+			default:
+				assertDefaultError(sortingData);
+		}
 		return isDescending ? -1 : 1;
 	}
-
-	let player1, player2;
-	switch (sortingData) {
-		case "star":
-			return checkIfNich(p1?.hypixelPlayer?.achievements?.bedwars_level ?? 0, p2?.hypixelPlayer?.achievements?.bedwars_level ?? 0, isDescending);
-		case "name":
-			return p1.name.localeCompare(p2.name);
-		case "winstreak":
-			player1 = p1?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
-			player2 = p2?.hypixelPlayer?.stats?.Bedwars?.winstreak ?? 0;
-			if (p1.sources.keathiz != undefined && player1 == 0) player1 = p1?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
-			if (p2.sources.keathiz != undefined && player2 == 0) player2 = p2?.sources?.keathiz?.data?.player?.winstreak?.estimates?.overall_winstreak ?? 0;
-			return checkIfNich(player1, player2, isDescending);
-		case "fkdr":
-			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.final_deaths_bedwars ?? 0), isDescending);
-		case "wlr":
-			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0), isDescending);
-		case "KDR":
-			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.kills_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.deaths_bedwars ?? 0), isDescending);
-		case "bblr":
-			return checkIfNich((p1?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p1?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), (p2?.hypixelPlayer?.stats?.Bedwars?.beds_broken_bedwars ?? 0) / (p2?.hypixelPlayer?.stats?.Bedwars?.beds_lost_bedwars ?? 0), isDescending);
-		case "wins":
-			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.wins_bedwars ?? 0, isDescending);
-		case "losses":
-			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.losses_bedwars ?? 0, isDescending);
-		case "finalkills":
-			return checkIfNich(p1?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, p2?.hypixelPlayer?.stats?.Bedwars?.final_kills_bedwars ?? 0, isDescending);
-		default:
-			assertDefaultError(sortingData);
-	}
-	return isDescending ? -1 : 1;
 };
 
 window.ipcRenderer.on("updater", async (event, args) => {
@@ -253,26 +260,33 @@ window.ipcRenderer.on("updater", async (event, args) => {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "The overlay is ready to update, Restarting in 5 seconds",
-			type: "SUCCESS",
+			type: "SUCCESS"
 		});
 	} else if (appUpdater.update.updateAvailable) {
 		useConfigStore.getState().setErrorMessage({
 			title: "Overlay Update",
 			cause: "An update is currently being downloaded!",
-			type: "SUCCESS",
+			type: "SUCCESS"
 		});
 	}
+});
 
-	const logs = useConfigStore.getState().logs;
-	if (logs.readable && window?.ipcRenderer) {
-		window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
+window.ipcRenderer.on("ready", async () => {
+	if (window?.ipcRenderer) {
+		const logs = useConfigStore.getState().logs;
+		if (logs.readable) {
+			window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
+		}
+
+		const keybinds = useConfigStore.getState().keybinds;
+		await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
 	}
 });
 
 export default () => {
 	const { columnState, table } = useConfigStore((state) => ({
 		columnState: state.table.columnState,
-		table: state.table,
+		table: state.table
 	}));
 	const { players } = usePlayerStore((state) => ({ players: state.players }));
 
@@ -281,26 +295,21 @@ export default () => {
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		useConfigStore.getState().setVersion();
-	}, []);
+	}, [players]);
 
 	const defaultColDef = { ...defaultColDefBase };
-
+	
 	const columnDefs = [...columnDefsBase];
-
-	const frameworkComponents = {
-		agColumnHeader: CustomHeader,
+	
+	const components = {
+		agColumnHeader: CustomHeader
 	};
-
-	const onSaveGridColumnState = (e: ColumnApi) => {
-		const columnState = e.getColumnState();
-		if (onGridReady) useConfigStore.getState().setTableState({ ...table, columnState });
-	};
-
+	
 	const onSortingOrderChange = (e: SortChangedEvent<Player>) => {
 		const columnState = e.columnApi.getColumnState();
 		useConfigStore.getState().setTableState({ ...table, columnState });
 	};
-
+	
 	const gridOptions: GridOptions<Player> = {
 		onGridReady(event: GridReadyEvent) {
 			columnApi = event.columnApi;
@@ -309,20 +318,12 @@ export default () => {
 			onGridReady = true;
 			this.suppressDragLeaveHidesColumns = true;
 		},
-		onGridColumnsChanged(event: GridColumnsChangedEvent) {
-			onSaveGridColumnState(event.columnApi);
-		},
-		onColumnResized(event: ColumnResizedEvent<Player>) {
-			onSaveGridColumnState(event.columnApi);
-		},
 		onSortChanged(event: SortChangedEvent<Player>) {
 			onSortingOrderChange(event);
 		},
-		onColumnMoved(event: ColumnMovedEvent) {
-			onSaveGridColumnState(event.columnApi);
-		},
 		onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
 			event.api.redrawRows();
+			useConfigStore.getState().setTableState({ ...table, columnState });
 		},
 		animateRows: false,
 		autoSizePadding: 0,
@@ -331,15 +332,15 @@ export default () => {
 		suppressCellFocus: true,
 		suppressChangeDetection: false,
 		overlayNoRowsTemplate: "No Players",
-		components: frameworkComponents,
-		getRowId: (params: GetRowIdParams<Player>) => params.data.name,
+		components,
+		getRowId: (params: GetRowIdParams<Player>) => params.data.name
 	};
-
+	
 	return (
 		<Box height={"100vh"}>
-			<div className='pl-1 pr-1 w-full h-full'>
-				<div className='ag-theme-alpine-dark' style={{ height: "89vh" }}>
-					<AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={frameworkComponents} />
+			<div className="pl-1 pr-1 w-full h-full">
+				<div className="" style={{ height: "89vh" }}>
+					<AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={components} />
 				</div>
 			</div>
 		</Box>

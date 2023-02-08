@@ -375,80 +375,108 @@ export const Appearance: FC = () => {
 
 export const KeybindEditorView: FC = () => {
 	const { keybinds } = useConfigStore((state) => ({ keybinds: state.keybinds }));
-	const [controlBind, setControlBind] = useState<KeybindInterface>({ keybind: "", focus: "none" });
 	const [lastKeyPressed, setLastKeyPressed] = useState<string>("");
+
+	const [visibilityKeybind, setToggleVisibilityKeybind] = useState<KeybindInterface>({ keybind: useConfigStore.getState().getKeybind("open_overlay")?.keybind, focus: "open_overlay" });
+	const [clearPlayerKeybind, setClearPlayerKeybind] = useState<KeybindInterface>({ keybind: useConfigStore.getState().getKeybind("clear_players")?.keybind, focus: "clear_players" });
+
+	const getKeyPressed = (event) => {
+		let inputKey: string;
+		if (event.altKey) {
+			inputKey = "Alt";
+		} else if (event.ctrlKey) {
+			inputKey = "Ctrl";
+		} else if (event.metaKey) {
+			inputKey = "Meta";
+		} else if (event.shiftKey) {
+			inputKey = "Shift";
+		} else {
+			inputKey = event.key;
+		}
+		return inputKey;
+	};
 
 	// TODO make it look nicer and cleaner
 	return (
-		<NavigationBar>
-			<Box>
-				<SettingCard className={"border-2 border-cyan-500"}>
+		<div>
+			<div className={"text-white"}>In order to set a keybind, Press each key once. The overlay may not show each key as separate items however they are.</div>
+			<Box className={"grid grid-col-3 w-full"}>
+				<TextSettingCard className={""}>
 					<span className={" "}>Toggle visibility</span>
-					<span className={" "}>
-						<InputTextBox
-							onKeyPressed={(event) => {
-								let inputKey: string;
-								if (event.altKey) {
-									inputKey = "Alt";
-								} else if (event.ctrlKey) {
-									inputKey = "Ctrl";
-								} else if (event.metaKey) {
-									inputKey = "Meta";
-								} else if (event.shiftKey) {
-									inputKey = "Shift";
-								} else {
-									inputKey = event.key;
-								}
-								if (lastKeyPressed == inputKey) {
-									console.log("same key pressed! ", event.key);
-								} else {
-									setLastKeyPressed(inputKey);
-									const keybind = controlBind.keybind.length != 0 ? controlBind.keybind + "+" + inputKey : inputKey;
-									setControlBind({ keybind, focus: "open_overlay" });
-									console.log(keybind, controlBind);
-								}
-							}}
-							onBlur={async () => {
-								await useConfigStore.getState().addKeybind(controlBind.focus, controlBind.keybind);
-								await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
-							}}
-							onFocus={() => {
-								useConfigStore.getState().removeKeybind("open_overlay");
-								setControlBind({ ...controlBind, keybind: "", focus: "open_overlay" });
-							}}
-							options={{
-								liveUpdate: true,
-								placeholder: "Open Overlay",
-								value: useConfigStore.getState().getKeybind("open_overlay")?.keybind,
-							}}
-						/>
-					</span>
-				</SettingCard>
-				<SettingCard className={"border-2 border-cyan-500"}>
-					<span className={" "}>Clear players</span>
+					<span />
 					<span className={" "}>
 						<InputTextBox
 							onKeyDown={(event) => {
-								const keybind = controlBind.keybind.length != 0 ? controlBind.keybind + "+" + event.key : event.key;
-								setControlBind({ ...controlBind, keybind, focus: "clear_players" });
+								const inputKey = getKeyPressed(event);
+								if (!(lastKeyPressed == inputKey || visibilityKeybind?.keybind?.includes(inputKey))) {
+									setLastKeyPressed(inputKey);
+									if (inputKey.length != 0) {
+										if (event.key == "Delete" || event.key == "Backspace") {
+											setToggleVisibilityKeybind({ keybind: "", focus: "open_overlay" });
+										} else {
+											const keybind = visibilityKeybind.keybind.length != 0 ? visibilityKeybind.keybind + "+" + inputKey : inputKey;
+											setToggleVisibilityKeybind({ keybind, focus: "open_overlay" });
+										}
+									}
+								}
 							}}
 							onBlur={async () => {
-								await useConfigStore.getState().addKeybind(controlBind.focus, controlBind.keybind);
-								await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
+								await useConfigStore.getState().addKeybind(visibilityKeybind.focus, visibilityKeybind.keybind);
+								setLastKeyPressed("none");
 							}}
 							onFocus={() => {
-								useConfigStore.getState().removeKeybind("clear_players");
-								setControlBind({ ...controlBind, keybind: "" });
+								useConfigStore.getState().removeKeybind("open_overlay");
+								setToggleVisibilityKeybind({ keybind: "", focus: "open_overlay" });
 							}}
 							options={{
-								placeholder: "Clear Players",
-								value: useConfigStore.getState().getKeybind("clear_players")?.keybind,
+								placeholder: visibilityKeybind.keybind,
+								value: visibilityKeybind.keybind,
+								label: {
+									text: "Toggle Overlay Keybind"
+								}
 							}}
 						/>
 					</span>
-				</SettingCard>
+				</TextSettingCard>
+				<TextSettingCard className={""}>
+					<span className={" "}>Clear players</span>
+					<span />
+					<span className={" "}>
+						<InputTextBox
+							onKeyDown={(event) => {
+								const inputKey = getKeyPressed(event);
+								if (!(lastKeyPressed == inputKey || clearPlayerKeybind?.keybind?.includes(inputKey))) {
+									setLastKeyPressed(inputKey);
+									if (inputKey.length != 0) {
+										if (event.key == "Delete" || event.key == "Backspace") {
+											setClearPlayerKeybind({ keybind: "", focus: "clear_players" });
+										} else {
+											const keybind = clearPlayerKeybind.keybind.length != 0 ? clearPlayerKeybind.keybind + "+" + inputKey : inputKey;
+											setClearPlayerKeybind({ keybind, focus: "clear_players" });
+										}
+									}
+								}
+							}}
+							onBlur={async () => {
+								await useConfigStore.getState().addKeybind(clearPlayerKeybind.focus, clearPlayerKeybind.keybind);
+								setLastKeyPressed("none");
+							}}
+							onFocus={() => {
+								useConfigStore.getState().removeKeybind("clear_players");
+								setClearPlayerKeybind({ keybind: "", focus: "clear_players" });
+							}}
+							options={{
+								placeholder: clearPlayerKeybind.keybind,
+								value: clearPlayerKeybind.keybind,
+								label: {
+									text: "Clear Players Keybind"
+								}
+							}}
+						/>
+					</span>
+				</TextSettingCard>
 			</Box>
-		</NavigationBar>
+		</div>
 	);
 };
 
@@ -473,7 +501,7 @@ export const NickView: FC = () => {
 	const nickArray: Array<string> = [];
 
 	players.map((p: Player) => {
-		if (!p.nicked) {
+		if ("hypixelPlayer" in p) {
 			playerArray.push(p?.hypixelPlayer?.displayname ?? p.name);
 		} else {
 			nickArray.push(p.name);
@@ -1343,7 +1371,7 @@ export const ColumnEditorView: FC = () => {
 
 		useConfigStore.getState().setTableState(table);
 		const players = constantPlayerData();
-		if (!players[0].nicked) {
+		if ("hypixelPlayer" in players[0]) {
 			setPlayerData([players[0]]);
 		}
 	};
@@ -1361,12 +1389,6 @@ export const ColumnEditorView: FC = () => {
 		onRowDataUpdated(event: RowDataUpdatedEvent<Player>) {
 			onGridUpdate(event);
 		},
-		onGridColumnsChanged(event: GridColumnsChangedEvent) {
-			onGridUpdate(event);
-		},
-		onColumnMoved(event: ColumnMovedEvent) {
-			onGridUpdate(event);
-		},
 		defaultColDef: defaultColDefBase,
 		columnDefs: columnDefsBase,
 		autoSizePadding: 0,
@@ -1379,7 +1401,7 @@ export const ColumnEditorView: FC = () => {
 	return (
 		<NavigationBar>
 			<Box className={"pl-2"}>
-				<div className='ag-theme-alpine-dark' style={{ height: "15vh" }}>
+				<div style={{ height: "15vh" }}>
 					<AgGridReact rowData={playerData} gridOptions={gridOptions} />
 				</div>
 				<div className={"grid grid-cols-6 justify-center"}>
@@ -1592,10 +1614,10 @@ export const ColourRenderer: FC<PropsWithChildren> = ({ children }) => {
 		<div style={{ backgroundColor: hexToRgbA(colours.backgroundColour, opacity / 100) }}>
 			<ThemeProvider theme={theme}>
 				{font.isGoogleFont ? (
-					<>
+					<div>
 						<GoogleFontLoader fonts={[{ font: font.family, weights: [400] }]} />
 						{children}
-					</>
+					</div>
 				) : (
 					<div style={{ fontFamily: font.family ?? "caption" }}>{children}</div>
 				)}

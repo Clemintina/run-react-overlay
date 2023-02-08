@@ -23,7 +23,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faUserNinja } from "@fortawesome/free-solid-svg-icons";
 import { Alert, Theme, useTheme } from "@mui/material";
 import { Api, Home, Sell, ViewColumn, Code } from "@mui/icons-material";
-import { MenuOption } from "@common/utils/Schemas";
+import { KeyboardFocusType, MenuOption } from "@common/utils/Schemas";
 import BrushIcon from "@mui/icons-material/Brush";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
@@ -33,7 +33,7 @@ import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 import { hexToRgbA } from "@common/helpers";
 import { InputTextBox } from "@components/BaseComponents";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 
@@ -46,6 +46,7 @@ const menuOptions = Array<MenuOption>(
 	{ menuName: "Nicks", menuLink: "/settings/nicks" },
 	{ menuName: "Custom", menuLink: "/settings/customlinks" },
 	{ menuName: "Table Editor", menuLink: "/settings/columneditor" },
+	{ menuName: "Keybinds", menuLink: "/settings/keybinds" }
 );
 
 menuOptions.sort((a, b) => a.menuName.localeCompare(b.menuName));
@@ -123,7 +124,7 @@ export const Titlebar = ({ children }) => {
 			handleDrawerClose();
 		}
 	};
-
+	
 	return (
 		<Box sx={{ display: "flex" }} className={"drag"}>
 			<CssBaseline />
