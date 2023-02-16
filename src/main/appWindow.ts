@@ -17,7 +17,7 @@ import { handleIPCSend } from "@main/Utils";
 import destr from "destr";
 import windowStateKeeper from "electron-window-state";
 import { LogFileMessage } from "@common/utils/LogFileReader";
-import { Components, GenericHTTPError, InvalidKeyError, RateLimitError } from "@common/zikeji";
+import { Components, GenericHTTPError, InvalidKeyError, RateLimitData, RateLimitError } from "@common/zikeji";
 import log from "electron-log";
 import psList from "ps-list";
 import express from "express";
@@ -94,7 +94,7 @@ export const gotOptions: ExtendOptions = {
 		maxRetryAfter: 30,
 	},
 	throwHttpErrors: false,
-	http2: true,
+	http2: false,
 } as const;
 
 /**
@@ -337,6 +337,22 @@ const registerSeraphIPC = () => {
 			}
 		}
 		return null;
+	});
+	
+	ipcMain.handle('hypixelproxy', async (event:IpcMainInvokeEvent,  args:string[])=>{
+		const gotClient = got.extend(gotOptions);
+		const resource = args[0] as string;
+		let playerName = args[1].toLowerCase() as string
+		const limit:RateLimitData = {
+			remaining: 1000,
+			reset: 1000,
+			limit: 1000,
+		};
+		
+		if (resource == RequestType.USERNAME || resource == RequestType.UUID) {
+			const {body,statusCode} = await gotClient.get<{player: Components.Schemas.Player, cause?: string}>(`https://cache.seraph.si/player/${playerName}`);
+			return { data: body?.player ?? null, status: statusCode, limit};
+		}
 	});
 
 	ipcMain.handle("mcutils", async (event: IpcMainInvokeEvent, args: string[]) => {

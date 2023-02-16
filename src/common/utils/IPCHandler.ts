@@ -5,7 +5,7 @@ import { KeybindInterface } from "@common/utils/Schemas";
 /**
  * Adds intellisense to each IpcRenderer
  */
-const IPCValidInvokeArray = ["hypixel", "registerGlobalKeybinds", "seraph", "isAdmin", "autoLog", "mcutils", "selectLogFile", "isFileReadable", "boomza", "keathiz", "observer", "lunar", "playerdb", "getFilePath", "notifications", "getAppInfo", "astolfo", "openlink"] as const;
+const IPCValidInvokeArray = ["hypixel",'hypixelproxy', "registerGlobalKeybinds", "seraph", "isAdmin", "autoLog", "mcutils", "selectLogFile", "isFileReadable", "boomza", "keathiz", "observer", "lunar", "playerdb", "getFilePath", "notifications", "getAppInfo", "astolfo", "openlink"] as const;
 export type IPCValidInvokeChannels = (typeof IPCValidInvokeArray)[number];
 
 const IPCValidOnArray = ["logFileLine", "globalShortcutPressed", "updater", "ready"] as const;
@@ -16,6 +16,7 @@ export type IPCValidSendChannels = (typeof IPCValidSendArray)[number];
 
 export enum IpcValidInvokeChannels {
 	HYPIXEL = "hypixel",
+	HYPIXEL_PROXY = "hypixelproxy",
 	GLOBAL_KEYBINDS = "registerGlobalKeybinds",
 	SERAPH = "seraph",
 	IS_ADMIN = "isAdmin",
@@ -50,6 +51,7 @@ export enum IpcValidSendChannels {
 
 export type IpcChannelMap = {
 	[IpcValidInvokeChannels.HYPIXEL]: [resource: RequestType, apiKey: string, name?: string | null, proxy?: string | undefined];
+	[IpcValidInvokeChannels.HYPIXEL_PROXY]:[resource:RequestType, name?: string| null]
 	[IpcValidInvokeChannels.MCUTILS]: [resource: RequestType, name: string];
 	[IpcValidInvokeChannels.SERAPH]: [endpoint: RunEndpoints, uuid: string, hypixelApiKey: string, hypixelApiKeyOwner: string, runApiKey: string, overlayUuid: string];
 	[IpcValidInvokeChannels.IS_FILE_READABLE]: [path: string];

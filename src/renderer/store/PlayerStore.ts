@@ -89,10 +89,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 		}
 
 		try {
-			const ipcHypixelPlayer =
-				playerData.name.length <= 16
-					? await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.USERNAME, apiKey, playerData.name, useConfigStore.getState().hypixel.proxy ? "sdad" : undefined])
-					: await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL, [RequestType.UUID, apiKey, playerData.name.replaceAll("-", ""), useConfigStore.getState().hypixel.proxy ? "dsadas" : undefined]);
+			const ipcHypixelPlayer =await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL_PROXY, [RequestType.USERNAME, playerData.name])
 			if (!ipcHypixelPlayer?.data?.uuid || ipcHypixelPlayer.status != 200) {
 				const data: unknown = ipcHypixelPlayer.data;
 				let cause, code;
@@ -137,17 +134,16 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				if ("hypixelPlayer" in playerData && !playerData.denicked) {
 					playerData.id = ipcHypixelPlayer.data.uuid;
 					playerData.hypixelPlayer = ipcHypixelPlayer.data;
-					if (ipcHypixelPlayer.limit && ipcHypixelPlayer.limit?.remaining < 20) {
-						useConfigStore.getState().setErrorMessage({
-							title: "Approaching rate limit",
-							cause: `Slow down! ${ipcHypixelPlayer.limit.limit - ipcHypixelPlayer.limit.remaining} / ${ipcHypixelPlayer.limit.limit} (${ipcHypixelPlayer.limit.reset} seconds remaining)`,
-							type: "WARNING",
-							code: 429
-						});
-					}
 				}
 			}
-
+			if (ipcHypixelPlayer?.limit && ipcHypixelPlayer?.limit?.remaining < 20) {
+				useConfigStore.getState().setErrorMessage({
+					title: "Approaching rate limit",
+					cause: `Slow down! ${ipcHypixelPlayer.limit.limit - ipcHypixelPlayer.limit.remaining} / ${ipcHypixelPlayer.limit.limit} (${ipcHypixelPlayer.limit.reset} seconds remaining)`,
+					type: "WARNING",
+					code: 429
+				});
+			}
 			playerObject.data = playerData;
 			const exists = get().players.findIndex((player) => player.name.toLowerCase() == playerData.name.toLowerCase());
 			if (exists == -1) {
