@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, memo, useEffect, useMemo, useState } from "react";
 import { Components, getBedwarsLevelInfo, getHighLevelPrestigeColour, getNetworkLevel, getPlayerRank, MinecraftColourAsHex, MinecraftFormatting, NetworkLevel } from "@common/zikeji";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { KeathizOverlayRun } from "@common/utils/externalapis/BoomzaApi";

@@ -254,35 +254,6 @@ const sortData = (valueA, valueB, nodeA: IRowNode, nodeB: IRowNode, isDescending
 	}
 };
 
-window.ipcRenderer.on("updater", async (event, args) => {
-	const appUpdater = JSON.parse(args).data as AppInformation;
-	if (appUpdater.update.ready) {
-		useConfigStore.getState().setErrorMessage({
-			title: "Overlay Update",
-			cause: "The overlay is ready to update, Restarting in 5 seconds",
-			type: "SUCCESS"
-		});
-	} else if (appUpdater.update.updateAvailable) {
-		useConfigStore.getState().setErrorMessage({
-			title: "Overlay Update",
-			cause: "An update is currently being downloaded!",
-			type: "SUCCESS"
-		});
-	}
-});
-
-window.ipcRenderer.on("ready", async () => {
-	if (window?.ipcRenderer) {
-		const logs = useConfigStore.getState().logs;
-		if (logs.readable) {
-			window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
-		}
-
-		const keybinds = useConfigStore.getState().keybinds;
-		await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
-	}
-});
-
 export default () => {
 	const { columnState, table } = useConfigStore((state) => ({
 		columnState: state.table.columnState,
