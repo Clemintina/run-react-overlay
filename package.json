@@ -45,7 +45,7 @@
 		"@mui/material": "^5.11.8",
 		"@mui/styled-engine-sc": "^5.11.0",
 		"@mui/system": "^5.11.8",
-		"@mui/x-data-grid": "^5.17.22",
+		"@mui/x-data-grid": "^6.0.1",
 		"@reduxjs/toolkit": "^1.9.2",
 		"@sentry/react": "^7.36.0",
 		"@sentry/tracing": "^7.36.0",
