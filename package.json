@@ -110,7 +110,7 @@
 		"@electron-forge/plugin-webpack": "6.0.5",
 		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
 		"@types/cache-manager": "^4.0.2",
-		"@types/eslint": "8.21.0",
+		"@types/eslint": "8.21.2",
 		"@types/express": "^4.17.17",
 		"@types/json-logic-js": "^2.0.1",
 		"@types/less": "^3.0.3",
