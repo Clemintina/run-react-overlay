@@ -53,19 +53,19 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				achievements: {},
 				stats: {},
 				achievementsOneTime: [],
-				achievementTracking: []
+				achievementTracking: [],
 			},
 			hypixelFriends: null,
 			hypixelFriendsMutuals: null,
 			denicked: false,
 			last_updated: new Date().getTime(),
 			sources: {
-				runApi: null
-			}
+				runApi: null,
+			},
 		};
 		let playerData: Player = defaultPlayer;
 		const playerObject: IPCResponse<Player> = { status: 400, cause: "none", data: playerData };
-		const { hypixel, settings, customFile, run } = useConfigStore.getState();
+		const { hypixel, settings, customFile, run, polsu } = useConfigStore.getState();
 
 		if (hypixel.apiKey === undefined || hypixel.apiKey.length !== 36 || !hypixel.apiKeyValid) {
 			useConfigStore.getState().setErrorMessage({
@@ -89,7 +89,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 		}
 
 		try {
-			const ipcHypixelPlayer =await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL_PROXY, [RequestType.USERNAME, playerData.name])
+			const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL_PROXY, [RequestType.USERNAME, playerData.name]);
 			if (!ipcHypixelPlayer?.data?.uuid || ipcHypixelPlayer.status != 200) {
 				const data: unknown = ipcHypixelPlayer.data;
 				let cause, code;
@@ -134,6 +134,34 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				if ("hypixelPlayer" in playerData && !playerData.denicked) {
 					playerData.id = ipcHypixelPlayer.data.uuid;
 					playerData.hypixelPlayer = ipcHypixelPlayer.data;
+					if (polsu.valid) {
+						const player = ipcHypixelPlayer.data;
+						const polsuPost = {
+							player: {
+								achievements: {
+									bedwars_level: player.achievements.bedwars_level,
+								},
+								uuid: player.uuid,
+								displayname: player.displayname,
+								newPackageRank: player?.newPackageRank ?? "",
+								rankPlusColor: player?.rankPlusColor ?? "",
+								monthlyPackageRank: player?.monthlyPackageRank ?? "",
+								stats: {
+									Bedwars: {
+										gold_resources_collected_bedwars: player.stats.Bedwars?.gold_resources_collected_bedwars ?? 0,
+										iron_resources_collected_bedwars: player.stats.Bedwars?.iron_resources_collected_bedwars ?? 0,
+										emerald_resources_collected_bedwars: player.stats.Bedwars?.emerald_resources_collected_bedwars ?? 0,
+										diamond_resources_collected_bedwars: player.stats.Bedwars?.diamond_resources_collected_bedwars ?? 0,
+										_items_purchased_bedwars: player.stats.Bedwars?._items_purchased_bedwars ?? 0,
+										permanent_items_purchased_bedwars: player.stats.Bedwars?.permanent_items_purchased_bedwars ?? 0,
+										favourites_2: player.stats.Bedwars?.favourites_2 ?? "",
+										favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? "",
+									},
+								},
+							},
+						};
+						window.ipcRenderer.invoke(IpcValidInvokeChannels.POLSU, ["quickbuy", polsu.apiKey, player.uuid, JSON.stringify(polsuPost)]);
+					}
 				}
 			}
 			if (ipcHypixelPlayer?.limit && ipcHypixelPlayer?.limit?.remaining < 20) {
@@ -141,7 +169,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					title: "Approaching rate limit",
 					cause: `Slow down! ${ipcHypixelPlayer.limit.limit - ipcHypixelPlayer.limit.remaining} / ${ipcHypixelPlayer.limit.limit} (${ipcHypixelPlayer.limit.reset} seconds remaining)`,
 					type: "WARNING",
-					code: 429
+					code: 429,
 				});
 			}
 			playerObject.data = playerData;
@@ -235,11 +263,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					}
 					get().updatePlayerState(playerData);
 
-					const [keathizApi] = await Promise.all([getKeathizData(playerData)]);
+					const [keathizApi, polsuSession] = await Promise.all([getKeathizData(playerData), getPolsuSession(playerData)]);
 					playerData.sources.keathiz = keathizApi;
-					get().updatePlayerState(playerData);
-
-					const [polsuSession] = await Promise.all([getPolsuSession(playerData)]);
 					playerData.sources.polsu = {
 						sessions: polsuSession,
 					};
@@ -247,6 +272,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				}
 			} else {
 				if (runApi.data) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-ignore
 					if (runApi.data.code == 403) {
 						useConfigStore.getState().setErrorMessage({
@@ -264,43 +290,13 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 			}
 		}
 
-		if ("hypixelPlayer" in playerData) {
-			playerData.loaded = true;
-			const player = playerData.hypixelPlayer;
-			const polsuPost = {
-				player: {
-					achievements: {
-						bedwars_level: player.achievements.bedwars_level
-					},
-					uuid: player.uuid,
-					displayname: player.displayname,
-					newPackageRank: player?.newPackageRank ?? '',
-					rankPlusColor: player?.rankPlusColor ?? '',
-					monthlyPackageRank: player?.monthlyPackageRank ?? '',
-					stats: {
-						Bedwars: {
-							gold_resources_collected_bedwars: player.stats.Bedwars?.gold_resources_collected_bedwars ?? 0,
-							iron_resources_collected_bedwars: player.stats.Bedwars?.iron_resources_collected_bedwars ?? 0,
-							emerald_resources_collected_bedwars: player.stats.Bedwars?.emerald_resources_collected_bedwars ?? 0,
-							diamond_resources_collected_bedwars: player.stats.Bedwars?.diamond_resources_collected_bedwars ?? 0,
-							_items_purchased_bedwars: player.stats.Bedwars?._items_purchased_bedwars ?? 0,
-							permanent_items_purchased_bedwars: player.stats.Bedwars?.permanent_items_purchased_bedwars ?? 0,
-							favourites_2: player.stats.Bedwars?.favourites_2 ?? '',
-							favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? ''
-						}
-					}
-				}
-			};
-			window.ipcRenderer.invoke(IpcValidInvokeChannels.POLSU, ["quickbuy", useConfigStore.getState().polsu.apiKey, playerData.hypixelPlayer.uuid, JSON.stringify(polsuPost)]);
-		}
-
 		playerObject.data = playerData;
 		get().updatePlayerState(playerData);
-		await get().updatePlayers();
+		// await get().updatePlayers();
 	},
 	removePlayer: async (username: string) => {
 		set((state) => ({
-			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase())
+			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase()),
 		}));
 	},
 	clearPlayers: async () => {
@@ -309,34 +305,34 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 		}));
 	},
 	updatePlayers: async () => {
-		const storedPlayers = get().players;
-		for (const player of storedPlayers) {
-			const config = useConfigStore.getState();
+		const { players } = get();
+		for (const player of players) {
+			const { settings } = useConfigStore.getState();
 			if ("hypixelPlayer" in player) {
-				if (config.settings.keathiz && player.sources?.keathiz == null) {
+				if (settings.keathiz && player.sources?.keathiz == null) {
 					const responseIPCResponse = await window.ipcRenderer.invoke<KeathizOverlayRun>(IpcValidInvokeChannels.KEATHIZ, [KeathizEndpoints.OVERLAY_RUN, player.hypixelPlayer.uuid]);
 					if (responseIPCResponse.status == 200) {
 						player.sources.keathiz = responseIPCResponse;
 					}
 				}
-				if (config.settings.lunar && player.sources?.lunar == null) {
+				if (settings.lunar && player.sources?.lunar == null) {
 					const responseIPCResponse = await getLunarTags(player);
 					if (responseIPCResponse?.data?.code == 200) {
 						player.sources.lunar = responseIPCResponse.data;
 					}
 				}
-				if (config.settings.boomza && player.sources?.boomza == null) {
+				if (settings.boomza && player.sources?.boomza == null) {
 					const responseIPCResponse = await getBoomza(player);
 					if (responseIPCResponse.status == 200) {
 						player.sources.boomza = responseIPCResponse;
 					}
 				}
-				if (config.settings.run.friends && player?.hypixelFriends?.data != undefined) {
+				if (settings.run.friends && player?.hypixelFriends?.data != undefined) {
 					const p1Friends = player?.hypixelFriends?.data;
 					const now = Date.now();
 					if (p1Friends !== undefined) {
 						for (const friendUuid of p1Friends) {
-							for (const statePlayers of storedPlayers) {
+							for (const statePlayers of players) {
 								if (!player.friended) {
 									const started = friendUuid?.started ?? Date.now();
 									const twoWeeks = 86400000 * 14;
@@ -354,7 +350,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 										}
 									}
 									set({
-										players: storedPlayers,
+										players,
 									});
 								}
 							}
@@ -371,7 +367,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				const playerArr = [...state.players];
 				playerArr[exists] = playerObject;
 				return {
-					players: playerArr
+					players: playerArr,
 				};
 			});
 		}
@@ -405,7 +401,7 @@ const getCustomApi = async (player: Player) => {
 	let api: IPCResponse<CustomFileJsonType>;
 	if ("hypixelPlayer" in player && player?.hypixelPlayer?.displayname && useConfigStore.getState().settings.preferences.customUrl) {
 		const { hypixelPlayer } = player;
-		let url = useConfigStore.getState().customApi.url.toLowerCase() + "&requesttype=seraphoverlay";
+		let url = useConfigStore.getState().customApi.url.toLowerCase();
 
 		if (url.match(/({uuid})/gi)) {
 			url = url.replaceAll(/({uuid})/gi, hypixelPlayer.uuid);

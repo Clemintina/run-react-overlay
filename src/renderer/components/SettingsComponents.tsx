@@ -432,8 +432,8 @@ export const KeybindEditorView: FC = () => {
 								placeholder: visibilityKeybind.keybind,
 								value: visibilityKeybind.keybind,
 								label: {
-									text: "Toggle Overlay Keybind"
-								}
+									text: "Toggle Overlay Keybind",
+								},
 							}}
 						/>
 					</span>
@@ -469,8 +469,8 @@ export const KeybindEditorView: FC = () => {
 								placeholder: clearPlayerKeybind.keybind,
 								value: clearPlayerKeybind.keybind,
 								label: {
-									text: "Clear Players Keybind"
-								}
+									text: "Clear Players Keybind",
+								},
 							}}
 						/>
 					</span>

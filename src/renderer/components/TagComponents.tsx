@@ -91,7 +91,7 @@ export const RenderRatioColour: FC<RenderRatioColour> = (props: RenderRatioColou
 	let renderer: JSX.Element;
 	let playerValue;
 	const { table } = useConfigStore((state) => ({ table: state.table }));
-	
+
 	if ("hypixelPlayer" in player) {
 		switch (props.ratio) {
 			case "wlr":

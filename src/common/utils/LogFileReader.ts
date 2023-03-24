@@ -80,7 +80,7 @@ export class LogFileReader {
 		useConfigStore.subscribe((state) => {
 			configStore = state;
 		});
-		
+
 		await window.ipcRenderer.on("logFileLine", async (event: IpcRendererEvent, data) => {
 			const line = readLogLine(data, true);
 			if (line.includes("FINAL KILL!")) {

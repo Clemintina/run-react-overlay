@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, ReactNode, useEffect, useState } from "react";
+import React, { FC, PropsWithChildren, ReactNode, useEffect, useMemo, useState } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, FilledInputProps, FormControl, InputLabel, InputProps, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Select, Snackbar, styled, Switch, SwitchProps, SxProps, TextField, Theme, Tooltip, Typography } from "@mui/material";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { hexToRgbA } from "@common/helpers";
@@ -156,7 +156,7 @@ export const InputTextBox: FC<InputTextBox> = ({ options, inputProps, helperText
 		<Box className='w-full'>
 			<div>{icon}</div>
 			<TextField
-				type="text"
+				type='text'
 				onKeyDown={(event) => {
 					if (onKeyDown) {
 						onKeyDown(event, getTextField);
@@ -358,7 +358,7 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, isOpen, onClo
 						<div className={"py-2"}>
 							<FormControl fullWidth>
 								<InputLabel>Report Type</InputLabel>
-								<Select value={reportType} label="Client" onChange={(event) => setReportType(event.target.value)}>
+								<Select value={reportType} label='Client' onChange={(event) => setReportType(event.target.value)}>
 									<MenuItem value={"cheating_blatant"}>Blatant Cheating</MenuItem>
 									<MenuItem value={"cheating_closet"}>Closet Cheating</MenuItem>
 									<MenuItem value={"sniping"}>Sniping</MenuItem>
@@ -366,8 +366,7 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, isOpen, onClo
 									<MenuItem value={"sniping_potential"}>Potential Sniper</MenuItem>
 								</Select>
 								<div className={"pt-4"}>
-									<InputTextBox helperText={"Your API Key will be used to identify you and any abuse will result in termination of your key."} options={{ placeholder: "Why are you reporting this player?", label: { text: "Report reason" } }}
-									              onBlur={(event) => setReportReason(event.target.value)} />
+									<InputTextBox helperText={"Your API Key will be used to identify you and any abuse will result in termination of your key."} options={{ placeholder: "Why are you reporting this player?", label: { text: "Report reason" } }} onBlur={(event) => setReportReason(event.target.value)} />
 								</div>
 								<div className={"pt-4"}>
 									<InputBoxButton
@@ -382,21 +381,21 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, isOpen, onClo
 													uuid: data.hypixelPlayer.uuid,
 													reason: reportReason,
 													report_type: reportType,
-													apikey: run.apiKey
+													apikey: run.apiKey,
 												};
 												try {
 													const response = await axios.post("https://antisniper.seraph.si/v4/addsniper", report, {
 														validateStatus: () => true,
 														headers: {
 															"run-api-key": run.apiKey,
-															"Accept-Encoding": "gzip,deflate,compress"
-														}
+															"Accept-Encoding": "gzip,deflate,compress",
+														},
 													});
 													if (response.status != 200) {
 														useConfigStore.getState().setErrorMessage({
 															title: "Report error",
 															cause: JSON.stringify(response.data),
-															type: "ERROR"
+															type: "ERROR",
 														});
 														setError(true);
 													} else {
@@ -406,7 +405,7 @@ export const PlayerOptionsModal: FC<PlayerOptionsModal> = ({ data, isOpen, onClo
 													useConfigStore.getState().setErrorMessage({
 														title: "Report error",
 														cause: "Timed out",
-														type: "ERROR"
+														type: "ERROR",
 													});
 													setError(true);
 												}
@@ -440,7 +439,7 @@ export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onCl
 	}
 
 	const { colours } = useConfigStore((state) => ({
-		colours: state.colours
+		colours: state.colours,
 	}));
 
 	const [open, setOpen] = useState(isOpen ?? false);
@@ -462,7 +461,7 @@ export const PlayerQuickBuyModal: FC<PlayerOptionsModal> = ({ data, isOpen, onCl
 		//border: `2px solid ${colours.primaryColour}`,
 		boxShadow: 24,
 		p: 4,
-		color: colours.primaryColour
+		color: colours.primaryColour,
 	};
 
 	// TODO Add player options
@@ -508,7 +507,7 @@ export const PlayerMenuOption: FC<PlayerCommonProperties> = ({ player }) => {
 					PaperProps={{
 						style: {
 							maxHeight: ITEM_HEIGHT * 4.5,
-							width: "20ch"
+							width: "20ch",
 						},
 					}}
 				>

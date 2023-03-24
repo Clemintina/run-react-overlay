@@ -30,76 +30,97 @@ export const defaultColDefBase: ColDef<Player> = {
 	sortable: true,
 	flex: 1,
 	minWidth: tinyColumnSize,
-	headerComponent: "agColumnHeader"
+	headerComponent: "agColumnHeader",
 };
+
+export enum FieldNames {
+	HEAD = "head",
+	PLAYER_STAR = "star",
+	PLAYER_NAME = "name",
+	PLAYER_TAGS = "tags",
+	WINSTREAK = "WS",
+	FINAL_KILLS_DEATHS_RATIO = "FKDR",
+	WINS_LOSSES_RATIO = "WLR",
+	KILL_DEATH_RATIO = "KDR",
+	BEDS_BROKEN_BEDS_LOST_RATIO = "BBLR",
+	WINS = "wins",
+	LOSSES = "losses",
+	FINAL_KILLS = "final_kills",
+	GUILD = "guild",
+	SESSION = "session",
+	FIRST_LOGIN = "first_login",
+	REPORT = "report",
+	NETWORK_LEVEL = "NWL",
+	RANKED_BEDWARS = "RBW",
+}
 
 export const columnDefsBase: ColDef<Player>[] = [
 	{
-		field: "head",
+		field: FieldNames.HEAD,
 		sortable: false,
-		cellRenderer: ({ data }) => <PlayerHeadComponent player={data} />
+		cellRenderer: ({ data }) => <PlayerHeadComponent player={data} />,
 	},
 	{
-		field: "star",
+		field: FieldNames.PLAYER_STAR,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "star"),
-		cellRenderer: ({ data }) => <PlayerStarComponent player={data} />
+		cellRenderer: ({ data }) => <PlayerStarComponent player={data} />,
 	},
 	{
-		field: "name",
+		field: FieldNames.PLAYER_NAME,
 		minWidth: 150,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "name"),
-		cellRenderer: ({ data }) => <PlayerNameComponent player={data} />
+		cellRenderer: ({ data }) => <PlayerNameComponent player={data} />,
 	},
 	{
-		field: "tags",
+		field: FieldNames.PLAYER_TAGS,
 		cellRenderer: ({ data }) => <PlayerTagsComponent player={data} />,
-		sortable: false
+		sortable: false,
 	},
 	{
-		field: "WS",
+		field: FieldNames.WINSTREAK,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "winstreak"),
-		cellRenderer: ({ data }) => <PlayerWinstreakComponent player={data} />
+		cellRenderer: ({ data }) => <PlayerWinstreakComponent player={data} />,
 	},
 	{
-		field: "FKDR",
+		field: FieldNames.FINAL_KILLS_DEATHS_RATIO,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "fkdr"),
-		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />
+		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"fkdr"} />,
 	},
 	{
-		field: "WLR",
+		field: FieldNames.WINS_LOSSES_RATIO,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wlr"),
-		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />
+		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"wlr"} />,
 	},
 	{
-		field: "KDR",
+		field: FieldNames.KILL_DEATH_RATIO,
 		hide: true,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "KDR"),
-		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"kdr"} />
+		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"kdr"} />,
 	},
 	{
-		field: "BBLR",
+		field: FieldNames.BEDS_BROKEN_BEDS_LOST_RATIO,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "bblr"),
-		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />
+		cellRenderer: ({ data }) => <RenderRatioColour player={data} ratio={"bblr"} />,
 	},
 	{
-		field: "wins",
+		field: FieldNames.WINS,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "wins"),
-		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />
+		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"wins"} />,
 	},
 	{
-		field: "losses",
+		field: FieldNames.LOSSES,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "losses"),
-		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />
+		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"losses"} />,
 	},
 	{
-		field: "final_kills",
+		field: FieldNames.FINAL_KILLS,
 		headerName: "Final Kills",
 		hide: true,
 		comparator: (valueA, valueB, nodeA, nodeB, isInverted) => sortData(valueA, valueB, nodeA, nodeB, isInverted, "finalkills"),
-		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />
+		cellRenderer: ({ data }) => <RenderCoreStatsColour player={data} stat={"finalKills"} />,
 	},
 	{
-		field: "session",
+		field: FieldNames.SESSION,
 		sortable: false,
 		cellRenderer: ({ data }) => {
 			const player = data;
@@ -145,13 +166,13 @@ export const columnDefsBase: ColDef<Player>[] = [
 		},
 	},
 	{
-		field: "guild",
+		field: FieldNames.GUILD,
 		sortable: false,
 		hide: true,
-		cellRenderer: ({ data }) => <PlayerGuildComponent player={data} />
+		cellRenderer: ({ data }) => <PlayerGuildComponent player={data} />,
 	},
 	{
-		field: "first_login",
+		field: FieldNames.FIRST_LOGIN,
 		headerName: "First Login",
 		sortable: false,
 		hide: true,
@@ -162,32 +183,32 @@ export const columnDefsBase: ColDef<Player>[] = [
 					<Interweave content={playerFormatter.getPlayerHypixelUtils().getDateFormatted(data?.hypixelPlayer?.firstLogin ?? 0)} isTooltip={false} />
 				</div>
 			);
-		}
+		},
 	},
 	{
-		field: "report",
+		field: FieldNames.REPORT,
 		headerName: "Extra",
 		sortable: false,
 		cellRenderer: ({ data }) => {
 			return <PlayerMenuOption player={data} />;
-		}
+		},
 	},
 	{
-		field: "NWL",
+		field: FieldNames.NETWORK_LEVEL,
 		sortable: false,
 		hide: true,
 		cellRenderer: ({ data }) => {
 			return <PlayerNetworkLevel player={data} />;
-		}
+		},
 	},
 	{
-		field: "RBW",
+		field: FieldNames.RANKED_BEDWARS,
 		sortable: false,
 		hide: true,
 		cellRenderer: ({ data }) => {
 			return <PlayerRankedBedwarsRating player={data} />;
-		}
-	}
+		},
+	},
 ];
 
 const checkIfNich = (num1: number | undefined, num2: number | undefined, isDescending) => {
@@ -254,39 +275,10 @@ const sortData = (valueA, valueB, nodeA: IRowNode, nodeB: IRowNode, isDescending
 	}
 };
 
-window.ipcRenderer.on("updater", async (event, args) => {
-	const appUpdater = JSON.parse(args).data as AppInformation;
-	if (appUpdater.update.ready) {
-		useConfigStore.getState().setErrorMessage({
-			title: "Overlay Update",
-			cause: "The overlay is ready to update, Restarting in 5 seconds",
-			type: "SUCCESS"
-		});
-	} else if (appUpdater.update.updateAvailable) {
-		useConfigStore.getState().setErrorMessage({
-			title: "Overlay Update",
-			cause: "An update is currently being downloaded!",
-			type: "SUCCESS"
-		});
-	}
-});
-
-window.ipcRenderer.on("ready", async () => {
-	if (window?.ipcRenderer) {
-		const logs = useConfigStore.getState().logs;
-		if (logs.readable) {
-			window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
-		}
-
-		const keybinds = useConfigStore.getState().keybinds;
-		await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybinds);
-	}
-});
-
 export default () => {
 	const { columnState, table } = useConfigStore((state) => ({
 		columnState: state.table.columnState,
-		table: state.table
+		table: state.table,
 	}));
 	const { players } = usePlayerStore((state) => ({ players: state.players }));
 
@@ -298,18 +290,18 @@ export default () => {
 	}, [players]);
 
 	const defaultColDef = { ...defaultColDefBase };
-	
+
 	const columnDefs = [...columnDefsBase];
-	
+
 	const components = {
-		agColumnHeader: CustomHeader
+		agColumnHeader: CustomHeader,
 	};
-	
+
 	const onSortingOrderChange = (e: SortChangedEvent<Player>) => {
 		const columnState = e.columnApi.getColumnState();
 		useConfigStore.getState().setTableState({ ...table, columnState });
 	};
-	
+
 	const gridOptions: GridOptions<Player> = {
 		onGridReady(event: GridReadyEvent) {
 			columnApi = event.columnApi;
@@ -333,13 +325,13 @@ export default () => {
 		suppressChangeDetection: false,
 		overlayNoRowsTemplate: "No Players",
 		components,
-		getRowId: (params: GetRowIdParams<Player>) => params.data.name
+		getRowId: (params: GetRowIdParams<Player>) => params.data.name,
 	};
-	
+
 	return (
 		<Box height={"100vh"}>
-			<div className="pl-1 pr-1 w-full h-full">
-				<div className="" style={{ height: "89vh" }}>
+			<div className='pl-1 pr-1 w-full h-full'>
+				<div className='' style={{ height: "89vh" }}>
 					<AgGridReact gridOptions={gridOptions} rowData={players} defaultColDef={defaultColDef} columnDefs={columnDefs} components={components} />
 				</div>
 			</div>
