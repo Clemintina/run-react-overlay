@@ -46,7 +46,7 @@ const menuOptions = Array<MenuOption>(
 	{ menuName: "Nicks", menuLink: "/settings/nicks" },
 	{ menuName: "Custom", menuLink: "/settings/customlinks" },
 	{ menuName: "Table Editor", menuLink: "/settings/columneditor" },
-	{ menuName: "Keybinds", menuLink: "/settings/keybinds" }
+	{ menuName: "Keybinds", menuLink: "/settings/keybinds" },
 );
 
 menuOptions.sort((a, b) => a.menuName.localeCompare(b.menuName));
@@ -124,7 +124,7 @@ export const Titlebar = ({ children }) => {
 			handleDrawerClose();
 		}
 	};
-	
+
 	return (
 		<Box sx={{ display: "flex" }} className={"drag"}>
 			<CssBaseline />

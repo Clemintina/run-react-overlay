@@ -157,7 +157,7 @@ export const OverlayTooltip: FC<OverlayTooltip> = ({ player, tooltip, children }
 		},
 	}));
 	let renderTooltip;
-	
+
 	if (player != undefined && ("last_nick_encountered" in player || player.sources.runApi?.data.bot?.tagged)) {
 		renderTooltip = children;
 	} else {

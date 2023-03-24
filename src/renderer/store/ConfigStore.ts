@@ -590,14 +590,14 @@ const useConfigStore = create<ConfigStore>()(
 					}
 					await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybindArray);
 					set({
-						keybinds: keybindArray
+						keybinds: keybindArray,
 					});
 				},
 				removeKeybind: async (focus: KeyboardFocusType) => {
 					const keybindArray = get().keybinds.filter((arr) => arr.focus !== focus);
 					await window.ipcRenderer.invoke(IpcValidInvokeChannels.GLOBAL_KEYBINDS, keybindArray);
 					set({
-						keybinds: keybindArray
+						keybinds: keybindArray,
 					});
 				},
 				getKeybind: (focus: KeyboardFocusType) => {

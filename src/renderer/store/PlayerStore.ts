@@ -53,15 +53,15 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				achievements: {},
 				stats: {},
 				achievementsOneTime: [],
-				achievementTracking: []
+				achievementTracking: [],
 			},
 			hypixelFriends: null,
 			hypixelFriendsMutuals: null,
 			denicked: false,
 			last_updated: new Date().getTime(),
 			sources: {
-				runApi: null
-			}
+				runApi: null,
+			},
 		};
 		let playerData: Player = defaultPlayer;
 		const playerObject: IPCResponse<Player> = { status: 400, cause: "none", data: playerData };
@@ -89,7 +89,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 		}
 
 		try {
-			const ipcHypixelPlayer =await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL_PROXY, [RequestType.USERNAME, playerData.name])
+			const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL_PROXY, [RequestType.USERNAME, playerData.name]);
 			if (!ipcHypixelPlayer?.data?.uuid || ipcHypixelPlayer.status != 200) {
 				const data: unknown = ipcHypixelPlayer.data;
 				let cause, code;
@@ -139,7 +139,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 						const polsuPost = {
 							player: {
 								achievements: {
-									bedwars_level: player.achievements.bedwars_level
+									bedwars_level: player.achievements.bedwars_level,
 								},
 								uuid: player.uuid,
 								displayname: player.displayname,
@@ -155,10 +155,10 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 										_items_purchased_bedwars: player.stats.Bedwars?._items_purchased_bedwars ?? 0,
 										permanent_items_purchased_bedwars: player.stats.Bedwars?.permanent_items_purchased_bedwars ?? 0,
 										favourites_2: player.stats.Bedwars?.favourites_2 ?? "",
-										favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? ""
-									}
-								}
-							}
+										favorite_slots: player.stats.Bedwars?.["favorite_slots"] ?? "",
+									},
+								},
+							},
 						};
 						window.ipcRenderer.invoke(IpcValidInvokeChannels.POLSU, ["quickbuy", polsu.apiKey, player.uuid, JSON.stringify(polsuPost)]);
 					}
@@ -169,7 +169,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 					title: "Approaching rate limit",
 					cause: `Slow down! ${ipcHypixelPlayer.limit.limit - ipcHypixelPlayer.limit.remaining} / ${ipcHypixelPlayer.limit.limit} (${ipcHypixelPlayer.limit.reset} seconds remaining)`,
 					type: "WARNING",
-					code: 429
+					code: 429,
 				});
 			}
 			playerObject.data = playerData;
@@ -262,7 +262,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 						playerData.sources.lunar = lunarApi.data;
 					}
 					get().updatePlayerState(playerData);
-					
+
 					const [keathizApi, polsuSession] = await Promise.all([getKeathizData(playerData), getPolsuSession(playerData)]);
 					playerData.sources.keathiz = keathizApi;
 					playerData.sources.polsu = {
@@ -272,6 +272,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				}
 			} else {
 				if (runApi.data) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					// @ts-ignore
 					if (runApi.data.code == 403) {
 						useConfigStore.getState().setErrorMessage({
@@ -295,7 +296,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 	},
 	removePlayer: async (username: string) => {
 		set((state) => ({
-			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase())
+			players: state.players.filter((player) => player.name.toLowerCase() !== username.toLowerCase()),
 		}));
 	},
 	clearPlayers: async () => {
@@ -349,7 +350,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 										}
 									}
 									set({
-										players
+										players,
 									});
 								}
 							}
@@ -366,7 +367,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				const playerArr = [...state.players];
 				playerArr[exists] = playerObject;
 				return {
-					players: playerArr
+					players: playerArr,
 				};
 			});
 		}
@@ -400,7 +401,7 @@ const getCustomApi = async (player: Player) => {
 	let api: IPCResponse<CustomFileJsonType>;
 	if ("hypixelPlayer" in player && player?.hypixelPlayer?.displayname && useConfigStore.getState().settings.preferences.customUrl) {
 		const { hypixelPlayer } = player;
-		let url = useConfigStore.getState().customApi.url.toLowerCase() + "&requesttype=seraphoverlay";
+		let url = useConfigStore.getState().customApi.url.toLowerCase();
 
 		if (url.match(/({uuid})/gi)) {
 			url = url.replaceAll(/({uuid})/gi, hypixelPlayer.uuid);

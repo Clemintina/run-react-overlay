@@ -27,7 +27,6 @@ import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOption
 import got, { ExtendOptions } from "got";
 import { PolsuApi } from "@clemintina/seraph-library";
 import { PlayerDB } from "@common/utils/externalapis/PlayerDB";
-import axios from "axios";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -288,8 +287,8 @@ const registerSeraphIPC = () => {
 						try {
 							const { body, statusCode } = await gotClient.get<PlayerDB>(`https://playerdb.co/api/player/minecraft/${playerName}`, {
 								headers: {
-									Accept: "application/json"
-								}
+									Accept: "application/json",
+								},
 							});
 							if (body.code != "player.found") {
 								return { data: null, status: statusCode };
@@ -338,20 +337,20 @@ const registerSeraphIPC = () => {
 		}
 		return null;
 	});
-	
-	ipcMain.handle('hypixelproxy', async (event:IpcMainInvokeEvent,  args:string[])=>{
+
+	ipcMain.handle("hypixelproxy", async (event: IpcMainInvokeEvent, args: string[]) => {
 		const gotClient = got.extend(gotOptions);
 		const resource = args[0] as string;
-		let playerName = args[1].toLowerCase() as string
-		const limit:RateLimitData = {
+		const playerName = args[1].toLowerCase() as string;
+		const limit: RateLimitData = {
 			remaining: 1000,
 			reset: 1000,
 			limit: 1000,
 		};
-		
+
 		if (resource == RequestType.USERNAME || resource == RequestType.UUID) {
-			const {body,statusCode} = await gotClient.get<{player: Components.Schemas.Player, cause?: string}>(`https://cache.seraph.si/player/${playerName}`);
-			return { data: body?.player ?? null, status: statusCode, limit};
+			const { body, statusCode } = await gotClient.get<{ player: Components.Schemas.Player; cause?: string }>(`https://cache.seraph.si/player/${playerName}`);
+			return { data: body?.player ?? null, status: statusCode, limit };
 		}
 	});
 
@@ -394,7 +393,7 @@ const registerSeraphIPC = () => {
 			"seraph-api-key": runApiKey,
 			"run-api-uuid": overlayUuid,
 			"API-Key": hypixelApiKey,
-			"API-Key-Owner": hypixelApiKeyOwner
+			"API-Key-Owner": hypixelApiKeyOwner,
 		};
 
 		if (endpoint === RunEndpoints.KEY) {
@@ -408,22 +407,22 @@ const registerSeraphIPC = () => {
 		} else if (endpoint == RunEndpoints.BLACKLIST) {
 			const { body, statusCode } = await gotClient.get(`https://api.seraph.si/blacklist/${uuid}`, {
 				headers: {
-					...seraphHeaders
-				}
+					...seraphHeaders,
+				},
 			});
 			return { data: body, status: statusCode };
 		} else if (endpoint == RunEndpoints.SAFELIST) {
 			const { body, statusCode } = await gotClient.get(`https://api.seraph.si/safelist/${uuid}`, {
 				headers: {
-					...seraphHeaders
-				}
+					...seraphHeaders,
+				},
 			});
 			return { data: body, status: statusCode };
 		} else {
 			const { body, statusCode } = await gotClient.get(`https://antisniper.seraph.si/v4/${endpoint}?uuid=${uuid}`, {
 				headers: {
-					...seraphHeaders
-				}
+					...seraphHeaders,
+				},
 			});
 			return { data: body, status: statusCode };
 		}
@@ -582,9 +581,9 @@ const registerExternalApis = () => {
 		const gotClient = got.extend(gotOptions);
 		const { body, statusCode } = await gotClient.get(`http://db.dfg87dcbvse44.xyz:8080/?playerv5=${username}`, {
 			headers,
-			agent
+			agent,
 		});
-		const json_response = destr(body.toString().replaceAll("'", "\"").toLowerCase());
+		const json_response = destr(body.toString().replaceAll("'", '"').toLowerCase());
 		let json: BoomzaAntisniper;
 		try {
 			json = { sniper: json_response.sniper, report: json_response.report, error: false, username: username };
@@ -607,7 +606,7 @@ const registerExternalApis = () => {
 		const gotClient = got.extend(gotOptions);
 		const { body, statusCode } = await gotClient.get(`https://api.antisniper.net/${endpoint}?key=${apikey}${params}`, {
 			headers,
-			agent
+			agent,
 		});
 		return { data: body, status: statusCode };
 	});
@@ -619,7 +618,7 @@ const registerExternalApis = () => {
 		const gotClient = got.extend(gotOptions);
 		const { body, statusCode } = await gotClient.get(`https://api.invite.observer/v1/daily?uuid=${uuid}&key=${apikey}`, {
 			headers,
-			agent
+			agent,
 		});
 		return { data: body, status: statusCode };
 	});
@@ -629,7 +628,7 @@ const registerExternalApis = () => {
 		const gotClient = got.extend(gotOptions);
 		const { body, statusCode } = await gotClient.get(`https://playerdb.co/api/player/minecraft/${uuid}`, {
 			headers,
-			agent
+			agent,
 		});
 		return { data: body, status: statusCode };
 	});
@@ -652,12 +651,14 @@ const registerExternalApis = () => {
 			const playerUrl = `https://api.polsu.xyz/polsu/bedwars/quickbuy/${uuid}.png`;
 			const gotClient = got.extend({
 				headers: {
-					"user-agent": "seraph-overlay-polsu"
-				}
+					"user-agent": "seraph-overlay-polsu",
+				},
 			});
-			await gotClient.post(`https://api.polsu.xyz/polsu/bedwars/quickbuy?key=${apiKey}`, {
-				json: JSON.parse(args[3])
-			}).catch((reason) => console.log(reason));
+			await gotClient
+				.post(`https://api.polsu.xyz/polsu/bedwars/quickbuy?key=${apiKey}`, {
+					json: JSON.parse(args[3]),
+				})
+				.catch((reason) => console.log(reason));
 			return { data: playerUrl, status: 200 };
 		}
 	});
@@ -667,7 +668,7 @@ const registerExternalApis = () => {
 			const gotClient = got.extend(gotOptions);
 			const { body, statusCode } = await gotClient.get<{ data: CustomFileJsonType }>(args[0], {
 				headers,
-				agent
+				agent,
 			});
 			return { data: body.data, status: statusCode };
 		} catch (e) {
@@ -779,13 +780,13 @@ const getProxyChannel = () => {
 		proxy: {
 			host: proxyStore.hostname,
 			port: Number(proxyStore.port),
-			proxyAuth: proxyStore.username + ":" + proxyStore.password
-		}
+			proxyAuth: proxyStore.username + ":" + proxyStore.password,
+		},
 	});
 };
 
 const agent = {
-	http: getProxyChannel()
+	http: getProxyChannel(),
 } as const;
 
 const getErrorHandler = (e) => {
