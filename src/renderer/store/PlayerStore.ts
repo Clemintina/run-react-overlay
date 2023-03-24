@@ -223,6 +223,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 										if (playerData.sources.runApi != null) {
 											playerData.sources.runApi.data.blacklist.tagged = true;
 											playerData.sources.runApi.data.blacklist.reason = "Blacklist File";
+											get().updatePlayerState(playerData);
 										}
 									}
 								});
@@ -235,6 +236,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 											if (playerData.sources.runApi != null) {
 												playerData.sources.runApi.data.blacklist.tagged = player.blacklisted;
 												playerData.sources.runApi.data.blacklist.reason = "Blacklist File";
+												get().updatePlayerState(playerData);
 											}
 										}
 									}
@@ -249,6 +251,8 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 							const data = custom_api.data;
 							if (data.blacklisted) {
 								playerData.sources.runApi.data.blacklist.tagged = true;
+								playerData.sources.runApi.data.blacklist.reason = "Blacklist API";
+								get().updatePlayerState(playerData);
 							}
 							playerData.sources.customApi = data;
 						}
@@ -262,14 +266,15 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 						playerData.sources.lunar = lunarApi.data;
 					}
 					get().updatePlayerState(playerData);
-
+					
 					const [keathizApi, polsuSession] = await Promise.all([getKeathizData(playerData), getPolsuSession(playerData)]);
 					playerData.sources.keathiz = keathizApi;
 					playerData.sources.polsu = {
-						sessions: polsuSession,
+						sessions: polsuSession
 					};
-					get().updatePlayerState(playerData);
 				}
+				playerData.loaded = true;
+				get().updatePlayerState(playerData);
 			} else {
 				if (runApi.data) {
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -289,8 +294,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 				}
 			}
 		}
-
-		playerObject.data = playerData;
 		get().updatePlayerState(playerData);
 		// await get().updatePlayers();
 	},
