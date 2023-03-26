@@ -68,10 +68,11 @@ contextBridge.exposeInMainWorld("config", {
  * @see (https://developer.mozilla.org/en-US/docs/Web/API/Window/DOMContentLoaded_event)
  */
 window.addEventListener("DOMContentLoaded", () => {
-	console.log("Loaded DOM");
+	console.log("Loaded DOM")
 });
 
-window.ipcRenderer.on("updater", async (event, args) => {
+window?.ipcRenderer?.on("updater", async ( _, args) => {
+	console.log(args);
 	const appUpdater = JSON.parse(args).data as AppInformation;
 	if (appUpdater.update.ready) {
 		useConfigStore.getState().setErrorMessage({
@@ -88,8 +89,9 @@ window.ipcRenderer.on("updater", async (event, args) => {
 	}
 });
 
-window.ipcRenderer.on("ready", async () => {
+window?.ipcRenderer?.on("ready", async () => {
 	if (window?.ipcRenderer) {
+		useConfigStore.getState().setVersion();
 		const logs = useConfigStore.getState().logs;
 		if (logs.readable) {
 			window.ipcRenderer.send("logFileSet", useConfigStore.getState().logs.logPath);
