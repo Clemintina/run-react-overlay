@@ -32,9 +32,9 @@
 	},
 	"dependencies": {
 		"@clemintina/seraph-library": "^1.0.43",
-		"@electron-forge/plugin-auto-unpack-natives": "^6.0.5",
-		"@emotion/react": "^11.10.6",
-		"@emotion/styled": "^11.10.6",
+		"@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
 		"@fortawesome/fontawesome-svg-core": "^6.4.0",
 		"@fortawesome/free-brands-svg-icons": "^6.4.0",
 		"@fortawesome/free-regular-svg-icons": "^6.4.0",

@@ -67,23 +67,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 		const playerObject: IPCResponse<Player> = { status: 400, cause: "none", data: playerData };
 		const { hypixel, settings, customFile, run, polsu } = useConfigStore.getState();
 
-		if (hypixel.apiKey === undefined || hypixel.apiKey.length !== 36 || !hypixel.apiKeyValid) {
-			useConfigStore.getState().setErrorMessage({
-				title: "No Hypixel API Key",
-				cause: "No Hypixel API Key",
-				code: 400,
-				type: "WARNING",
-			});
-			return { status: 403, cause: "No API Key", data: null };
-		}
-
-		let apiKey;
-		if (hypixel.apiKeyValid_2) {
-			apiKey = get().players.length % 2 ? hypixel.apiKey : hypixel.apiKey_2;
-		} else {
-			apiKey = hypixel.apiKey;
-		}
-
 		if (useConfigStore.getState().nicks.filter((nickname) => nickname.nick.toLowerCase() == username.toLowerCase()).length != 0) {
 			playerData.name = useConfigStore.getState().nicks.filter((nickname) => nickname.nick.toLowerCase() == username.toLowerCase())[0].uuid;
 		}
@@ -92,7 +75,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 			const ipcHypixelPlayer = await window.ipcRenderer.invoke<Components.Schemas.Player>(IpcValidInvokeChannels.HYPIXEL_PROXY, [RequestType.USERNAME, playerData.name]);
 			if (!ipcHypixelPlayer?.data?.uuid || ipcHypixelPlayer.status != 200) {
 				const data: unknown = ipcHypixelPlayer.data;
-				let cause, code;
+				let cause: string | undefined, code: number;
 				if (typeof data === "string") {
 					cause = data;
 					code = ipcHypixelPlayer.status;
@@ -266,7 +249,7 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
 						playerData.sources.lunar = lunarApi.data;
 					}
 					get().updatePlayerState(playerData);
-					
+
 					const [keathizApi, polsuSession] = await Promise.all([getKeathizData(playerData), getPolsuSession(playerData)]);
 					playerData.sources.keathiz = keathizApi;
 					playerData.sources.polsu = {

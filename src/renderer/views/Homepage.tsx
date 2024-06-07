@@ -12,14 +12,12 @@ import usePlayerStore from "@renderer/store/PlayerStore";
 import useConfigStore from "@renderer/store/ConfigStore";
 import { Box } from "@mui/material";
 import { Interweave } from "interweave";
-import { AppInformation } from "@common/utils/Schemas";
 import { PlayerGuildComponent, PlayerHeadComponent, PlayerNameComponent, PlayerNetworkLevel, PlayerRankedBedwarsRating, PlayerSessionComponent, PlayerStarComponent, PlayerTagsComponent, PlayerWinstreakComponent } from "@components/PlayerComponents";
 import { RenderCoreStatsColour, RenderRatioColour } from "@components/TagComponents";
 import { CustomHeader } from "@components/AppComponents";
 import { PlayerMenuOption } from "@components/BaseComponents";
 import { getPlayerRank } from "@common/zikeji";
 import { OverlayTooltip } from "@components/TooltipComponents";
-import { IpcValidInvokeChannels } from "@common/utils/IPCHandler";
 
 let columnApi: ColumnApi;
 const tinyColumnSize = 30;
@@ -54,7 +52,7 @@ export enum FieldNames {
 	RANKED_BEDWARS = "RBW",
 }
 
-export const columnDefsBase: ColDef<Player>[] = [
+export const columnDefsBase: ColDef<any, any>[] = [
 	{
 		field: FieldNames.HEAD,
 		sortable: false,
